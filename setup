@@ -56,20 +56,37 @@ for arg in "$@"; do
 done
 
 # ─── Determine install path ─────────────────────────────────────────────
+# Claude Code discovers custom slash commands from .claude/commands/
 if [ "$LOCAL" = true ]; then
-  INSTALL_DIR="$(pwd)/.claude/skills/design-kit"
+  INSTALL_DIR="$(pwd)/.claude/commands"
 else
-  INSTALL_DIR="$HOME/.claude/skills/design-kit"
+  INSTALL_DIR="$HOME/.claude/commands"
 fi
 
 # ─── Uninstall ───────────────────────────────────────────────────────────
 if [ "$UNINSTALL" = true ]; then
   header
-  if [ -d "$INSTALL_DIR" ]; then
-    rm -rf "$INSTALL_DIR"
-    ok "Removed $INSTALL_DIR"
-  else
-    warn "Nothing to uninstall at $INSTALL_DIR"
+  removed=false
+  # Remove command files installed by this tool
+  for dir in "$SCRIPT_DIR"/*/; do
+    if [ -f "$dir/SKILL.md" ]; then
+      skill_name="$(basename "$dir")"
+      if [ -f "$INSTALL_DIR/$skill_name.md" ]; then
+        rm "$INSTALL_DIR/$skill_name.md"
+        ok "Removed $INSTALL_DIR/$skill_name.md"
+        removed=true
+      fi
+    fi
+  done
+  # Also clean up old skills/ location if it exists
+  OLD_DIR="$(dirname "$INSTALL_DIR")/skills/design-kit"
+  if [ -d "$OLD_DIR" ]; then
+    rm -rf "$OLD_DIR"
+    ok "Removed legacy $OLD_DIR"
+    removed=true
+  fi
+  if [ "$removed" = false ]; then
+    warn "Nothing to uninstall"
   fi
   exit 0
 fi
@@ -95,22 +112,18 @@ echo ""
 # Create install directory
 mkdir -p "$INSTALL_DIR"
 
-# Copy each skill
+# Copy each skill as a .md command file
 for skill in "${SKILLS[@]}"; do
-  skill_src="$SCRIPT_DIR/$skill"
-  skill_dst="$INSTALL_DIR/$skill"
+  skill_src="$SCRIPT_DIR/$skill/SKILL.md"
+  skill_dst="$INSTALL_DIR/$skill.md"
 
-  # Clean previous version
-  rm -rf "$skill_dst"
-  mkdir -p "$skill_dst"
-
-  # Copy skill files
-  cp -r "$skill_src"/* "$skill_dst"/
+  # Copy SKILL.md as <skill-name>.md
+  cp "$skill_src" "$skill_dst"
 
   ok "Installed ${BOLD}/$skill${RESET}"
 
   # Show description from first non-frontmatter, non-empty line
-  desc=$(sed -n '/^---$/,/^---$/d; /^#/d; /^$/d; p' "$skill_dst/SKILL.md" | head -1)
+  desc=$(sed -n '/^---$/,/^---$/d; /^#/d; /^$/d; p' "$skill_dst" | head -1)
   if [ -n "$desc" ]; then
     dim "$desc"
   fi
