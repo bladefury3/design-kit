@@ -43,9 +43,10 @@ for each component.
 
 1. Confirm Figma is connected by checking open files.
 
-   **Note on library components**: If components come from an attached team library,
-   use `figma_execute` with `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
-   and the async Figma plugin APIs. The standard MCP tools may not surface library data.
+   **Note on library components**: Unlike variables, the Figma Plugin API has NO
+   discovery method for library components (`getAvailableLibraryComponentSetsAsync`
+   does not exist). See Step 1 for the multi-strategy discovery approach — you may
+   need to navigate to the library file or reverse-discover keys from instances.
 
 2. Check if `tokens.json` exists in the working directory. If yes, load it — you'll
    reference token names in component specs AND use the `$extensions.figma.key` values
@@ -69,9 +70,21 @@ The goal of discovery is to build a **complete key map** — component name → 
 component key (hash string) — so that all downstream skills can instantiate components
 directly via `figma_instantiate_component` without searching.
 
-### 1a. Get the component key map via figma_execute
+### Critical: Figma API asymmetry for components vs. variables
 
-This is the most reliable method, especially for library components:
+Unlike variables, the Figma Plugin API has **no** `getAvailableLibraryComponentSetsAsync()`
+method. You cannot discover library components from a consuming file the way you can
+discover library variables. The plugin API only offers:
+
+- `figma.importComponentByKeyAsync(key)` — import a component IF you have the key
+- `figma.importComponentSetByKeyAsync(key)` — import a component set IF you have the key
+
+This means component discovery requires a **different strategy** depending on where
+the components live.
+
+### Strategy A: Components are in the current file (local components)
+
+Use `figma_execute` to discover all local components with their keys:
 
 ```javascript
 // Run via figma_execute — discovers all local components with their keys
@@ -101,34 +114,94 @@ return allComponents.map(c => ({
 }));
 ```
 
-For library components not in the current file, use `figma_get_library_components`
-with `includeVariants=true`, then capture the `componentKey` from each result.
+### Strategy B: Components are in an attached library (most common)
 
-### 1b. Also try MCP discovery tools
+Library components require a **multi-step discovery**:
 
-Based on the user's scope choice:
-
-**Full library:**
+**Step 1: Try REST API first** (fastest when it works)
 ```
-Use figma_get_library_components with the library file key to get component keys.
-Use figma_get_design_system_summary for an overview.
+Use figma_get_library_components with the library file key and includeVariants=true.
+Capture componentKey from each result.
 ```
 
-**Selection:**
+This works when the library is a **published team library** accessible via REST API.
+It may fail with 404 if the library is a copy, a draft, or not shared with the API token.
+
+**Step 2: If REST fails, navigate to the library file**
+
+Ask the user to open the library file with the Desktop Bridge plugin:
+
+> "The library components aren't accessible via API from this file.
+> Could you open the library file in Figma and run the Desktop Bridge plugin?
+> I'll switch to it, discover all components with their keys, then switch back.
+> This is a one-time operation — once I have the keys, they're saved in
+> `components/index.json` for all future use."
+
+Then navigate to the library file and run the local discovery script (Strategy A):
+
 ```
-Use figma_get_selection to get currently selected nodes.
-Filter to component and component set types.
+Use figma_navigate to switch to the library file URL.
+Run the figma_execute discovery script above.
+Use figma_navigate to switch back to the working file.
 ```
 
-**Page-based:**
-```
-Use figma_get_file_data to find components on the specified page.
+**Step 3: If the library file can't be opened, check for instances**
+
+If the user has placed any library component instances on the canvas, you can
+reverse-discover keys from them:
+
+```javascript
+// Run via figma_execute — discover component keys from existing instances
+const page = figma.currentPage;
+const instances = page.findAll(n => n.type === 'INSTANCE');
+
+const discovered = {};
+for (const inst of instances) {
+  const main = inst.mainComponent;
+  if (!main) continue;
+  const parent = main.parent;
+  const setName = parent?.type === 'COMPONENT_SET' ? parent.name : main.name;
+
+  if (!discovered[setName]) {
+    discovered[setName] = {
+      name: setName,
+      componentSetKey: parent?.type === 'COMPONENT_SET' ? parent.key : null,
+      variants: {}
+    };
+  }
+
+  discovered[setName].variants[main.name] = {
+    key: main.key,  // This is the instantiation key
+    nodeId: main.id,
+    properties: Object.fromEntries(
+      main.name.split(', ').map(p => p.split('='))
+    )
+  };
+}
+
+return Object.values(discovered);
 ```
 
-**Search:**
-```
-Use figma_search_components with the user's search term.
-```
+Ask the user to place sample instances of each component on the canvas first:
+> "I can discover component keys from instances on the canvas. Could you drag
+> a few components from the library onto the page? I'll extract their keys
+> and you can delete them afterward."
+
+### Strategy C: User provides component keys manually
+
+If the design system team maintains a component registry or has exported keys before,
+the user can provide a JSON file with component keys. This is common in mature
+design system teams.
+
+### Choosing the right strategy
+
+| Situation | Strategy | MCP Calls |
+|---|---|---|
+| Components in current file | A: Local discovery | 1 figma_execute |
+| Published team library | B.1: REST API | 1 figma_get_library_components |
+| Library is a copy/draft | B.2: Navigate to library file | 2 figma_navigate + 1 figma_execute |
+| Can't open library file | B.3: Reverse from instances | 1 figma_execute (needs instances on canvas) |
+| Team has key registry | C: Manual import | 0 (just Read the file) |
 
 **Important**: Whichever method you use, always capture the **component key** (hash
 string). This is the equivalent of `$extensions.figma.key` in tokens.json — it's the

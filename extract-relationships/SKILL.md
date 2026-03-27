@@ -36,9 +36,11 @@ dependency graph.
 
 1. Confirm Figma is connected.
 
-   **Note on library components**: If components come from an attached team library,
-   use `figma_execute` with `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
-   and the async Figma plugin APIs. The standard MCP tools may not surface library data.
+   **Note on library components**: Unlike variables, the Figma Plugin API has NO
+   discovery method for library components. If `components/index.json` exists,
+   use it as the primary source — it already contains component keys. If not,
+   the user should run `/extract-components` first, which handles the multi-step
+   library discovery process.
 
 2. Check for existing artifacts:
    - `tokens.json` — for shared token analysis. When present, use the
