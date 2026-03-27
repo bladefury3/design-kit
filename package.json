@@ -1,0 +1,10 @@
+{
+  "name": "design-kit",
+  "version": "0.1.0",
+  "description": "Design system documentation skills for Claude Code + Figma",
+  "author": "Sidharath Chhatani",
+  "license": "MIT",
+  "scripts": {
+    "setup": "./setup"
+  }
+}

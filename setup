@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ─── Design Kit Installer ───────────────────────────────────────────────
+# Installs design system documentation skills for Claude Code.
+# Usage: ./setup [--local] [--uninstall]
+# ─────────────────────────────────────────────────────────────────────────
+
+VERSION=$(cat "$(dirname "$0")/VERSION")
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+# ─── Colors ──────────────────────────────────────────────────────────────
+BOLD='\033[1m'
+DIM='\033[2m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
+RED='\033[0;31m'
+RESET='\033[0m'
+
+# ─── Helpers ─────────────────────────────────────────────────────────────
+info()  { echo -e "${BLUE}→${RESET} $1"; }
+ok()    { echo -e "${GREEN}✓${RESET} $1"; }
+warn()  { echo -e "${YELLOW}!${RESET} $1"; }
+fail()  { echo -e "${RED}✗${RESET} $1"; exit 1; }
+dim()   { echo -e "${DIM}  $1${RESET}"; }
+
+header() {
+  echo ""
+  echo -e "${BOLD}design-kit${RESET} ${DIM}v${VERSION}${RESET}"
+  echo -e "${DIM}Design system documentation skills for Claude Code${RESET}"
+  echo ""
+}
+
+# ─── Parse args ──────────────────────────────────────────────────────────
+LOCAL=false
+UNINSTALL=false
+
+for arg in "$@"; do
+  case "$arg" in
+    --local)     LOCAL=true ;;
+    --uninstall) UNINSTALL=true ;;
+    --help|-h)
+      header
+      echo "Usage: ./setup [OPTIONS]"
+      echo ""
+      echo "Options:"
+      echo "  --local      Install to .claude/skills/design-kit in current directory"
+      echo "  --uninstall  Remove installed skills"
+      echo "  -h, --help   Show this help"
+      echo ""
+      exit 0
+      ;;
+    *) fail "Unknown option: $arg" ;;
+  esac
+done
+
+# ─── Determine install path ─────────────────────────────────────────────
+if [ "$LOCAL" = true ]; then
+  INSTALL_DIR="$(pwd)/.claude/skills/design-kit"
+else
+  INSTALL_DIR="$HOME/.claude/skills/design-kit"
+fi
+
+# ─── Uninstall ───────────────────────────────────────────────────────────
+if [ "$UNINSTALL" = true ]; then
+  header
+  if [ -d "$INSTALL_DIR" ]; then
+    rm -rf "$INSTALL_DIR"
+    ok "Removed $INSTALL_DIR"
+  else
+    warn "Nothing to uninstall at $INSTALL_DIR"
+  fi
+  exit 0
+fi
+
+# ─── Install ─────────────────────────────────────────────────────────────
+header
+
+# Discover skills (directories containing SKILL.md)
+SKILLS=()
+for dir in "$SCRIPT_DIR"/*/; do
+  if [ -f "$dir/SKILL.md" ]; then
+    SKILLS+=("$(basename "$dir")")
+  fi
+done
+
+if [ ${#SKILLS[@]} -eq 0 ]; then
+  fail "No skills found. Each skill needs a SKILL.md file."
+fi
+
+info "Found ${#SKILLS[@]} skill(s): ${SKILLS[*]}"
+echo ""
+
+# Create install directory
+mkdir -p "$INSTALL_DIR"
+
+# Copy each skill
+for skill in "${SKILLS[@]}"; do
+  skill_src="$SCRIPT_DIR/$skill"
+  skill_dst="$INSTALL_DIR/$skill"
+
+  # Clean previous version
+  rm -rf "$skill_dst"
+  mkdir -p "$skill_dst"
+
+  # Copy skill files
+  cp -r "$skill_src"/* "$skill_dst"/
+
+  ok "Installed ${BOLD}/$skill${RESET}"
+
+  # Show description from first non-frontmatter, non-empty line
+  desc=$(sed -n '/^---$/,/^---$/d; /^#/d; /^$/d; p' "$skill_dst/SKILL.md" | head -1)
+  if [ -n "$desc" ]; then
+    dim "$desc"
+  fi
+done
+
+echo ""
+ok "Installed to ${BOLD}${INSTALL_DIR}${RESET}"
+echo ""
+
+# ─── Post-install hints ─────────────────────────────────────────────────
+echo -e "${BOLD}Quick start:${RESET}"
+echo ""
+echo "  Open a Figma file, then in Claude Code:"
+echo ""
+for skill in "${SKILLS[@]}"; do
+  echo -e "    ${BLUE}/${skill}${RESET}"
+done
+echo ""
+echo -e "${DIM}Skills require the figma-console MCP server to be connected.${RESET}"
+echo -e "${DIM}Make sure your Figma file is open with the Figma Console plugin running.${RESET}"
+echo ""
