@@ -1,0 +1,164 @@
+{
+  "$schema": "design-kit/component-index/v1",
+  "$metadata": {
+    "extractedAt": "2026-03-27T20:41:13.577Z",
+    "totalComponents": 14,
+    "figmaFile": "Design Kit Test",
+    "libraryFile": "Untitled UI PRO VARIABLES (v6.0)",
+    "libraryFileKey": "JhsFSqLI1lWfDZq5I4crsQ"
+  },
+  "components": {
+    "avatar": {
+      "file": "avatar.json",
+      "name": "Avatar",
+      "category": "Data Display",
+      "variantCount": 60,
+      "description": "User avatar with image, initials, placeholder, and status indicators",
+      "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
+      "defaultVariantKey": "7114e668f908fdf61aa7ce03300ff10ca08c4342"
+    },
+    "avatar-group": {
+      "file": "avatar-group.json",
+      "name": "Avatar group",
+      "category": "Data Display",
+      "variantCount": 3,
+      "description": "Stacked group of avatars for showing multiple users",
+      "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d",
+      "defaultVariantKey": "0d3105b2b3fff02d7804f317d31921b8ef02e8dc"
+    },
+    "avatar-label-group": {
+      "file": "avatar-label-group.json",
+      "name": "Avatar label group",
+      "category": "Data Display",
+      "variantCount": 16,
+      "description": "Avatar with name and supporting text",
+      "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef",
+      "defaultVariantKey": "360054184886a747d00b6c36a2f6e4f6609213b8"
+    },
+    "input-field": {
+      "file": "input-field.json",
+      "name": "Input field",
+      "category": "Inputs",
+      "variantCount": 112,
+      "description": "Text input with variants for size, type (default, icon leading, dropdown, tags, payment), destructive state",
+      "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b",
+      "defaultVariantKey": "88323dfdd85345b5d612ee789a94e1e27c5025c6"
+    },
+    "input-dropdown": {
+      "file": "input-dropdown.json",
+      "name": "Input dropdown",
+      "category": "Inputs",
+      "variantCount": 60,
+      "description": "Dropdown select input with search, tags, avatar, dot, and icon leading variants",
+      "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
+      "defaultVariantKey": "cacec70cefc3c9113c54f859f76e71e8caa3c3fd"
+    },
+    "button-group": {
+      "file": "button-group.json",
+      "name": "Button group",
+      "category": "Inputs",
+      "variantCount": 3,
+      "description": "Grouped button set with icon options",
+      "figmaKey": "5d21508db6f4dd5aa4582cb2c599de63d78c8c23",
+      "defaultVariantKey": "de477799a176a73c728e1c8d4fe228df35504a88"
+    },
+    "alert": {
+      "file": "alert.json",
+      "name": "Alert",
+      "category": "Feedback",
+      "variantCount": 24,
+      "description": "Alert banner with color variants (default, gray, brand, warning, error, success) in floating and full-width sizes",
+      "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b",
+      "defaultVariantKey": "c3910a2dad8a3d8fcd829bfd6603d236d7291153"
+    },
+    "activity-feed": {
+      "file": "activity-feed.json",
+      "name": "Activity feed",
+      "category": "Data Display",
+      "variantCount": 6,
+      "description": "Activity timeline with notification and message variants",
+      "figmaKey": "c7fcdb4a3d3d83eceaf3b574ecc7f028debaf25b",
+      "defaultVariantKey": "fd8d8c5880fe416f1ea4587743258c640c41b751"
+    },
+    "activity-gauge": {
+      "file": "activity-gauge.json",
+      "name": "Activity gauge",
+      "category": "Data Display",
+      "variantCount": 24,
+      "description": "Circular progress gauge with legend and label options",
+      "figmaKey": "6541c06b6ae4e58ff40001b913d351f813802486",
+      "defaultVariantKey": "04bcc2ac8298a4bd0a4b0e7076a1ca7abb452c04"
+    },
+    "404-section": {
+      "file": "404-section.json",
+      "name": "404 section",
+      "category": "Sections",
+      "variantCount": 28,
+      "description": "404 error page sections with various layouts (simple, illustration, screen mockup, split image)",
+      "figmaKey": "6461663adede8577b2f3ff1ebe81852a22f8f8c6",
+      "defaultVariantKey": "b9ebfab51c3de2cd1ac1525c1ff5be5983b7bcae"
+    },
+    "progress-bar": {
+      "file": "progress-bar.json",
+      "name": "Progress bar",
+      "category": "Feedback",
+      "variantCount": null,
+      "description": "Progress indicator bar with label variants",
+      "figmaKey": null,
+      "defaultVariantKey": null
+    },
+    "calendar": {
+      "file": "calendar.json",
+      "name": "Calendar",
+      "category": "Inputs",
+      "variantCount": null,
+      "description": "Date picker calendar component",
+      "figmaKey": null,
+      "defaultVariantKey": null
+    },
+    "header-navigation": {
+      "file": "header-navigation.json",
+      "name": "Header navigation",
+      "category": "Navigation",
+      "variantCount": null,
+      "description": "Top navigation header with open/closed states and style variants",
+      "figmaKey": null,
+      "defaultVariantKey": null
+    },
+    "table-header": {
+      "file": "table-header.json",
+      "name": "Table header",
+      "category": "Data Display",
+      "variantCount": null,
+      "description": "Table column header with sort arrow and help icon",
+      "figmaKey": null,
+      "defaultVariantKey": null
+    }
+  },
+  "categories": {
+    "Data Display": [
+      "avatar",
+      "avatar-group",
+      "avatar-label-group",
+      "activity-feed",
+      "activity-gauge",
+      "table-header"
+    ],
+    "Inputs": [
+      "input-field",
+      "input-dropdown",
+      "button-group",
+      "calendar"
+    ],
+    "Feedback": [
+      "alert",
+      "progress-bar"
+    ],
+    "Sections": [
+      "404-section"
+    ],
+    "Navigation": [
+      "header-navigation"
+    ]
+  }
+}
