@@ -6,6 +6,10 @@ description: |
   conventions. Use to validate that designs follow the system.
 allowed-tools:
   - mcp__figma-console__figma_execute
+  - mcp__figma-console__figma_get_design_system_kit
+  - mcp__figma-console__figma_get_component_for_development_deep
+  - mcp__figma-console__figma_analyze_component_set
+  - mcp__figma-console__figma_check_design_parity
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_take_screenshot
@@ -55,7 +59,22 @@ token values from `tokens.json` instead of re-querying Figma for every variable.
 
 **With JSONs**: Load files → audit frames against known tokens/components → only call Figma MCP for frame-specific data (screenshots, node properties). Use `$extensions.figma.key` for any variable lookups via `figma.variables.importVariableByKeyAsync(key)`.
 
-**Without JSONs**: You MUST suggest the user run `/extract-tokens` and `/extract-components` first:
+**Without JSONs — try `figma_get_design_system_kit` first:**
+
+Before suggesting extraction skills, try a single-call approach:
+```
+Use figma_get_design_system_kit with:
+  - include: ["tokens", "components", "styles"]
+  - format: "full"
+```
+If this returns data, you can audit against it immediately — no need to run
+extraction skills first. Save the results for the session.
+
+If the file has no local design system and components come from a library, ask:
+> "I need the library file URL to pull design system data for auditing.
+> What's the URL? (e.g., `https://www.figma.com/design/ABC123/My-Library`)"
+
+If REST API fails (404), fall back to suggesting extraction skills:
 > "I need pre-extracted design system data to audit efficiently. Let me run
 > `/extract-tokens` and `/extract-components` first. This is a one-time setup
 > that speeds up all future audits."
@@ -103,6 +122,11 @@ Use figma_lint_design for built-in linting.
 Use figma_get_variables to get the defined token set.
 ```
 
+If you loaded design system data via `figma_get_design_system_kit` in the
+JSON-first step, use the `visualSpec` data from that response to verify
+token compliance — it contains exact colors, padding, typography, and layout
+values that should match what's in the audited frames.
+
 For each element in the audited frames, check:
 
 **Colors**
@@ -132,12 +156,20 @@ For each element in the audited frames, check:
 
 ```
 Use figma_search_components and figma_get_component_details.
+Use figma_check_design_parity to compare design specs vs expected component specs.
 ```
+
+`figma_check_design_parity` returns scored discrepancy reports with actionable fixes —
+much faster than manual inspection for component compliance.
 
 - Are designers using the library components, or detached instances?
 - Are there recreated components that duplicate existing library components?
 - Are component overrides within expected bounds? (e.g., changing text is fine,
   changing colors may indicate a missing variant)
+
+Also use `figma_check_design_parity` to automatically compare design specs vs
+expected component specifications. This returns scored discrepancy reports
+with actionable fixes — much faster than manual inspection.
 
 ### Check 3: Layout & spacing consistency
 

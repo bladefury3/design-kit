@@ -6,6 +6,9 @@ description: |
   and implementation notes. Use when a design is ready for engineering handoff.
 allowed-tools:
   - mcp__figma-console__figma_execute
+  - mcp__figma-console__figma_get_design_system_kit
+  - mcp__figma-console__figma_analyze_component_set
+  - mcp__figma-console__figma_generate_component_doc
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_take_screenshot
@@ -63,9 +66,25 @@ and frame-specific visual validation:
 
 **With JSONs**: Load files → generate handoff docs directly from structured data → only call Figma MCP for screenshots and visual validation
 
-**Without JSONs**: You MUST suggest extraction first:
-> "I need pre-extracted design system data to generate complete handoff docs.
-> Let me run `/extract-tokens` and `/extract-components` first."
+**Without JSONs — try `figma_get_design_system_kit` first:**
+
+```
+Use figma_get_design_system_kit with:
+  - include: ["tokens", "components", "styles"]
+  - format: "full"
+  - includeImages: true
+```
+This returns implementation-ready data in one call: visual specs with exact colors,
+padding, typography, layout values, and rendered component screenshots. Much of the
+handoff documentation can be generated directly from this response.
+
+If the file has no local design system, ask for the library URL:
+> "I need the design system library URL to generate accurate handoff docs.
+> What's the URL? (e.g., `https://www.figma.com/design/ABC123/My-Library`)"
+
+If REST fails, fall back to extraction:
+> "I need pre-extracted design system data. Let me run `/extract-tokens` and
+> `/extract-components` first."
 
 3. Ask the user about scope and format:
 
@@ -103,9 +122,12 @@ Capture every relevant frame:
 For each component used in the design:
 
 ```
-Use figma_get_component_for_development for dev-ready specs.
-Use figma_get_component_for_development_deep for full anatomy.
-Use figma_generate_component_doc for auto-generated documentation.
+Use figma_get_component_for_development_deep for full anatomy (up to 20 levels),
+  resolved token names, and instance references. Prefer this over the non-deep version.
+Use figma_analyze_component_set for state machines — maps variant states to CSS
+  pseudo-classes (:hover, :focus-visible, :disabled) with visual diffs.
+Use figma_generate_component_doc to auto-generate markdown documentation with
+  anatomy, typography tokens, accessibility notes, and implementation details.
 Use figma_get_annotations for designer notes.
 ```
 
@@ -198,6 +220,11 @@ Page (vertical, gap: 0)
 ## Step 4: Document interactions and states
 
 ### State matrix
+
+Use `figma_analyze_component_set` to auto-generate the state matrix — it maps
+variant states directly to CSS pseudo-classes and reports visual diffs from
+the default state (what exact properties change for hover, focus, disabled, etc.).
+This is faster and more accurate than manual inspection.
 
 | Element | Default | Hover | Pressed | Focus | Disabled |
 |---|---|---|---|---|---|

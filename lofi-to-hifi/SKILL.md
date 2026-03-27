@@ -28,6 +28,7 @@ allowed-tools:
   - mcp__figma-console__figma_delete_node
   - mcp__figma-console__figma_set_instance_properties
   - mcp__figma-console__figma_execute
+  - mcp__figma-console__figma_get_design_system_kit
   - mcp__figma-console__figma_navigate
   - mcp__figma-console__figma_get_design_system_summary
   - mcp__figma-console__figma_list_open_files
@@ -65,7 +66,24 @@ You MUST load them BEFORE making Figma MCP calls:
 
 **With JSONs**: Load files → plan transformation → instantiate components by key → bind tokens by key → minimal MCP calls
 
-**Without JSONs**: You MUST suggest running the extraction skills first:
+**Without JSONs — try `figma_get_design_system_kit` first:**
+
+```
+Use figma_get_design_system_kit with:
+  - include: ["tokens", "components"]
+  - format: "full"
+  - includeImages: true
+```
+If this returns data, you have everything needed to convert wireframes — component
+definitions with visual specs, token values, and even rendered screenshots to
+reference. Use component keys from the response for `figma_instantiate_component`.
+
+If the file has no local design system, ask for the library URL:
+> "I need the design system library URL to pull components and tokens.
+> What's the URL? (e.g., `https://www.figma.com/design/ABC123/My-Library`)"
+
+If `figma_get_design_system_kit` is unavailable or returns nothing, suggest running
+the extraction skills:
 > "I need pre-extracted design system data for lo-fi to hi-fi conversion.
 > Let me run `/extract-tokens` and `/extract-components` first.
 > This lets me use exact component IDs and token keys instead of searching."
@@ -180,20 +198,38 @@ Use figma_execute to apply auto-layout where needed.
 
 ### 3b. Replace with components
 
+**If components/index.json exists** (preferred — no search calls):
 ```
-Use figma_search_components to find the right component.
-Use figma_instantiate_component to place it.
-Use figma_set_instance_properties to configure variants/props.
+Look up the component in index.json → get defaultVariantKey or specific variantKey.
+Use figma_instantiate_component with componentKey set to the VARIANT key.
+Use figma_set_instance_properties to configure props.
 Use figma_delete_node to remove the wireframe placeholder.
 Use figma_move_node to position the new component.
 ```
 
+**If no index.json** (search-based fallback):
+```
+Use figma_search_components to find the right component.
+Use figma_instantiate_component to place it.
+Use figma_set_instance_properties to configure variants/props.
+```
+
+**CRITICAL: Use variant keys, not component set keys.**
+`figma_instantiate_component` requires a VARIANT key (type: COMPONENT), not a
+component set key (type: COMPONENT_SET). Component set keys will fail.
+
+- From `components/index.json`: use `defaultVariantKey` or look up specific
+  variant in `$extensions.figma.variantKeys`
+- From `figma_get_library_components`: use keys from the `variants` array
+  inside each result, NOT the top-level component set key
+- From `figma_get_design_system_kit`: extract variant keys from component definitions
+
 For each wireframe element that maps to a component:
-1. Find the matching library component
-2. Instantiate it in the correct position
-3. Set the right variant (size, style, state)
-4. Set text/content props to match wireframe labels
-5. Remove the wireframe placeholder
+1. Look up the component key (from JSON or search)
+2. Instantiate with the correct **variant** key
+3. Set text/content props to match wireframe labels
+4. Remove the wireframe placeholder
+5. Position the new component
 
 ### 3c. Apply tokens to non-component elements
 

@@ -7,6 +7,7 @@ description: |
   a design system file for optimal AI-assisted workflows.
 allowed-tools:
   - mcp__figma-console__figma_execute
+  - mcp__figma-console__figma_get_design_system_kit
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_take_screenshot
@@ -86,7 +87,18 @@ component specs, and relationship data:
 
 **With JSONs**: Load files → write enriched descriptions back to Figma from structured data → validate
 
-**Without JSONs**: You MUST suggest extraction first:
+**Without JSONs — use `figma_get_design_system_kit` as the "before" snapshot:**
+
+```
+Use figma_get_design_system_kit with:
+  - include: ["tokens", "components", "styles"]
+  - format: "full"
+```
+This shows you exactly what downstream AI tools currently see when they query the file.
+Use this as your "before" snapshot — then optimize descriptions, naming, and annotations
+to make the next `figma_get_design_system_kit` call return richer, more actionable data.
+
+If the file has no design system data, suggest extraction first:
 > "I need structured design system data to optimize for MCP. Let me run
 > `/extract-tokens` and `/extract-components` first."
 
@@ -397,6 +409,28 @@ When you need to bind a design token to a Figma node via `figma_execute`:
 5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
 
 This turns O(n) collection scanning into O(1) direct key lookup per token.
+
+## Optimization target: `figma_get_design_system_kit` output
+
+The ultimate measure of MCP optimization is what `figma_get_design_system_kit`
+returns. This is the tool that downstream AI agents call to understand the
+design system. Every optimization you make should improve its output:
+
+- **Component descriptions** → appear in the `components` section of the kit response
+- **Variable descriptions** → appear in the `tokens` section
+- **Style names and descriptions** → appear in the `styles` section
+- **Annotations** → enriched data available via `figma_get_component_for_development_deep`
+
+### Before/after validation
+
+Run `figma_get_design_system_kit` with `format: "compact"` before AND after optimization.
+Compare the output — the "after" should have:
+- Zero empty description fields
+- Structured variant/prop information in component descriptions
+- Token descriptions with mode notes (light/dark behavior)
+- Consistent, meaningful names throughout
+
+This before/after comparison is the objective proof that the optimization worked.
 
 ## Tone
 

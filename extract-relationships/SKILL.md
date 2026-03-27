@@ -6,6 +6,8 @@ description: |
   composition patterns. Use after extract-components to complete the design system graph.
 allowed-tools:
   - mcp__figma-console__figma_execute
+  - mcp__figma-console__figma_get_design_system_kit
+  - mcp__figma-console__figma_analyze_component_set
   - mcp__figma-console__figma_search_components
   - mcp__figma-console__figma_get_component
   - mcp__figma-console__figma_get_component_details
@@ -48,13 +50,24 @@ dependency graph.
      `figma.variables.importVariableByKeyAsync(key)` instead of scanning collections.
    - `components/index.json` — for the component inventory. When present, use
      component node IDs and Figma keys from the JSON rather than re-querying Figma.
-3. If neither exists, inform the user:
+3. If neither exists, try `figma_get_design_system_kit` before asking the user to run extraction skills:
 
-> "I work best after `/extract-tokens` and `/extract-components` have been run.
-> I can still map relationships directly from Figma, but the output will be
-> richer with existing token and component data.
+```
+Use figma_get_design_system_kit with:
+  - include: ["components"]
+  - format: "compact"
+```
+
+This single call returns all component data needed to build the relationship graph.
+If it returns components, proceed with those. If the file has no local components
+and you need library data, ask the user:
+
+> "I don't see pre-extracted JSONs or local components. To map relationships from
+> a library, I need the library file URL. What's the URL of your design system file?
+> (e.g., `https://www.figma.com/design/ABC123/My-Library`)
 >
-> Want me to proceed, or run those first?"
+> Or run `/extract-tokens` and `/extract-components` first — they'll create the
+> JSONs I need."
 
 ## Step 1: Build the component graph
 
@@ -162,6 +175,17 @@ Example: `Button` and `Link` both use `color.semantic.action.primary`
 If component JSONs exist, cross-reference their token usage.
 Group components by shared semantic tokens.
 ```
+
+### Variant state analysis ("stateRelationship")
+Components that share interactive state patterns (hover, focus, disabled).
+
+Use `figma_analyze_component_set` for each component set to get:
+- CSS pseudo-class mappings (`:hover`, `:focus-visible`, `:disabled`)
+- Visual diffs between states (what changes from default)
+- This reveals which components follow the same state model
+
+Example: Button, Input, and Select all have Default→Hover→Focus→Disabled states
+with similar visual transitions.
 
 ### Slot compatibility ("fitsSlot")
 Components designed to work in a specific slot context.
