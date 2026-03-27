@@ -6,6 +6,7 @@ description: |
   machine-readable for Figma Console MCP and other AI tools. Use to prepare
   a design system file for optimal AI-assisted workflows.
 allowed-tools:
+  - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_take_screenshot
@@ -67,6 +68,23 @@ means constant back-and-forth and guesswork. This skill bridges that gap.
    - `tokens.json` — for token context
    - `components/index.json` — for component inventory
    - `relationships.json` — for dependency context
+### JSON-first approach (recommended)
+
+Pre-extracted JSONs are the input that makes MCP optimization fast and accurate:
+
+- `tokens.json` — Use token descriptions and naming to write rich variable descriptions
+  back into Figma, rather than guessing from raw values.
+- `components/index.json` — Use component specs to write structured descriptions
+  (variants, props, usage guidelines) back into Figma component descriptions.
+- `relationships.json` — Use dependency data to add relationship annotations
+  ("Contains: Button, Avatar, Text") to component descriptions.
+
+**With JSONs**: Load files → write enriched descriptions back to Figma → validate
+
+**Without JSONs**: Suggest extraction first:
+> "MCP optimization is most effective when I have structured design system data to
+> write back into Figma. Want me to run `/extract-tokens` and `/extract-components` first?"
+
 3. Ask the user about scope:
 
 > "What should I optimize for MCP?

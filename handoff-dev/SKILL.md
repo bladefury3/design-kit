@@ -5,6 +5,7 @@ description: |
   exact token values, component APIs, responsive behavior, interaction states,
   and implementation notes. Use when a design is ready for engineering handoff.
 allowed-tools:
+  - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_take_screenshot
@@ -47,6 +48,23 @@ Every token value, every state, every responsive behavior — documented and exp
    - `tokens.json` — for token name → value mappings
    - `components/index.json` — for component API reference
    - `relationships.json` — for understanding composition
+### JSON-first approach (recommended)
+
+Pre-extracted JSONs make handoff documentation significantly richer and faster to generate:
+
+- `tokens.json` — Token names, values, Figma keys, and mode variants. No need to
+  re-extract from Figma.
+- `components/index.json` + individual component JSONs — Full component APIs, variants,
+  anatomy. The bulk of handoff documentation comes from these files.
+- `relationships.json` — Component dependency graph. Helps document which components
+  are used together and their composition patterns.
+
+**With JSONs**: Load files → generate handoff docs directly from structured data → only call Figma MCP for screenshots and visual validation
+
+**Without JSONs**: Suggest extraction first:
+> "I can generate much richer handoff docs with pre-extracted design system data.
+> Want me to run `/extract-tokens` and `/extract-components` first?"
+
 3. Ask the user about scope and format:
 
 > "What are we handing off?

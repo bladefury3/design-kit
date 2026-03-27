@@ -6,6 +6,7 @@ description: |
   component. Use after extract-tokens to build the component layer of your
   design system documentation.
 allowed-tools:
+  - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_search_components
   - mcp__figma-console__figma_get_component
   - mcp__figma-console__figma_get_component_details
@@ -41,6 +42,11 @@ for each component.
 ## Before you begin
 
 1. Confirm Figma is connected by checking open files.
+
+   **Note on library components**: If components come from an attached team library,
+   use `figma_execute` with `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
+   and the async Figma plugin APIs. The standard MCP tools may not surface library data.
+
 2. Check if `tokens.json` exists in the working directory. If yes, load it — you'll
    reference token names in component specs. If not, note it and proceed (you can
    still extract components, just without token cross-references).

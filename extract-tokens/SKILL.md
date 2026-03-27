@@ -6,6 +6,7 @@ description: |
   Figma variables and styles. Use when starting design system documentation
   or when tokens need to be synced.
 allowed-tools:
+  - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_variables
   - mcp__figma-console__figma_get_token_values
   - mcp__figma-console__figma_browse_tokens
@@ -37,19 +38,118 @@ user's Figma file and produce a clean, structured `tokens.json` file.
 
 ## Step 1: Discover what's in the file
 
-Start by understanding the design system landscape:
+Design tokens can live in two places: **local variables** (defined in the current file)
+and **library variables** (from attached team/shared libraries). You MUST check both.
+
+### 1a. Check local variables and styles
 
 ```
-Use figma_get_design_system_summary to get an overview.
-Use figma_get_variables to discover all variable collections.
+Use figma_get_variables with format='summary' to check for local variables.
 Use figma_get_styles to find any style-based tokens (pre-variables era).
 ```
 
+### 1b. Check attached library variables (CRITICAL)
+
+The `figma_get_variables` tool often returns empty for library variables.
+You MUST use `figma_execute` with Figma's async plugin API to discover them:
+
+```javascript
+// Discovery script — run via figma_execute
+const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
+const localVars = await figma.variables.getLocalVariablesAsync();
+const teamCollections = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+
+return {
+  local: {
+    collections: localCollections.map(c => ({
+      name: c.name,
+      id: c.id,
+      modes: c.modes,
+      variableCount: c.variableIds.length
+    })),
+    totalVariables: localVars.length
+  },
+  library: teamCollections.map(c => ({
+    name: c.name,
+    key: c.key,
+    libraryName: c.libraryName
+  }))
+};
+```
+
+### 1c. Get variable inventory from each library collection
+
+For each library collection discovered, list the variables it contains:
+
+```javascript
+// Run via figma_execute for each collection
+const teamCollections = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+const results = [];
+
+for (const collection of teamCollections) {
+  const variables = await figma.teamLibrary.getVariablesInLibraryCollectionAsync(collection.key);
+  results.push({
+    collectionName: collection.name,
+    libraryName: collection.libraryName,
+    key: collection.key,
+    variableCount: variables.length,
+    variables: variables.map(v => ({
+      name: v.name,
+      key: v.key,
+      resolvedType: v.resolvedType
+    }))
+  });
+}
+
+return results;
+```
+
+**Important**: For large collections (100+ variables), process in batches using
+`.slice()` to avoid timeout. Use a timeout of 15000ms for these calls.
+
+### 1d. Check for bound variables on existing nodes
+
+Nodes in the file may already have library variables bound to them. This can reveal
+which tokens are actively in use:
+
+```javascript
+// Run via figma_execute
+const page = figma.currentPage;
+const allNodes = page.findAll();
+const boundVars = [];
+
+for (const node of allNodes.slice(0, 100)) {
+  if ('boundVariables' in node) {
+    const bv = node.boundVariables;
+    if (bv && Object.keys(bv).length > 0) {
+      const details = {};
+      for (const [prop, binding] of Object.entries(bv)) {
+        if (binding && typeof binding === 'object') {
+          details[prop] = Array.isArray(binding)
+            ? binding.map(b => b.id)
+            : binding.id;
+        }
+      }
+      boundVars.push({
+        nodeName: node.name,
+        nodeType: node.type,
+        bindings: details
+      });
+    }
+  }
+}
+
+return { nodesWithBoundVars: boundVars };
+```
+
+### 1e. Present the summary
+
 Present a summary to the user:
-- How many variable collections exist and their names
-- What categories of tokens are present (color, number, string, boolean)
-- Any styles that aren't captured as variables
-- How many modes exist (light/dark, brand variants, etc.)
+- **Local variables**: How many collections, total variable count
+- **Library variables**: Which libraries are attached, collections and variable counts per collection
+- **Styles**: Any style-based tokens (pre-variables era)
+- **Bound variables**: Which tokens are actively used on nodes in the file
+- **Categories**: What types are present (COLOR, FLOAT, STRING, BOOLEAN)
 
 Ask the user:
 > "Here's what I found in your file. Which collections should I extract?
@@ -57,11 +157,97 @@ Ask the user:
 
 ## Step 2: Extract token values
 
-For each selected collection, extract the full token tree:
+### For local variables
 
 ```
-Use figma_get_token_values to pull values for each collection.
-Use figma_browse_tokens to navigate nested token groups.
+Use figma_get_variables with format='full', resolveAliases=true for local variables.
+Use figma_get_token_values to pull values for each local collection.
+```
+
+### For library variables
+
+Library variable values must be extracted via `figma_execute`. The library API provides
+variable names, keys, and resolved types but NOT values directly. To get actual values,
+you need to import the variables into the file context first:
+
+```javascript
+// Run via figma_execute — import and resolve library variables
+// Process one collection at a time to avoid timeouts
+const teamCollections = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+const targetCollection = teamCollections.find(c => c.name === '<COLLECTION_NAME>');
+
+if (!targetCollection) return { error: 'Collection not found' };
+
+const libVars = await figma.teamLibrary.getVariablesInLibraryCollectionAsync(targetCollection.key);
+const results = [];
+
+for (const libVar of libVars) {
+  // Import the library variable to get its full data
+  const imported = await figma.variables.importVariableByKeyAsync(libVar.key);
+  const valuesByMode = {};
+
+  // Get the variable's collection for mode info
+  const collection = await figma.variables.getVariableCollectionByIdAsync(imported.variableCollectionId);
+
+  for (const mode of collection.modes) {
+    const rawValue = imported.valuesByMode[mode.modeId];
+    if (rawValue && typeof rawValue === 'object' && 'id' in rawValue) {
+      // This is an alias — resolve it
+      const aliasVar = await figma.variables.getVariableByIdAsync(rawValue.id);
+      valuesByMode[mode.name] = {
+        type: 'alias',
+        aliasName: aliasVar ? aliasVar.name : 'unknown',
+        aliasId: rawValue.id
+      };
+    } else {
+      valuesByMode[mode.name] = { type: 'literal', value: rawValue };
+    }
+  }
+
+  results.push({
+    name: imported.name,
+    id: imported.id,
+    resolvedType: imported.resolvedType,
+    description: imported.description || '',
+    valuesByMode: valuesByMode
+  });
+}
+
+return {
+  collection: targetCollection.name,
+  modes: null, // fetched per-variable above
+  variables: results
+};
+```
+
+**Important**: Run this once per collection. For collections with 100+ variables,
+split into batches (e.g., `libVars.slice(0, 50)`, then `libVars.slice(50, 100)`)
+and merge results. Use a timeout of 30000ms.
+
+### Resolving color values
+
+Figma stores colors as `{r, g, b, a}` objects with values from 0-1. Convert to hex:
+
+```javascript
+function rgbaToHex(color) {
+  const r = Math.round(color.r * 255).toString(16).padStart(2, '0');
+  const g = Math.round(color.g * 255).toString(16).padStart(2, '0');
+  const b = Math.round(color.b * 255).toString(16).padStart(2, '0');
+  if (color.a !== undefined && color.a < 1) {
+    const a = Math.round(color.a * 255).toString(16).padStart(2, '0');
+    return `#${r}${g}${b}${a}`;
+  }
+  return `#${r}${g}${b}`;
+}
+```
+
+### Also check figma_get_styles and figma_browse_tokens
+
+Some tokens may only exist as styles (not variables) in older files or hybrid systems:
+
+```
+Use figma_get_styles to find color styles, text styles, and effect styles.
+Use figma_browse_tokens for any token browser data.
 ```
 
 ### Token categories to look for
@@ -271,18 +457,40 @@ After writing, confirm with a summary of what was produced.
 
 ## Edge cases
 
-- **No variables found**: Fall back to extracting from styles. Older Figma files
-  may not use the variables system yet. Extract colors, text styles, and effects
-  from the styles API instead.
+- **`figma_get_variables` returns empty but library is attached**: This is the most
+  common case. Library variables are NOT returned by `figma_get_variables`. You MUST
+  use `figma_execute` with `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
+  and `figma.teamLibrary.getVariablesInLibraryCollectionAsync(key)` to discover them.
+  Then use `figma.variables.importVariableByKeyAsync(key)` to read their values.
+
+- **Async API required**: All `figma.variables.*` and `figma.teamLibrary.*` methods
+  require async versions (ending in `Async`). The sync versions will throw
+  "Cannot call with documentAccess: dynamic-page" errors.
+
+- **No variables found (local or library)**: Fall back to extracting from styles.
+  Older Figma files may not use the variables system yet. Extract colors, text
+  styles, and effects from the styles API instead.
 
 - **Mixed variables + styles**: Extract both and flag the overlap. Let the user
   decide which source is canonical.
 
-- **Very large token sets (500+)**: Extract in batches by collection. Present
-  progress as you go.
+- **Very large token sets (500+)**: Extract in batches by collection. Within each
+  collection, batch by 50 variables per `figma_execute` call. Use timeout of 30000ms.
+  Present progress as you go.
+
+- **Alias chains**: Some variables alias other variables that are also aliases.
+  Resolve the full chain to get the final literal value. Include both the alias
+  path and the resolved value in the output.
+
+- **Color values as RGBA objects**: Figma stores colors as `{r, g, b, a}` with
+  float values 0-1. Always convert to hex strings for the output. Include alpha
+  channel only when `a < 1`.
 
 - **Tokens with no clear category**: Ask the user to help categorize them.
   Don't guess — a spacing token named ambiguously could be sizing.
+
+- **Multiple libraries attached**: A file can have variables from multiple libraries.
+  Present each library separately and let the user choose which to extract.
 
 ## Tone
 

@@ -5,6 +5,7 @@ description: |
   compliance, component usage consistency, spacing violations, and naming
   conventions. Use to validate that designs follow the system.
 allowed-tools:
+  - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_take_screenshot
@@ -44,6 +45,22 @@ spacing, typography, and naming conventions.
    - `tokens.json` — the source of truth for token values
    - `components/index.json` — the component inventory
    - `relationships.json` — component dependency graph
+### JSON-first approach (recommended)
+
+If `tokens.json`, `components/index.json`, and `relationships.json` exist, load them
+BEFORE making any Figma MCP calls. These files contain pre-extracted design system data
+with Figma variable IDs and keys, eliminating the need to re-discover the design system
+on every audit run.
+
+**With JSONs**: Load files → audit frames against known tokens/components → only call Figma MCP for frame-specific data (screenshots, node properties)
+
+**Without JSONs**: Suggest the user run `/extract-tokens` and `/extract-components` first:
+> "I can audit more efficiently with pre-extracted design system data. Want me to
+> run `/extract-tokens` and `/extract-components` first? This is a one-time setup
+> that speeds up all future audits."
+
+This dramatically reduces MCP tool calls from ~50+ per audit to ~5-10.
+
 3. If none of these exist, you can still audit using Figma's built-in variables
    and styles as the reference. Inform the user:
 

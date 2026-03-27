@@ -51,6 +51,26 @@ tokens, components, and visual treatments to bring them to life.
    - `tokens.json` — required for applying visual styles
    - `components/index.json` — required for component replacement
    - `relationships.json` — helpful for understanding composition patterns
+### JSON-first approach (recommended)
+
+Pre-extracted design system JSONs are essential for efficient lo-fi to hi-fi conversion.
+Load them BEFORE making Figma MCP calls:
+
+- `tokens.json` — **Required**. Contains all token values with Figma variable keys.
+  Use these keys to bind variables directly via `figma_execute` instead of searching.
+- `components/index.json` — **Required**. Contains component names, node IDs, and variant
+  configurations. Use node IDs to instantiate components directly instead of searching.
+- `relationships.json` — **Helpful**. Tells you which components typically compose together.
+
+**With JSONs**: Load files → plan transformation → instantiate components by key → bind tokens by ID → minimal MCP calls
+
+**Without JSONs**: Suggest running the extraction skills first:
+> "Converting lo-fi to hi-fi works best with pre-extracted design system data.
+> This lets me use exact component IDs and token keys instead of searching.
+> Want me to run `/extract-tokens` and `/extract-components` first?"
+
+This reduces MCP calls from ~100+ per conversion to ~20-30.
+
 3. If design system docs are missing, extract from Figma directly:
 
 ```

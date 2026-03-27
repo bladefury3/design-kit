@@ -5,6 +5,7 @@ description: |
   Documents containment hierarchies, shared token usage, variant families, and
   composition patterns. Use after extract-components to complete the design system graph.
 allowed-tools:
+  - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_search_components
   - mcp__figma-console__figma_get_component
   - mcp__figma-console__figma_get_component_details
@@ -34,6 +35,11 @@ dependency graph.
 ## Before you begin
 
 1. Confirm Figma is connected.
+
+   **Note on library components**: If components come from an attached team library,
+   use `figma_execute` with `figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync()`
+   and the async Figma plugin APIs. The standard MCP tools may not surface library data.
+
 2. Check for existing artifacts:
    - `tokens.json` — for shared token analysis
    - `components/index.json` — for the component inventory
