@@ -1,0 +1,294 @@
+{
+  "$schema": "design-kit/relationships/v1",
+  "$metadata": {
+    "extractedAt": "2026-03-27T21:00:00Z",
+    "figmaFile": "Design Kit Test",
+    "libraryFile": "Untitled UI PRO VARIABLES (v6.0)",
+    "libraryFileKey": "JhsFSqLI1lWfDZq5I4crsQ",
+    "totalComponents": 14,
+    "totalRelationships": 42,
+    "source": "compositionDependencies from figma_get_component_for_development + dashboard instance analysis"
+  },
+
+  "components": {
+    "button": {
+      "name": "Buttons/Button",
+      "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
+      "defaultVariantKey": "c7b6f17162347f1cf7e6689f70b24a4ab487d216",
+      "atomicLevel": "molecule",
+      "contains": [
+        { "name": "_Dot", "componentId": "1046:10693", "count": 140, "description": "Status dot indicator for dot-leading icon variant" },
+        { "name": "placeholder", "componentId": "3465:410042", "count": 380, "description": "Icon placeholder for instance swap slots" }
+      ],
+      "containedBy": [
+        { "name": "Alert", "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b" },
+        { "name": "Header section", "description": "Used in header CTA actions" },
+        { "name": "Dashboard (custom)", "description": "Used in dashboard header actions" }
+      ],
+      "instanceSwapSlots": {
+        "Icon leading swap": {
+          "propKey": "🔀 Icon leading swap#3466:91",
+          "defaultComponentId": "3465:410042",
+          "description": "Leading icon — swap with any icon component"
+        },
+        "Icon trailing swap": {
+          "propKey": "🔀 Icon trailing swap#3466:852",
+          "defaultComponentId": "3465:410042",
+          "description": "Trailing icon — swap with any icon component"
+        }
+      },
+      "booleanToggles": {
+        "Icon leading": { "propKey": "⬅️ Icon leading#3287:1577", "default": true },
+        "Icon trailing": { "propKey": "➡️ Icon trailing#3287:2338", "default": true }
+      },
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 3
+      }
+    },
+
+    "button-close-x": {
+      "name": "Buttons/Button close X",
+      "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        { "name": "Alert", "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b" }
+      ],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+
+    "avatar": {
+      "name": "Avatar",
+      "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
+      "defaultVariantKey": "7114e668f908fdf61aa7ce03300ff10ca08c4342",
+      "atomicLevel": "molecule",
+      "contains": [
+        { "name": "_Avatar company icon", "count": 18, "description": "Company logo badge overlay" },
+        { "name": "_Avatar online indicator", "count": 18, "description": "Online/offline status dot" },
+        { "name": "Verified tick", "count": 6, "description": "Verified badge overlay" },
+        { "name": "user-01", "componentId": "3463:405657", "count": 18, "description": "Default user icon placeholder" }
+      ],
+      "containedBy": [
+        { "name": "Avatar group", "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d" },
+        { "name": "Avatar label group", "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef" },
+        { "name": "Activity feed", "figmaKey": "c7fcdb4a3d3d83eceaf3b574ecc7f028debaf25b" }
+      ],
+      "dependencyCount": {
+        "dependsOn": 4,
+        "dependedOnBy": 3
+      }
+    },
+
+    "avatar-group": {
+      "name": "Avatar group",
+      "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d",
+      "defaultVariantKey": "0d3105b2b3fff02d7804f317d31921b8ef02e8dc",
+      "atomicLevel": "molecule",
+      "contains": [
+        { "name": "Avatar", "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e" }
+      ],
+      "containedBy": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+
+    "avatar-label-group": {
+      "name": "Avatar label group",
+      "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef",
+      "defaultVariantKey": "360054184886a747d00b6c36a2f6e4f6609213b8",
+      "atomicLevel": "molecule",
+      "contains": [
+        { "name": "Avatar", "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e" }
+      ],
+      "containedBy": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+
+    "alert": {
+      "name": "Alert",
+      "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b",
+      "defaultVariantKey": "c3910a2dad8a3d8fcd829bfd6603d236d7291153",
+      "atomicLevel": "organism",
+      "contains": [
+        { "name": "Buttons/Button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "count": 36, "description": "Action buttons (primary + secondary)" },
+        { "name": "Buttons/Button close X", "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122", "count": 18, "description": "Dismiss button" },
+        { "name": "Featured icon", "count": 2, "description": "Large colored icon" },
+        { "name": "Featured icon outline", "count": 10, "description": "Outlined icon variant" },
+        { "name": "info-circle", "componentId": "3463:405444", "count": 6, "description": "Info icon" },
+        { "name": "alert-circle", "componentId": "3463:405479", "count": 4, "description": "Alert icon" },
+        { "name": "check-circle", "componentId": "3463:404967", "count": 2, "description": "Success icon" },
+        { "name": "x-close", "componentId": "3463:405165", "count": 12, "description": "Close icon" }
+      ],
+      "containedBy": [],
+      "booleanToggles": {
+        "X close button": { "default": true },
+        "Actions": { "default": true },
+        "Supporting text": { "default": true }
+      },
+      "dependencyCount": {
+        "dependsOn": 8,
+        "dependedOnBy": 0
+      }
+    },
+
+    "input-field": {
+      "name": "Input field",
+      "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b",
+      "defaultVariantKey": "88323dfdd85345b5d612ee789a94e1e27c5025c6",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+
+    "input-dropdown": {
+      "name": "Input dropdown",
+      "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
+      "defaultVariantKey": "cacec70cefc3c9113c54f859f76e71e8caa3c3fd",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    }
+  },
+
+  "patterns": {
+    "action-buttons": {
+      "description": "Multiple components use Buttons/Button as action triggers",
+      "components": ["alert"],
+      "sharedTraits": [
+        "All use Buttons/Button with Hierarchy=Tertiary or Link variants",
+        "All pair a primary and secondary action",
+        "Actions can be toggled off with a boolean prop"
+      ]
+    },
+    "avatar-compositions": {
+      "description": "Avatar is used as a building block in multiple group/label components",
+      "components": ["avatar-group", "avatar-label-group", "activity-feed"],
+      "sharedTraits": [
+        "All contain Avatar instances",
+        "All support size variants that cascade to the Avatar size",
+        "Avatar status icons propagate through composition"
+      ]
+    },
+    "status-indicators": {
+      "description": "Multiple components use dot/badge indicators for status",
+      "components": ["button", "avatar"],
+      "sharedTraits": [
+        "Button uses _Dot for dot-leading variant",
+        "Avatar uses _Avatar online indicator and Verified tick",
+        "Both use small overlay elements positioned relative to the main element"
+      ]
+    }
+  },
+
+  "atomicHierarchy": {
+    "atoms": ["button-close-x", "placeholder", "_Dot", "user-01", "info-circle", "alert-circle", "check-circle", "x-close", "Verified tick", "_Avatar company icon", "_Avatar online indicator", "Featured icon", "Featured icon outline"],
+    "molecules": ["button", "avatar", "avatar-group", "avatar-label-group", "input-field", "input-dropdown", "button-group", "progress-bar", "table-header"],
+    "organisms": ["alert", "activity-feed", "activity-gauge", "calendar", "header-navigation", "404-section"]
+  },
+
+  "dependencyHotspots": [
+    {
+      "component": "Buttons/Button",
+      "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
+      "dependedOnBy": 3,
+      "impact": "high",
+      "note": "Used in Alert actions, Header sections, and custom dashboard layouts. Changes cascade to any component with action buttons."
+    },
+    {
+      "component": "Avatar",
+      "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
+      "dependedOnBy": 3,
+      "impact": "high",
+      "note": "Foundation for Avatar group, Avatar label group, and Activity feed. Size changes cascade through all compositions."
+    },
+    {
+      "component": "placeholder",
+      "componentId": "3465:410042",
+      "dependedOnBy": 2,
+      "impact": "medium",
+      "note": "Default icon placeholder used in Button and potentially other components with instance swap slots."
+    }
+  ],
+
+  "swapGroups": {
+    "buttonIconSlot": {
+      "description": "Icons that can be swapped into Button leading/trailing icon slots",
+      "slotProps": ["🔀 Icon leading swap#3466:91", "🔀 Icon trailing swap#3466:852"],
+      "defaultComponent": { "name": "placeholder", "componentId": "3465:410042" },
+      "usedIn": ["button", "alert"]
+    },
+    "alertIconSlot": {
+      "description": "Featured icons used in Alert component",
+      "members": ["info-circle", "alert-circle", "check-circle"],
+      "usedIn": ["alert"]
+    },
+    "avatarStatusSlot": {
+      "description": "Status indicators overlaid on Avatar",
+      "members": ["_Avatar online indicator", "_Avatar company icon", "Verified tick"],
+      "usedIn": ["avatar"]
+    }
+  },
+
+  "dashboardUsage": {
+    "$description": "Components and tokens used in the Dashboard frame (7:2) — demonstrates real-world composition",
+    "libraryInstances": [
+      {
+        "component": "Buttons/Button",
+        "variant": "Size=md, Hierarchy=Secondary gray, Icon=Default, State=Default",
+        "variantKey": "0d4b46142ad80966cfaf4c86d99b457d4924595e",
+        "usage": "Export action in header"
+      },
+      {
+        "component": "Buttons/Button",
+        "variant": "Size=md, Hierarchy=Primary, Icon=Default, State=Default",
+        "variantKey": "c7b6f17162347f1cf7e6689f70b24a4ab487d216",
+        "usage": "Add Widget primary action in header"
+      }
+    ],
+    "tokenBindings": 411,
+    "totalNodes": 123,
+    "composition": {
+      "Dashboard": {
+        "contains": ["Sidebar", "Main Content"],
+        "layout": "horizontal"
+      },
+      "Sidebar": {
+        "contains": ["Logo", "Navigation"],
+        "layout": "vertical"
+      },
+      "Main Content": {
+        "contains": ["Header", "Stats Cards", "Recent Activity"],
+        "layout": "vertical"
+      },
+      "Header": {
+        "contains": ["HeaderLeft", "Actions"],
+        "layout": "horizontal, space-between"
+      },
+      "Actions": {
+        "contains": ["Buttons/Button (Secondary gray)", "Buttons/Button (Primary)"],
+        "note": "Real library instances, instantiated via variant keys from button.json"
+      },
+      "Stats Cards": {
+        "contains": ["StatCard/Total Revenue", "StatCard/Active Users", "StatCard/Bounce Rate", "StatCard/Avg. Session"],
+        "layout": "horizontal, fill"
+      }
+    }
+  }
+}
