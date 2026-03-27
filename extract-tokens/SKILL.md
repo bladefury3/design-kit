@@ -38,10 +38,25 @@ user's Figma file and produce a clean, structured `tokens.json` file.
 
 ## Step 1: Discover what's in the file
 
-Design tokens can live in two places: **local variables** (defined in the current file)
-and **library variables** (from attached team/shared libraries). You MUST check both.
+### Try `figma_get_design_system_kit` first (single call)
+
+If the user provides a library file URL/key, try:
+```
+Use figma_get_design_system_kit with:
+  - fileKey: "<file key>" (if extracting from a library file)
+  - include: ["tokens", "styles"]
+  - format: "full"
+```
+This returns tokens AND styles in one optimized call. If it works, you can skip
+the manual discovery steps below and go straight to structuring the output.
+
+If it fails (404 for copies/drafts) or you need library variables from an attached
+library, use the manual discovery approach:
 
 ### 1a. Check local variables and styles
+
+Design tokens can live in two places: **local variables** (defined in the current file)
+and **library variables** (from attached team/shared libraries). You MUST check both.
 
 ```
 Use figma_get_variables with format='summary' to check for local variables.

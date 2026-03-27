@@ -43,51 +43,94 @@ for each component.
 
 1. Confirm Figma is connected by checking open files.
 
-   **Note on library components**: Unlike variables, the Figma Plugin API has NO
-   discovery method for library components (`getAvailableLibraryComponentSetsAsync`
-   does not exist). See Step 1 for the multi-strategy discovery approach — you may
-   need to navigate to the library file or reverse-discover keys from instances.
-
 2. Check if `tokens.json` exists in the working directory. If yes, load it — you'll
    reference token names in component specs AND use the `$extensions.figma.key` values
    for direct variable lookups via `figma.variables.importVariableByKeyAsync(key)`
-   instead of scanning collections. If not, note it and proceed (you can still extract
-   components, just without token cross-references or fast variable lookups).
-3. Ask the user about scope:
+   instead of scanning collections.
 
-> "I can extract components in a few ways:
+3. **Ask the user where components live.** This is the critical question:
+
+> "Where are the components I should extract?
 >
-> **A) Full library** — Every published component in the file
-> **B) Selection** — Just the components you've selected in Figma
-> **C) Page-based** — All components on a specific page
-> **D) Search** — Components matching a name pattern
+> **A) This file** — Components are defined locally in the current Figma file
+> **B) An attached library** — Components come from a separate library file
+>    → If so, what's the library file URL? (e.g., `https://www.figma.com/design/ABC123/My-Library`)
+> **C) Multiple sources** — Some local, some from libraries
 >
-> Which approach works best?"
+> If you're not sure, I can check what's in this file and what libraries are attached."
+
+**Why the file URL matters:** The MCP tools can read component data from ANY Figma
+file via REST API — but they need the file URL or key. Unlike variables (which have
+a plugin API for library discovery), components can ONLY be discovered from library
+files via REST API tools like `figma_get_design_system_kit` and
+`figma_get_library_components`. Without the library file URL, you're limited to
+navigating to the file or reverse-discovering from instances.
+
+4. Ask the user about scope:
+
+> "Which components should I extract?
+>
+> **A) Everything** — All published components
+> **B) Specific categories** — e.g., just Inputs, or just Navigation
+> **C) Search** — Components matching a name pattern"
 
 ## Step 1: Discover components
 
-The goal of discovery is to build a **complete key map** — component name → Figma
-component key (hash string) — so that all downstream skills can instantiate components
-directly via `figma_instantiate_component` without searching.
+The goal is to build a **complete key map** — component name → Figma component key
+(hash) — so all downstream skills can instantiate via `figma_instantiate_component`
+without searching. Use whichever strategy works, in priority order.
 
-### Critical: Figma API asymmetry for components vs. variables
+### Strategy 1: `figma_get_design_system_kit` (best — single call, gets everything)
 
-Unlike variables, the Figma Plugin API has **no** `getAvailableLibraryComponentSetsAsync()`
-method. You cannot discover library components from a consuming file the way you can
-discover library variables. The plugin API only offers:
+If the user provided a library file URL/key, this is the fastest path:
 
-- `figma.importComponentByKeyAsync(key)` — import a component IF you have the key
-- `figma.importComponentSetByKeyAsync(key)` — import a component set IF you have the key
+```
+Use figma_get_design_system_kit with:
+  - fileKey: "<library file key from URL>"
+  - format: "full" (or "compact" for large libraries)
+  - include: ["components"]
+  - includeImages: true (for visual reference)
+```
 
-This means component discovery requires a **different strategy** depending on where
-the components live.
+This returns ALL components with variant definitions, visual specs, property
+definitions, and rendered screenshots in one call. Extract the component keys
+from the response.
 
-### Strategy A: Components are in the current file (local components)
+If the components are local (in the current file), call without a fileKey —
+it uses the currently open file.
 
-Use `figma_execute` to discover all local components with their keys:
+### Strategy 2: `figma_get_library_components` (good — with variant keys)
+
+If Strategy 1 fails or you need variant-level keys:
+
+```
+Use figma_get_library_components with:
+  - libraryFileUrl: "<library file URL>" OR libraryFileKey: "<key>"
+  - includeVariants: true
+  - limit: 100
+```
+
+This returns component sets with a `variants` array containing individual variant
+keys. **Use variant keys (type: COMPONENT) for `figma_instantiate_component`, NOT
+component set keys (type: COMPONENT_SET).**
+
+### Strategy 3: `figma_search_components` (good — for specific components)
+
+Search by name in local file or library:
+
+```
+Use figma_search_components with:
+  - query: "Button" (or empty for all)
+  - libraryFileKey: "<key>" (for library search)
+  - limit: 25
+```
+
+### Strategy 4: `figma_execute` local discovery (for current file only)
+
+When components are defined in the current file:
 
 ```javascript
-// Run via figma_execute — discovers all local components with their keys
+// Run via figma_execute — discovers all local components with keys
 const allComponents = figma.root.findAll(n =>
   n.type === 'COMPONENT' || n.type === 'COMPONENT_SET'
 );
@@ -96,16 +139,13 @@ return allComponents.map(c => ({
   name: c.name,
   type: c.type,
   id: c.id,
-  key: c.key,  // CRITICAL: the hash key for instantiation
+  key: c.key,  // CRITICAL: hash key for instantiation
   description: c.description || '',
-  parent: c.parent?.name || null,
-  // For component sets, get variant keys
   ...(c.type === 'COMPONENT_SET' ? {
     variants: c.children.map(v => ({
       name: v.name,
       id: v.id,
-      key: v.key,  // CRITICAL: variant key for figma_instantiate_component
-      // Parse variant properties from the name (e.g., "Size=md, State=default")
+      key: v.key,  // Variant key for figma_instantiate_component
       properties: Object.fromEntries(
         v.name.split(', ').map(p => p.split('='))
       )
@@ -114,50 +154,33 @@ return allComponents.map(c => ({
 }));
 ```
 
-### Strategy B: Components are in an attached library (most common)
+### Strategy 5: Navigate to library file (when REST API is blocked)
 
-Library components require a **multi-step discovery**:
+If the library is a copy/draft and REST returns 404:
 
-**Step 1: Try REST API first** (fastest when it works)
-```
-Use figma_get_library_components with the library file key and includeVariants=true.
-Capture componentKey from each result.
-```
-
-This works when the library is a **published team library** accessible via REST API.
-It may fail with 404 if the library is a copy, a draft, or not shared with the API token.
-
-**Step 2: If REST fails, navigate to the library file**
-
-Ask the user to open the library file with the Desktop Bridge plugin:
-
-> "The library components aren't accessible via API from this file.
+> "The library isn't accessible via API (it may be a copy or unpublished).
 > Could you open the library file in Figma and run the Desktop Bridge plugin?
-> I'll switch to it, discover all components with their keys, then switch back.
-> This is a one-time operation — once I have the keys, they're saved in
-> `components/index.json` for all future use."
-
-Then navigate to the library file and run the local discovery script (Strategy A):
+> I'll switch to it, discover all components, then switch back.
+> This is a one-time operation — the keys are saved for all future use."
 
 ```
 Use figma_navigate to switch to the library file URL.
-Run the figma_execute discovery script above.
-Use figma_navigate to switch back to the working file.
+Run figma_execute discovery (Strategy 4) inside the library file.
+Use figma_navigate to switch back.
 ```
 
-**Step 3: If the library file can't be opened, check for instances**
+### Strategy 6: Reverse-discover from instances (last resort)
 
-If the user has placed any library component instances on the canvas, you can
-reverse-discover keys from them:
+If the user can't open the library file, discover keys from existing instances
+on the canvas:
 
 ```javascript
-// Run via figma_execute — discover component keys from existing instances
-const page = figma.currentPage;
-const instances = page.findAll(n => n.type === 'INSTANCE');
-
+// Run via figma_execute — discover keys from placed instances
+const instances = figma.currentPage.findAll(n => n.type === 'INSTANCE');
 const discovered = {};
+
 for (const inst of instances) {
-  const main = inst.mainComponent;
+  const main = await inst.getMainComponentAsync();
   if (!main) continue;
   const parent = main.parent;
   const setName = parent?.type === 'COMPONENT_SET' ? parent.name : main.name;
@@ -171,41 +194,38 @@ for (const inst of instances) {
   }
 
   discovered[setName].variants[main.name] = {
-    key: main.key,  // This is the instantiation key
-    nodeId: main.id,
-    properties: Object.fromEntries(
-      main.name.split(', ').map(p => p.split('='))
-    )
+    key: main.key,
+    nodeId: main.id
   };
 }
 
 return Object.values(discovered);
 ```
 
-Ask the user to place sample instances of each component on the canvas first:
-> "I can discover component keys from instances on the canvas. Could you drag
-> a few components from the library onto the page? I'll extract their keys
-> and you can delete them afterward."
+> "I can discover keys from component instances on the canvas.
+> Could you drag a few components from the library onto the page?
+> I'll extract their keys and you can delete them afterward."
 
-### Strategy C: User provides component keys manually
+### Strategy priority and when REST API fails
 
-If the design system team maintains a component registry or has exported keys before,
-the user can provide a JSON file with component keys. This is common in mature
-design system teams.
+The REST API tools (`figma_get_design_system_kit`, `figma_get_library_components`,
+`figma_get_file_data`) require the library file to be accessible to the API token.
+They return 404 when:
+- The file is a **duplicate/copy** (not the original published library)
+- The file is **not shared** with the API token's account
+- The file is a **draft** that hasn't been published
 
-### Choosing the right strategy
+When REST fails, you MUST fall back to Strategy 5 or 6. Always tell the user
+why the fallback is needed.
 
 | Situation | Strategy | MCP Calls |
 |---|---|---|
-| Components in current file | A: Local discovery | 1 figma_execute |
-| Published team library | B.1: REST API | 1 figma_get_library_components |
-| Library is a copy/draft | B.2: Navigate to library file | 2 figma_navigate + 1 figma_execute |
-| Can't open library file | B.3: Reverse from instances | 1 figma_execute (needs instances on canvas) |
-| Team has key registry | C: Manual import | 0 (just Read the file) |
-
-**Important**: Whichever method you use, always capture the **component key** (hash
-string). This is the equivalent of `$extensions.figma.key` in tokens.json — it's the
-direct instantiation handle that eliminates searching.
+| User provided library URL + REST works | 1: design_system_kit | 1 call |
+| Need variant-level keys | 2: library_components | 1 call |
+| Searching for specific components | 3: search_components | 1 call |
+| Components in current file | 4: figma_execute local | 1 call |
+| REST blocked (copy/draft) | 5: Navigate to file | 2-3 calls |
+| Can't open library file | 6: Reverse from instances | 1 call + user action |
 
 Present a summary:
 > "Found **24 components**. Here's the breakdown:
@@ -281,13 +301,23 @@ return result;
 
 ### 2b. Enrich via MCP tools (secondary — for data not available via plugin API)
 
+**If `figma_get_design_system_kit` was used in Step 1 with `format: "full"`,
+you may already have visual specs, variant definitions, and resolved tokens
+for each component. Check before making additional calls.**
+
+For components that need deeper extraction:
+
 ```
-Use figma_get_component_for_development for dev-ready specs.
-Use figma_get_component_for_development_deep for full anatomy breakdown.
-Use figma_analyze_component_set for variant matrix analysis.
-Use figma_get_annotations for any designer annotations.
-Use figma_get_component_image to capture a visual reference.
+Use figma_get_component_for_development_deep for full anatomy (up to 20 levels deep),
+  resolved token names, instance references, and annotations.
+Use figma_analyze_component_set for variant state machines, CSS pseudo-class mappings
+  (hover, focus, disabled), and visual diffs between variants.
+Use figma_get_annotations for designer annotations attached to the component.
+Use figma_get_component_image for a rendered screenshot of each variant.
 ```
+
+**Prefer `figma_get_component_for_development_deep` over the regular `_for_development`**
+— it gives unlimited depth via Desktop Bridge and resolved token names.
 
 ### What to extract per component
 
