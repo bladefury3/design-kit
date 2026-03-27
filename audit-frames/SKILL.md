@@ -45,21 +45,22 @@ spacing, typography, and naming conventions.
    - `tokens.json` — the source of truth for token values
    - `components/index.json` — the component inventory
    - `relationships.json` — component dependency graph
-### JSON-first approach (recommended)
+### JSON-first approach (mandatory)
 
-If `tokens.json`, `components/index.json`, and `relationships.json` exist, load them
-BEFORE making any Figma MCP calls. These files contain pre-extracted design system data
-with Figma variable IDs and keys, eliminating the need to re-discover the design system
-on every audit run.
+If `tokens.json`, `components/index.json`, and `relationships.json` exist, you MUST load
+them BEFORE making any Figma MCP calls. These files contain pre-extracted design system
+data with Figma variable keys (`$extensions.figma.key`), eliminating the need to
+re-discover the design system on every audit run. When auditing token compliance, read
+token values from `tokens.json` instead of re-querying Figma for every variable.
 
-**With JSONs**: Load files → audit frames against known tokens/components → only call Figma MCP for frame-specific data (screenshots, node properties)
+**With JSONs**: Load files → audit frames against known tokens/components → only call Figma MCP for frame-specific data (screenshots, node properties). Use `$extensions.figma.key` for any variable lookups via `figma.variables.importVariableByKeyAsync(key)`.
 
-**Without JSONs**: Suggest the user run `/extract-tokens` and `/extract-components` first:
-> "I can audit more efficiently with pre-extracted design system data. Want me to
-> run `/extract-tokens` and `/extract-components` first? This is a one-time setup
+**Without JSONs**: You MUST suggest the user run `/extract-tokens` and `/extract-components` first:
+> "I need pre-extracted design system data to audit efficiently. Let me run
+> `/extract-tokens` and `/extract-components` first. This is a one-time setup
 > that speeds up all future audits."
 
-This dramatically reduces MCP tool calls from ~50+ per audit to ~5-10.
+This is the required workflow. It dramatically reduces MCP tool calls from ~50+ per audit to ~5-10.
 
 3. If none of these exist, you can still audit using Figma's built-in variables
    and styles as the reference. Inform the user:
@@ -252,6 +253,18 @@ Write `audit-report.json`:
   ]
 }
 ```
+
+### How to use tokens.json for Figma operations
+
+When you need to bind a design token to a Figma node via `figma_execute`:
+
+1. Read `tokens.json` from the working directory
+2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
+3. Get the Figma key from `$extensions.figma.key`
+4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+
+This turns O(n) collection scanning into O(1) direct key lookup per token.
 
 ## Tone
 

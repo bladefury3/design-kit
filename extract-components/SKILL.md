@@ -48,8 +48,10 @@ for each component.
    and the async Figma plugin APIs. The standard MCP tools may not surface library data.
 
 2. Check if `tokens.json` exists in the working directory. If yes, load it — you'll
-   reference token names in component specs. If not, note it and proceed (you can
-   still extract components, just without token cross-references).
+   reference token names in component specs AND use the `$extensions.figma.key` values
+   for direct variable lookups via `figma.variables.importVariableByKeyAsync(key)`
+   instead of scanning collections. If not, note it and proceed (you can still extract
+   components, just without token cross-references or fast variable lookups).
 3. Ask the user about scope:
 
 > "I can extract components in a few ways:
@@ -372,6 +374,18 @@ Present a report:
 **Components with no variants**
 - Still extract — document props, tokens, layout
 - Variant section can be empty or omitted
+
+### How to use tokens.json for Figma operations
+
+When you need to bind a design token to a Figma node via `figma_execute`:
+
+1. Read `tokens.json` from the working directory
+2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
+3. Get the Figma key from `$extensions.figma.key`
+4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+
+This turns O(n) collection scanning into O(1) direct key lookup per token.
 
 ## Tone
 

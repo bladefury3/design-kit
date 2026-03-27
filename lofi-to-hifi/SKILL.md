@@ -51,25 +51,40 @@ tokens, components, and visual treatments to bring them to life.
    - `tokens.json` — required for applying visual styles
    - `components/index.json` — required for component replacement
    - `relationships.json` — helpful for understanding composition patterns
-### JSON-first approach (recommended)
+### JSON-first approach (mandatory)
 
-Pre-extracted design system JSONs are essential for efficient lo-fi to hi-fi conversion.
-Load them BEFORE making Figma MCP calls:
+Pre-extracted design system JSONs are required for lo-fi to hi-fi conversion.
+You MUST load them BEFORE making Figma MCP calls:
 
-- `tokens.json` — **Required**. Contains all token values with Figma variable keys.
-  Use these keys to bind variables directly via `figma_execute` instead of searching.
+- `tokens.json` — **Required**. Contains all token values with Figma variable keys
+  (`$extensions.figma.key`). Use these keys to bind variables directly via
+  `figma.variables.importVariableByKeyAsync(key)` instead of scanning collections.
 - `components/index.json` — **Required**. Contains component names, node IDs, and variant
   configurations. Use node IDs to instantiate components directly instead of searching.
 - `relationships.json` — **Helpful**. Tells you which components typically compose together.
 
-**With JSONs**: Load files → plan transformation → instantiate components by key → bind tokens by ID → minimal MCP calls
+**With JSONs**: Load files → plan transformation → instantiate components by key → bind tokens by key → minimal MCP calls
 
-**Without JSONs**: Suggest running the extraction skills first:
-> "Converting lo-fi to hi-fi works best with pre-extracted design system data.
-> This lets me use exact component IDs and token keys instead of searching.
-> Want me to run `/extract-tokens` and `/extract-components` first?"
+**Without JSONs**: You MUST suggest running the extraction skills first:
+> "I need pre-extracted design system data for lo-fi to hi-fi conversion.
+> Let me run `/extract-tokens` and `/extract-components` first.
+> This lets me use exact component IDs and token keys instead of searching."
 
-This reduces MCP calls from ~100+ per conversion to ~20-30.
+This is the required workflow. It reduces MCP calls from ~100+ per conversion to ~20-30.
+
+### Correct pattern for binding tokens via figma_execute
+
+```javascript
+// CORRECT: Read tokens.json, use figma keys directly
+// In the figma_execute call, pass the key map as data
+const key = tokensJson.spacing["spacing-xl"]["$extensions"]["figma"]["key"];
+const variable = await figma.variables.importVariableByKeyAsync(key);
+node.setBoundVariable('paddingTop', variable);
+
+// WRONG: Scan all collections to find by name (slow, wasteful)
+// const collections = await figma.teamLibrary.getAvailableLibraryVariableCollectionsAsync();
+// for (const col of collections) { ... search all vars ... }
+```
 
 3. If design system docs are missing, extract from Figma directly:
 
@@ -279,6 +294,18 @@ Take a screenshot after each iteration to track progress.
 
 - **Multiple pages/frames**: Process one at a time. Maintain consistency across
   them by reusing the same token choices.
+
+### How to use tokens.json for Figma operations
+
+When you need to bind a design token to a Figma node via `figma_execute`:
+
+1. Read `tokens.json` from the working directory
+2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
+3. Get the Figma key from `$extensions.figma.key`
+4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+
+This turns O(n) collection scanning into O(1) direct key lookup per token.
 
 ## Tone
 

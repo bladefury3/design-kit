@@ -68,22 +68,27 @@ means constant back-and-forth and guesswork. This skill bridges that gap.
    - `tokens.json` — for token context
    - `components/index.json` — for component inventory
    - `relationships.json` — for dependency context
-### JSON-first approach (recommended)
+### JSON-first approach (mandatory)
 
-Pre-extracted JSONs are the input that makes MCP optimization fast and accurate:
+Pre-extracted JSONs are the required input for MCP optimization. You MUST use the
+structured data from `tokens.json` and `components/*.json` rather than re-extracting
+from Figma. When writing descriptions back to Figma, source the content from these
+files, which contain authoritative token values, Figma keys (`$extensions.figma.key`),
+component specs, and relationship data:
 
-- `tokens.json` — Use token descriptions and naming to write rich variable descriptions
-  back into Figma, rather than guessing from raw values.
+- `tokens.json` — Use token descriptions, naming, and Figma keys to write rich variable
+  descriptions back into Figma, rather than guessing from raw values. Use
+  `$extensions.figma.key` for any direct variable lookups.
 - `components/index.json` — Use component specs to write structured descriptions
   (variants, props, usage guidelines) back into Figma component descriptions.
 - `relationships.json` — Use dependency data to add relationship annotations
   ("Contains: Button, Avatar, Text") to component descriptions.
 
-**With JSONs**: Load files → write enriched descriptions back to Figma → validate
+**With JSONs**: Load files → write enriched descriptions back to Figma from structured data → validate
 
-**Without JSONs**: Suggest extraction first:
-> "MCP optimization is most effective when I have structured design system data to
-> write back into Figma. Want me to run `/extract-tokens` and `/extract-components` first?"
+**Without JSONs**: You MUST suggest extraction first:
+> "I need structured design system data to optimize for MCP. Let me run
+> `/extract-tokens` and `/extract-components` first."
 
 3. Ask the user about scope:
 
@@ -380,6 +385,18 @@ Present the summary:
 
 - **Files with no design system**: This skill is less useful for one-off design
   files. Suggest `/extract-tokens` first to establish a system, then optimize.
+
+### How to use tokens.json for Figma operations
+
+When you need to bind a design token to a Figma node via `figma_execute`:
+
+1. Read `tokens.json` from the working directory
+2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
+3. Get the Figma key from `$extensions.figma.key`
+4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+
+This turns O(n) collection scanning into O(1) direct key lookup per token.
 
 ## Tone
 

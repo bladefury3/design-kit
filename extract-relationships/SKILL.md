@@ -41,8 +41,11 @@ dependency graph.
    and the async Figma plugin APIs. The standard MCP tools may not surface library data.
 
 2. Check for existing artifacts:
-   - `tokens.json` — for shared token analysis
-   - `components/index.json` — for the component inventory
+   - `tokens.json` — for shared token analysis. When present, use the
+     `$extensions.figma.key` values for any variable lookups via
+     `figma.variables.importVariableByKeyAsync(key)` instead of scanning collections.
+   - `components/index.json` — for the component inventory. When present, use
+     component node IDs and Figma keys from the JSON rather than re-querying Figma.
 3. If neither exists, inform the user:
 
 > "I work best after `/extract-tokens` and `/extract-components` have been run.
@@ -319,6 +322,18 @@ into each component file by adding a `relationships` key:
 
 - **Components with no relationships**: Standalone utility components. List them
   under `"isolated"` in the output.
+
+### How to use tokens.json for Figma operations
+
+When you need to bind a design token to a Figma node via `figma_execute`:
+
+1. Read `tokens.json` from the working directory
+2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
+3. Get the Figma key from `$extensions.figma.key`
+4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+
+This turns O(n) collection scanning into O(1) direct key lookup per token.
 
 ## Tone
 

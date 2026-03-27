@@ -48,12 +48,14 @@ Every token value, every state, every responsive behavior — documented and exp
    - `tokens.json` — for token name → value mappings
    - `components/index.json` — for component API reference
    - `relationships.json` — for understanding composition
-### JSON-first approach (recommended)
+### JSON-first approach (mandatory)
 
-Pre-extracted JSONs make handoff documentation significantly richer and faster to generate:
+Pre-extracted JSONs are the required source for handoff documentation. You MUST generate
+handoff docs primarily from the JSON files, with Figma MCP only called for screenshots
+and frame-specific visual validation:
 
-- `tokens.json` — Token names, values, Figma keys, and mode variants. No need to
-  re-extract from Figma.
+- `tokens.json` — Token names, values, Figma keys (`$extensions.figma.key`), and mode
+  variants. Use these directly — do NOT re-extract token data from Figma.
 - `components/index.json` + individual component JSONs — Full component APIs, variants,
   anatomy. The bulk of handoff documentation comes from these files.
 - `relationships.json` — Component dependency graph. Helps document which components
@@ -61,9 +63,9 @@ Pre-extracted JSONs make handoff documentation significantly richer and faster t
 
 **With JSONs**: Load files → generate handoff docs directly from structured data → only call Figma MCP for screenshots and visual validation
 
-**Without JSONs**: Suggest extraction first:
-> "I can generate much richer handoff docs with pre-extracted design system data.
-> Want me to run `/extract-tokens` and `/extract-components` first?"
+**Without JSONs**: You MUST suggest extraction first:
+> "I need pre-extracted design system data to generate complete handoff docs.
+> Let me run `/extract-tokens` and `/extract-components` first."
 
 3. Ask the user about scope and format:
 
@@ -317,6 +319,18 @@ Present the summary:
 >
 > The developer should be able to implement this without asking a single question.
 > Want me to adjust anything before you share it?"
+
+### How to use tokens.json for Figma operations
+
+When you need to bind a design token to a Figma node via `figma_execute`:
+
+1. Read `tokens.json` from the working directory
+2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
+3. Get the Figma key from `$extensions.figma.key`
+4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+
+This turns O(n) collection scanning into O(1) direct key lookup per token.
 
 ## Tone
 

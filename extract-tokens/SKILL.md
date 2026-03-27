@@ -492,6 +492,50 @@ After writing, confirm with a summary of what was produced.
 - **Multiple libraries attached**: A file can have variables from multiple libraries.
   Present each library separately and let the user choose which to extract.
 
+## Output format: `$extensions.figma.key` is critical
+
+When writing `tokens.json`, every token MUST include the Figma variable key in
+`$extensions.figma.key`. This key is the direct lookup handle that all other
+design-kit skills use to perform O(1) variable imports via
+`figma.variables.importVariableByKeyAsync(key)`.
+
+Without this key, downstream skills (`extract-components`, `audit-frames`,
+`lofi-to-hifi`, `handoff-dev`, `handoff-mcp`) are forced to fall back to
+expensive O(n) collection scanning with
+`getAvailableLibraryVariableCollectionsAsync()` +
+`getVariablesInLibraryCollectionAsync()`.
+
+### Ensuring the key is present
+
+When extracting each variable, capture its key:
+
+- **Library variables**: The key comes from the library variable listing
+  (`libVar.key`) before import.
+- **Local variables**: After fetching via `figma.variables.getLocalVariablesAsync()`,
+  use the variable's `key` property.
+
+Include it in the output like this:
+
+```json
+{
+  "spacing": {
+    "spacing-xl": {
+      "$value": "32px",
+      "$type": "dimension",
+      "$extensions": {
+        "figma": {
+          "key": "VariableID:abc123..."
+        },
+        "resolvedValue": "32px"
+      }
+    }
+  }
+}
+```
+
+This single field makes every downstream Figma operation a direct key lookup
+instead of a brute-force search.
+
 ## Tone
 
 You're a design system consultant helping a designer document their work.
