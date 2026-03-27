@@ -207,6 +207,7 @@ for (const libVar of libVars) {
   results.push({
     name: imported.name,
     id: imported.id,
+    key: libVar.key,  // CRITICAL: This is the hash key for importVariableByKeyAsync()
     resolvedType: imported.resolvedType,
     description: imported.description || '',
     valuesByMode: valuesByMode
@@ -505,33 +506,65 @@ expensive O(n) collection scanning with
 `getAvailableLibraryVariableCollectionsAsync()` +
 `getVariablesInLibraryCollectionAsync()`.
 
-### Ensuring the key is present
+### Ensuring the key is correct
 
-When extracting each variable, capture its key:
+The key MUST be the **hash string** returned by `libVar.key` from
+`figma.teamLibrary.getVariablesInLibraryCollectionAsync()`. This is the string
+that `figma.variables.importVariableByKeyAsync(key)` accepts.
 
-- **Library variables**: The key comes from the library variable listing
-  (`libVar.key`) before import.
-- **Local variables**: After fetching via `figma.variables.getLocalVariablesAsync()`,
-  use the variable's `key` property.
-
-Include it in the output like this:
-
+**CORRECT** — hash key from `libVar.key`:
 ```json
 {
-  "spacing": {
-    "spacing-xl": {
-      "$value": "32px",
-      "$type": "dimension",
-      "$extensions": {
-        "figma": {
-          "key": "VariableID:abc123..."
-        },
-        "resolvedValue": "32px"
-      }
+  "spacing-xl": {
+    "$extensions": {
+      "figma": { "key": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" }
     }
   }
 }
 ```
+
+**WRONG** — variable name, alias name, or VariableID (none of these work with `importVariableByKeyAsync`):
+```json
+{
+  "spacing-xl": {
+    "$extensions": {
+      "figma": { "key": "spacing-xl" }
+    }
+  }
+}
+```
+```json
+{
+  "spacing-xl": {
+    "$extensions": {
+      "figma": { "key": "Spacing/4" }
+    }
+  }
+}
+```
+
+### Where to capture the key
+
+- **Library variables**: In Step 1c (inventory), you already get `v.key` from
+  `getVariablesInLibraryCollectionAsync()`. In Step 2 (extraction), pass `libVar.key`
+  through to the results alongside the imported variable data. The extraction code
+  captures it as: `key: libVar.key`.
+- **Local variables**: After fetching via `figma.variables.getLocalVariablesAsync()`,
+  use the variable's `key` property directly.
+
+### Verify the key works
+
+After writing tokens.json, spot-check a few keys by running:
+
+```javascript
+// Run via figma_execute — verify keys from tokens.json
+const testKey = '<hash from tokens.json>';
+const v = await figma.variables.importVariableByKeyAsync(testKey);
+return { name: v.name, id: v.id, success: true };
+```
+
+If this returns the correct variable name, the key is valid. If it errors, the key
+is wrong (likely a variable name was stored instead of the hash).
 
 This single field makes every downstream Figma operation a direct key lookup
 instead of a brute-force search.
