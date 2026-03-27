@@ -60,8 +60,12 @@ You MUST load them BEFORE making Figma MCP calls:
 - `tokens.json` — **Required**. Contains all token values with Figma variable keys
   (`$extensions.figma.key`). Use these keys to bind variables directly via
   `figma.variables.importVariableByKeyAsync(key)` instead of scanning collections.
-- `components/index.json` — **Required**. Contains component names, node IDs, and variant
-  configurations. Use node IDs to instantiate components directly instead of searching.
+- `components/index.json` — **Required**. The catalog of all components with figmaKey and
+  defaultVariantKey. Use defaultVariantKey to instantiate components directly.
+- `components/<name>.json` — **On-demand**. When you need a specific variant (not just the
+  default), check if the individual JSON exists. If not, extract it now using
+  `figma_get_library_components` with the component's figmaKey, write it, then use it.
+  This caches the full variant key map for future use.
 - `relationships.json` — **Helpful**. Tells you which components typically compose together.
 
 **With JSONs**: Load files → plan transformation → instantiate components by key → bind tokens by key → minimal MCP calls

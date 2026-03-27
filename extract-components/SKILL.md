@@ -228,20 +228,63 @@ why the fallback is needed.
 | Can't open library file | 6: Reverse from instances | 1 call + user action |
 
 Present a summary:
-> "Found **24 components**. Here's the breakdown:
+> "Found **24 components** across 4 categories. I'll build `components/index.json`
+> with keys for all of them — this is the catalog that all other skills reference.
 >
-> - **Inputs**: Button, TextField, Select, Checkbox, Radio, Toggle, Slider
-> - **Navigation**: Tabs, Breadcrumb, Sidebar, Navbar, Pagination
-> - **Feedback**: Alert, Toast, Badge, Tooltip, Progress
-> - **Layout**: Card, Divider, Avatar, Modal, Drawer, Accordion, Table
+> - **Inputs** (7): Button, TextField, Select, Checkbox, Radio, Toggle, Slider
+> - **Navigation** (5): Tabs, Breadcrumb, Sidebar, Navbar, Pagination
+> - **Feedback** (4): Alert, Toast, Badge, Tooltip, Progress
+> - **Layout** (8): Card, Divider, Avatar, Modal, Drawer, Accordion, Table
 >
-> Want me to extract all of them, or a specific group?"
+> Individual component JSONs (full variant keys, props, anatomy) are built
+> **on-demand** — the first time you or another skill works with a specific
+> component, I'll extract its full spec and save it for future use."
 
-## Step 2: Deep-dive each component
+## Step 2: Build `components/index.json` (the catalog)
 
-For each component, gather comprehensive details. Prefer `figma_execute` for
-extracting keys and structural data (faster, captures keys), then use MCP tools
-for enrichment (descriptions, images, annotations):
+The index is the **primary output** of this skill. It contains every component's
+name, description, category, figmaKey, and defaultVariantKey — enough for any
+downstream skill to instantiate components without searching.
+
+Build the index from the discovery data in Step 1. For each component set, capture:
+- `name` — component name
+- `file` — path to individual JSON (e.g., `button.json`) — may not exist yet
+- `category` — category/group
+- `description` — short description
+- `figmaKey` — component set key (hash)
+- `defaultVariantKey` — key of the default variant (hash) for `figma_instantiate_component`
+- `variantCount` — how many variants exist
+- `status` — published/draft
+
+Write `components/index.json`. This is the one file that MUST be produced. Everything
+else is on-demand.
+
+## Step 3: On-demand deep extraction (per component)
+
+Individual component JSONs are built **the first time a component is needed**,
+not upfront for the entire library. This avoids extracting 100+ components that
+may never be used.
+
+### When to extract a full component JSON
+
+A downstream skill (or the user) triggers extraction when:
+- `/lofi-to-hifi` needs to instantiate a specific variant (not just the default)
+- `/handoff-dev` needs full props, anatomy, and token usage for documentation
+- `/audit-frames` needs to check token compliance for a specific component
+- The user asks to "extract Button" or "show me the Card component spec"
+
+### The on-demand extraction flow
+
+1. Check if `components/<name>.json` exists
+   - If yes → read it and use it (zero MCP calls)
+   - If no → extract it now (Steps 3a/3b below), write the JSON, then use it
+2. **Every extraction pays for itself twice** — first use extracts + acts,
+   every future use just reads the cached JSON
+
+### 3a. Extract keys and structure via figma_execute (for current file components)
+
+Prefer `figma_execute` for extracting keys and structural data (faster, captures keys),
+then use MCP tools for enrichment (descriptions, images, annotations):
 
 ### 2a. Extract keys and structure via figma_execute (primary method)
 
@@ -523,60 +566,7 @@ MCP search calls entirely.
 | `props[*].$extensions.figma.compatibleKeys` | Direct instance swap by key | Search for compatible components each time |
 ```
 
-## Step 4: Create component index
-
-After extracting all components, create `components/index.json`:
-
-The index is the **quick-lookup table** that downstream skills read first. It must
-include component keys so that a skill can instantiate any component without opening
-the individual JSON file.
-
-```json
-{
-  "$schema": "design-kit/component-index/v1",
-  "$metadata": {
-    "extractedAt": "<ISO timestamp>",
-    "totalComponents": 24,
-    "figmaFile": "<file name>"
-  },
-  "components": {
-    "button": {
-      "file": "button.json",
-      "name": "Button",
-      "category": "Inputs",
-      "status": "published",
-      "variantCount": 3,
-      "description": "Primary action trigger",
-      "figmaKey": "a1b2c3d4e5f6...",
-      "defaultVariantKey": "1a2b3c4d5e6f..."
-    },
-    "text-field": {
-      "file": "text-field.json",
-      "name": "Text Field",
-      "category": "Inputs",
-      "status": "published",
-      "variantCount": 4,
-      "description": "Single-line text input",
-      "figmaKey": "b2c3d4e5f6a1...",
-      "defaultVariantKey": "2b3c4d5e6f1a..."
-    }
-  },
-  "categories": {
-    "Inputs": ["button", "text-field", "select", "checkbox", "radio", "toggle", "slider"],
-    "Navigation": ["tabs", "breadcrumb", "sidebar", "navbar", "pagination"],
-    "Feedback": ["alert", "toast", "badge", "tooltip", "progress"],
-    "Layout": ["card", "divider", "avatar", "modal", "drawer", "accordion", "table"]
-  }
-}
-```
-
-This means a downstream skill like `/lofi-to-hifi` can do:
-1. Read `components/index.json`
-2. Look up `components.button.defaultVariantKey`
-3. Call `figma_instantiate_component(key)` — done. No searching.
-```
-
-## Step 5: Validate and report
+## Step 4: Report
 
 For each component, check for quality signals:
 
@@ -595,23 +585,23 @@ For each component, check for quality signals:
 - Fixed sizing where auto-layout would be better
 
 Present a report:
-> "Extracted **24 components** into `components/`:
+> "Built `components/index.json` with **24 component sets** cataloged:
 >
-> **Quality summary:**
-> - 18/24 have descriptions
-> - 20/24 use token variables
-> - 6/24 are missing disabled states
-> - 2 components have hardcoded colors that should be tokens
+> **Categories:**
+> - Inputs (7): Button, TextField, Select, Checkbox, Radio, Toggle, Slider
+> - Navigation (5): Tabs, Breadcrumb, Sidebar, Navbar, Pagination
+> - Feedback (4): Alert, Toast, Badge, Tooltip, Progress
+> - Layout (8): Card, Divider, Avatar, Modal, Drawer, Accordion, Table
 >
-> **Files created:**
-> - `components/button.json`
-> - `components/text-field.json`
-> - ... (list all)
-> - `components/index.json`
+> **Index includes for each:** name, figmaKey, defaultVariantKey, description, category
 >
-> Want me to detail the issues I flagged?"
+> **Individual component JSONs** are built on-demand. The first time you work with
+> a component (e.g., `/lofi-to-hifi` instantiates a Button), its full spec gets
+> extracted and cached as `components/button.json`. No wasted extraction.
+>
+> Want me to extract full specs for any specific components now?"
 
-## Step 6: Handle edge cases
+## Step 5: Handle edge cases
 
 **Component sets vs. standalone components**
 - Component sets (with variants) → single JSON with full variant matrix

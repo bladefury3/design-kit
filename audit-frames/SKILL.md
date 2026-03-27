@@ -51,11 +51,13 @@ spacing, typography, and naming conventions.
    - `relationships.json` — component dependency graph
 ### JSON-first approach (mandatory)
 
-If `tokens.json`, `components/index.json`, and `relationships.json` exist, you MUST load
-them BEFORE making any Figma MCP calls. These files contain pre-extracted design system
-data with Figma variable keys (`$extensions.figma.key`), eliminating the need to
-re-discover the design system on every audit run. When auditing token compliance, read
-token values from `tokens.json` instead of re-querying Figma for every variable.
+If `tokens.json` and `components/index.json` exist, you MUST load them BEFORE making
+any Figma MCP calls. These contain pre-extracted design system data with Figma keys,
+eliminating the need to re-discover the design system on every audit run.
+
+When checking a specific component's compliance, look for `components/<name>.json`.
+If it doesn't exist, extract it on the spot using `figma_get_component_for_development_deep`,
+write the JSON, then audit against it. This caches the spec for future audits.
 
 **With JSONs**: Load files → audit frames against known tokens/components → only call Figma MCP for frame-specific data (screenshots, node properties). Use `$extensions.figma.key` for any variable lookups via `figma.variables.importVariableByKeyAsync(key)`.
 

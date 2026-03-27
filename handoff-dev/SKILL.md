@@ -59,8 +59,11 @@ and frame-specific visual validation:
 
 - `tokens.json` — Token names, values, Figma keys (`$extensions.figma.key`), and mode
   variants. Use these directly — do NOT re-extract token data from Figma.
-- `components/index.json` + individual component JSONs — Full component APIs, variants,
-  anatomy. The bulk of handoff documentation comes from these files.
+- `components/index.json` — The catalog. Check if `components/<name>.json` exists for
+  each component you're documenting. If not, extract it on the spot using
+  `figma_get_component_for_development_deep` or `figma_get_library_components`,
+  write `components/<name>.json`, then generate the handoff docs from it.
+  This caches the full spec for future handoffs.
 - `relationships.json` — Component dependency graph. Helps document which components
   are used together and their composition patterns.
 
