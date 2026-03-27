@@ -56,16 +56,56 @@ dependency graph.
 
 ## Step 1: Build the component graph
 
-Start by understanding every component and what's inside it:
+### If components/index.json exists (preferred — zero MCP discovery calls)
+
+Read `components/index.json` and the individual component JSONs. These already
+contain component keys, variant keys, token keys, anatomy, and props. You can
+build the entire relationship graph from this data without touching Figma:
+
+- **Containment**: Read each component's `anatomy` to find instance slots
+- **Token siblings**: Cross-reference `tokens` sections across components
+- **Swap groups**: Read `props` with `type: "instanceSwap"` and their `compatibleKeys`
+- **Variant families**: Group by `$extensions.figma.componentSetKey`
+
+This is O(n) over the JSON files — no Figma MCP calls needed.
+
+### If components/index.json doesn't exist (fallback — uses MCP)
 
 ```
 Use figma_get_library_components or figma_search_components to get all components.
 For each component, use figma_get_component_for_development_deep to see its full layer tree.
 ```
 
+Or use `figma_execute` to walk the component tree directly (captures keys):
+
+```javascript
+// Run via figma_execute — build full component graph with keys
+const components = figma.root.findAll(n =>
+  n.type === 'COMPONENT' || n.type === 'COMPONENT_SET'
+);
+
+const graph = [];
+for (const comp of components) {
+  const target = comp.type === 'COMPONENT_SET' ? comp.children[0] : comp;
+  const instances = target.findAll(n => n.type === 'INSTANCE');
+
+  graph.push({
+    name: comp.name,
+    key: comp.key,
+    nodeId: comp.id,
+    contains: instances.map(i => ({
+      name: i.mainComponent?.parent?.name || i.mainComponent?.name || 'unknown',
+      componentKey: i.mainComponent?.key || null,
+      slotName: i.name
+    }))
+  });
+}
+return graph;
+```
+
 For each component, identify:
-- **Child instances** — other components used inside this one
-- **Instance swap slots** — positions where different components can be plugged in
+- **Child instances** — other components used inside this one (with their keys)
+- **Instance swap slots** — positions where different components can be plugged in (with compatible keys)
 - **Shared parent** — components that are variants of the same component set
 
 ## Step 2: Map relationship types
@@ -165,14 +205,28 @@ Look for common design system patterns in the relationships:
   "components": {
     "button": {
       "name": "Button",
+      "figmaKey": "a1b2c3d4e5f6...",
+      "defaultVariantKey": "1a2b3c4d5e6f...",
       "atomicLevel": "molecule",
-      "contains": ["icon"],
-      "containedBy": ["card", "modal", "form", "dialog", "toolbar", "login-form"],
+      "contains": [
+        { "name": "icon", "figmaKey": "d4e5f6a1b2c3...", "slotName": "iconSlot" }
+      ],
+      "containedBy": [
+        { "name": "card", "figmaKey": "e5f6a1b2c3d4..." },
+        { "name": "modal", "figmaKey": "f6a1b2c3d4e5..." },
+        { "name": "form", "figmaKey": "a1b2c3d4e5f6..." }
+      ],
       "swappableWith": [],
       "variantOf": null,
       "sharesTokens": {
-        "color.semantic.action.primary": ["link", "tab"],
-        "borderRadius.md": ["input", "select", "card"]
+        "color.background.bg-brand-solid": {
+          "figmaKey": "a191f123...",
+          "sharedWith": ["link", "tab"]
+        },
+        "borderRadius.radius-md": {
+          "figmaKey": "19927d5b...",
+          "sharedWith": ["input", "select", "card"]
+        }
       },
       "fitsSlot": {
         "card.actionSlot": true,
@@ -186,9 +240,20 @@ Look for common design system patterns in the relationships:
     },
     "card": {
       "name": "Card",
+      "figmaKey": "e5f6a1b2c3d4...",
+      "defaultVariantKey": "5f6a1b2c3d4e...",
       "atomicLevel": "organism",
-      "contains": ["avatar", "text", "button", "badge", "divider"],
-      "containedBy": ["feed", "grid-layout"],
+      "contains": [
+        { "name": "avatar", "figmaKey": "..." },
+        { "name": "text", "figmaKey": "..." },
+        { "name": "button", "figmaKey": "a1b2c3d4e5f6...", "slotName": "actionSlot" },
+        { "name": "badge", "figmaKey": "..." },
+        { "name": "divider", "figmaKey": "..." }
+      ],
+      "containedBy": [
+        { "name": "feed", "figmaKey": "..." },
+        { "name": "grid-layout", "figmaKey": "..." }
+      ],
       "composedOf": {
         "header": ["avatar", "text", "badge"],
         "body": ["text"],
@@ -254,17 +319,45 @@ Look for common design system patterns in the relationships:
   "swapGroups": {
     "iconSlot": {
       "description": "Components that fit icon slots",
-      "members": ["icon/check", "icon/close", "icon/arrow-right", "icon/search", "icon/settings"],
+      "members": [
+        { "name": "icon/check", "figmaKey": "..." },
+        { "name": "icon/close", "figmaKey": "..." },
+        { "name": "icon/arrow-right", "figmaKey": "..." },
+        { "name": "icon/search", "figmaKey": "..." },
+        { "name": "icon/settings", "figmaKey": "..." }
+      ],
       "usedIn": ["button", "text-field", "navbar", "sidebar"]
     },
     "feedbackSlot": {
       "description": "Components that fit feedback/status slots",
-      "members": ["badge", "spinner", "icon/check"],
+      "members": [
+        { "name": "badge", "figmaKey": "..." },
+        { "name": "spinner", "figmaKey": "..." },
+        { "name": "icon/check", "figmaKey": "..." }
+      ],
       "usedIn": ["button", "text-field", "toast"]
     }
   }
 }
 ```
+
+### Why every key matters in relationships.json
+
+The relationships file serves two purposes:
+
+1. **Human understanding** — names, atomic levels, dependency counts
+2. **MCP action** — keys that let tools act without searching
+
+| Field | What it enables | Without it |
+|---|---|---|
+| `components[*].figmaKey` | Instantiate any component directly | Search by name every time |
+| `components[*].defaultVariantKey` | Instantiate the default variant in one call | Search + parse variants |
+| `contains[*].figmaKey` | Know exactly which child components to expect | Walk the layer tree |
+| `swapGroups[*].members[*].figmaKey` | Swap slot contents by key | Search for compatible components |
+| `sharesTokens[*].figmaKey` | Audit token usage without re-extracting | Re-scan all variable bindings |
+
+If a downstream skill reads `relationships.json` and finds a `figmaKey`, it should
+**never** call `figma_search_components` for that component. The key IS the answer.
 
 ## Step 5: Visualize (optional)
 

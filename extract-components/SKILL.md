@@ -65,11 +65,52 @@ for each component.
 
 ## Step 1: Discover components
 
-Based on the user's choice:
+The goal of discovery is to build a **complete key map** — component name → Figma
+component key (hash string) — so that all downstream skills can instantiate components
+directly via `figma_instantiate_component` without searching.
+
+### 1a. Get the component key map via figma_execute
+
+This is the most reliable method, especially for library components:
+
+```javascript
+// Run via figma_execute — discovers all local components with their keys
+const allComponents = figma.root.findAll(n =>
+  n.type === 'COMPONENT' || n.type === 'COMPONENT_SET'
+);
+
+return allComponents.map(c => ({
+  name: c.name,
+  type: c.type,
+  id: c.id,
+  key: c.key,  // CRITICAL: the hash key for instantiation
+  description: c.description || '',
+  parent: c.parent?.name || null,
+  // For component sets, get variant keys
+  ...(c.type === 'COMPONENT_SET' ? {
+    variants: c.children.map(v => ({
+      name: v.name,
+      id: v.id,
+      key: v.key,  // CRITICAL: variant key for figma_instantiate_component
+      // Parse variant properties from the name (e.g., "Size=md, State=default")
+      properties: Object.fromEntries(
+        v.name.split(', ').map(p => p.split('='))
+      )
+    }))
+  } : {})
+}));
+```
+
+For library components not in the current file, use `figma_get_library_components`
+with `includeVariants=true`, then capture the `componentKey` from each result.
+
+### 1b. Also try MCP discovery tools
+
+Based on the user's scope choice:
 
 **Full library:**
 ```
-Use figma_get_library_components to get all published components.
+Use figma_get_library_components with the library file key to get component keys.
 Use figma_get_design_system_summary for an overview.
 ```
 
@@ -89,6 +130,10 @@ Use figma_get_file_data to find components on the specified page.
 Use figma_search_components with the user's search term.
 ```
 
+**Important**: Whichever method you use, always capture the **component key** (hash
+string). This is the equivalent of `$extensions.figma.key` in tokens.json — it's the
+direct instantiation handle that eliminates searching.
+
 Present a summary:
 > "Found **24 components**. Here's the breakdown:
 >
@@ -101,10 +146,69 @@ Present a summary:
 
 ## Step 2: Deep-dive each component
 
-For each component, gather comprehensive details:
+For each component, gather comprehensive details. Prefer `figma_execute` for
+extracting keys and structural data (faster, captures keys), then use MCP tools
+for enrichment (descriptions, images, annotations):
+
+### 2a. Extract keys and structure via figma_execute (primary method)
+
+```javascript
+// Run via figma_execute — extract full component data with keys
+// Process one component set at a time
+const node = await figma.getNodeByIdAsync('<COMPONENT_SET_NODE_ID>');
+
+const result = {
+  name: node.name,
+  key: node.key,  // Component set key
+  nodeId: node.id,
+  description: node.description || '',
+  // Variant keys — CRITICAL for direct instantiation
+  variants: node.type === 'COMPONENT_SET'
+    ? node.children.map(v => ({
+        name: v.name,
+        key: v.key,  // This is what figma_instantiate_component needs
+        nodeId: v.id,
+        properties: Object.fromEntries(
+          v.name.split(', ').map(p => p.split('='))
+        )
+      }))
+    : [{ name: node.name, key: node.key, nodeId: node.id }],
+
+  // Component properties (props)
+  componentPropertyDefinitions: node.componentPropertyDefinitions,
+
+  // Bound variables (token usage) — cross-reference with tokens.json
+  boundTokens: []
+};
+
+// Walk the component's layer tree to find bound variables
+function walkForTokens(n) {
+  if ('boundVariables' in n && n.boundVariables) {
+    for (const [prop, binding] of Object.entries(n.boundVariables)) {
+      const bindings = Array.isArray(binding) ? binding : [binding];
+      for (const b of bindings) {
+        if (b && b.id) {
+          result.boundTokens.push({
+            layer: n.name,
+            property: prop,
+            variableId: b.id
+          });
+        }
+      }
+    }
+  }
+  if ('children' in n) {
+    for (const child of n.children) walkForTokens(child);
+  }
+}
+walkForTokens(node);
+
+return result;
+```
+
+### 2b. Enrich via MCP tools (secondary — for data not available via plugin API)
 
 ```
-Use figma_get_component_details for variant properties, descriptions.
 Use figma_get_component_for_development for dev-ready specs.
 Use figma_get_component_for_development_deep for full anatomy breakdown.
 Use figma_analyze_component_set for variant matrix analysis.
@@ -119,11 +223,13 @@ Use figma_get_component_image to capture a visual reference.
 - Description (from Figma component description field)
 - Category/group (derived from naming convention or page location)
 - Figma node ID (for cross-referencing)
+- **Component key** (hash string for instantiation — CRITICAL)
 
 **Variants**
 - All variant properties and their possible values
 - Default variant combination
 - Which combinations are valid vs. intentionally excluded
+- **Variant key for each combination** (hash string for `figma_instantiate_component`)
 
 **Props** (component properties)
 - Boolean props (show/hide elements)
@@ -139,6 +245,7 @@ Use figma_get_component_image to capture a visual reference.
 **Token usage**
 - Which tokens are applied (colors, spacing, typography, radii, shadows)
 - Map each visual property to its token reference
+- **Include the figma hash key for each token** (from tokens.json `$extensions.figma.key`)
 - Flag any hardcoded values that should be tokens (linting opportunity)
 
 **Sizing & spacing**
@@ -168,6 +275,11 @@ Use kebab-case matching the component name:
 
 ### Component JSON format
 
+The output must include `$extensions.figma` with the **component key** (hash string)
+for direct instantiation, and **variant keys** for each variant combination. This is
+the component equivalent of `$extensions.figma.key` in tokens.json — it eliminates
+MCP search calls entirely.
+
 ```json
 {
   "$schema": "design-kit/component/v1",
@@ -180,6 +292,22 @@ Use kebab-case matching the component name:
   "description": "Primary action trigger. Use for the main call-to-action on a page.",
   "category": "Inputs",
   "status": "published",
+
+  "$extensions": {
+    "figma": {
+      "componentSetKey": "a1b2c3d4e5f6...",
+      "nodeId": "123:456",
+      "variantKeys": {
+        "Size=sm, Variant=primary, State=default": "f6e5d4c3b2a1...",
+        "Size=md, Variant=primary, State=default": "1a2b3c4d5e6f...",
+        "Size=lg, Variant=primary, State=default": "6f5e4d3c2b1a...",
+        "Size=md, Variant=secondary, State=default": "b1c2d3e4f5a6...",
+        "Size=md, Variant=ghost, State=default": "c2d3e4f5a6b1...",
+        "Size=md, Variant=destructive, State=default": "d3e4f5a6b1c2..."
+      },
+      "defaultVariantKey": "1a2b3c4d5e6f..."
+    }
+  },
 
   "variants": {
     "size": {
@@ -211,7 +339,12 @@ Use kebab-case matching the component name:
     },
     "iconSlot": {
       "type": "instanceSwap",
-      "description": "Icon component to display when showIcon is true"
+      "description": "Icon component to display when showIcon is true",
+      "$extensions": {
+        "figma": {
+          "compatibleKeys": ["key1...", "key2...", "key3..."]
+        }
+      }
     }
   },
 
@@ -232,37 +365,37 @@ Use kebab-case matching the component name:
   },
 
   "tokens": {
+    "$description": "Token references with figma hash keys for direct binding",
     "background": {
-      "primary": "{color.semantic.action.primary}",
-      "secondary": "{color.semantic.action.secondary}",
-      "ghost": "transparent",
-      "destructive": "{color.semantic.feedback.error}"
+      "primary":     { "$ref": "color.background.bg-brand-solid", "figmaKey": "a191f123..." },
+      "secondary":   { "$ref": "color.background.bg-primary", "figmaKey": "b6157f22..." },
+      "ghost":       "transparent",
+      "destructive": { "$ref": "color.background.bg-error-solid", "figmaKey": "cb1aed3a..." }
     },
-    "textColor": "{color.semantic.text.onAction}",
-    "borderRadius": "{borderRadius.md}",
-    "fontFamily": "{typography.fontFamily.sans}",
+    "textColor":   { "$ref": "color.text.text-white", "figmaKey": "8ebcc991..." },
+    "borderRadius": { "$ref": "borderRadius.radius-md", "figmaKey": "19927d5b..." },
     "fontSize": {
-      "sm": "{typography.fontSize.sm}",
-      "md": "{typography.fontSize.md}",
-      "lg": "{typography.fontSize.lg}"
+      "sm": { "$ref": "typography.fontSize.text-sm", "figmaKey": "4f043a03..." },
+      "md": { "$ref": "typography.fontSize.text-md", "figmaKey": "b7a5042a..." },
+      "lg": { "$ref": "typography.fontSize.text-lg", "figmaKey": "8137a2b2..." }
     },
     "padding": {
-      "sm": "{spacing.2} {spacing.3}",
-      "md": "{spacing.3} {spacing.4}",
-      "lg": "{spacing.4} {spacing.6}"
+      "sm": { "y": "spacing.spacing-md", "x": "spacing.spacing-lg", "yKey": "cc421a9e...", "xKey": "48917321..." },
+      "md": { "y": "spacing.spacing-lg", "x": "spacing.spacing-xl", "yKey": "48917321...", "xKey": "f4d6b399..." },
+      "lg": { "y": "spacing.spacing-xl", "x": "spacing.spacing-3xl", "yKey": "f4d6b399...", "xKey": "ac8c9414..." }
     },
-    "gap": "{spacing.2}"
+    "gap": { "$ref": "spacing.spacing-md", "figmaKey": "cc421a9e..." }
   },
 
   "layout": {
     "direction": "horizontal",
     "alignment": "center",
-    "gap": "{spacing.2}",
+    "gap": { "$ref": "spacing.spacing-md", "figmaKey": "cc421a9e..." },
     "padding": {
-      "top": "{spacing.3}",
-      "right": "{spacing.4}",
-      "bottom": "{spacing.3}",
-      "left": "{spacing.4}"
+      "top":    { "$ref": "spacing.spacing-lg", "figmaKey": "48917321..." },
+      "right":  { "$ref": "spacing.spacing-xl", "figmaKey": "f4d6b399..." },
+      "bottom": { "$ref": "spacing.spacing-lg", "figmaKey": "48917321..." },
+      "left":   { "$ref": "spacing.spacing-xl", "figmaKey": "f4d6b399..." }
     },
     "sizing": {
       "width": "hug",
@@ -278,9 +411,22 @@ Use kebab-case matching the component name:
 }
 ```
 
+### Why every key matters
+
+| Field | What it enables | Without it |
+|---|---|---|
+| `$extensions.figma.variantKeys` | `figma_instantiate_component(key)` — one call | `figma_search_components` + parse results + guess variant |
+| `tokens[*].figmaKey` | `importVariableByKeyAsync(key)` in `figma_execute` | Scan 6 collections + 359 variables per token |
+| `props[*].$extensions.figma.compatibleKeys` | Direct instance swap by key | Search for compatible components each time |
+```
+
 ## Step 4: Create component index
 
 After extracting all components, create `components/index.json`:
+
+The index is the **quick-lookup table** that downstream skills read first. It must
+include component keys so that a skill can instantiate any component without opening
+the individual JSON file.
 
 ```json
 {
@@ -297,7 +443,9 @@ After extracting all components, create `components/index.json`:
       "category": "Inputs",
       "status": "published",
       "variantCount": 3,
-      "description": "Primary action trigger"
+      "description": "Primary action trigger",
+      "figmaKey": "a1b2c3d4e5f6...",
+      "defaultVariantKey": "1a2b3c4d5e6f..."
     },
     "text-field": {
       "file": "text-field.json",
@@ -305,7 +453,9 @@ After extracting all components, create `components/index.json`:
       "category": "Inputs",
       "status": "published",
       "variantCount": 4,
-      "description": "Single-line text input"
+      "description": "Single-line text input",
+      "figmaKey": "b2c3d4e5f6a1...",
+      "defaultVariantKey": "2b3c4d5e6f1a..."
     }
   },
   "categories": {
@@ -315,6 +465,12 @@ After extracting all components, create `components/index.json`:
     "Layout": ["card", "divider", "avatar", "modal", "drawer", "accordion", "table"]
   }
 }
+```
+
+This means a downstream skill like `/lofi-to-hifi` can do:
+1. Read `components/index.json`
+2. Look up `components.button.defaultVariantKey`
+3. Call `figma_instantiate_component(key)` — done. No searching.
 ```
 
 ## Step 5: Validate and report
