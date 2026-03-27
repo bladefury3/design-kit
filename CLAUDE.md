@@ -6,8 +6,8 @@ extract, audit, and optimize design systems.
 ## Commands
 
 ```bash
-./setup              # Install skills to ~/.claude/skills/design-kit
-./setup --local      # Install to .claude/skills/design-kit in current project
+./setup              # Install skills to ~/.claude/commands/
+./setup --local      # Install to .claude/commands/ in current project
 ```
 
 ## Project Structure
@@ -15,10 +15,11 @@ extract, audit, and optimize design systems.
 ```
 design-kit/
 ├── extract-tokens/          # Skill: extract design tokens → tokens.json
-├── extract-components/      # Skill: extract component specs → component JSONs
+├── extract-components/      # Skill: extract component specs → components/index.json + on-demand JSONs
 ├── extract-relationships/   # Skill: map component relationships → relationships.json
+├── plan-design/             # Skill: plan a design → plan.json (spec, no Figma changes)
+├── build-design/            # Skill: execute plan.json → Figma frames + library components
 ├── audit-frames/            # Skill: audit frames against design system
-├── lofi-to-hifi/            # Skill: convert low-fi → high-fi designs
 ├── handoff-dev/             # Skill: developer handoff documentation
 ├── handoff-mcp/             # Skill: optimize Figma file for MCP consumption
 ├── setup                    # Installation script
