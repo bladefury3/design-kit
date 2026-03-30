@@ -1,0 +1,60 @@
+{
+  "$schema": "design-kit/audit/v1",
+  "$metadata": {
+    "auditedAt": "2026-03-27T23:30:00Z",
+    "figmaFile": "Design Kit Test",
+    "frames": ["PM Dashboard (24:716)"],
+    "strictness": "standard"
+  },
+  "score": 8.5,
+  "previousScore": 6.0,
+  "summary": {
+    "tokenCompliance": 0.92,
+    "componentCompliance": 0.67,
+    "namingQuality": 1.0,
+    "autoLayout": 1.0,
+    "accessibilityBasics": 0.9
+  },
+  "remediation": {
+    "textColorsBound": 73,
+    "componentsReplaced": {
+      "navItems": { "count": 5, "from": "token-built FRAME", "to": "Buttons/Button (Tertiary gray)" },
+      "viewAllLinks": { "count": 2, "from": "token-built FRAME", "to": "Buttons/Button (Link gray)" },
+      "userProfile": { "count": 1, "from": "token-built FRAME + ellipse", "to": "Avatar label group" },
+      "progressBars": { "count": 3, "from": "token-built FRAME", "to": "Progress bar (library)" }
+    },
+    "keptAsTokenBuilt": {
+      "activityGauges": "Library component doesn't render at inline (48px) size — kept as token-built ellipse arcs",
+      "activityFeed": "5 items kept as token-built timeline — replacing with single library component would lose custom content",
+      "statCards": "No library equivalent — token-built is correct",
+      "roadmapTable": "Custom layout — Table/Table cell library components don't match this structure",
+      "statusBadges": "No Badge library component — token-built is correct"
+    }
+  },
+  "remainingFindings": [
+    {
+      "severity": "info",
+      "category": "component-compliance",
+      "message": "Activity gauge library component doesn't work at inline sizes (48px). Token-built ellipse arcs are the correct approach for compact gauge visualizations.",
+      "autoFixable": false
+    },
+    {
+      "severity": "info",
+      "category": "component-compliance",
+      "message": "Activity feed items are token-built. A single library Activity feed instance could replace them but would lose custom text content.",
+      "autoFixable": false
+    },
+    {
+      "severity": "warning",
+      "category": "token-compliance",
+      "message": "Progress bar library components show default 50% value. Percentage can't be overridden via component properties — it's baked into the variant.",
+      "autoFixable": false
+    },
+    {
+      "severity": "info",
+      "category": "token-compliance",
+      "message": "14 nav item padding values were hardcoded but are now managed by the library Button component — resolved by component swap.",
+      "autoFixable": false
+    }
+  ]
+}

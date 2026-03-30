@@ -1,13 +1,139 @@
 {
   "$schema": "design-kit/component-index/v1",
   "$metadata": {
-    "extractedAt": "2026-03-27T20:41:13.577Z",
-    "totalComponents": 14,
+    "extractedAt": "2026-03-27T23:15:00Z",
+    "totalComponents": 35,
     "figmaFile": "Design Kit Test",
     "libraryFile": "Untitled UI PRO VARIABLES (v6.0)",
     "libraryFileKey": "JhsFSqLI1lWfDZq5I4crsQ"
   },
   "components": {
+    "button": {
+      "file": "button.json",
+      "name": "Buttons/Button",
+      "category": "Inputs",
+      "variantCount": 380,
+      "description": "Primary action button. 5 sizes (sm-2xl), 7 hierarchy styles, 3 icon modes, 4 states.",
+      "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
+      "defaultVariantKey": "c7b6f17162347f1cf7e6689f70b24a4ab487d216"
+    },
+    "button-close-x": {
+      "file": "button-close-x.json",
+      "name": "Buttons/Button close X",
+      "category": "Inputs",
+      "variantCount": 18,
+      "description": "Close/dismiss button with X icon",
+      "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122",
+      "defaultVariantKey": null
+    },
+    "button-destructive": {
+      "file": "button-destructive.json",
+      "name": "Buttons/Button destructive",
+      "category": "Inputs",
+      "variantCount": 220,
+      "description": "Destructive action button with error styling",
+      "figmaKey": "b69262dc99cd25932f61abeb5b5cbf3da290fdf4",
+      "defaultVariantKey": null
+    },
+    "button-utility": {
+      "file": "button-utility.json",
+      "name": "Buttons/Button utility",
+      "category": "Inputs",
+      "variantCount": 16,
+      "description": "Utility button for secondary actions",
+      "figmaKey": "b2ed6c268558656853d84b9a492c6281f2b153b1",
+      "defaultVariantKey": null
+    },
+    "button-group": {
+      "file": "button-group.json",
+      "name": "Button group",
+      "category": "Inputs",
+      "variantCount": 3,
+      "description": "Grouped button set with icon options",
+      "figmaKey": "5d21508db6f4dd5aa4582cb2c599de63d78c8c23",
+      "defaultVariantKey": "de477799a176a73c728e1c8d4fe228df35504a88"
+    },
+    "social-button": {
+      "file": "social-button.json",
+      "name": "Social button",
+      "category": "Inputs",
+      "variantCount": 108,
+      "description": "Social login/auth buttons (Google, Apple, Facebook, etc.)",
+      "figmaKey": "0ab34f8844f06a4d57d47ca5d8c40f1fee4860c6",
+      "defaultVariantKey": null
+    },
+    "social-button-groups": {
+      "file": "social-button-groups.json",
+      "name": "Social button groups",
+      "category": "Inputs",
+      "variantCount": 6,
+      "description": "Grouped social login buttons",
+      "figmaKey": "1d818116147d9763bba3d1af76fcbef89ebf9df6",
+      "defaultVariantKey": null
+    },
+    "input-field": {
+      "file": "input-field.json",
+      "name": "Input field",
+      "category": "Inputs",
+      "variantCount": 112,
+      "description": "Text input with variants for size, type (default, icon leading, dropdown, tags, payment), destructive state",
+      "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b",
+      "defaultVariantKey": "88323dfdd85345b5d612ee789a94e1e27c5025c6"
+    },
+    "input-dropdown": {
+      "file": "input-dropdown.json",
+      "name": "Input dropdown",
+      "category": "Inputs",
+      "variantCount": 60,
+      "description": "Dropdown select input with search, tags, avatar, dot, and icon leading variants",
+      "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
+      "defaultVariantKey": "cacec70cefc3c9113c54f859f76e71e8caa3c3fd"
+    },
+    "textarea-input-field": {
+      "file": "textarea-input-field.json",
+      "name": "Textarea input field",
+      "category": "Inputs",
+      "variantCount": 14,
+      "description": "Multi-line text input with tags and destructive variants",
+      "figmaKey": "20d06dfce8290b89f9f19df38cf64a8e86f98a4d",
+      "defaultVariantKey": "5656a4c8eef68386843f1112d274b0629b0655ff"
+    },
+    "verification-code-input": {
+      "file": "verification-code-input.json",
+      "name": "Verification code input field",
+      "category": "Inputs",
+      "variantCount": 6,
+      "description": "OTP/verification code input with 4 or 6 digit options",
+      "figmaKey": "22e02c9edb194a00aae5bce15869c9de600bc2cd",
+      "defaultVariantKey": "282161d738ac93e37fad824fee49dcb4b2c5ad18"
+    },
+    "checkbox": {
+      "file": "checkbox.json",
+      "name": "Checkbox",
+      "category": "Inputs",
+      "variantCount": 72,
+      "description": "Checkbox and radio button with text, size, and state variants",
+      "figmaKey": "38076cee88904c5dd4005a42c9683b278dbe6177",
+      "defaultVariantKey": "e0cf0495acd547428a0f2324feb94982b0dd2eda"
+    },
+    "checkbox-group": {
+      "file": "checkbox-group.json",
+      "name": "Checkbox group",
+      "category": "Inputs",
+      "variantCount": 24,
+      "description": "Grouped checkbox/radio layouts with icon, avatar, payment variants",
+      "figmaKey": "c374789af64e48dc46af5eec729ff80b245f82a5",
+      "defaultVariantKey": "0280b7f700e4d54f726010ffd9be10f5cbcde645"
+    },
+    "toggle": {
+      "file": "toggle.json",
+      "name": "Toggle",
+      "category": "Inputs",
+      "variantCount": 64,
+      "description": "Toggle switch with default and slim types, text option, 2 sizes",
+      "figmaKey": "87f8a10f14b84d9c71d443b19c96976425525e30",
+      "defaultVariantKey": "87ca6c02fdc446e5dd9f1ef976f70754f548f340"
+    },
     "avatar": {
       "file": "avatar.json",
       "name": "Avatar",
@@ -35,41 +161,14 @@
       "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef",
       "defaultVariantKey": "360054184886a747d00b6c36a2f6e4f6609213b8"
     },
-    "input-field": {
-      "file": "input-field.json",
-      "name": "Input field",
-      "category": "Inputs",
-      "variantCount": 112,
-      "description": "Text input with variants for size, type (default, icon leading, dropdown, tags, payment), destructive state",
-      "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b",
-      "defaultVariantKey": "88323dfdd85345b5d612ee789a94e1e27c5025c6"
-    },
-    "input-dropdown": {
-      "file": "input-dropdown.json",
-      "name": "Input dropdown",
-      "category": "Inputs",
-      "variantCount": 60,
-      "description": "Dropdown select input with search, tags, avatar, dot, and icon leading variants",
-      "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
-      "defaultVariantKey": "cacec70cefc3c9113c54f859f76e71e8caa3c3fd"
-    },
-    "button-group": {
-      "file": "button-group.json",
-      "name": "Button group",
-      "category": "Inputs",
-      "variantCount": 3,
-      "description": "Grouped button set with icon options",
-      "figmaKey": "5d21508db6f4dd5aa4582cb2c599de63d78c8c23",
-      "defaultVariantKey": "de477799a176a73c728e1c8d4fe228df35504a88"
-    },
-    "alert": {
-      "file": "alert.json",
-      "name": "Alert",
-      "category": "Feedback",
-      "variantCount": 24,
-      "description": "Alert banner with color variants (default, gray, brand, warning, error, success) in floating and full-width sizes",
-      "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b",
-      "defaultVariantKey": "c3910a2dad8a3d8fcd829bfd6603d236d7291153"
+    "avatar-profile-photo": {
+      "file": "avatar-profile-photo.json",
+      "name": "Avatar profile photo",
+      "category": "Data Display",
+      "variantCount": 9,
+      "description": "Large profile photo avatar with placeholder and text options",
+      "figmaKey": "1a9af86136632b5bf52e240df1538eb8ca748e90",
+      "defaultVariantKey": "acf93f2b560d2ffb897c85b6b78164c31b668529"
     },
     "activity-feed": {
       "file": "activity-feed.json",
@@ -89,6 +188,114 @@
       "figmaKey": "6541c06b6ae4e58ff40001b913d351f813802486",
       "defaultVariantKey": "04bcc2ac8298a4bd0a4b0e7076a1ca7abb452c04"
     },
+    "table": {
+      "file": "table.json",
+      "name": "Table",
+      "category": "Data Display",
+      "variantCount": 16,
+      "description": "Full table with example data (team members, files, companies, sales)",
+      "figmaKey": "824beeff38ad4dc1ed3d5cf07ac52166e749efb4",
+      "defaultVariantKey": "bb147f478fc5bf8ba880b4182e5fa93034d2b6e0"
+    },
+    "table-cell": {
+      "file": "table-cell.json",
+      "name": "Table cell",
+      "category": "Data Display",
+      "variantCount": 108,
+      "description": "Individual table cell with 30+ style variants (text, avatar, badge, toggle, etc.)",
+      "figmaKey": "87191658bb89170c6a653eb9fda4cd94872f4c03",
+      "defaultVariantKey": "73d985781048dc8d9da08244e0b916b747f90582"
+    },
+    "table-header": {
+      "file": "table-header.json",
+      "name": "Table header",
+      "category": "Data Display",
+      "variantCount": 16,
+      "description": "Table column header with sort arrow and help icon",
+      "figmaKey": "bbce8ec9ff61b8604d15664d5a0b8ef51be8847a",
+      "defaultVariantKey": "caf12f3555476e07f9f6534c6a52108b69cbd20c"
+    },
+    "table-header-cell": {
+      "file": "table-header-cell.json",
+      "name": "Table header cell",
+      "category": "Data Display",
+      "variantCount": 8,
+      "description": "Table header cell wrapper with checkbox and color variants",
+      "figmaKey": "18c264e263ec60c73a470e9681b635f9f1d745f8",
+      "defaultVariantKey": "5e643979df81dfa925ac77dd58b767f5b933b1a3"
+    },
+    "alert": {
+      "file": "alert.json",
+      "name": "Alert",
+      "category": "Feedback",
+      "variantCount": 24,
+      "description": "Alert banner with color variants (default, gray, brand, warning, error, success) in floating and full-width sizes",
+      "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b",
+      "defaultVariantKey": "c3910a2dad8a3d8fcd829bfd6603d236d7291153"
+    },
+    "progress-bar": {
+      "file": "progress-bar.json",
+      "name": "Progress bar",
+      "category": "Feedback",
+      "variantCount": 55,
+      "description": "Linear progress indicator with label variants (right, bottom, top floating, bottom floating, none)",
+      "figmaKey": "8c42bb4c2a2a1f013432ffb164dae4a2922ee04d",
+      "defaultVariantKey": "ec7802c450b061223232028437ea3e9969473c36"
+    },
+    "progress-circle": {
+      "file": "progress-circle.json",
+      "name": "Progress circle",
+      "category": "Feedback",
+      "variantCount": 16,
+      "description": "Circular progress indicator with circle and half-circle shapes",
+      "figmaKey": "130d80f439f7e7a0b859059eb6d63adb95c7e224",
+      "defaultVariantKey": "2ddbfe2911f1d2567766ddf1dfa0709d8ccff7f6"
+    },
+    "progress-steps-icons-centered": {
+      "file": "progress-steps-icons-centered.json",
+      "name": "Progress steps / Progress icons centered",
+      "category": "Feedback",
+      "variantCount": 24,
+      "description": "Step progress indicator with centered icons, 3-4 steps",
+      "figmaKey": "51c3d35a7fcce6d8af33cbdd693971649dec5a08",
+      "defaultVariantKey": "be812cdbdea887d7488ba899dd7c13ee63ca4d6b"
+    },
+    "progress-steps-icons-with-text": {
+      "file": "progress-steps-icons-with-text.json",
+      "name": "Progress steps / Progress icons with text",
+      "category": "Feedback",
+      "variantCount": 12,
+      "description": "Step progress with icon and text labels, connector option",
+      "figmaKey": "2012185b1b1cb7a2da92ef1ab9823b979500197e",
+      "defaultVariantKey": "91f9af06406718249b255598563fb09fb1438d39"
+    },
+    "progress-steps-minimal": {
+      "file": "progress-steps-minimal.json",
+      "name": "Progress steps / Progress minimal icons",
+      "category": "Feedback",
+      "variantCount": 12,
+      "description": "Minimal step dots with optional text labels",
+      "figmaKey": "82477bb95e7a7d0b360db25e70e31990b3926455",
+      "defaultVariantKey": "0f8135ae6b30d04f772afd7db47eaa838becd630"
+    },
+    "progress-steps-minimal-connected": {
+      "file": "progress-steps-minimal-connected.json",
+      "name": "Progress steps / Progress minimal icons connected",
+      "category": "Feedback",
+      "variantCount": 6,
+      "description": "Minimal connected step dots",
+      "figmaKey": "9dce40cadd4d371129e3f8d2699141245b894262",
+      "defaultVariantKey": "247708c3f0b53627cc62825c98da82d6ce2741ec"
+    },
+    "progress-steps-text-with-line": {
+      "file": "progress-steps-text-with-line.json",
+      "name": "Progress steps / Progress text with line",
+      "category": "Feedback",
+      "variantCount": 6,
+      "description": "Step progress with text labels and connecting line",
+      "figmaKey": "54ed1ea397923566e74f20a131ff8621f1a1033b",
+      "defaultVariantKey": "bcb82cc8f38044d2f3a17d8f1d034d0a0264c92a"
+    },
     "404-section": {
       "file": "404-section.json",
       "name": "404 section",
@@ -98,67 +305,58 @@
       "figmaKey": "6461663adede8577b2f3ff1ebe81852a22f8f8c6",
       "defaultVariantKey": "b9ebfab51c3de2cd1ac1525c1ff5be5983b7bcae"
     },
-    "progress-bar": {
-      "file": "progress-bar.json",
-      "name": "Progress bar",
-      "category": "Feedback",
-      "variantCount": null,
-      "description": "Progress indicator bar with label variants",
-      "figmaKey": null,
-      "defaultVariantKey": null
-    },
-    "calendar": {
-      "file": "calendar.json",
-      "name": "Calendar",
-      "category": "Inputs",
-      "variantCount": null,
-      "description": "Date picker calendar component",
-      "figmaKey": null,
-      "defaultVariantKey": null
-    },
-    "header-navigation": {
-      "file": "header-navigation.json",
-      "name": "Header navigation",
-      "category": "Navigation",
-      "variantCount": null,
-      "description": "Top navigation header with open/closed states and style variants",
-      "figmaKey": null,
-      "defaultVariantKey": null
-    },
-    "table-header": {
-      "file": "table-header.json",
-      "name": "Table header",
-      "category": "Data Display",
-      "variantCount": null,
-      "description": "Table column header with sort arrow and help icon",
-      "figmaKey": null,
-      "defaultVariantKey": null
+    "screen-mockup": {
+      "file": "screen-mockup.json",
+      "name": "3:2 screen mockup",
+      "category": "Sections",
+      "variantCount": 6,
+      "description": "Browser/device screen mockup in 6 sizes (xs-2xl)",
+      "figmaKey": "5ab7a87adad2a1963eab84e8b7f907156b60f684",
+      "defaultVariantKey": "d65be08c72cf60f934b7207e6314696247b9e3c2"
     }
   },
   "categories": {
+    "Inputs": [
+      "button",
+      "button-close-x",
+      "button-destructive",
+      "button-utility",
+      "button-group",
+      "social-button",
+      "social-button-groups",
+      "input-field",
+      "input-dropdown",
+      "textarea-input-field",
+      "verification-code-input",
+      "checkbox",
+      "checkbox-group",
+      "toggle"
+    ],
     "Data Display": [
       "avatar",
       "avatar-group",
       "avatar-label-group",
+      "avatar-profile-photo",
       "activity-feed",
       "activity-gauge",
-      "table-header"
-    ],
-    "Inputs": [
-      "input-field",
-      "input-dropdown",
-      "button-group",
-      "calendar"
+      "table",
+      "table-cell",
+      "table-header",
+      "table-header-cell"
     ],
     "Feedback": [
       "alert",
-      "progress-bar"
+      "progress-bar",
+      "progress-circle",
+      "progress-steps-icons-centered",
+      "progress-steps-icons-with-text",
+      "progress-steps-minimal",
+      "progress-steps-minimal-connected",
+      "progress-steps-text-with-line"
     ],
     "Sections": [
-      "404-section"
-    ],
-    "Navigation": [
-      "header-navigation"
+      "404-section",
+      "screen-mockup"
     ]
   }
 }
