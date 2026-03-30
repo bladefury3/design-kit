@@ -280,6 +280,48 @@ Use figma_browse_tokens for any token browser data.
 - Line heights
 - Letter spacing
 
+**Text Styles (CRITICAL — extract alongside variables)**
+
+Text styles are composite tokens that bundle font family + size + weight + line height
+into one reusable style (e.g., "Text sm/Medium", "Display xs/Semibold"). They are
+different from individual typography variables and must be extracted separately.
+
+Use `figma_get_styles` or `figma_get_design_system_kit` to discover text styles.
+For library text styles, use:
+
+```javascript
+// Discover library text styles via figma_execute
+const styles = await figma.teamLibrary.getAvailableLibraryTextStylesAsync();
+for (const s of styles) {
+  const imported = await figma.importStyleByKeyAsync(s.key);
+  results.push({
+    name: s.name,
+    key: s.key,
+    fontFamily: imported.fontName.family,
+    fontStyle: imported.fontName.style,
+    fontSize: imported.fontSize,
+    lineHeight: imported.lineHeight,
+    letterSpacing: imported.letterSpacing
+  });
+}
+```
+
+Write text styles to a `textStyles` section in tokens.json:
+```json
+{
+  "textStyles": {
+    "text-sm-regular": {
+      "$type": "textStyle",
+      "$value": { "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 14, "lineHeight": 20 },
+      "$extensions": { "figma": { "key": "<style hash key>" } }
+    }
+  }
+}
+```
+
+This key is used by `build-design` via `figma.importStyleByKeyAsync(key)` then
+`textNode.textStyleId = style.id` — one call instead of binding 3+ individual variables.
+
 **Spacing**
 - Spacing scale (4px, 8px, 12px, 16px, 24px, 32px, etc.)
 - Component-specific spacing

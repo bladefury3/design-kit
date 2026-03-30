@@ -52,7 +52,29 @@ plan, ask the user — don't guess. All decisions were made in `/plan-design`.
 3. Read `tokens.json` and `components/index.json` — you'll need these for
    on-demand component extraction if any components haven't been fully extracted yet.
 
-4. Confirm with the user:
+4. **Pre-build validation (mandatory):**
+
+   a. **Verify token keys**: Scan all `figmaKey` values in plan.json. Every key must
+      be a 40-character hex hash. If any key contains `/` (path-style), STOP and warn:
+      > "Plan contains path-style token keys that won't work. Run `/extract-tokens`
+      > to refresh, or manually fix the keys in tokens.json."
+
+   b. **Verify component coverage**: Check the plan's `componentCoverage.percentage`.
+      If below 60%, warn:
+      > "Only [X]% of elements use library components. Review the plan — some
+      > token-built elements may have library equivalents."
+
+   c. **Verify typography tokens**: Check that every `type: "text"` node in the plan
+      has `fontSize`, `lineHeight`, AND `fills` in its `tokens` object. If any text
+      node is missing typography tokens, STOP and warn:
+      > "Text node '[name]' is missing typography token bindings. The plan must
+      > specify fontSize, lineHeight, and fills for every text node."
+
+   d. **Check relationships.json**: If it exists, verify that composition patterns
+      are respected (e.g., if Avatar label group contains Avatar, don't instantiate
+      a standalone Avatar where the label group should be used).
+
+5. Confirm with the user:
    > "Ready to build: **[plan name]** ([width]px)
    > - [N] library components to instantiate
    > - [N] token-built frames
@@ -144,7 +166,8 @@ if (node.sizing?.height === 'fill') instance.layoutSizingVertical = 'FILL';
 
 ### type: "text"
 
-Create a text node with token-bound properties:
+Create a text node with **ALL properties token-bound**. Never hardcode font sizes,
+line heights, or text colors — always bind to variables from tokens.json.
 
 ```javascript
 await figma.loadFontAsync({family: 'Inter', style: node.style || 'Regular'});
@@ -152,7 +175,8 @@ const text = figma.createText();
 text.characters = node.content;
 text.fontName = {family: 'Inter', style: node.style || 'Regular'};
 
-// Bind font size, line height, and fill color from tokens
+// MANDATORY: Bind ALL token properties — fontSize, lineHeight, AND fills
+// Never use hardcoded values like text.fontSize = 14
 for (const [prop, token] of Object.entries(node.tokens)) {
   const v = await figma.variables.importVariableByKeyAsync(token.figmaKey);
   if (prop === 'fills') {
@@ -164,6 +188,34 @@ for (const [prop, token] of Object.entries(node.tokens)) {
   }
 }
 ```
+
+**CRITICAL**: If a figmaKey fails to import (returns undefined), it may be a
+path-style key instead of a hash. Check tokens.json — all keys must be 40-char
+hex hashes. Fall back to hardcoded `$value` ONLY as a last resort, and flag it
+in the build output so the user knows which tokens need key fixes.
+
+**PREFER TEXT STYLES over individual variable bindings.** If the plan specifies a
+`textStyleKey` on a text node, apply the composite text style instead of binding
+fontSize/lineHeight/fills individually:
+
+```javascript
+// Preferred: apply text style (one call, full typography compliance)
+if (node.textStyleKey) {
+  const style = await figma.importStyleByKeyAsync(node.textStyleKey);
+  text.textStyleId = style.id;
+  // Still bind fills separately — text styles don't include color
+  if (node.tokens?.fills) {
+    const v = await figma.variables.importVariableByKeyAsync(node.tokens.fills.figmaKey);
+    text.fills = [figma.variables.setBoundVariableForPaint(
+      {type:'SOLID', color:{r:0,g:0,b:0}}, 'color', v
+    )];
+  }
+}
+```
+
+Text styles give proper Figma compliance — the design panel shows the style name
+instead of raw values, and changes to the library style propagate everywhere.
+Only fall back to individual variable bindings when `tokens.json` has no `textStyles` section.
 
 ### type: "ellipse"
 
