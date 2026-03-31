@@ -22,7 +22,7 @@ breakpoints, stress-test with real content, and hand off to engineering — all 
 | `/content-stress` | Break your design with edge-case content before users do |
 | `/audit-frames` | Nielsen's heuristics + Gestalt + cognitive load + token compliance |
 | `/diff-system` | What changed in your design system since last extraction? |
-| `/revision` | Apply feedback surgically — classifies, prioritizes, fixes |
+| `/design-revision` | Apply feedback from Figma comments or direct input — classifies, prioritizes, fixes |
 | `/plan-component` | Plan a new component — variants, props, tokens, anatomy |
 | `/build-component` | Build a component set in Figma from a plan |
 | `/review-component` | Score component quality across 9 dimensions |
@@ -156,7 +156,7 @@ It's a one-time step — the data is cached locally for all future commands.
 ### Iterate and ship
 
 ```
-/revision                # apply feedback without rebuilding from scratch
+/design-revision                # apply feedback without rebuilding from scratch
 /handoff-dev             # generate developer specs with exact tokens and states
 ```
 
@@ -172,7 +172,7 @@ Brief/screenshot ──→ /brainstorm ──→ pick a direction
                     /design-flow      /responsive-adapt
                     (multi-screen)    (tablet + mobile)
                          │                │
-                    /content-stress ──→ /audit-frames ──→ /revision
+                    /content-stress ──→ /audit-frames ──→ /design-revision
                     (break it)        (check it)       (fix it)
                          │
                     /handoff-dev ──→ ship to engineering

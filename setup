@@ -325,7 +325,7 @@ Available design-kit commands (reference by name):
 - content-stress: Stress-test with edge-case content
 - audit-frames: Heuristic + token + Gestalt audit
 - diff-system: Design system change detection
-- revision: Apply feedback surgically
+- design-revision: Apply feedback from Figma comments or direct input
 - extract-tokens: Pull tokens from Figma
 - extract-components: Document component specs
 - extract-relationships: Map component dependencies

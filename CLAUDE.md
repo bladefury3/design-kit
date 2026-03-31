@@ -34,7 +34,7 @@ design-kit/
 ├── brainstorm/                   # Skill: generate design variations (SCAMPER + JTBD)
 ├── responsive-adapt/             # Skill: desktop → tablet → mobile adaptation
 ├── design-flow/                  # Skill: multi-screen connected flow design
-├── revision/                     # Skill: surgical updates from feedback
+├── design-revision/              # Skill: revise from Figma comments or direct feedback
 ├── audit-frames/                 # Skill: audit frames (heuristics + tokens + Gestalt)
 ├── diff-system/                  # Skill: diff current Figma vs extracted data
 ├── content-stress/               # Skill: stress-test with edge-case content
@@ -62,7 +62,7 @@ Brief/screenshot ──→ /brainstorm ──→ pick a direction
                     /design-flow      /responsive-adapt
                     (multi-screen)    (tablet + mobile)
                          │                │
-                    /content-stress ──→ /audit-frames ──→ /revision
+                    /content-stress ──→ /audit-frames ──→ /design-revision
                     (break it)        (check it)       (fix it)
                          │
                     /handoff-dev ──→ ship to engineering

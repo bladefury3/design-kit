@@ -820,7 +820,7 @@ After applying fixes, take a new screenshot and re-score the affected dimensions
 to show improvement.
 
 **If B (plan fixes):**
-Suggest running `/revision` with the review findings as input. Or if the issues
+Suggest running `/design-revision` with the review findings as input. Or if the issues
 are fundamental (wrong variant architecture, missing atomic decomposition),
 suggest `/plan-component` to redesign the component structure.
 
@@ -830,7 +830,7 @@ Generate a summary of what needs to change:
 > 2. Increase close button target size to 44px (resize + constraint update)
 > 3. Add Loading state variant (new row in variant matrix)
 >
-> Run `/revision` to apply these changes, or `/plan-component` to redesign
+> Run `/design-revision` to apply these changes, or `/plan-component` to redesign
 > the variant structure from scratch."
 
 **If C (just the report):**
@@ -851,7 +851,7 @@ After presenting the review, suggest what to do next based on the overall score:
 
 **Score 5-7.9:**
 > "This component needs some work. You can:
-> - Run `/revision` to apply targeted fixes from this review
+> - Run `/design-revision` to apply targeted fixes from this review
 > - Fix the top issues manually and re-run `/review-component` to check progress
 > - Focus on the highest-weight dimensions first (Variant Completeness and Token Compliance)"
 

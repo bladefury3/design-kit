@@ -546,7 +546,7 @@ Create the `reports/` directory if it doesn't exist, then write `reports/audit-r
 
 After presenting the audit report, suggest follow-up actions:
 
-> "Want to fix the issues found? Run `/revision` — it'll take this audit's findings
+> "Want to fix the issues found? Run `/design-revision` — it'll take this audit's findings
 > as input and apply targeted fixes. Or if the audit looks clean, run `/handoff-dev`
 > to generate developer documentation."
 

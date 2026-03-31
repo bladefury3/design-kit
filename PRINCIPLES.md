@@ -5,7 +5,7 @@ from the relevant sections — this is the "design brain" that runs across every
 
 ## Nielsen's 10 Usability Heuristics
 
-Used by: `/audit-frames`, `/brainstorm`, `/revision`, `/design-flow`
+Used by: `/audit-frames`, `/brainstorm`, `/design-revision`, `/design-flow`
 
 | # | Heuristic | What to check |
 |---|---|---|
@@ -278,7 +278,7 @@ Not all edge cases matter equally. Test in this order:
 
 ## Feedback Classification
 
-Used by: `/revision`
+Used by: `/design-revision`
 
 | Type | How to handle | Example |
 |---|---|---|
@@ -299,7 +299,7 @@ Used by: `/revision`
 
 ## AskUserQuestion Format
 
-Used by: `/brainstorm`, `/responsive-adapt`, `/design-flow`, `/revision`, `/plan-design`, `/content-stress`, `/audit-frames`
+Used by: `/brainstorm`, `/responsive-adapt`, `/design-flow`, `/design-revision`, `/plan-design`, `/content-stress`, `/audit-frames`
 
 **ALWAYS follow this structure for every AskUserQuestion call:**
 
@@ -320,7 +320,7 @@ Figma to understand your own question, it's too complex.
 
 ## AI Slop Check
 
-Used by: `/brainstorm`, `/plan-design`, `/build-design`, `/revision`, `/design-flow`
+Used by: `/brainstorm`, `/plan-design`, `/build-design`, `/design-revision`, `/design-flow`
 
 Before finalizing any design output, check for these common AI design traps:
 

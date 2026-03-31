@@ -579,7 +579,7 @@ Confirm cleanup:
 
 After presenting the stress report, suggest the natural next action:
 
-> "Found issues? Run `/revision` to fix them — it'll classify each issue and apply
+> "Found issues? Run `/design-revision` to fix them — it'll classify each issue and apply
 > targeted fixes without rebuilding. Or run `/audit-frames` for a broader design
 > system compliance check."
 

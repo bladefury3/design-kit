@@ -1,9 +1,9 @@
 ---
-name: revision
+name: design-revision
 description: |
-  Apply surgical revisions to existing Figma frames based on feedback. Classifies
-  feedback by type, generates minimal diff-plans, and modifies frames without
-  rebuilding from scratch. Use for iterating on designs after review.
+  Apply surgical revisions to existing Figma frames based on feedback. Pulls
+  feedback from Figma comments or direct input, classifies by type, generates
+  minimal diff-plans, and modifies frames without rebuilding. Use after review.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_selection
@@ -36,7 +36,7 @@ allowed-tools:
   - Agent
 ---
 
-# Revision
+# Design Revision
 
 You are a design iteration specialist. Your job is to take feedback — from
 stakeholders, engineers, usability tests, or the designer themselves — and apply
@@ -122,33 +122,52 @@ rebuild via `/plan-design` + `/build-design` instead.
    ```
 
    If nothing is selected:
-   > "Select the frame you want to revise in Figma, then run `/revision` again."
+   > "Select the frame you want to revise in Figma, then run `/design-revision` again."
 
-4. **Get the feedback.** Feedback can come from three sources:
+4. **Get the feedback source.** This is the first real question — ask it clearly.
 
-   **a) Direct input** — The user typed it in the conversation or as slash command args.
-   If the user already provided feedback (e.g., `/revision make the sidebar narrower`),
-   skip to Step 1 without asking.
+   If the user already provided feedback inline (e.g., `/design-revision make the
+   sidebar narrower`), skip this question and go to Step 1.
 
-   **b) Figma comments** — Pull comments attached to the frame:
+   Otherwise, AskUserQuestion:
+
+   > Ready to revise **[frame name]**. Where's the feedback coming from?
+   >
+   > RECOMMENDATION: Choose A if you have specific changes in mind, B if your team
+   > left comments in Figma.
+   >
+   > A) **I'll describe it** — tell me what needs to change right now
+   > B) **Figma comments** — pull all comments on this frame and use those as feedback
+   > C) **Both** — pull Figma comments AND let me add more
+   > D) **Feedback document** — I have a file with structured feedback
+
+   **STOP.** Wait for response.
+
+   **If B or C (Figma comments):**
    ```
    Use figma_get_comments to retrieve all comments on the file.
    Filter to comments within or referencing the selected frame.
    ```
 
-   **c) Structured feedback document** — The user points to a file.
+   Present the comments found:
+   > Found **[N] comments** on this frame:
+   >
+   > | # | Author | Comment | Resolved? |
+   > |---|---|---|---|
+   > | 1 | @sarah | "The spacing between cards feels too tight" | No |
+   > | 2 | @mike | "Can we make the CTA more prominent?" | No |
+   > | 3 | @sarah | "Love the color scheme" | Yes |
+   >
+   > I'll work from the **[N] unresolved** comments. Want to include resolved
+   > ones too, or add anything else?
+
+   **If D (feedback document):**
    ```
    Read the file and parse each feedback item.
    ```
 
-   If no feedback was provided and no Figma comments exist:
-   > "I have the frame selected. What feedback should I apply?
-   >
-   > A) I'll type it now (describe what needs to change)
-   > B) Pull from Figma comments (I'll read comments on this frame)
-   > C) I have a feedback document (give me the file path)"
-
-   **STOP.** Wait for response.
+   **If C (both):** Merge Figma comments with the user's additional feedback
+   into a single list before classifying.
 
 5. **Screenshot the current state as "before."**
 
@@ -462,7 +481,7 @@ Present the comparison:
 - Original: `"[Frame name] [Original]"` (untouched)
 - Revision: `"[Frame name] [Revised]"` (with changes applied)
 
-If the user runs `/revision` again on an already-revised frame, increment:
+If the user runs `/design-revision` again on an already-revised frame, increment:
 - `"[Frame name] [Revised v2]"`, `"[Frame name] [Revised v3]"`, etc.
 
 ## Step 5: Flag deferred items
