@@ -1,9 +1,10 @@
 ---
 name: handoff-dev
 description: |
-  Generate developer-ready documentation from Figma designs. Produces specs with
-  exact token values, component APIs, responsive behavior, interaction states,
-  and implementation notes. Use when a design is ready for engineering handoff.
+  Annotate Figma frames with developer specs that Dev Mode doesn't show: token
+  names, interaction states, conditional logic, content rules, focus order, and
+  animation. Creates a spec section next to the design — not JSON files, not
+  comments. Use when a design is ready for engineering.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_design_system_kit
@@ -26,10 +27,19 @@ allowed-tools:
   - mcp__figma-console__figma_search_components
   - mcp__figma-console__figma_get_library_components
   - mcp__figma-console__figma_get_annotations
+  - mcp__figma-console__figma_set_annotations
+  - mcp__figma-console__figma_get_annotation_categories
   - mcp__figma-console__figma_get_design_system_summary
   - mcp__figma-console__figma_check_design_parity
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
+  - mcp__figma-console__figma_create_child
+  - mcp__figma-console__figma_set_fills
+  - mcp__figma-console__figma_set_text
+  - mcp__figma-console__figma_rename_node
+  - mcp__figma-console__figma_resize_node
+  - mcp__figma-console__figma_move_node
+  - mcp__figma-console__figma_clone_node
   - Read
   - Write
   - Edit
@@ -40,219 +50,337 @@ allowed-tools:
 
 # Developer Handoff
 
-You are a design-to-engineering translator. Your job is to produce documentation that
-a developer can implement from without needing to ask the designer clarifying questions.
-Every token value, every state, every responsive behavior — documented and explicit.
+You annotate Figma frames with the information developers actually need — the
+things Figma's Dev Mode doesn't show. You don't duplicate what Dev Mode already
+provides. You don't bloat the canvas with obvious specs.
+
+## What Dev Mode already gives developers (DO NOT annotate)
+
+- Spacing values in pixels
+- Color values (hex, RGB, HSL)
+- Typography properties (font family, size, weight, line-height)
+- Component name and current variant
+- Auto-layout properties (direction, gap, padding)
+- Dimensions, border radius, shadows, opacity
+- CSS / iOS / Android code snippets
+
+**If Dev Mode shows it, you don't annotate it.** Your job is to fill the gaps.
+
+## What Dev Mode does NOT show (annotate ONLY these)
+
+| Category | What to annotate | Example |
+|---|---|---|
+| **Token names** | Design system variable name for each value | "This 16px is `spacing-xl`, not a magic number" |
+| **Interaction states** | What happens on hover, focus, press, disabled | "Hover: background darkens 10%. Focus: 2px brand ring" |
+| **Conditional logic** | When elements show/hide, enable/disable | "Disable submit until all required fields valid" |
+| **Content rules** | Max length, truncation, overflow behavior | "Max 50 chars, truncate with ellipsis" |
+| **Focus order** | Tab sequence for keyboard navigation | "Tab: Name → Email → Password → Submit" |
+| **Animation** | Transition timing and easing | "150ms ease-out on background-color" |
+| **Data binding** | What API field maps to each element | "user.displayName, falls back to user.email" |
+
+**Most frames need only 2-3 of these categories.** A simple card might only need
+token names. A form needs interaction states + focus order + content rules. A
+dashboard might need nothing beyond what Dev Mode shows.
 
 ## Before you begin
 
-1. Confirm Figma is connected.
-2. Load available design system docs:
-   - `design-system/tokens.json` — for token name → value mappings
-   - `design-system/components/index.json` — for component API reference
-   - `design-system/relationships.json` — for understanding composition
-### JSON-first approach (mandatory)
+1. **Confirm Figma is connected.**
 
-Pre-extracted JSONs are the required source for handoff documentation. You MUST generate
-handoff docs primarily from the JSON files, with Figma MCP only called for screenshots
-and frame-specific visual validation:
+2. **Load design system data** for token name lookups:
+   - `design-system/tokens.json` — token names and resolved values
+   - `design-system/components/index.json` — component catalog
+   - `design-system/relationships.json` — composition patterns
 
-- `design-system/tokens.json` — Token names, values, Figma keys (`$extensions.figma.key`), and mode
-  variants. Use these directly — do NOT re-extract token data from Figma.
-- `design-system/components/index.json` — The catalog. Check if `design-system/components/<name>.json` exists for
-  each component you're documenting. If not, extract it on the spot using
-  `figma_get_component_for_development_deep` or `figma_get_library_components`,
-  write `design-system/components/<name>.json`, then generate the handoff docs from it.
-  This caches the full spec for future handoffs.
-- `design-system/relationships.json` — Component dependency graph. Helps document which components
-  are used together and their composition patterns.
+   If missing, try `figma_get_design_system_kit` as fallback. If that also fails,
+   proceed without token names — annotate interaction states and logic instead.
 
-**With JSONs**: Load files → generate handoff docs directly from structured data → only call Figma MCP for screenshots and visual validation
+3. **Get the target frame** from selection or user specification.
 
-**Without JSONs — try `figma_get_design_system_kit` first:**
+4. **Determine what needs annotation.** Analyze the frame and identify which of
+   the 7 categories are relevant. AskUserQuestion ONLY if genuinely unclear:
 
-```
-Use figma_get_design_system_kit with:
-  - include: ["tokens", "components", "styles"]
-  - format: "full"
-  - includeImages: true
-```
-This returns implementation-ready data in one call: visual specs with exact colors,
-padding, typography, layout values, and rendered component screenshots. Much of the
-handoff documentation can be generated directly from this response.
-
-If the file has no local design system, ask for the library URL:
-> "I need the design system library URL to generate accurate handoff docs.
-> What's the URL? (e.g., `https://www.figma.com/design/ABC123/My-Library`)"
-
-If REST fails, fall back to extraction:
-> "I need pre-extracted design system data. Let me run `/extract-tokens` and
-> `/extract-components` first."
-
-3. **Determine scope and context.**
-
-   If the user specified what to hand off (e.g., "/handoff-dev for this signup form"),
-   skip the scope question — it's answered.
-
-   Default tech stack to the project's actual stack if detectable (check package.json,
-   framework files). Only ask if genuinely unknown:
-
-   > "Generating developer handoff for **[frame name]**. What's your tech stack?
+   > Preparing developer handoff for **[frame name]**.
    >
-   > RECOMMENDATION: I'll format specs generically (works for any framework)
-   > unless you need framework-specific output.
+   > Based on what I see, I'll annotate:
+   > - Token names (this frame uses 12 unique tokens)
+   > - Interaction states (4 interactive components)
+   > - Focus order (form with 6 inputs)
    >
-   > A) Generic — CSS properties, token names, component specs
-   > B) React + Tailwind — className strings, component props, hooks
-   > C) Other — tell me your stack"
+   > Anything else developers usually ask about for this kind of screen?
+   >
+   > RECOMMENDATION: Start with these 3. I can add more after you review.
+   >
+   > A) These 3 are good — go
+   > B) Also add content rules (I have max-length constraints)
+   > C) Also add animation specs
+   > D) Skip token names — our devs know the system. Just states + focus.
 
-   One question max before starting work.
+   Default to the detected categories and proceed. One question max.
 
-## Step 1: Capture the design
+## Step 1: Analyze the frame
 
-```
-Use figma_get_selection or navigate to the specified frames.
-Use figma_take_screenshot for visual reference.
-Use figma_get_file_data for structural data.
-```
+Read the frame structure using `figma_get_file_data` and `figma_get_selection`.
+For each element, determine:
 
-Capture every relevant frame:
-- Default states
-- Hover / active / focused / disabled states
-- Mobile / tablet / desktop breakpoints (if designed)
-- Empty states, loading states, error states
-- Light and dark mode (if applicable)
+- Is it a library component? (Check `design-system/components/index.json`)
+- What tokens are bound? (Check bound variables via `figma_execute`)
+- Is it interactive? (Buttons, inputs, links, toggles, checkboxes)
+- Does it contain dynamic text? (User names, dates, numbers, generated content)
 
-## Step 2: Extract component specs
+Use `figma_analyze_component_set` on interactive components to get their state
+machines — this tells you exactly what changes between default, hover, focus,
+and disabled states.
 
-For each component used in the design:
+### Determine annotation density
 
-```
-Use figma_get_component_for_development_deep for full anatomy (up to 20 levels),
-  resolved token names, and instance references. Prefer this over the non-deep version.
-Use figma_analyze_component_set for state machines — maps variant states to CSS
-  pseudo-classes (:hover, :focus-visible, :disabled) with visual diffs.
-Use figma_generate_component_doc to auto-generate markdown documentation with
-  anatomy, typography tokens, accessibility notes, and implementation details.
-Use figma_get_annotations for designer notes.
-```
+Not every element needs annotation. Apply this filter:
 
-Document for developers:
-
-### Component API
-
-```json
-{
-  "component": "Button",
-  "props": {
-    "variant": {
-      "type": "enum",
-      "values": ["primary", "secondary", "ghost", "destructive"],
-      "default": "primary",
-      "required": false
-    },
-    "size": {
-      "type": "enum",
-      "values": ["sm", "md", "lg"],
-      "default": "md",
-      "required": false
-    },
-    "label": {
-      "type": "string",
-      "required": true
-    },
-    "icon": {
-      "type": "ReactNode | null",
-      "default": null,
-      "position": "leading"
-    },
-    "disabled": {
-      "type": "boolean",
-      "default": false
-    },
-    "onClick": {
-      "type": "() => void",
-      "required": true
-    }
-  }
-}
-```
-
-### Visual specs
-
-For each component instance in the design, document the specific configuration:
-- Which variant/size is being used
-- What content is displayed (actual text, actual icons)
-- How it's positioned in its parent layout
-
-## Step 3: Document layout and spacing
-
-For the overall page/frame structure:
-
-### Layout tree
-
-```
-Page (vertical, gap: 0)
-├── Header (horizontal, padding: 16 24, justify: space-between)
-│   ├── Logo (fixed: 120x32)
-│   ├── Nav (horizontal, gap: 32)
-│   └── CTA Button (variant: primary, size: sm)
-├── Hero (vertical, padding: 64 24, align: center, maxWidth: 1200)
-│   ├── Heading (fontSize: 4xl, fontWeight: bold, color: text.primary)
-│   ├── Subtitle (fontSize: lg, color: text.secondary, maxWidth: 600)
-│   └── Actions (horizontal, gap: 16, marginTop: 32)
-│       ├── Button (variant: primary, size: lg)
-│       └── Button (variant: secondary, size: lg)
-├── Features (grid: 3 cols, gap: 24, padding: 64 24)
-│   ├── Card (contains: icon + title + description)
-│   ├── Card (...)
-│   └── Card (...)
-└── Footer (horizontal, padding: 48 24, justify: space-between)
-```
-
-### Token mapping table
-
-| Property | Token | Resolved Value |
+| Element type | Annotate? | Why |
 |---|---|---|
-| Page background | `color.bg.primary` | `#ffffff` |
-| Header padding | `spacing.4 spacing.6` | `16px 24px` |
-| Hero heading size | `fontSize.4xl` | `36px` |
-| Hero heading color | `color.text.primary` | `#0f172a` |
-| Card border radius | `borderRadius.lg` | `12px` |
-| Card shadow | `shadow.md` | `0 4px 6px -1px rgba(0,0,0,0.1)` |
-| Section gap | `spacing.16` | `64px` |
-| Grid gap | `spacing.6` | `24px` |
+| Library component in default state | **No** | Dev Mode shows everything needed |
+| Library component with state changes | **Token names + states** | States aren't visible |
+| Token-built frame | **Token names** | Dev can't see which tokens were used |
+| Form inputs | **States + focus order + content rules** | Critical for implementation |
+| Conditional elements (show/hide) | **Conditional logic** | Not visible in static frame |
+| Animated transitions | **Animation specs** | Static frame can't show motion |
+| Data-driven text | **Data binding + content rules** | Devs need the field name |
+| Static text, images, dividers | **No** | Nothing to add beyond Dev Mode |
 
-## Step 4: Document interactions and states
+**Target: annotate 30-50% of elements.** If you're annotating everything, you're
+duplicating Dev Mode. If you're annotating nothing, the handoff is incomplete.
 
-### State matrix
+## Step 2: Create the spec section in Figma
 
-Use `figma_analyze_component_set` to auto-generate the state matrix — it maps
-variant states directly to CSS pseudo-classes and reports visual diffs from
-the default state (what exact properties change for hover, focus, disabled, etc.).
-This is faster and more accurate than manual inspection.
+Create a **spec section** next to the design frame — NOT overlaying it.
 
-| Element | Default | Hover | Pressed | Focus | Disabled |
-|---|---|---|---|---|---|
-| Primary Button | blue bg | darken 10% | darken 20% | ring 2px | 50% opacity |
-| Link | underline none | underline | — | ring 2px | gray text |
-| Card | shadow.sm | shadow.md + translateY(-2px) | — | ring 2px | — |
-| Input | gray border | blue border | — | blue border + ring | gray bg |
+```javascript
+// Create a section next to the design frame
+const designFrame = figma.currentPage.selection[0];
+const section = figma.createSection();
+section.name = "📐 Dev Specs: " + designFrame.name;
+section.x = designFrame.x + designFrame.width + 100; // 100px gap to the right
+section.y = designFrame.y;
+```
 
-### Per-field state documentation (forms)
+The spec section contains annotation cards organized by category. Each card is
+a small frame with a title and spec content.
 
-When handing off forms, document EACH input field individually — not "inputs have 5 states" generically:
+### Annotation card structure
+
+```javascript
+// Each annotation card
+const card = figma.createFrame();
+card.name = "Spec: [Element Name]";
+card.layoutMode = 'VERTICAL';
+card.paddingLeft = card.paddingRight = card.paddingTop = card.paddingBottom = 12;
+card.itemSpacing = 8;
+card.cornerRadius = 8;
+card.fills = [{ type: 'SOLID', color: { r: 0.96, g: 0.97, b: 0.98 } }]; // Light gray
+card.strokes = [{ type: 'SOLID', color: { r: 0.85, g: 0.87, b: 0.9 } }];
+card.strokeWeight = 1;
+```
+
+### Category-specific annotation formats
+
+**Token Names** (only when tokens are bound but names aren't obvious from Dev Mode):
+
+```
+┌─────────────────────────────────┐
+│ 🎨 Token Map                    │
+│                                 │
+│ Metrics row gap    spacing-3xl  │
+│ Card background    bg-secondary │
+│ Card radius        radius-xl    │
+│ Section gap        spacing-4xl  │
+│                                 │
+│ Use token names in code, not    │
+│ hardcoded values.               │
+└─────────────────────────────────┘
+```
+
+Only list tokens that a developer might miss. If a button uses `bg-brand-primary`,
+Dev Mode shows the color — the developer just needs to know it's `bg-brand-primary`
+in the token system. Keep this list to tokens on TOKEN-BUILT elements where the
+mapping isn't obvious from the component name.
+
+**Interaction States** (for components with hover/focus/disabled behavior):
+
+```
+┌─────────────────────────────────┐
+│ 🖱 Interaction States            │
+│                                 │
+│ Submit Button                   │
+│   hover:    bg darkens 10%      │
+│   focus:    2px ring, brand     │
+│   active:   scale 0.98          │
+│   disabled: opacity 50%, no     │
+│             pointer events      │
+│   loading:  text → "Saving...", │
+│             spinner replaces    │
+│             icon, disabled      │
+│                                 │
+│ Search Input                    │
+│   focus:    border → brand,     │
+│             label floats up     │
+│   error:    border → error,     │
+│             helper text shows   │
+│   disabled: bg → tertiary,      │
+│             no interaction      │
+└─────────────────────────────────┘
+```
+
+Use `figma_analyze_component_set` to get the exact visual diffs between states.
+Don't guess — report what the component actually changes.
+
+**Conditional Logic** (when elements depend on data or user actions):
+
+```
+┌─────────────────────────────────┐
+│ ⚡ Conditional Logic             │
+│                                 │
+│ Submit button                   │
+│   enabled when: all required    │
+│   fields pass validation        │
+│                                 │
+│ Error messages                  │
+│   shown when: field loses focus │
+│   with invalid value            │
+│                                 │
+│ "Upgrade" banner                │
+│   shown when: user.plan = free  │
+│   hidden when: user.plan = pro  │
+│                                 │
+│ Empty state                     │
+│   shown when: items.length = 0  │
+│   action: "Create your first    │
+│   project" button               │
+└─────────────────────────────────┘
+```
+
+**Content Rules** (for dynamic text that could overflow):
+
+```
+┌─────────────────────────────────┐
+│ 📝 Content Rules                 │
+│                                 │
+│ User name    max 50 chars       │
+│              truncate: ellipsis │
+│                                 │
+│ Description  max 120 chars      │
+│              truncate: 2 lines  │
+│              + "..." link       │
+│                                 │
+│ Stat values  format: compact    │
+│              1000 → "1K"        │
+│              1000000 → "1M"     │
+└─────────────────────────────────┘
+```
+
+**Focus Order** (for forms and interactive sections):
+
+```
+┌─────────────────────────────────┐
+│ ⌨️ Focus Order                   │
+│                                 │
+│ 1. Full Name input              │
+│ 2. Email input                  │
+│ 3. Password input               │
+│    → toggle visibility (Tab)    │
+│ 4. Confirm Password input       │
+│ 5. Terms checkbox               │
+│ 6. Submit button                │
+│                                 │
+│ Escape: closes modal            │
+│ Enter: submits form (from any   │
+│ input)                          │
+└─────────────────────────────────┘
+```
+
+**Animation** (only if the design has motion — most frames don't):
+
+```
+┌─────────────────────────────────┐
+│ 🎬 Animation                     │
+│                                 │
+│ Button hover                    │
+│   property: background-color    │
+│   duration: 150ms               │
+│   easing: ease-in-out           │
+│                                 │
+│ Modal open                      │
+│   property: opacity, transform  │
+│   duration: 200ms               │
+│   easing: ease-out              │
+│   transform: translateY(8px)→0  │
+└─────────────────────────────────┘
+```
+
+## Step 3: Add Figma annotations to interactive elements
+
+Beyond the spec section, use `figma_set_annotations` on specific interactive
+elements in the ORIGINAL frame. This puts specs directly in Dev Mode's
+annotation panel — developers see them when they inspect the element.
+
+```
+Use figma_set_annotations on:
+  - Interactive components (buttons, inputs, toggles) → interaction states
+  - Conditional elements → show/hide logic
+  - Form containers → focus order
+```
+
+Keep annotations SHORT — one line per annotation. The spec section has the details.
+The element annotation is just a pointer: "See spec section for full state matrix."
+
+**Do NOT annotate:**
+- Every element (bloat)
+- Spacing values (Dev Mode shows these)
+- Color values (Dev Mode shows these)
+- Typography (Dev Mode shows these)
+- Static, non-interactive elements
+
+## Step 4: Screenshot and verify
+
+Take a screenshot showing the design frame + spec section side by side.
+
+Check:
+- Is the spec section readable at normal zoom?
+- Does it cover only what Dev Mode doesn't show?
+- Are annotation cards organized by category?
+- Is annotation density reasonable (30-50% of elements, not 100%)?
+
+## Step 5: Present the handoff
+
+> **Developer handoff ready for [frame name]**
+>
+> Created spec section "📐 Dev Specs: [frame name]" to the right of the design.
+>
+> **What's annotated:**
+> - [N] token mappings (token-built elements only)
+> - [N] interaction state specs (buttons, inputs, toggles)
+> - [N] conditional logic rules
+> - [N] content rules (max length, truncation)
+> - Focus order for [form name]
+>
+> **What's NOT annotated (Dev Mode handles it):**
+> - Spacing, colors, typography, dimensions, component names
+>
+> The spec section is a Figma section — developers can inspect it alongside
+> the design in Dev Mode. Want me to add or remove anything?
+
+## Per-field state documentation (forms)
+
+When handing off forms, document EACH input field individually — not "inputs have
+5 states" generically:
 
 | Field | Default | Focused | Filled | Error | Disabled |
 |---|---|---|---|---|---|
 | Full Name | Gray border, placeholder "Jane Doe" | Blue border, cursor | Black text, value shown | Red border, "Name is required" below | Gray bg, no interaction |
 | Email | Gray border, placeholder "jane@company.com" | Blue border, cursor | Black text, value shown | Red border, "Enter a valid email" below | Gray bg, no interaction |
-| Password | Gray border, placeholder "••••••••" | Blue border, cursor, toggle visible | Dots shown, strength meter active | Red border, "Min 8 characters" below | Gray bg, no interaction |
 
 Every error message must be the ACTUAL string, not "shows error."
 Every placeholder must be the ACTUAL text, not "placeholder text."
 
-### Interactive sub-features
+## Interactive sub-features
 
 Document behavior that lives INSIDE a component, not just the component's states:
 
@@ -264,134 +392,45 @@ Document behavior that lives INSIDE a component, not just the component's states
 
 For each sub-feature, document: trigger, visual change, state transitions, and edge cases.
 
-### Transitions
+## Edge cases
 
-| Element | Property | Duration | Easing |
-|---|---|---|---|
-| Button | background-color | 150ms | ease-in-out |
-| Card | box-shadow, transform | 200ms | ease-out |
-| Input | border-color | 150ms | ease-in-out |
-| Modal | opacity, transform | 300ms | ease-out (in), ease-in (out) |
+- **Frame with no interactive elements**: Only annotate token names for token-built
+  elements. If everything is library components, there may be nothing to annotate.
+  That's fine — tell the developer: "This frame is 100% library components. Dev Mode
+  has everything you need."
 
-### Responsive behavior
+- **Very complex frame (50+ elements)**: Don't annotate everything. Focus on the
+  elements developers will implement first (primary actions, form inputs, data displays).
+  Offer to annotate more sections on request.
 
-| Breakpoint | Layout Changes |
-|---|---|
-| Desktop (≥1024px) | 3-column feature grid, horizontal nav |
-| Tablet (≥768px) | 2-column feature grid, hamburger nav |
-| Mobile (<768px) | 1-column stack, hamburger nav, full-width buttons |
+- **Frame already has designer annotations**: Read them with `figma_get_annotations`.
+  Don't overwrite — add to them. If there's a conflict, defer to the designer's annotation.
 
-## Step 5: Document content and copy
+- **No design system data**: Skip token names. Focus on interaction states, conditional
+  logic, and content rules — these don't need token data.
 
-List all text content with specifications:
+## What NOT to do
 
-| Element | Content | Max Length | Truncation | Localization Notes |
-|---|---|---|---|---|
-| Hero heading | "Build faster with our tools" | ~40 chars | — | Translate |
-| Hero subtitle | "Everything you need to..." | ~120 chars | 2 lines | Translate |
-| CTA primary | "Get Started" | ~20 chars | — | Translate |
-| Card titles | "Feature Name" | ~30 chars | Ellipsis | Translate |
+- **Don't create JSON files in a `handoff/` directory.** Developers work in Figma Dev Mode,
+  not in their terminal reading JSON.
+- **Don't leave Figma comments.** Comments are for design feedback conversations between
+  humans, not for specs.
+- **Don't annotate spacing values.** Dev Mode shows these with pixel precision.
+- **Don't annotate every element.** 30-50% density. If a button is from the library and
+  has no special states, skip it.
+- **Don't create a full-size redline overlay.** A compact spec section to the side is
+  enough. Overlays clutter the canvas.
 
-## Step 6: Edge cases and implementation notes
+## Next steps
 
-Document anything a developer might miss:
-
-**Keyboard navigation**
-- Tab order follows visual layout (left-to-right, top-to-bottom)
-- Enter/Space activates buttons and links
-- Escape closes modals and dropdowns
-
-**Loading states**
-- Buttons show spinner replacing icon, text stays
-- Cards show skeleton placeholders
-- Page shows skeleton layout, not spinner
-
-**Empty states**
-- No results: show illustration + message + action
-- First use: show onboarding prompt
-- Error: show error message + retry button
-
-**Accessibility**
-- All images need alt text
-- Form inputs need labels (visible or aria-label)
-- Color is not the only indicator (icons + text for status)
-- Minimum contrast ratios met (check audit report)
-
-**Browser/device support**
-- Note any CSS features that need fallbacks
-- Flag any interactions that differ on touch vs. mouse
-
-## Step 7: Output the handoff document
-
-Create `handoff/` directory with:
-
-```
-handoff/
-├── overview.json          # Page-level specs, layout tree, responsive rules
-├── components.json        # Component instances with specific configurations
-├── tokens-used.json       # Subset of design-system/tokens.json actually used in this design
-├── states.json            # Interaction states, transitions, animations
-├── content.json           # All text content and media specs
-├── notes.json             # Edge cases, accessibility, implementation notes
-└── screenshots/           # Reference screenshots (if user wants them saved)
-```
-
-### overview.json format
-
-```json
-{
-  "$schema": "design-kit/handoff/v1",
-  "$metadata": {
-    "generatedAt": "<ISO timestamp>",
-    "figmaFile": "<file name>",
-    "frames": ["<frame names>"],
-    "techStack": {
-      "framework": "react",
-      "styling": "tailwind",
-      "componentLib": "custom"
-    }
-  },
-  "layout": {
-    "tree": "<nested layout structure>",
-    "breakpoints": "<responsive rules>",
-    "maxWidth": "1200px"
-  },
-  "tokenMap": [
-    {
-      "element": "Page background",
-      "token": "color.bg.primary",
-      "resolvedValue": "#ffffff"
-    }
-  ]
-}
-```
-
-Present the summary:
-> "Handoff docs are ready in `handoff/`:
->
-> - **6 files** covering layout, components, tokens, states, content, and notes
-> - **14 component instances** documented with exact configurations
-> - **38 tokens** mapped to resolved values
-> - **4 responsive breakpoints** with layout rules
-> - **12 interaction states** with transitions
->
-> The developer should be able to implement this without asking a single question.
-> Want me to adjust anything before you share it?"
-
-### How to use design-system/tokens.json for Figma operations
-
-When you need to bind a design token to a Figma node via `figma_execute`:
-
-1. Read `design-system/tokens.json` from the working directory
-2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
-3. Get the Figma key from `$extensions.figma.key`
-4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
-5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when design-system/tokens.json exists
-
-This turns O(n) collection scanning into O(1) direct key lookup per token.
+> "Specs are in Figma. The developer can:
+> - Inspect the design in Dev Mode for spacing, colors, typography
+> - Check the spec section for states, logic, content rules, focus order
+> - Run `/audit-frames` if they want to verify design system compliance"
 
 ## Tone
 
-You're a technical writer who respects both the designer's intent and the developer's
-need for precision. Be exhaustively specific — a developer reading your docs at 2am
-should find every answer they need. No ambiguity, no "use your judgment" handwaving.
+You're a senior developer writing specs for yourself. You know what Dev Mode shows.
+You know what's missing. You fill the gaps efficiently — no over-documentation,
+no redundancy. If a developer could figure it out from Dev Mode alone, you don't
+annotate it.
