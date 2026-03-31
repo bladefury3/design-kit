@@ -1,0 +1,46 @@
+{
+  "id": "responsive-adapt-01",
+  "skill": "responsive-adapt",
+  "name": "6-column data table to 375px mobile — tests morphing vs shrinking",
+  "difficulty": "hard",
+  "input": {
+    "sourceFrame": {
+      "name": "Orders / Desktop",
+      "width": 1440,
+      "description": "Orders management table with 6 columns: Order # (text link), Customer (avatar + name + email), Date (relative), Status (badge: Pending/Shipped/Delivered/Cancelled), Total (currency), Actions (3-dot menu). Has column header sort indicators, row hover states, bulk selection checkboxes, and pagination (showing 1-25 of 312). Top bar has search, date range filter, and status filter dropdown."
+    },
+    "targetBreakpoint": 375,
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Applies a Morph pattern: converts the table into a card list, not a squished table",
+    "Prioritizes essential columns for the card view: Order #, Customer name, Status badge, Total",
+    "Moves secondary data (email, date, actions menu) to a card expand/detail view or separate screen",
+    "Preserves the status badge as a visual element — does not convert it to plain text",
+    "Replaces column header sorting with a sort-by dropdown or segmented control",
+    "Converts bulk selection checkboxes to an 'Edit' or 'Select' mode toggle",
+    "Converts pagination to infinite scroll or 'Load more' pattern appropriate for mobile",
+    "Adapts the top filter bar: search becomes a search icon that expands, filters go into a bottom sheet or filter icon",
+    "Plans touch targets at minimum 44px for all interactive elements"
+  ],
+  "antiPatterns": [
+    "Shrinks the 6-column table to fit 375px — columns become unreadable at ~60px each",
+    "Adds horizontal scroll to the table — forces users to scroll sideways to see data",
+    "Removes the table entirely and shows only a summary or chart",
+    "Keeps all 6 columns visible but truncates every cell to 2-3 characters",
+    "Loses the bulk selection capability entirely with no replacement",
+    "Keeps desktop pagination (page numbers) instead of adapting to mobile pattern",
+    "Shrinks filter bar but keeps it as a horizontal row of dropdowns that overflow",
+    "Removes the status badge color and just shows text",
+    "Uses the same row height as desktop — no touch target consideration"
+  ],
+  "evaluationCriteria": {
+    "morphNotShrink": "Does it transform the table into cards/list, not just make it smaller?",
+    "columnPrioritization": "Does it identify which columns are essential vs secondary and split them?",
+    "interactionAdaptation": "Does it adapt sort, filter, select, and paginate to mobile-native patterns?",
+    "informationPreservation": "Is ALL the data still accessible, even if moved to expand/detail views?",
+    "touchTargets": "Are interactive elements sized for touch (44px minimum)?",
+    "filterAdaptation": "Does it convert the filter bar to a mobile pattern (bottom sheet, icon, etc.)?"
+  }
+}

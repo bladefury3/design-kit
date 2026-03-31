@@ -1,0 +1,47 @@
+{
+  "id": "diff-system-01",
+  "skill": "diff-system",
+  "name": "Component removed from library — tests critical change detection and impact analysis",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Diff the current Figma library against our extracted design system",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "baselineState": {
+      "componentCount": 35,
+      "components": ["Accordion", "Avatar", "Badge", "Banner", "Breadcrumb", "Button", "Card", "Checkbox", "Chip", "DataTable", "DatePicker", "Dialog", "Divider", "Drawer", "Dropdown", "EmptyState", "Footer", "Header", "Icon", "Input", "Link", "Menu", "NavigationBar", "Pagination", "ProgressBar", "RadioButton", "Select", "Sidebar", "Skeleton", "Spinner", "Switch", "Tabs", "Toast", "Tooltip", "Typography"]
+    },
+    "currentState": {
+      "componentCount": 34,
+      "removedComponent": "Toast",
+      "note": "Toast was deleted from the Figma library but still referenced in index.json and relationships.json"
+    }
+  },
+  "expectedBehaviors": [
+    "Detects exactly 1 component removed: Toast",
+    "Classifies Toast removal as CRITICAL severity, not just 'removed'",
+    "Explains WHY it is critical: Toast is a feedback/notification component used across many flows",
+    "Queries relationships.json or Figma to find which components contain or depend on Toast",
+    "Lists specific frames or screens that use Toast instances (e.g., form submissions, error handling, success confirmations)",
+    "Checks if Toast was replaced by something else (e.g., a new Snackbar component) or truly deleted",
+    "Recommends immediate action: re-add Toast, migrate to replacement, or acknowledge intentional removal",
+    "Flags that existing Figma instances of Toast will show as missing component (yellow warning diamond)"
+  ],
+  "antiPatterns": [
+    "Reports '1 component removed' without naming it or explaining impact",
+    "Lists the removal as INFO or WARNING severity instead of CRITICAL",
+    "Does not check what depends on Toast — treats it as an isolated deletion",
+    "Only compares counts (35 vs 34) without identifying which component is missing",
+    "Does not check whether a replacement component was added",
+    "Produces a generic 'component was removed, consider re-adding' message without context",
+    "Ignores that existing instances in frames will break (missing component warnings)"
+  ],
+  "evaluationCriteria": {
+    "detectionAccuracy": "Does it identify Toast specifically as the removed component, not just a count difference?",
+    "severityClassification": "Does it classify this as CRITICAL, recognizing that removing a feedback component breaks user flows?",
+    "impactAnalysis": "Does it trace Toast dependencies — which frames use it, which components contain it?",
+    "replacementCheck": "Does it investigate whether Toast was replaced by a new component (e.g., Snackbar) or truly deleted?",
+    "actionableRecommendation": "Does it recommend concrete next steps, not just 'component was removed'?",
+    "instanceAwareness": "Does it warn about orphaned Toast instances showing missing-component warnings in Figma?"
+  }
+}

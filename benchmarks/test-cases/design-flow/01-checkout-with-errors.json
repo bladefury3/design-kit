@@ -1,0 +1,43 @@
+{
+  "id": "design-flow-01",
+  "skill": "design-flow",
+  "name": "3-step checkout flow — tests error state coverage and state persistence",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Design a 3-step checkout flow: Cart -> Shipping -> Payment -> Confirmation. Standard e-commerce.",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Plans at least 4 screens for the happy path (Cart, Shipping, Payment, Confirmation)",
+    "Plans error states for EACH step, not just the final payment step",
+    "Cart errors: out-of-stock item discovered at checkout, price changed since added, quantity exceeds available stock",
+    "Shipping errors: address validation failure, unserviceable zip code, PO box not allowed for certain items",
+    "Payment errors: card declined, insufficient funds, expired card, 3D Secure challenge, network timeout",
+    "Payment failure screen has: clear error message, retry with same method, try alternative payment method, option to save cart and return later",
+    "Plans state persistence: if user abandons mid-flow, cart contents and shipping info are preserved on return",
+    "Plans a progress indicator that shows current step and allows back-navigation to completed steps",
+    "Plans the transition between steps — what loads, what animates, what data carries forward",
+    "Confirmation screen includes: order number, summary of items, shipping address, estimated delivery, edit/cancel window"
+  ],
+  "antiPatterns": [
+    "Only designs the happy path: Cart -> Shipping -> Payment -> Confirmation with no error screens",
+    "Plans a single generic 'Error' screen used for all failure types",
+    "Payment failure only shows 'Payment failed. Try again.' with no alternatives or context",
+    "No back-navigation — user cannot return to edit shipping after reaching payment",
+    "Treats the flow as 4 independent screens with no shared state or data flow",
+    "Confirmation screen is just a checkmark and 'Thank you' — no order details",
+    "Ignores edge case of empty cart (user navigates directly to checkout URL)",
+    "No loading/processing states between steps — instant transitions with no feedback",
+    "Error messages are generic ('Something went wrong') instead of actionable ('Card ending in 4242 was declined')"
+  ],
+  "evaluationCriteria": {
+    "errorCoverage": "Does it plan error states for EACH step (cart, shipping, payment), not just payment?",
+    "paymentFailureDepth": "Does the payment failure screen offer retry, alternative method, AND save-for-later?",
+    "statePersistence": "Does it plan what happens when a user leaves mid-flow and returns?",
+    "backNavigation": "Can users go back to edit previous steps without losing entered data?",
+    "edgeCases": "Does it handle empty cart, out-of-stock, and network timeout scenarios?",
+    "confirmationCompleteness": "Does the confirmation screen include order number, items, address, and delivery estimate?",
+    "loadingStates": "Does it plan loading/processing states for payment submission and step transitions?"
+  }
+}

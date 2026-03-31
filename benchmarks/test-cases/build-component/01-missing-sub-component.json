@@ -1,0 +1,85 @@
+{
+  "id": "build-component-01",
+  "skill": "build-component",
+  "name": "Sub-component with wrong variantKey — tests graceful error recovery",
+  "difficulty": "hard",
+  "input": {
+    "planFile": "plans/components/toast.json",
+    "planContents": {
+      "component": "Toast",
+      "variants": [
+        {
+          "name": "Type=Success",
+          "props": { "Type": "Success" },
+          "children": [
+            {
+              "type": "INSTANCE",
+              "role": "icon",
+              "componentKey": "d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0a1b2c3",
+              "variantKey": "Name=check-circle, Size=20"
+            },
+            {
+              "type": "TEXT",
+              "role": "message",
+              "content": "Changes saved successfully"
+            },
+            {
+              "type": "INSTANCE",
+              "role": "close-button",
+              "componentKey": "NONEXISTENT_KEY_abc123",
+              "variantKey": "Style=Ghost, Size=SM, Icon=close-x"
+            }
+          ]
+        },
+        {
+          "name": "Type=Error",
+          "props": { "Type": "Error" },
+          "children": [
+            {
+              "type": "INSTANCE",
+              "role": "icon",
+              "componentKey": "d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0a1b2c3",
+              "variantKey": "Name=alert-circle, Size=20"
+            },
+            {
+              "type": "TEXT",
+              "role": "message",
+              "content": "Something went wrong. Please try again."
+            },
+            {
+              "type": "INSTANCE",
+              "role": "close-button",
+              "componentKey": "NONEXISTENT_KEY_abc123",
+              "variantKey": "Style=Ghost, Size=SM, Icon=close-x"
+            }
+          ]
+        }
+      ]
+    },
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Detects that 'NONEXISTENT_KEY_abc123' is not a valid component key during pre-build validation",
+    "Attempts to resolve the intended component by searching — e.g., figma_search_components('Button close') or figma_search_components('IconButton')",
+    "If search returns candidates, presents them to the user and asks which one to use",
+    "If search fails, asks the user to provide the correct componentKey or variantKey",
+    "Builds the rest of the Toast component (icon, text) even while the close button is unresolved",
+    "Does not silently skip the close-button — it is a critical interactive element"
+  ],
+  "antiPatterns": [
+    "Crashes with an unhandled error when figma_instantiate_component fails",
+    "Silently skips the close-button and produces a Toast with no dismiss mechanism",
+    "Builds only the Success variant and stops, leaving Error variant unbuilt",
+    "Retries the same bad key repeatedly without trying alternative resolution",
+    "Asks the user for the key without first attempting figma_search_components",
+    "Creates a placeholder rectangle labeled 'close button' instead of finding the real component"
+  ],
+  "evaluationCriteria": {
+    "errorRecovery": "Does it attempt search-based resolution before falling back to the user?",
+    "partialProgress": "Does it build the parts it can (icon, text) even when one child fails?",
+    "variantCompleteness": "Does it attempt both Success and Error variants, not just the first?",
+    "userCommunication": "Does it clearly explain what went wrong and what it tried?",
+    "noSilentSkip": "Does it treat a missing close button as a blocking issue, not a skippable one?"
+  }
+}

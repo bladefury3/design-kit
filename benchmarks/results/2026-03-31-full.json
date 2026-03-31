@@ -1,0 +1,42 @@
+{
+  "$schema": "design-kit/eval-results/v1",
+  "runAt": "2026-03-31T01:30:00Z",
+  "mode": "simulated",
+  "overall": 8.0,
+  "skillCount": 18,
+  "testCaseCount": 23,
+  "bySkill": {
+    "plan-component": { "overall": 8.85, "testCases": { "01": { "name": "Duplicate risk", "score": 9.2 }, "02": { "name": "Complex variant architecture", "score": 8.5 } } },
+    "design-revision": { "overall": 8.5, "testCases": { "01": { "name": "Mixed Figma comments", "score": 9.0 }, "02": { "name": "Direct feedback", "score": 9.0 } } },
+    "responsive-adapt": { "overall": 8.7, "testCases": { "01": { "name": "Data table to mobile", "score": 8.7 } } },
+    "review-component": { "overall": 8.8, "testCases": { "01": { "name": "Mediocre button", "score": 8.8 } } },
+    "audit-frames": { "overall": 8.7, "testCases": { "01": { "name": "Intentionally flawed frame", "score": 8.7 } } },
+    "brainstorm": { "overall": 8.6, "testCases": { "01": { "name": "Settings page variations", "score": 8.6 }, "02": { "name": "Contradictory constraints", "score": 8.6 } } },
+    "build-design": { "overall": 8.6, "testCases": { "01": { "name": "Plan with bad keys", "score": 8.6 } } },
+    "diff-system": { "overall": 8.5, "testCases": { "01": { "name": "Component removed", "score": 8.5 } } },
+    "handoff-mcp": { "overall": 8.4, "testCases": { "01": { "name": "Poor documentation", "score": 8.4 } } },
+    "design-flow": { "overall": 8.4, "testCases": { "01": { "name": "Checkout with errors", "score": 8.4 } } },
+    "extract-icons": { "overall": 8.1, "testCases": { "01": { "name": "Icon tagging disambiguation", "score": 8.1 } } },
+    "plan-design": { "overall": 7.87, "testCases": { "01": { "name": "Vague brief", "score": 8.0 }, "02": { "name": "Rich brief no system", "score": 7.6 }, "03": { "name": "Complex dark dashboard", "score": 8.0 } } },
+    "content-stress": { "overall": 7.9, "testCases": { "01": { "name": "Dashboard with real data", "score": 7.9 } } },
+    "extract-relationships": { "overall": 7.8, "testCases": { "01": { "name": "Circular dependency", "score": 7.8 } } },
+    "extract-tokens": { "overall": 7.6, "testCases": { "01": { "name": "Mixed sources + alias chains", "score": 7.6 } } },
+    "handoff-dev": { "overall": 7.5, "testCases": { "01": { "name": "Complex interaction states", "score": 7.5 } } },
+    "extract-components": { "overall": 7.4, "testCases": { "01": { "name": "Large library batching", "score": 7.4 } } },
+    "build-component": { "overall": 7.1, "testCases": { "01": { "name": "Missing sub-component", "score": 7.1 } } }
+  },
+  "topIssues": [
+    { "skill": "build-component", "score": 7.1, "issue": "No figma_search_components fallback for missing sub-components — goes straight to placeholder. No figma_get_design_system_kit degradation. Heavy engineering jargon.", "fix": "Add search-based resolution before placeholder. Add graceful degradation. Reduce API jargon in user-facing output." },
+    { "skill": "extract-components", "score": 7.4, "issue": "On-demand extraction design means no individual JSONs produced upfront. No fault tolerance for partial failures. No dependency ordering. No resumability.", "fix": "Add fault tolerance (try/catch per component). Add dependency-aware ordering. Add checkpoint/resume mechanism." },
+    { "skill": "handoff-dev", "score": 7.5, "issue": "State matrix is generic not per-field. No specific error messages. No interactive sub-features (password toggle, autocomplete). Asks 5 upfront questions.", "fix": "Add per-field state documentation. Require specific error message strings. Add interactive extras section. Reduce questions to 2." },
+    { "skill": "extract-tokens", "score": 7.6, "issue": "Asks 4-5 questions before work. No next-step guidance. Source differentiation at collection level only.", "fix": "Reduce to 1-2 questions with escape hatches. Add 'Next: run /extract-components' guidance. Add per-token source field." },
+    { "skill": "content-stress", "score": 7.9, "issue": "No dedicated temporal stress category — 'March 2019' stale data not reliably flagged.", "fix": "Add explicit Temporal stress category with date staleness detection." },
+    { "skill": "design-flow", "score": 8.4, "issue": "No loading/processing states between flow steps. Payment failure depth is shallow.", "fix": "Add loading state requirement per transition. Expand error recovery patterns." },
+    { "skill": "extract-icons", "score": 8.1, "issue": "No usage disambiguation field. Tags from names only, not descriptions. No alternatives grouping.", "fix": "Add primaryUse field. Parse descriptions for tags. Group similar icons with 'alternatives' field." }
+  ],
+  "skillsByTier": {
+    "strong (8.5+)": ["plan-component", "review-component", "responsive-adapt", "audit-frames", "brainstorm", "build-design", "design-revision", "diff-system"],
+    "solid (7.5-8.4)": ["handoff-mcp", "design-flow", "extract-icons", "plan-design", "content-stress", "extract-relationships", "extract-tokens", "handoff-dev"],
+    "needsWork (<7.5)": ["extract-components", "build-component"]
+  }
+}
