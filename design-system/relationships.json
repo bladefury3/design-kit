@@ -1,294 +1,4275 @@
 {
   "$schema": "design-kit/relationships/v1",
   "$metadata": {
-    "extractedAt": "2026-03-27T21:00:00Z",
-    "figmaFile": "Design Kit Test",
-    "libraryFile": "Untitled UI PRO VARIABLES (v6.0)",
-    "libraryFileKey": "JhsFSqLI1lWfDZq5I4crsQ",
-    "totalComponents": 14,
-    "totalRelationships": 42,
-    "source": "compositionDependencies from figma_get_component_for_development + dashboard instance analysis"
+    "extractedAt": "2026-03-31T01:09:25.695237+00:00",
+    "figmaFile": "\u2756 Untitled UI \u2013 PRO VARIABLES (v6.0)",
+    "figmaFileKey": "JhsFSqLI1lWfDZq5I4crsQ",
+    "totalComponents": 163,
+    "totalRelationships": 159
   },
-
   "components": {
-    "button": {
-      "name": "Buttons/Button",
-      "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
-      "defaultVariantKey": "c7b6f17162347f1cf7e6689f70b24a4ab487d216",
-      "atomicLevel": "molecule",
+    "email-verification": {
+      "name": "Email verification",
+      "figmaKey": "1783a235286168691cb3808e53204a295631558e",
+      "defaultVariantKey": "548b1eaebf2162e039dda1c05573f96075a424e9",
+      "category": "Authentication",
+      "atomicLevel": "template",
       "contains": [
-        { "name": "_Dot", "componentId": "1046:10693", "count": 140, "description": "Status dot indicator for dot-leading icon variant" },
-        { "name": "placeholder", "componentId": "3465:410042", "count": 380, "description": "Icon placeholder for instance swap slots" }
-      ],
-      "containedBy": [
-        { "name": "Alert", "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b" },
-        { "name": "Header section", "description": "Used in header CTA actions" },
-        { "name": "Dashboard (custom)", "description": "Used in dashboard header actions" }
-      ],
-      "instanceSwapSlots": {
-        "Icon leading swap": {
-          "propKey": "🔀 Icon leading swap#3466:91",
-          "defaultComponentId": "3465:410042",
-          "description": "Leading icon — swap with any icon component"
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
         },
-        "Icon trailing swap": {
-          "propKey": "🔀 Icon trailing swap#3466:852",
-          "defaultComponentId": "3465:410042",
-          "description": "Trailing icon — swap with any icon component"
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        },
+        {
+          "name": "verification-code-input-field",
+          "figmaKey": "22e02c9edb194a00aae5bce15869c9de600bc2cd"
         }
-      },
-      "booleanToggles": {
-        "Icon leading": { "propKey": "⬅️ Icon leading#3287:1577", "default": true },
-        "Icon trailing": { "propKey": "➡️ Icon trailing#3287:2338", "default": true }
-      },
+      ],
+      "containedBy": [],
+      "swappableWith": [],
       "dependencyCount": {
-        "dependsOn": 2,
-        "dependedOnBy": 3
+        "dependsOn": 3,
+        "dependedOnBy": 0
       }
     },
-
-    "button-close-x": {
+    "forgot-password": {
+      "name": "Forgot password",
+      "figmaKey": "913638db7667592ad3698987d577af9ea9cbc564",
+      "defaultVariantKey": "3433c141d6a2917f662fb3aabe0809ce4d3a6c0b",
+      "category": "Authentication",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        },
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "log-in": {
+      "name": "Log in",
+      "figmaKey": "c2271d5d9587b309a94438b320e6745aa46437ab",
+      "defaultVariantKey": "08a563f715714f359717097738f4c6c02031c617",
+      "category": "Authentication",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        },
+        {
+          "name": "social-button",
+          "figmaKey": "0ab34f8844f06a4d57d47ca5d8c40f1fee4860c6"
+        },
+        {
+          "name": "checkbox",
+          "figmaKey": "38076cee88904c5dd4005a42c9683b278dbe6177"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 4,
+        "dependedOnBy": 0
+      }
+    },
+    "sign-up": {
+      "name": "Sign up",
+      "figmaKey": "9124529540a3bd2e3ff45ee815cfbf1d0da9e949",
+      "defaultVariantKey": "004acfcad36d34ba60c62b02f7eb88132ea0ac3a",
+      "category": "Authentication",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        },
+        {
+          "name": "social-button",
+          "figmaKey": "0ab34f8844f06a4d57d47ca5d8c40f1fee4860c6"
+        },
+        {
+          "name": "checkbox",
+          "figmaKey": "38076cee88904c5dd4005a42c9683b278dbe6177"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 4,
+        "dependedOnBy": 0
+      }
+    },
+    "buttons-button": {
+      "name": "Buttons/Button",
+      "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
+      "defaultVariantKey": "051ccc8c9aa4e9ed0d506444724ff993b732f5ff",
+      "category": "Buttons",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "404-section",
+          "figmaKey": "6461663adede8577b2f3ff1ebe81852a22f8f8c6"
+        },
+        {
+          "name": "alert",
+          "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b"
+        },
+        {
+          "name": "banner",
+          "figmaKey": "4811896ee1e0a9e24ad770cd53b94050b309d88e"
+        },
+        {
+          "name": "blog-page-header",
+          "figmaKey": "f4d15dde31f078338660d7b62be0d32a885153b6"
+        },
+        {
+          "name": "blog-section",
+          "figmaKey": "6288adebcca5419e6d9927ce9a395e78503204fb"
+        },
+        {
+          "name": "blog-subscribe-card",
+          "figmaKey": "b4858f53adc3861f08d11a9e9be5d12f535cf22c"
+        },
+        {
+          "name": "button-group",
+          "figmaKey": "5d21508db6f4dd5aa4582cb2c599de63d78c8c23"
+        },
+        {
+          "name": "cta-section",
+          "figmaKey": "477070f0913966defaf2af072c1b41052876e3cc"
+        },
+        {
+          "name": "careers-section",
+          "figmaKey": "d0981a3f688de5539abf89c142fc01b9c870f808"
+        },
+        {
+          "name": "contact-page-header",
+          "figmaKey": "cc93e203c553d6505374cc180e19acbc676bd4ef"
+        },
+        {
+          "name": "contact-sections",
+          "figmaKey": "a7ae15b1d24244e68b0576a499fbeed5dfa38468"
+        },
+        {
+          "name": "content-section",
+          "figmaKey": "12dd9d2ca24d436199887f231d90f3e9d00ed76f"
+        },
+        {
+          "name": "dropdown",
+          "figmaKey": "94e853d143db191b38a69baa61c41f161449e96f"
+        },
+        {
+          "name": "dropdown-header-navigation",
+          "figmaKey": "93898bbd417c7dad28e71e842e994aef7d8ce4bc"
+        },
+        {
+          "name": "email-template",
+          "figmaKey": "f435fb46f60bf5b5b8ab7c741df4683b5cc7f82e"
+        },
+        {
+          "name": "email-verification",
+          "figmaKey": "1783a235286168691cb3808e53204a295631558e"
+        },
+        {
+          "name": "faq-section",
+          "figmaKey": "00ab3865c9100406ea223f5a18d1a5cb7111be46"
+        },
+        {
+          "name": "features-section",
+          "figmaKey": "714040b97c6fcf814aea5e7e606f058eeead3db7"
+        },
+        {
+          "name": "forgot-password",
+          "figmaKey": "913638db7667592ad3698987d577af9ea9cbc564"
+        },
+        {
+          "name": "full-width-header-navigation",
+          "figmaKey": "1b53e3b0f16f9e5b4e00e50166fcab0cf9e18927"
+        },
+        {
+          "name": "header-navigation",
+          "figmaKey": "84808508e5578c143036b7e1a09bf7c45e024231"
+        },
+        {
+          "name": "header-section",
+          "figmaKey": "9dce5635426c70cafe43ae742070d6072cc4a4f3"
+        },
+        {
+          "name": "hero-header-section",
+          "figmaKey": "d97681b9015066784cf69d25e545923af4956869"
+        },
+        {
+          "name": "inline-cta",
+          "figmaKey": "9efe9ac3fbcf6408d9f94fe08a478ebf1905e2aa"
+        },
+        {
+          "name": "log-in",
+          "figmaKey": "c2271d5d9587b309a94438b320e6745aa46437ab"
+        },
+        {
+          "name": "modal",
+          "figmaKey": "6540fcc878028a31e108ace9841eda667138b78b"
+        },
+        {
+          "name": "newsletter-cta-section",
+          "figmaKey": "f0a8c52cae944b9f934553e0fcbacd84221cdfd9"
+        },
+        {
+          "name": "notification",
+          "figmaKey": "fda7c58a957c936a77761cfc19c69aff9ab6bad9"
+        },
+        {
+          "name": "page-header",
+          "figmaKey": "9f41057ba1966242ecd2d47aa7af58e195648d88"
+        },
+        {
+          "name": "pricing-page-header",
+          "figmaKey": "b5851e353557194840295990aec0296664616c0f"
+        },
+        {
+          "name": "pricing-section",
+          "figmaKey": "affd28ecc065fbd0c2a83a5aab37bc52fcf63970"
+        },
+        {
+          "name": "section-footer",
+          "figmaKey": "4972f3ac94d16d2a89c0d9aca6a21d0c2a5c4cfa"
+        },
+        {
+          "name": "section-header",
+          "figmaKey": "cb6d48d13c37178e89df4309324998a4b7123519"
+        },
+        {
+          "name": "sidebar-navigation",
+          "figmaKey": "7e6ae108915e2e3454cffd3247cf219050a7c8a0"
+        },
+        {
+          "name": "sign-up",
+          "figmaKey": "9124529540a3bd2e3ff45ee815cfbf1d0da9e949"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 35
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon leading swap",
+          "defaultNodeId": "3465:410042",
+          "defaultComponent": "icon (placeholder)"
+        },
+        {
+          "slotName": "Icon trailing swap",
+          "defaultNodeId": "3465:410042",
+          "defaultComponent": "icon (placeholder)"
+        }
+      ]
+    },
+    "buttons-button-close-x": {
       "name": "Buttons/Button close X",
       "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122",
+      "defaultVariantKey": "1073d09b801a63e2ffacd1f8e5fccd7a4b441ca1",
+      "category": "Buttons",
       "atomicLevel": "atom",
       "contains": [],
       "containedBy": [
-        { "name": "Alert", "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b" }
+        {
+          "name": "alert",
+          "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b"
+        },
+        {
+          "name": "code-snippet",
+          "figmaKey": "f164edfa44f2b46668eef45298e317708f71547c"
+        },
+        {
+          "name": "modal",
+          "figmaKey": "6540fcc878028a31e108ace9841eda667138b78b"
+        },
+        {
+          "name": "notification",
+          "figmaKey": "fda7c58a957c936a77761cfc19c69aff9ab6bad9"
+        },
+        {
+          "name": "slide-out-menu",
+          "figmaKey": "d8d8ab3c3dd6368593d514b48d7d2bc8c79a4bbd"
+        }
       ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 5
+      }
+    },
+    "buttons-button-destructive": {
+      "name": "Buttons/Button destructive",
+      "figmaKey": "b69262dc99cd25932f61abeb5b5cbf3da290fdf4",
+      "defaultVariantKey": "ded24681fc18af8737c00b7dce3a826bf7b55a98",
+      "category": "Buttons",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon leading swap",
+          "defaultNodeId": "3465:410042",
+          "defaultComponent": "icon (placeholder)"
+        },
+        {
+          "slotName": "Icon trailing swap",
+          "defaultNodeId": "3465:410042",
+          "defaultComponent": "icon (placeholder)"
+        }
+      ]
+    },
+    "buttons-button-utility": {
+      "name": "Buttons/Button utility",
+      "figmaKey": "b2ed6c268558656853d84b9a492c6281f2b153b1",
+      "defaultVariantKey": "02a9feba0298243580d5ea79f627460166bda454",
+      "category": "Buttons",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon swap",
+          "defaultNodeId": "3465:410042",
+          "defaultComponent": "icon (placeholder)"
+        }
+      ]
+    },
+    "social-button": {
+      "name": "Social button",
+      "figmaKey": "0ab34f8844f06a4d57d47ca5d8c40f1fee4860c6",
+      "defaultVariantKey": "140eeabf40ff8548d9cace526a34b4351ed5e9b4",
+      "category": "Buttons",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "log-in",
+          "figmaKey": "c2271d5d9587b309a94438b320e6745aa46437ab"
+        },
+        {
+          "name": "sign-up",
+          "figmaKey": "9124529540a3bd2e3ff45ee815cfbf1d0da9e949"
+        },
+        {
+          "name": "social-button-groups",
+          "figmaKey": "1d818116147d9763bba3d1af76fcbef89ebf9df6"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 3
+      }
+    },
+    "chart-marker": {
+      "name": "Chart marker",
+      "figmaKey": "4b433e70e1e8737a2592ff9e4ff1321979d4a719",
+      "defaultVariantKey": "42f177071f50fcb2595db2f6878a9aa15b48faac",
+      "category": "Charts",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "cursor",
+          "figmaKey": "0d454ddf31d9254f1b121d1d7bd4072a56283a6e",
+          "optional": true
+        },
+        {
+          "name": "tooltip",
+          "figmaKey": "9e890e7130a643b900af038d5a6c32f74ee034dd",
+          "optional": true
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "line-and-bar-chart",
+          "figmaKey": "30e7dcebd1ce904c5bdf7ba86a70dae14a87f5bd"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 1
+      }
+    },
+    "line-and-bar-chart": {
+      "name": "Line and bar chart",
+      "figmaKey": "30e7dcebd1ce904c5bdf7ba86a70dae14a87f5bd",
+      "defaultVariantKey": "03d14cc5b500bb81d691137afb362737208b8b55",
+      "category": "Charts",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "legend",
+          "figmaKey": "662d1cd8d4e2b4337fe538fa809f555ca264c4e7"
+        },
+        {
+          "name": "chart-marker",
+          "figmaKey": "4b433e70e1e8737a2592ff9e4ff1321979d4a719"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "pie-chart": {
+      "name": "_Pie chart",
+      "figmaKey": "9fa4dfbb53cf8051d143e0b7b9df2cbc0f471ed5",
+      "defaultVariantKey": "62b622d65dcb54d93a4dc015eda43f81a142a5f9",
+      "category": "Charts",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "pie-chart",
+          "figmaKey": "96b14448bbac8a21a666f15626fd955b83e88a40"
+        }
+      ],
+      "swappableWith": [],
       "dependencyCount": {
         "dependsOn": 0,
         "dependedOnBy": 1
       }
     },
-
-    "avatar": {
-      "name": "Avatar",
-      "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
-      "defaultVariantKey": "7114e668f908fdf61aa7ce03300ff10ca08c4342",
+    "radar-chart": {
+      "name": "Radar chart",
+      "figmaKey": "bf68bf0a2dba3fac5e5ba27121590b744238eda4",
+      "defaultVariantKey": "12ca4d969ad7d26d47307e44319e90b740965279",
+      "category": "Charts",
       "atomicLevel": "molecule",
       "contains": [
-        { "name": "_Avatar company icon", "count": 18, "description": "Company logo badge overlay" },
-        { "name": "_Avatar online indicator", "count": 18, "description": "Online/offline status dot" },
-        { "name": "Verified tick", "count": 6, "description": "Verified badge overlay" },
-        { "name": "user-01", "componentId": "3463:405657", "count": 18, "description": "Default user icon placeholder" }
+        {
+          "name": "legend",
+          "figmaKey": "662d1cd8d4e2b4337fe538fa809f555ca264c4e7"
+        }
       ],
-      "containedBy": [
-        { "name": "Avatar group", "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d" },
-        { "name": "Avatar label group", "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef" },
-        { "name": "Activity feed", "figmaKey": "c7fcdb4a3d3d83eceaf3b574ecc7f028debaf25b" }
-      ],
+      "containedBy": [],
+      "swappableWith": [],
       "dependencyCount": {
-        "dependsOn": 4,
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "legend": {
+      "name": "_Legend",
+      "figmaKey": "662d1cd8d4e2b4337fe538fa809f555ca264c4e7",
+      "defaultVariantKey": "60dc8a4cdc47a03c8fbcdc0c1feac6273a0132c2",
+      "category": "Charts",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "line-and-bar-chart",
+          "figmaKey": "30e7dcebd1ce904c5bdf7ba86a70dae14a87f5bd"
+        },
+        {
+          "name": "pie-chart",
+          "figmaKey": "96b14448bbac8a21a666f15626fd955b83e88a40"
+        },
+        {
+          "name": "radar-chart",
+          "figmaKey": "bf68bf0a2dba3fac5e5ba27121590b744238eda4"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
         "dependedOnBy": 3
       }
     },
-
+    "blog-post-card": {
+      "name": "Blog post card",
+      "figmaKey": "fa6307b131dbf711c5c72aa9c3fcf9a529a0ea2d",
+      "defaultVariantKey": "0232171ee8bfb4ab3a7847d6db3830f1a277c273",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "blog-page-header",
+          "figmaKey": "f4d15dde31f078338660d7b62be0d32a885153b6"
+        },
+        {
+          "name": "blog-section",
+          "figmaKey": "6288adebcca5419e6d9927ce9a395e78503204fb"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 2
+      }
+    },
+    "blog-subscribe-card": {
+      "name": "Blog subscribe card",
+      "figmaKey": "b4858f53adc3861f08d11a9e9be5d12f535cf22c",
+      "defaultVariantKey": "619f9fc3fc23ed61113c89172e27b9ac08b7a0bd",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "card-header": {
+      "name": "Card header",
+      "figmaKey": "3e63b065e7eda6c65e63163e296fd124163ea2da",
+      "defaultVariantKey": "84ae129bea4b0f8b90dfaf80774dbaa3c5eb6cdd",
+      "category": "Content",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "content-divider",
+          "figmaKey": "b871e08bc8d92259a26baa2d8d3f3999a418e8fa",
+          "optional": true
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+          "optional": true
+        },
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "content-divider": {
+      "name": "Content divider",
+      "figmaKey": "b871e08bc8d92259a26baa2d8d3f3999a418e8fa",
+      "defaultVariantKey": "164feca2d5c2340680163198f07260bc84331990",
+      "category": "Content",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "card-header",
+          "figmaKey": "3e63b065e7eda6c65e63163e296fd124163ea2da"
+        },
+        {
+          "name": "content-item",
+          "figmaKey": "f77fb66a7a0c6d467e4c1d9537c621fa9ce78aa8"
+        },
+        {
+          "name": "page-header",
+          "figmaKey": "9f41057ba1966242ecd2d47aa7af58e195648d88"
+        },
+        {
+          "name": "section-footer",
+          "figmaKey": "4972f3ac94d16d2a89c0d9aca6a21d0c2a5c4cfa"
+        },
+        {
+          "name": "section-header",
+          "figmaKey": "cb6d48d13c37178e89df4309324998a4b7123519"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 5
+      }
+    },
+    "content-item": {
+      "name": "Content item",
+      "figmaKey": "f77fb66a7a0c6d467e4c1d9537c621fa9ce78aa8",
+      "defaultVariantKey": "897c7f80811681da0e0ce2dd9d0e4ded2953815b",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "content-divider",
+          "figmaKey": "b871e08bc8d92259a26baa2d8d3f3999a418e8fa",
+          "optional": true
+        },
+        {
+          "name": "avatar-group",
+          "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d",
+          "optional": true
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "email-template": {
+      "name": "Email template",
+      "figmaKey": "f435fb46f60bf5b5b8ab7c741df4683b5cc7f82e",
+      "defaultVariantKey": "110bcca94b3d2da2a816815925ef51b303c10862",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "empty-state": {
+      "name": "Empty state",
+      "figmaKey": "c483384b6016c49734f68490308d4df6aafb9055",
+      "defaultVariantKey": "281861fff8f0773f79ebb32e0ddd10827d5863da",
+      "category": "Content",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312",
+          "optional": true
+        },
+        {
+          "name": "illustration",
+          "figmaKey": "57fc404fea51f838d8bed2ee5525d145df92c8a8"
+        },
+        {
+          "name": "file-type-icon",
+          "figmaKey": "2f1d0be33bbe89caecf38eaa98d4ef5cd9ad434c"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "file-upload": {
+      "name": "File upload",
+      "figmaKey": "b7964260e37d68fec7b4e14530ebdda793e12b37",
+      "defaultVariantKey": "0ef1ab5edeb7a341eff0a5582a6be48e574c161a",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "progress-bar",
+          "figmaKey": "8c42bb4c2a2a1f013432ffb164dae4a2922ee04d"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "inline-cta": {
+      "name": "Inline CTA",
+      "figmaKey": "9efe9ac3fbcf6408d9f94fe08a478ebf1905e2aa",
+      "defaultVariantKey": "0317842ef3577b0a2a698d0540f9d29a0fc2d50c",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "page-header": {
+      "name": "Page header",
+      "figmaKey": "9f41057ba1966242ecd2d47aa7af58e195648d88",
+      "defaultVariantKey": "31da5a41fac983dead60b4e4844954f70169db64",
+      "category": "Content",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "breadcrumbs",
+          "figmaKey": "a3f7e71ae31a53754970fe770a8468d675e38781",
+          "optional": true
+        },
+        {
+          "name": "content-divider",
+          "figmaKey": "b871e08bc8d92259a26baa2d8d3f3999a418e8fa",
+          "optional": true
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "section-footer": {
+      "name": "Section footer",
+      "figmaKey": "4972f3ac94d16d2a89c0d9aca6a21d0c2a5c4cfa",
+      "defaultVariantKey": "c084bf0809520d63ee7d1a1d3a5696ee35e03c30",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
+          "optional": true
+        },
+        {
+          "name": "content-divider",
+          "figmaKey": "b871e08bc8d92259a26baa2d8d3f3999a418e8fa",
+          "optional": true
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "section-header": {
+      "name": "Section header",
+      "figmaKey": "cb6d48d13c37178e89df4309324998a4b7123519",
+      "defaultVariantKey": "1fd1cfd868a60f228993a8ffdd53306ac3d3bdec",
+      "category": "Content",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "content-divider",
+          "figmaKey": "b871e08bc8d92259a26baa2d8d3f3999a418e8fa",
+          "optional": true
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "horizontal-tabs",
+          "figmaKey": "faf270e3e7e5c3cb39e2865dc77591ab4f06d63d"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "section-label": {
+      "name": "Section label",
+      "figmaKey": "9c6209cbe55d70c556c5ce1409eab2fc805bb4ec",
+      "defaultVariantKey": "343b6a18d9b6ffca3adc93a152852c055b7385f2",
+      "category": "Content",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "help-icon",
+          "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b",
+          "optional": true
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "activity-feed": {
+      "name": "Activity feed",
+      "figmaKey": "c7fcdb4a3d3d83eceaf3b574ecc7f028debaf25b",
+      "defaultVariantKey": "2c97709edc1967b4b55268a9e64dfa89d1b1130a",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "activity-gauge": {
+      "name": "Activity gauge",
+      "figmaKey": "6541c06b6ae4e58ff40001b913d351f813802486",
+      "defaultVariantKey": "04bcc2ac8298a4bd0a4b0e7076a1ca7abb452c04",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "avatar": {
+      "name": "Avatar",
+      "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
+      "defaultVariantKey": "007d8db3975dba63b8fb5111a55fa294ad93165c",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "activity-feed",
+          "figmaKey": "c7fcdb4a3d3d83eceaf3b574ecc7f028debaf25b"
+        },
+        {
+          "name": "avatar-group",
+          "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d"
+        },
+        {
+          "name": "avatar-label-group",
+          "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef"
+        },
+        {
+          "name": "avatar-profile-photo",
+          "figmaKey": "1a9af86136632b5bf52e240df1538eb8ca748e90"
+        },
+        {
+          "name": "blog-post-card",
+          "figmaKey": "fa6307b131dbf711c5c72aa9c3fcf9a529a0ea2d"
+        },
+        {
+          "name": "blog-post-page-header",
+          "figmaKey": "7c026abaea59176c03438c1bc5a9b52b406f83a6"
+        },
+        {
+          "name": "card-header",
+          "figmaKey": "3e63b065e7eda6c65e63163e296fd124163ea2da"
+        },
+        {
+          "name": "dropdown",
+          "figmaKey": "94e853d143db191b38a69baa61c41f161449e96f"
+        },
+        {
+          "name": "message",
+          "figmaKey": "2687346e642330bad55c0c73517ac4624ef71a1a"
+        },
+        {
+          "name": "sidebar-navigation",
+          "figmaKey": "7e6ae108915e2e3454cffd3247cf219050a7c8a0"
+        },
+        {
+          "name": "social-proof-section",
+          "figmaKey": "5196059dfb6b10362eacc7c817d6b150ae37a85a"
+        },
+        {
+          "name": "team-section",
+          "figmaKey": "36976f52a34edd5c94e59d0a9b99e5b9f4107b0a"
+        },
+        {
+          "name": "testimonial-section",
+          "figmaKey": "e24e2d769a5e36117f65fbd8ba60ad224aef44b7"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 13
+      }
+    },
+    "avatar-label-group": {
+      "name": "Avatar label group",
+      "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef",
+      "defaultVariantKey": "1070b9367aca1bf89e7d5531958a0dcc4b143feb",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "badge": {
+      "name": "Badge",
+      "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+      "defaultVariantKey": "6af9a9e21cfe20e8594b1097891fd08c1dcaff08",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "badge-group",
+          "figmaKey": "9ab264081a65cce613b9912e18eea7d684b676dc"
+        },
+        {
+          "name": "blog-page-header",
+          "figmaKey": "f4d15dde31f078338660d7b62be0d32a885153b6"
+        },
+        {
+          "name": "blog-post-card",
+          "figmaKey": "fa6307b131dbf711c5c72aa9c3fcf9a529a0ea2d"
+        },
+        {
+          "name": "blog-post-page-header",
+          "figmaKey": "7c026abaea59176c03438c1bc5a9b52b406f83a6"
+        },
+        {
+          "name": "card-header",
+          "figmaKey": "3e63b065e7eda6c65e63163e296fd124163ea2da"
+        },
+        {
+          "name": "checkbox-group-item",
+          "figmaKey": "158de6d4c3d901131686d4c65e85dd248ee03a3e"
+        },
+        {
+          "name": "design-note",
+          "figmaKey": "6ac3b9f53101bc80b6d2554c8d78c352f6b36690"
+        },
+        {
+          "name": "footer",
+          "figmaKey": "f73cce12a883a8d73b9a24e6a5f74037a0c7a2a4"
+        },
+        {
+          "name": "header-section",
+          "figmaKey": "9dce5635426c70cafe43ae742070d6072cc4a4f3"
+        },
+        {
+          "name": "metric-item",
+          "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed"
+        },
+        {
+          "name": "sidebar-navigation",
+          "figmaKey": "7e6ae108915e2e3454cffd3247cf219050a7c8a0"
+        },
+        {
+          "name": "job-post",
+          "figmaKey": "f84ae20725dc3d2fbf7eb2f8b470037616ba8ef2"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 12
+      },
+      "swapSlots": [
+        {
+          "slotName": "Flag swap",
+          "defaultNodeId": "1046:3563",
+          "defaultComponent": "flag (US)"
+        },
+        {
+          "slotName": "Icon trailing swap",
+          "defaultNodeId": "3463:404482",
+          "defaultComponent": "icon (circle)"
+        },
+        {
+          "slotName": "Icon leading swap",
+          "defaultNodeId": "3463:404509",
+          "defaultComponent": "icon (arrow-right)"
+        }
+      ]
+    },
+    "emoji": {
+      "name": "Emoji",
+      "figmaKey": "24f609cc737f33a429068772dd3da9c2546da01f",
+      "defaultVariantKey": "43d9d3ddbeea4339fd2abbf86998a6197483923b",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "metric-item": {
+      "name": "Metric item",
+      "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed",
+      "defaultVariantKey": "0077391d4c99c5cfac7ebf146fb836bf449b4cf0",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312",
+          "optional": true
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "metrics-section",
+          "figmaKey": "af9a029a84ccdc9f446ec76f137e2e1488cfccb7"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 1
+      }
+    },
+    "star-icon": {
+      "name": "Star icon",
+      "figmaKey": "2c5f32381b7874bd4913c83c578dd8541658062f",
+      "defaultVariantKey": "04c2a52e28f7090e9b200ba3b735744e5a0e8351",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "social-proof-section",
+          "figmaKey": "5196059dfb6b10362eacc7c817d6b150ae37a85a"
+        },
+        {
+          "name": "testimonial-section",
+          "figmaKey": "e24e2d769a5e36117f65fbd8ba60ad224aef44b7"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 2
+      }
+    },
+    "table": {
+      "name": "Table",
+      "figmaKey": "824beeff38ad4dc1ed3d5cf07ac52166e749efb4",
+      "defaultVariantKey": "1ac0271c101b72ae0d5f597e526a9312683de137",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "table-header",
+          "figmaKey": "bbce8ec9ff61b8604d15664d5a0b8ef51be8847a"
+        },
+        {
+          "name": "table-cell",
+          "figmaKey": "87191658bb89170c6a653eb9fda4cd94872f4c03"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "table-cell": {
+      "name": "Table cell",
+      "figmaKey": "87191658bb89170c6a653eb9fda4cd94872f4c03",
+      "defaultVariantKey": "cd3e049992dd203c237219116ad1bb2ba147378d",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "table",
+          "figmaKey": "824beeff38ad4dc1ed3d5cf07ac52166e749efb4"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "table-header": {
+      "name": "Table header",
+      "figmaKey": "bbce8ec9ff61b8604d15664d5a0b8ef51be8847a",
+      "defaultVariantKey": "caf12f3555476e07f9f6534c6a52108b69cbd20c",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "table-header-cell",
+          "figmaKey": "18c264e263ec60c73a470e9681b635f9f1d745f8"
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "table",
+          "figmaKey": "824beeff38ad4dc1ed3d5cf07ac52166e749efb4"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 1
+      }
+    },
+    "table-header-cell": {
+      "name": "Table header cell",
+      "figmaKey": "18c264e263ec60c73a470e9681b635f9f1d745f8",
+      "defaultVariantKey": "302e7001f0e5449f90f6dfd21e99d37cf02461c0",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "table-header",
+          "figmaKey": "bbce8ec9ff61b8604d15664d5a0b8ef51be8847a"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "tag": {
+      "name": "Tag",
+      "figmaKey": "4641442bd521086f873060945bbe25c81c2cd484",
+      "defaultVariantKey": "f141a6a0c1464b2fac4e1f1d2afecce9382e36d5",
+      "category": "Data Display",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      },
+      "swapSlots": [
+        {
+          "slotName": "Flag swap",
+          "defaultNodeId": "1046:3563",
+          "defaultComponent": "flag (US)"
+        }
+      ]
+    },
+    "verified-tick": {
+      "name": "Verified tick",
+      "figmaKey": "06f8476fb7975008fa765400d72851aacb3c1ee7",
+      "defaultVariantKey": "c8f964dc355cff7f3c5eb954ae0bb671948c1609",
+      "category": "Data Display",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "avatar-profile-photo",
+          "figmaKey": "1a9af86136632b5bf52e240df1538eb8ca748e90"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "alert": {
+      "name": "Alert",
+      "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b",
+      "defaultVariantKey": "246c3d39ece00ff74c97f25d27db2981800944f8",
+      "category": "Feedback",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button-close-x",
+          "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122",
+          "optional": true
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "banner": {
+      "name": "Banner",
+      "figmaKey": "4811896ee1e0a9e24ad770cd53b94050b309d88e",
+      "defaultVariantKey": "00a79b893d1834ef6e6bad8318ec6ec7eda566e7",
+      "category": "Feedback",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "loading-indicator": {
+      "name": "Loading indicator",
+      "figmaKey": "52bafa2f4da1389931c0f6f4b4a19df549677737",
+      "defaultVariantKey": "3d2bb8e2205798f8cc692aee41a8e204280ecdcd",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "notification": {
+      "name": "Notification",
+      "figmaKey": "fda7c58a957c936a77761cfc19c69aff9ab6bad9",
+      "defaultVariantKey": "918c24328d1ea19dca3c47476b75a276afb10117",
+      "category": "Feedback",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button-close-x",
+          "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122",
+          "optional": true
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "progress-bar": {
+      "name": "Progress bar",
+      "figmaKey": "8c42bb4c2a2a1f013432ffb164dae4a2922ee04d",
+      "defaultVariantKey": "455233e4866111bec922616e3e6bd1e63857fc35",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "file-upload",
+          "figmaKey": "b7964260e37d68fec7b4e14530ebdda793e12b37"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "progress-circle": {
+      "name": "Progress circle",
+      "figmaKey": "9bc99d1eda61feae671c0f22186fbb3801b01352",
+      "defaultVariantKey": "3c066ae875be5852c7b6792bda11bbd721173660",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "progress-steps-progress-icons-centered": {
+      "name": "Progress steps / Progress icons centered",
+      "figmaKey": "51c3d35a7fcce6d8af33cbdd693971649dec5a08",
+      "defaultVariantKey": "018bae780554e79bc29012227bd600cbcbfb889c",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "progress-steps-progress-icons-with-text": {
+      "name": "Progress steps / Progress icons with text",
+      "figmaKey": "2012185b1b1cb7a2da92ef1ab9823b979500197e",
+      "defaultVariantKey": "65c0e3368624396b657a08a09c6c82945cc4d864",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "progress-steps-progress-minimal-icons": {
+      "name": "Progress steps / Progress minimal icons",
+      "figmaKey": "82477bb95e7a7d0b360db25e70e31990b3926455",
+      "defaultVariantKey": "0f8135ae6b30d04f772afd7db47eaa838becd630",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "progress-steps-progress-minimal-icons-connected": {
+      "name": "Progress steps / Progress minimal icons connected",
+      "figmaKey": "9dce40cadd4d371129e3f8d2699141245b894262",
+      "defaultVariantKey": "01e0fc1fb66d3fee521abb5c0afc1531602a1e03",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "progress-steps-progress-text-with-line": {
+      "name": "Progress steps / Progress text with line",
+      "figmaKey": "54ed1ea397923566e74f20a131ff8621f1a1033b",
+      "defaultVariantKey": "1a69011c0f3385e28a89aecb23376fd3c342a2e2",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "tooltip": {
+      "name": "Tooltip",
+      "figmaKey": "9e890e7130a643b900af038d5a6c32f74ee034dd",
+      "defaultVariantKey": "ec71e0d67c03a35e45020dc42d86b0bbe9ea7c39",
+      "category": "Feedback",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "chart-marker",
+          "figmaKey": "4b433e70e1e8737a2592ff9e4ff1321979d4a719"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "check-icon": {
+      "name": "Check icon",
+      "figmaKey": "981e8bd8f4b854deb45350349aee7a79f5cb3e0d",
+      "defaultVariantKey": "fa39dbeae14b492f6b6a48d5e1d3b78c77592fb8",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "check-item-text": {
+      "name": "Check item text",
+      "figmaKey": "0055630c8e208c7b7289db042d2ead2934e22be8",
+      "defaultVariantKey": "fd6b2bc08d495dbfaab9f75559e90062f8efc5cc",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "company-logo": {
+      "name": "Company logo",
+      "figmaKey": "837713c5432763617f1e8628cb921b7e588e1e7f",
+      "defaultVariantKey": "2233b094e4863832ebaaaaa382a776732f1f253e",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "social-proof-section",
+          "figmaKey": "5196059dfb6b10362eacc7c817d6b150ae37a85a"
+        },
+        {
+          "name": "testimonial-section",
+          "figmaKey": "e24e2d769a5e36117f65fbd8ba60ad224aef44b7"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 2
+      }
+    },
+    "featured-icon": {
+      "name": "Featured icon",
+      "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312",
+      "defaultVariantKey": "fe68148380df17951b6cb811497c6e5a7707dae1",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "404-section",
+          "figmaKey": "6461663adede8577b2f3ff1ebe81852a22f8f8c6"
+        },
+        {
+          "name": "content-section",
+          "figmaKey": "12dd9d2ca24d436199887f231d90f3e9d00ed76f"
+        },
+        {
+          "name": "email-verification",
+          "figmaKey": "1783a235286168691cb3808e53204a295631558e"
+        },
+        {
+          "name": "empty-state",
+          "figmaKey": "c483384b6016c49734f68490308d4df6aafb9055"
+        },
+        {
+          "name": "features-section",
+          "figmaKey": "714040b97c6fcf814aea5e7e606f058eeead3db7"
+        },
+        {
+          "name": "forgot-password",
+          "figmaKey": "913638db7667592ad3698987d577af9ea9cbc564"
+        },
+        {
+          "name": "metric-item",
+          "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed"
+        },
+        {
+          "name": "modal",
+          "figmaKey": "6540fcc878028a31e108ace9841eda667138b78b"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 8
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon swap",
+          "defaultNodeId": "3463:405479",
+          "defaultComponent": "icon (zap)"
+        }
+      ]
+    },
+    "featured-icon-outline": {
+      "name": "Featured icon outline",
+      "figmaKey": "1667e635bc1d40b0816f9dcbdffddbbb7f47aa4e",
+      "defaultVariantKey": "3b4fd5eccb7926e35a98bac94a099ea0f05d2f26",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon swap",
+          "defaultNodeId": "3463:405479",
+          "defaultComponent": "icon (zap)"
+        }
+      ]
+    },
+    "file-type-icon": {
+      "name": "File type icon",
+      "figmaKey": "2f1d0be33bbe89caecf38eaa98d4ef5cd9ad434c",
+      "defaultVariantKey": "25ecce0c0354945e2a0b92344fd708a8aee1f0de",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "empty-state",
+          "figmaKey": "c483384b6016c49734f68490308d4df6aafb9055"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "folder-icon": {
+      "name": "Folder icon",
+      "figmaKey": "959ec67142428348051d7e67bd06178c540b199f",
+      "defaultVariantKey": "499f8ca851b4e4b961a2a5d71aa93c1f97c44f5a",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "hand-drawn-accents": {
+      "name": "Hand-drawn accents",
+      "figmaKey": "3e2658b8ac9cbb9b6fb916958dc76b68d10f3fc3",
+      "defaultVariantKey": "180db83ab24755418d2886188560292d429cab61",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "hand-drawn-arrow": {
+      "name": "Hand-drawn arrow",
+      "figmaKey": "445aa9b86bb5d6a25733db730c7ab1456ccc4617",
+      "defaultVariantKey": "bc8c1e171773ad1619b1716c425648f319a5ab29",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "hand-drawn-line": {
+      "name": "Hand-drawn line",
+      "figmaKey": "f54b3e6a347bb22256c5f987913fafc318c726b5",
+      "defaultVariantKey": "c45eeb0c8f33e0ffa2805b9167fea833481ec021",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "hand-drawn-pen-scribble": {
+      "name": "Hand-drawn pen scribble",
+      "figmaKey": "e44a8425273b3d589c52c32ea0ee12dac7733de4",
+      "defaultVariantKey": "dd3341fd228cf8a81541f52d1b69bd2699d1d41a",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "hand-drawn-underlines": {
+      "name": "Hand-drawn underlines",
+      "figmaKey": "b4d91a0161cc3411c868364b952c1ec6dc1ec887",
+      "defaultVariantKey": "12e59399361659fe349e02af8a8693ea500fbb9f",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "illustration": {
+      "name": "Illustration",
+      "figmaKey": "57fc404fea51f838d8bed2ee5525d145df92c8a8",
+      "defaultVariantKey": "3e254a43e44f948202ab725e2cf3c3d978f49509",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "empty-state",
+          "figmaKey": "c483384b6016c49734f68490308d4df6aafb9055"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "line-pattern": {
+      "name": "Line pattern",
+      "figmaKey": "0d830339f4fd607143486da1a05fd53269648053",
+      "defaultVariantKey": "b2a8d904a53f6bd38fa78bd842a0c50f9b0dccc2",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "mobile-app-store-badge": {
+      "name": "Mobile app store badge",
+      "figmaKey": "31da09b3d4d27f658cd23042b299d86b78600b6b",
+      "defaultVariantKey": "1e33ffdeafe1e1ea30bd217d00835aa2b064d4b7",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "payment-method-icon": {
+      "name": "Payment method icon",
+      "figmaKey": "659efa33b6fbdce904d083dc0d50c1650f0af798",
+      "defaultVariantKey": "6d0358de6e357b0bae8138d60cb44c055a00c2f9",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "press-logo": {
+      "name": "Press logo",
+      "figmaKey": "d51c4f1e9e9c13a462d42880dab8e2bc6fbffbfd",
+      "defaultVariantKey": "58385ee8579f48f4e3bd9881d3beca823907b2e9",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "press-mentions-section",
+          "figmaKey": "41ecc7674f1aa637148e7ac9ddbbce4c13e88c51"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "social-icon": {
+      "name": "Social icon",
+      "figmaKey": "b9d46bf066c1abdd65ca5d63ca674bbc0893304f",
+      "defaultVariantKey": "423f7606196701eaed68373841bed7abfb27519e",
+      "category": "Icons & Decorative",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "footer",
+          "figmaKey": "f73cce12a883a8d73b9a24e6a5f74037a0c7a2a4"
+        },
+        {
+          "name": "team-section",
+          "figmaKey": "36976f52a34edd5c94e59d0a9b99e5b9f4107b0a"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 2
+      }
+    },
+    "checkbox": {
+      "name": "Checkbox",
+      "figmaKey": "38076cee88904c5dd4005a42c9683b278dbe6177",
+      "defaultVariantKey": "05fe63a1f2b342863219b297659e3b2e7c1e2571",
+      "category": "Inputs",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "checkbox-group-item",
+          "figmaKey": "158de6d4c3d901131686d4c65e85dd248ee03a3e"
+        },
+        {
+          "name": "log-in",
+          "figmaKey": "c2271d5d9587b309a94438b320e6745aa46437ab"
+        },
+        {
+          "name": "sign-up",
+          "figmaKey": "9124529540a3bd2e3ff45ee815cfbf1d0da9e949"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 3
+      }
+    },
+    "date-picker-dropdown": {
+      "name": "Date picker dropdown",
+      "figmaKey": "1a19794db51ea273fefaacd32adcab8e71aedcb3",
+      "defaultVariantKey": "1eaac46e966a43213b59d3ef01e1bb74205de8b2",
+      "category": "Inputs",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "calendar",
+          "figmaKey": "6d78abb7e35a3f53a191351faf92d334130a790c"
+        },
+        {
+          "name": "calendar-cell",
+          "figmaKey": "a8559ac92a15fbc8d5ccf6774d448ebd6f704404"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "date-picker-modal": {
+      "name": "Date picker modal",
+      "figmaKey": "e276e105c961a27b53267271ee43a98d69abfb93",
+      "defaultVariantKey": "4b4f5bd287de83920b5f65c3b05c44445a4fc00c",
+      "category": "Inputs",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "calendar",
+          "figmaKey": "6d78abb7e35a3f53a191351faf92d334130a790c"
+        },
+        {
+          "name": "calendar-cell",
+          "figmaKey": "a8559ac92a15fbc8d5ccf6774d448ebd6f704404"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "input-dropdown": {
+      "name": "Input dropdown",
+      "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
+      "defaultVariantKey": "2017e9327c4c5ac45a0d2a693c92b33bbead0bf0",
+      "category": "Inputs",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "help-icon",
+          "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b",
+          "optional": true
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon swap",
+          "defaultNodeId": "3463:405657",
+          "defaultComponent": "icon (search-lg)"
+        }
+      ]
+    },
+    "input-field": {
+      "name": "Input field",
+      "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b",
+      "defaultVariantKey": "024997ea4f34d04c6c4051f2360b782655080457",
+      "category": "Inputs",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "help-icon",
+          "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b",
+          "optional": true
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "banner",
+          "figmaKey": "4811896ee1e0a9e24ad770cd53b94050b309d88e"
+        },
+        {
+          "name": "blog-subscribe-card",
+          "figmaKey": "b4858f53adc3861f08d11a9e9be5d12f535cf22c"
+        },
+        {
+          "name": "cta-section",
+          "figmaKey": "477070f0913966defaf2af072c1b41052876e3cc"
+        },
+        {
+          "name": "contact-page-header",
+          "figmaKey": "cc93e203c553d6505374cc180e19acbc676bd4ef"
+        },
+        {
+          "name": "contact-sections",
+          "figmaKey": "a7ae15b1d24244e68b0576a499fbeed5dfa38468"
+        },
+        {
+          "name": "forgot-password",
+          "figmaKey": "913638db7667592ad3698987d577af9ea9cbc564"
+        },
+        {
+          "name": "inline-cta",
+          "figmaKey": "9efe9ac3fbcf6408d9f94fe08a478ebf1905e2aa"
+        },
+        {
+          "name": "log-in",
+          "figmaKey": "c2271d5d9587b309a94438b320e6745aa46437ab"
+        },
+        {
+          "name": "newsletter-cta-section",
+          "figmaKey": "f0a8c52cae944b9f934553e0fcbacd84221cdfd9"
+        },
+        {
+          "name": "sign-up",
+          "figmaKey": "9124529540a3bd2e3ff45ee815cfbf1d0da9e949"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 10
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon swap",
+          "defaultNodeId": "3463:406209",
+          "defaultComponent": "icon (search)"
+        }
+      ]
+    },
+    "slider": {
+      "name": "Slider",
+      "figmaKey": "c35676dc1091832227c72587b9951871baa7e612",
+      "defaultVariantKey": "08759e6e01d99c3e5e62f5089e4051553cb6765d",
+      "category": "Inputs",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "textarea-input-field": {
+      "name": "Textarea input field",
+      "figmaKey": "20d06dfce8290b89f9f19df38cf64a8e86f98a4d",
+      "defaultVariantKey": "02dd530a56bcaafab711d16e9a92f742959b08ec",
+      "category": "Inputs",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "help-icon",
+          "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b",
+          "optional": true
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "toggle": {
+      "name": "Toggle",
+      "figmaKey": "87f8a10f14b84d9c71d443b19c96976425525e30",
+      "defaultVariantKey": "460192ce8be8dd7ea4470fa1b5c195f368f2399f",
+      "category": "Inputs",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "verification-code-input-field": {
+      "name": "Verification code input field",
+      "figmaKey": "22e02c9edb194a00aae5bce15869c9de600bc2cd",
+      "defaultVariantKey": "282161d738ac93e37fad824fee49dcb4b2c5ad18",
+      "category": "Inputs",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "email-verification",
+          "figmaKey": "1783a235286168691cb3808e53204a295631558e"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "avatar-add-button": {
+      "name": "_Avatar add button",
+      "figmaKey": "d268253559c10876fbb4f2d824a8955ba268d49a",
+      "defaultVariantKey": "19eb7daae495ca652e9abb1f645ef5e687a46c3b",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "avatar-group",
+          "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "command-bar-menu-section": {
+      "name": "_Command bar menu section",
+      "figmaKey": "e30da68c9a8dc6a926cf2edfe334ba0cd0dedaef",
+      "defaultVariantKey": "f39940eec85d7d153c29ce8130dfd3815e23c656",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "command-bar",
+          "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "command-dropdown-menu-item": {
+      "name": "_Command dropdown menu item",
+      "figmaKey": "41e6e113c1eda89a15a0b96baf7dba95e5f689d5",
+      "defaultVariantKey": "41c816295f7f1e0aac582ef7af77515b8bd130f5",
+      "category": "Internal",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "command-bar",
+          "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      },
+      "swapSlots": [
+        {
+          "slotName": "Icon swap",
+          "defaultNodeId": "3463:405657",
+          "defaultComponent": "icon (search-lg)"
+        }
+      ]
+    },
+    "command-input": {
+      "name": "_Command input",
+      "figmaKey": "a07c456631bb1d94f82cb3b09cae6a9ed332fc59",
+      "defaultVariantKey": "046d0b8e67faf5ef13f14f93ac1723c786761daf",
+      "category": "Internal",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "help-icon",
+          "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b",
+          "optional": true
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "command-bar",
+          "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 1
+      }
+    },
+    "command-menu-header": {
+      "name": "_Command menu header",
+      "figmaKey": "e04cc8432d26074c82110358f5903dce969e62b6",
+      "defaultVariantKey": "b8819fade1e1f3999d75eb2fe3e95b24dcab4d72",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "command-bar",
+          "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "command-shortcut": {
+      "name": "_Command shortcut",
+      "figmaKey": "00e3da82eed57bebcec2b17b019350ccf5276b99",
+      "defaultVariantKey": "540c9f0835e08e833001d7b897a5ef10fef1260a",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "command-bar",
+          "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "feature-tab": {
+      "name": "_Feature tab",
+      "figmaKey": "07259c032c5003ac7dc6b02ce3c578561ad73f9c",
+      "defaultVariantKey": "2b6d1c8d3b080540a7297bab751ced5b0faf29da",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "features-section",
+          "figmaKey": "714040b97c6fcf814aea5e7e606f058eeead3db7"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "footer-links-column": {
+      "name": "_Footer links column",
+      "figmaKey": "5913a069f5c0151366ae48e59ff66b97f02e2e52",
+      "defaultVariantKey": "4047249f7a95d9471d3a5c4ddfc37d935d162b00",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "footer",
+          "figmaKey": "f73cce12a883a8d73b9a24e6a5f74037a0c7a2a4"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "job-post": {
+      "name": "_Job post",
+      "figmaKey": "f84ae20725dc3d2fbf7eb2f8b470037616ba8ef2",
+      "defaultVariantKey": "1602cff268026a2fd84335941824d61ea985da05",
+      "category": "Internal",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+          "optional": true
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "careers-section",
+          "figmaKey": "d0981a3f688de5539abf89c142fc01b9c870f808"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 1
+      }
+    },
+    "map-location-marker": {
+      "name": "_Map location marker",
+      "figmaKey": "864b949ee74e04c589a30c5b010f0e0f8779577b",
+      "defaultVariantKey": "2c8f6cc8bedeb1736a5f3213bb63929da7596eba",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "contact-sections",
+          "figmaKey": "a7ae15b1d24244e68b0576a499fbeed5dfa38468"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "nav-menu-item-card": {
+      "name": "_Nav menu item card",
+      "figmaKey": "6dc19ecbbc0758b4806c14982fa7657e1b52a5fc",
+      "defaultVariantKey": "08936045539bd71f05b1b787a0e28ad2869f34d8",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "dropdown-header-navigation",
+          "figmaKey": "93898bbd417c7dad28e71e842e994aef7d8ce4bc"
+        },
+        {
+          "name": "full-width-header-navigation",
+          "figmaKey": "1b53e3b0f16f9e5b4e00e50166fcab0cf9e18927"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 2
+      }
+    },
+    "navigation-actions": {
+      "name": "_Navigation actions",
+      "figmaKey": "cf9901b0ec6dcb7f11a7b1a843a6d348c959bbf1",
+      "defaultVariantKey": "127f84006a453cd32f1ae75e9400b4119b59f04f",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "dropdown-header-navigation",
+          "figmaKey": "93898bbd417c7dad28e71e842e994aef7d8ce4bc"
+        },
+        {
+          "name": "full-width-header-navigation",
+          "figmaKey": "1b53e3b0f16f9e5b4e00e50166fcab0cf9e18927"
+        },
+        {
+          "name": "header-navigation",
+          "figmaKey": "84808508e5578c143036b7e1a09bf7c45e024231"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 3
+      }
+    },
+    "play-button": {
+      "name": "_Play button",
+      "figmaKey": "8a88d47dd56a1bd50bb454e5de3049cf10d69c54",
+      "defaultVariantKey": "cc80ae3cbc44862342cf98384f98e752879f4e8b",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "video-player",
+          "figmaKey": "f6203eb4b36245ec8f4e90eb28ababad5b202512"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "pricing-tier-card": {
+      "name": "_Pricing tier card",
+      "figmaKey": "6eb29298a615c3abdb179ec820e55145a39237c9",
+      "defaultVariantKey": "39fdbc64120a578c21f021ef3de4810ecc5d93f1",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "pricing-section",
+          "figmaKey": "affd28ecc065fbd0c2a83a5aab37bc52fcf63970"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "slide-out-menu-header": {
+      "name": "_Slide out menu header",
+      "figmaKey": "14966de7208a5d7511ab47007c791e3213bedb2e",
+      "defaultVariantKey": "0f1de2e716f22fd168749796b1bf6605a01a1f72",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "slide-out-menu",
+          "figmaKey": "d8d8ab3c3dd6368593d514b48d7d2bc8c79a4bbd"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "tag-count": {
+      "name": "_Tag count",
+      "figmaKey": "8e8c8e86b3e3ac5c96edf27827cb822172973184",
+      "defaultVariantKey": "3911f68c83f36ef9576a1a406a04020c9be59a5c",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "command-bar",
+          "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "video-progress": {
+      "name": "_Video progress",
+      "figmaKey": "383a9bc812cbcdb144404e5c9b2364ad5e694887",
+      "defaultVariantKey": "2f2c72da53e858f7305b4fbf39ab0b4525b7f1be",
+      "category": "Internal",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "video-player",
+          "figmaKey": "f6203eb4b36245ec8f4e90eb28ababad5b202512"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
     "avatar-group": {
       "name": "Avatar group",
       "figmaKey": "b6a9734e2eb0ed6401450ec9b0bb6d6c4de3db4d",
       "defaultVariantKey": "0d3105b2b3fff02d7804f317d31921b8ef02e8dc",
+      "category": "Layout",
       "atomicLevel": "molecule",
       "contains": [
-        { "name": "Avatar", "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e" }
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "avatar-add-button",
+          "figmaKey": "d268253559c10876fbb4f2d824a8955ba268d49a"
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "content-item",
+          "figmaKey": "f77fb66a7a0c6d467e4c1d9537c621fa9ce78aa8"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 1
+      }
+    },
+    "avatar-profile-photo": {
+      "name": "Avatar profile photo",
+      "figmaKey": "1a9af86136632b5bf52e240df1538eb8ca748e90",
+      "defaultVariantKey": "0e68f1b92820ede603382761bf3a97f53de32be2",
+      "category": "Layout",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "verified-tick",
+          "figmaKey": "06f8476fb7975008fa765400d72851aacb3c1ee7",
+          "optional": true
+        },
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        }
       ],
       "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "badge-group": {
+      "name": "Badge group",
+      "figmaKey": "9ab264081a65cce613b9912e18eea7d684b676dc",
+      "defaultVariantKey": "068122210b581e0605c0f870351e857e1f1a402a",
+      "category": "Layout",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
       "dependencyCount": {
         "dependsOn": 1,
         "dependedOnBy": 0
       }
     },
-
-    "avatar-label-group": {
-      "name": "Avatar label group",
-      "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef",
-      "defaultVariantKey": "360054184886a747d00b6c36a2f6e4f6609213b8",
+    "button-group": {
+      "name": "Button group",
+      "figmaKey": "5d21508db6f4dd5aa4582cb2c599de63d78c8c23",
+      "defaultVariantKey": "b4b6f788d162a7663548588e4767d56792bb5a9e",
+      "category": "Layout",
       "atomicLevel": "molecule",
       "contains": [
-        { "name": "Avatar", "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e" }
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
       ],
       "containedBy": [],
+      "swappableWith": [],
       "dependencyCount": {
         "dependsOn": 1,
         "dependedOnBy": 0
       }
     },
-
-    "alert": {
-      "name": "Alert",
-      "figmaKey": "eda3587c724f4829c5a26d56c450efeff36f2f2b",
-      "defaultVariantKey": "c3910a2dad8a3d8fcd829bfd6603d236d7291153",
+    "checkbox-group": {
+      "name": "Checkbox group",
+      "figmaKey": "c374789af64e48dc46af5eec729ff80b245f82a5",
+      "defaultVariantKey": "0280b7f700e4d54f726010ffd9be10f5cbcde645",
+      "category": "Layout",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "checkbox-group-item",
+          "figmaKey": "158de6d4c3d901131686d4c65e85dd248ee03a3e"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "checkbox-group-item": {
+      "name": "Checkbox group item",
+      "figmaKey": "158de6d4c3d901131686d4c65e85dd248ee03a3e",
+      "defaultVariantKey": "364fad01902ca3b4d55f2b48ab242eb4c4c2852d",
+      "category": "Layout",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+          "optional": true
+        },
+        {
+          "name": "checkbox",
+          "figmaKey": "38076cee88904c5dd4005a42c9683b278dbe6177"
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "checkbox-group",
+          "figmaKey": "c374789af64e48dc46af5eec729ff80b245f82a5"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 1
+      }
+    },
+    "pagination-dot-group": {
+      "name": "Pagination dot group",
+      "figmaKey": "aa6ecae003e2e070e17206b069913ee6c163358b",
+      "defaultVariantKey": "0c0fcdf2961d486bc894f1332f005c11d2b88a9b",
+      "category": "Layout",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "social-button-groups": {
+      "name": "Social button groups",
+      "figmaKey": "1d818116147d9763bba3d1af76fcbef89ebf9df6",
+      "defaultVariantKey": "200db0f194a1ede881b034243c9c0d24215732d3",
+      "category": "Layout",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "social-button",
+          "figmaKey": "0ab34f8844f06a4d57d47ca5d8c40f1fee4860c6"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "404-section": {
+      "name": "404 section",
+      "figmaKey": "6461663adede8577b2f3ff1ebe81852a22f8f8c6",
+      "defaultVariantKey": "4459948e07c4209ca1d958a33057845dad0e84da",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "blog-section": {
+      "name": "Blog section",
+      "figmaKey": "6288adebcca5419e6d9927ce9a395e78503204fb",
+      "defaultVariantKey": "136c8bc6a6ae72f3b66e7e5566995b71e33541d4",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "blog-post-card",
+          "figmaKey": "fa6307b131dbf711c5c72aa9c3fcf9a529a0ea2d"
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "cta-section": {
+      "name": "CTA section",
+      "figmaKey": "477070f0913966defaf2af072c1b41052876e3cc",
+      "defaultVariantKey": "09606b9ad61e25ddc947bf5d3002d75522882349",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "careers-section": {
+      "name": "Careers section",
+      "figmaKey": "d0981a3f688de5539abf89c142fc01b9c870f808",
+      "defaultVariantKey": "0c927096ed8f2b7faf583b90382e3bcb44be9fca",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "job-post",
+          "figmaKey": "f84ae20725dc3d2fbf7eb2f8b470037616ba8ef2"
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "contact-sections": {
+      "name": "Contact sections",
+      "figmaKey": "a7ae15b1d24244e68b0576a499fbeed5dfa38468",
+      "defaultVariantKey": "9626c56a3a7bc7518408ea1d2db98a7cf2f27c2f",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        },
+        {
+          "name": "map-location-marker",
+          "figmaKey": "864b949ee74e04c589a30c5b010f0e0f8779577b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "content-section": {
+      "name": "Content section",
+      "figmaKey": "12dd9d2ca24d436199887f231d90f3e9d00ed76f",
+      "defaultVariantKey": "a9b2001766b5ca92c32fb5042009f471ff86366b",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "faq-section": {
+      "name": "FAQ section",
+      "figmaKey": "00ab3865c9100406ea223f5a18d1a5cb7111be46",
+      "defaultVariantKey": "02e0c0bd80011b0a74f01d868fe854dcd2c8231a",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "features-section": {
+      "name": "Features section",
+      "figmaKey": "714040b97c6fcf814aea5e7e606f058eeead3db7",
+      "defaultVariantKey": "020a4b197fa90ef65b0958b4ba3507617d9f733a",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "feature-tab",
+          "figmaKey": "07259c032c5003ac7dc6b02ce3c578561ad73f9c"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "hero-header-section": {
+      "name": "Hero header section",
+      "figmaKey": "d97681b9015066784cf69d25e545923af4956869",
+      "defaultVariantKey": "00edf682f0be1c2edb8e25047972f258194e2e0f",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "metrics-section": {
+      "name": "Metrics section",
+      "figmaKey": "af9a029a84ccdc9f446ec76f137e2e1488cfccb7",
+      "defaultVariantKey": "089f1b9faf1a135347a874efbd2226c88f2ba0f4",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "metric-item",
+          "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "newsletter-cta-section": {
+      "name": "Newsletter CTA section",
+      "figmaKey": "f0a8c52cae944b9f934553e0fcbacd84221cdfd9",
+      "defaultVariantKey": "01a0decf0c747329e9bda763e4d884f1ba353e23",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "press-mentions-section": {
+      "name": "Press mentions section",
+      "figmaKey": "41ecc7674f1aa637148e7ac9ddbbce4c13e88c51",
+      "defaultVariantKey": "3dc0120641d56cce58474914e027de23e4ad5015",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "press-logo",
+          "figmaKey": "d51c4f1e9e9c13a462d42880dab8e2bc6fbffbfd"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "pricing-section": {
+      "name": "Pricing section",
+      "figmaKey": "affd28ecc065fbd0c2a83a5aab37bc52fcf63970",
+      "defaultVariantKey": "131b5ef202a13aa6cd044e372b0dddd6d343c9f3",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "pricing-tier-card",
+          "figmaKey": "6eb29298a615c3abdb179ec820e55145a39237c9"
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "horizontal-tabs",
+          "figmaKey": "faf270e3e7e5c3cb39e2865dc77591ab4f06d63d"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "social-proof-section": {
+      "name": "Social proof section",
+      "figmaKey": "5196059dfb6b10362eacc7c817d6b150ae37a85a",
+      "defaultVariantKey": "00be78e8e0fe7ef1291895eeb8eb1f0220c7005e",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "company-logo",
+          "figmaKey": "837713c5432763617f1e8628cb921b7e588e1e7f"
+        },
+        {
+          "name": "star-icon",
+          "figmaKey": "2c5f32381b7874bd4913c83c578dd8541658062f"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "team-section": {
+      "name": "Team section",
+      "figmaKey": "36976f52a34edd5c94e59d0a9b99e5b9f4107b0a",
+      "defaultVariantKey": "f13956f1bb729b5fe3e1ea0c58297c00249ee392",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "social-icon",
+          "figmaKey": "b9d46bf066c1abdd65ca5d63ca674bbc0893304f"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "testimonial-section": {
+      "name": "Testimonial section",
+      "figmaKey": "e24e2d769a5e36117f65fbd8ba60ad224aef44b7",
+      "defaultVariantKey": "c2e4c05737436955539244597561f4bf675fea0b",
+      "category": "Marketing Sections",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "star-icon",
+          "figmaKey": "2c5f32381b7874bd4913c83c578dd8541658062f"
+        },
+        {
+          "name": "company-logo",
+          "figmaKey": "837713c5432763617f1e8628cb921b7e588e1e7f"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "browser-toolbar": {
+      "name": "Browser toolbar",
+      "figmaKey": "8a5a09ba709d8fe3d218204bfa167cd8d69bf313",
+      "defaultVariantKey": "3e4926aaef5634da81e9b4cd98ef7eb8d92da35c",
+      "category": "Media",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "carousel-image": {
+      "name": "Carousel image",
+      "figmaKey": "04cbc720015ea7585cdc168fa2ae42be32f2b60e",
+      "defaultVariantKey": "2655fb365627e0fb12da8de6023ffefca80324a4",
+      "category": "Media",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "code-snippet": {
+      "name": "Code snippet",
+      "figmaKey": "f164edfa44f2b46668eef45298e317708f71547c",
+      "defaultVariantKey": "d37688bc77693cc60a1bcec53cfea2a6c8629228",
+      "category": "Media",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button-close-x",
+          "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "video-player": {
+      "name": "Video player",
+      "figmaKey": "f6203eb4b36245ec8f4e90eb28ababad5b202512",
+      "defaultVariantKey": "3713cd3fe499c7e3ff3ab3ab2ab85d945c89a301",
+      "category": "Media",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "video-progress",
+          "figmaKey": "383a9bc812cbcdb144404e5c9b2364ad5e694887"
+        },
+        {
+          "name": "play-button",
+          "figmaKey": "8a88d47dd56a1bd50bb454e5de3049cf10d69c54"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "message": {
+      "name": "Message",
+      "figmaKey": "2687346e642330bad55c0c73517ac4624ef71a1a",
+      "defaultVariantKey": "05077fb21d07c9c495e88aa788a86c482b4e3d62",
+      "category": "Messaging",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "message-reaction",
+          "figmaKey": "e7a13b775eeaa97641b04f2caad11fcf5dcd3731"
+        },
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "message-reaction": {
+      "name": "_Message reaction",
+      "figmaKey": "e7a13b775eeaa97641b04f2caad11fcf5dcd3731",
+      "defaultVariantKey": "c0a37fbd4d8879064e722dc5d804fa8e5d3650ab",
+      "category": "Messaging",
+      "atomicLevel": "molecule",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "message",
+          "figmaKey": "2687346e642330bad55c0c73517ac4624ef71a1a"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      },
+      "swapSlots": [
+        {
+          "slotName": "Emoji swap",
+          "defaultNodeId": "1244:280",
+          "defaultComponent": "emoji (heart)"
+        }
+      ]
+    },
+    "breadcrumbs": {
+      "name": "Breadcrumbs",
+      "figmaKey": "a3f7e71ae31a53754970fe770a8468d675e38781",
+      "defaultVariantKey": "2fe3ec6453789a3a3851d8a28adaedf0ca7cf44d",
+      "category": "Navigation",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "page-header",
+          "figmaKey": "9f41057ba1966242ecd2d47aa7af58e195648d88"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "dropdown-header-navigation": {
+      "name": "Dropdown header navigation",
+      "figmaKey": "93898bbd417c7dad28e71e842e994aef7d8ce4bc",
+      "defaultVariantKey": "0102ffe5ed580d1bf1ffea15cfec8f7c8d6e937e",
+      "category": "Navigation",
       "atomicLevel": "organism",
       "contains": [
-        { "name": "Buttons/Button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "count": 36, "description": "Action buttons (primary + secondary)" },
-        { "name": "Buttons/Button close X", "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122", "count": 18, "description": "Dismiss button" },
-        { "name": "Featured icon", "count": 2, "description": "Large colored icon" },
-        { "name": "Featured icon outline", "count": 10, "description": "Outlined icon variant" },
-        { "name": "info-circle", "componentId": "3463:405444", "count": 6, "description": "Info icon" },
-        { "name": "alert-circle", "componentId": "3463:405479", "count": 4, "description": "Alert icon" },
-        { "name": "check-circle", "componentId": "3463:404967", "count": 2, "description": "Success icon" },
-        { "name": "x-close", "componentId": "3463:405165", "count": 12, "description": "Close icon" }
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "navigation-actions",
+          "figmaKey": "cf9901b0ec6dcb7f11a7b1a843a6d348c959bbf1"
+        },
+        {
+          "name": "nav-menu-item-card",
+          "figmaKey": "6dc19ecbbc0758b4806c14982fa7657e1b52a5fc"
+        }
       ],
       "containedBy": [],
-      "booleanToggles": {
-        "X close button": { "default": true },
-        "Actions": { "default": true },
-        "Supporting text": { "default": true }
-      },
+      "swappableWith": [],
       "dependencyCount": {
-        "dependsOn": 8,
+        "dependsOn": 3,
         "dependedOnBy": 0
       }
     },
-
-    "input-field": {
-      "name": "Input field",
-      "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b",
-      "defaultVariantKey": "88323dfdd85345b5d612ee789a94e1e27c5025c6",
+    "footer": {
+      "name": "Footer",
+      "figmaKey": "f73cce12a883a8d73b9a24e6a5f74037a0c7a2a4",
+      "defaultVariantKey": "00933912ff5eecdf5eb6d4ba79fe4bed29616d91",
+      "category": "Navigation",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "footer-links-column",
+          "figmaKey": "5913a069f5c0151366ae48e59ff66b97f02e2e52"
+        },
+        {
+          "name": "social-icon",
+          "figmaKey": "b9d46bf066c1abdd65ca5d63ca674bbc0893304f"
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "full-width-header-navigation": {
+      "name": "Full-width header navigation",
+      "figmaKey": "1b53e3b0f16f9e5b4e00e50166fcab0cf9e18927",
+      "defaultVariantKey": "00a4447fbe40c2ca620c9b9f343645821c611c97",
+      "category": "Navigation",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "navigation-actions",
+          "figmaKey": "cf9901b0ec6dcb7f11a7b1a843a6d348c959bbf1"
+        },
+        {
+          "name": "nav-menu-item-card",
+          "figmaKey": "6dc19ecbbc0758b4806c14982fa7657e1b52a5fc"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "header-navigation": {
+      "name": "Header navigation",
+      "figmaKey": "84808508e5578c143036b7e1a09bf7c45e024231",
+      "defaultVariantKey": "8aa1d772068c47da9a03962ee03f202abfa36cbd",
+      "category": "Navigation",
       "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "navigation-actions",
+          "figmaKey": "cf9901b0ec6dcb7f11a7b1a843a6d348c959bbf1"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "horizontal-tabs": {
+      "name": "Horizontal tabs",
+      "figmaKey": "faf270e3e7e5c3cb39e2865dc77591ab4f06d63d",
+      "defaultVariantKey": "1e40921b3eea2961a5df22d3fdd9ed5afb487406",
+      "category": "Navigation",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "pricing-page-header",
+          "figmaKey": "b5851e353557194840295990aec0296664616c0f"
+        },
+        {
+          "name": "pricing-section",
+          "figmaKey": "affd28ecc065fbd0c2a83a5aab37bc52fcf63970"
+        },
+        {
+          "name": "section-header",
+          "figmaKey": "cb6d48d13c37178e89df4309324998a4b7123519"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 3
+      }
+    },
+    "pagination": {
+      "name": "Pagination",
+      "figmaKey": "be7821026107bd8f993506465819b1df2ccf2a71",
+      "defaultVariantKey": "0f0feb33c3f73294e63c271c484bcb46f9be3d81",
+      "category": "Navigation",
+      "atomicLevel": "atom",
       "contains": [],
       "containedBy": [],
+      "swappableWith": [],
       "dependencyCount": {
         "dependsOn": 0,
         "dependedOnBy": 0
       }
     },
-
-    "input-dropdown": {
-      "name": "Input dropdown",
-      "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
-      "defaultVariantKey": "cacec70cefc3c9113c54f859f76e71e8caa3c3fd",
-      "atomicLevel": "molecule",
+    "sidebar-navigation": {
+      "name": "Sidebar navigation",
+      "figmaKey": "7e6ae108915e2e3454cffd3247cf219050a7c8a0",
+      "defaultVariantKey": "fdb9479175542d94749a9c11d6a9f3ef49eeaa23",
+      "category": "Navigation",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "vertical-tabs": {
+      "name": "Vertical tabs",
+      "figmaKey": "f25484c5feb442ebfc1c220b8099cecbb2c2db1d",
+      "defaultVariantKey": "fe95ffa051076addad062527226fb0fd74b3bf72",
+      "category": "Navigation",
+      "atomicLevel": "atom",
       "contains": [],
       "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "background-overlay": {
+      "name": "Background overlay",
+      "figmaKey": "5419150f5032bdf9ffeb3f24c45e162664f803d9",
+      "defaultVariantKey": "63021101f6e283a77cbf7a95e748ad2df23e218e",
+      "category": "Overlays",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "command-bar": {
+      "name": "Command bar",
+      "figmaKey": "b5086df13a83c1e325d068ded11bde57e5853284",
+      "defaultVariantKey": "1004ed05f428a238b02f46ca81d78df3c0ea1c3a",
+      "category": "Overlays",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "command-input",
+          "figmaKey": "a07c456631bb1d94f82cb3b09cae6a9ed332fc59"
+        },
+        {
+          "name": "command-bar-menu-section",
+          "figmaKey": "e30da68c9a8dc6a926cf2edfe334ba0cd0dedaef"
+        },
+        {
+          "name": "command-menu-header",
+          "figmaKey": "e04cc8432d26074c82110358f5903dce969e62b6"
+        },
+        {
+          "name": "command-dropdown-menu-item",
+          "figmaKey": "41e6e113c1eda89a15a0b96baf7dba95e5f689d5"
+        },
+        {
+          "name": "command-shortcut",
+          "figmaKey": "00e3da82eed57bebcec2b17b019350ccf5276b99"
+        },
+        {
+          "name": "tag-count",
+          "figmaKey": "8e8c8e86b3e3ac5c96edf27827cb822172973184"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 6,
+        "dependedOnBy": 0
+      }
+    },
+    "dropdown": {
+      "name": "Dropdown",
+      "figmaKey": "94e853d143db191b38a69baa61c41f161449e96f",
+      "defaultVariantKey": "5532b2d8fcc8c93ef6448dc92262db705165c660",
+      "category": "Overlays",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "modal": {
+      "name": "Modal",
+      "figmaKey": "6540fcc878028a31e108ace9841eda667138b78b",
+      "defaultVariantKey": "020d29203c54252e6db0631aab7833eb505d35df",
+      "category": "Overlays",
+      "atomicLevel": "organism",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        },
+        {
+          "name": "buttons-button-close-x",
+          "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "slide-out-menu": {
+      "name": "Slide out menu",
+      "figmaKey": "d8d8ab3c3dd6368593d514b48d7d2bc8c79a4bbd",
+      "defaultVariantKey": "04b1b4096c1a52923a312324e0feb62ddc3199e0",
+      "category": "Overlays",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "slide-out-menu-header",
+          "figmaKey": "14966de7208a5d7511ab47007c791e3213bedb2e"
+        },
+        {
+          "name": "buttons-button-close-x",
+          "figmaKey": "5cd2e15fe51f9dae563810c96d57eff122051122"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "blog-page-header": {
+      "name": "Blog page header",
+      "figmaKey": "f4d15dde31f078338660d7b62be0d32a885153b6",
+      "defaultVariantKey": "1a6d1f8bedc0f43bf7f9cd05891eea5a0fa87847",
+      "category": "Page Headers",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "blog-post-card",
+          "figmaKey": "fa6307b131dbf711c5c72aa9c3fcf9a529a0ea2d"
+        },
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 3,
+        "dependedOnBy": 0
+      }
+    },
+    "blog-post-page-header": {
+      "name": "Blog post page header",
+      "figmaKey": "7c026abaea59176c03438c1bc5a9b52b406f83a6",
+      "defaultVariantKey": "0c2e08cace8fbeac94e7a5968fdf1e0ebbb02179",
+      "category": "Page Headers",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "avatar",
+          "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e"
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "contact-page-header": {
+      "name": "Contact page header",
+      "figmaKey": "cc93e203c553d6505374cc180e19acbc676bd4ef",
+      "defaultVariantKey": "13f082467853bab80f6b7478376f67a7f9097d4b",
+      "category": "Page Headers",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "header-section": {
+      "name": "Header section",
+      "figmaKey": "9dce5635426c70cafe43ae742070d6072cc4a4f3",
+      "defaultVariantKey": "02438e25e84f1b49b152dedb41c15ec0b0b73d67",
+      "category": "Page Headers",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "pricing-page-header": {
+      "name": "Pricing page header",
+      "figmaKey": "b5851e353557194840295990aec0296664616c0f",
+      "defaultVariantKey": "060b863d87d31a47d14da6a4b6b9bb88bbf5bf76",
+      "category": "Page Headers",
+      "atomicLevel": "template",
+      "contains": [
+        {
+          "name": "buttons-button",
+          "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35"
+        },
+        {
+          "name": "horizontal-tabs",
+          "figmaKey": "faf270e3e7e5c3cb39e2865dc77591ab4f06d63d"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 2,
+        "dependedOnBy": 0
+      }
+    },
+    "32-screen-mockup": {
+      "name": "3:2 screen mockup",
+      "figmaKey": "5ab7a87adad2a1963eab84e8b7f907156b60f684",
+      "defaultVariantKey": "0592d8229436089e65f895b53b728941e4fd0469",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "background-pattern": {
+      "name": "Background pattern",
+      "figmaKey": "a7d190c8d4b2974296a4f50cba04e548541b606e",
+      "defaultVariantKey": "c2c9ba62518bcac1026850b08faed22c1216c5d9",
+      "category": "Utility",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "background-pattern-decorative",
+          "figmaKey": "0973705e435af1aa18bcceab16fb8b37ca2350b2"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "background-pattern-decorative": {
+      "name": "Background pattern decorative",
+      "figmaKey": "0973705e435af1aa18bcceab16fb8b37ca2350b2",
+      "defaultVariantKey": "8ca5858674598167504bc3b9c1c3e1ea602633ee",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "background-pattern",
+          "figmaKey": "a7d190c8d4b2974296a4f50cba04e548541b606e"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "calendar": {
+      "name": "Calendar",
+      "figmaKey": "6d78abb7e35a3f53a191351faf92d334130a790c",
+      "defaultVariantKey": "1e2fd2d27339907c6ad624e0498722133a6a011d",
+      "category": "Utility",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "calendar-cell",
+          "figmaKey": "a8559ac92a15fbc8d5ccf6774d448ebd6f704404"
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "date-picker-dropdown",
+          "figmaKey": "1a19794db51ea273fefaacd32adcab8e71aedcb3"
+        },
+        {
+          "name": "date-picker-modal",
+          "figmaKey": "e276e105c961a27b53267271ee43a98d69abfb93"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 2
+      }
+    },
+    "credit-card-mockup": {
+      "name": "Credit card mockup",
+      "figmaKey": "f53b315c051388d46703c11114067f5e345f4038",
+      "defaultVariantKey": "913fb6ce79106649fe5b00aed56b507403cf3496",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "cursor": {
+      "name": "Cursor",
+      "figmaKey": "0d454ddf31d9254f1b121d1d7bd4072a56283a6e",
+      "defaultVariantKey": "68aebd6f8193474d2f58824020f63ada86d082d3",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "chart-marker",
+          "figmaKey": "4b433e70e1e8737a2592ff9e4ff1321979d4a719"
+        },
+        {
+          "name": "help-icon",
+          "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 2
+      }
+    },
+    "design-note": {
+      "name": "Design note",
+      "figmaKey": "6ac3b9f53101bc80b6d2554c8d78c352f6b36690",
+      "defaultVariantKey": "172ff664e8ed8c104b4a0c04730549eddd3d0c8d",
+      "category": "Utility",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "badge",
+          "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+          "optional": true
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "design-system-header": {
+      "name": "Design system header",
+      "figmaKey": "ff5adcfbb6f2f9a1f3129479e2884ff14bf71a08",
+      "defaultVariantKey": "3d3b1dff099b0936354d602126130c3689d0153e",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "help-icon": {
+      "name": "Help icon",
+      "figmaKey": "0360c96124d42313d7232c2d16d2b63fc259bf6b",
+      "defaultVariantKey": "1a997eb59a12903a26246477fdd9edf65d76f0a3",
+      "category": "Utility",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "cursor",
+          "figmaKey": "0d454ddf31d9254f1b121d1d7bd4072a56283a6e",
+          "optional": true
+        }
+      ],
+      "containedBy": [
+        {
+          "name": "input-dropdown",
+          "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe"
+        },
+        {
+          "name": "input-field",
+          "figmaKey": "b7c7d2a4de723cb06ed030cf91ed91361d5ada8b"
+        },
+        {
+          "name": "section-label",
+          "figmaKey": "9c6209cbe55d70c556c5ce1409eab2fc805bb4ec"
+        },
+        {
+          "name": "textarea-input-field",
+          "figmaKey": "20d06dfce8290b89f9f19df38cf64a8e86f98a4d"
+        },
+        {
+          "name": "command-input",
+          "figmaKey": "a07c456631bb1d94f82cb3b09cae6a9ed332fc59"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 5
+      }
+    },
+    "measure-spacing-guide": {
+      "name": "Measure + spacing guide",
+      "figmaKey": "5079d218809ecb0d2520b9e6e698eacd8d4ec0d9",
+      "defaultVariantKey": "a7c1d95e82a038495421c7cd796abce6f16f2d08",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "modern-screen-mockup": {
+      "name": "Modern screen mockup",
+      "figmaKey": "f59a8839698ddeb31048eeb1c12cd2232edc178c",
+      "defaultVariantKey": "477ac473961ec23fe9650b176a81d8653559c3b1",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 0
+      }
+    },
+    "numeric-key": {
+      "name": "Numeric key",
+      "figmaKey": "6603e5261836d96f37ca8822c526419b6035fb61",
+      "defaultVariantKey": "98e5c6da28874df598f3b335a2b772f04baa3c77",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "numeric-key-combo",
+          "figmaKey": "22d0218d87dd7f52d8bffe943bee7dba9648b5f0"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "numeric-key-combo": {
+      "name": "Numeric key combo",
+      "figmaKey": "22d0218d87dd7f52d8bffe943bee7dba9648b5f0",
+      "defaultVariantKey": "ab8b2f80ff95a8b5f35d627964e52771d8d854c4",
+      "category": "Utility",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "numeric-key",
+          "figmaKey": "6603e5261836d96f37ca8822c526419b6035fb61"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "wysiwyg-toolbar": {
+      "name": "WYSIWYG toolbar",
+      "figmaKey": "f845e3b39da3f4a75cf6383201394b974f3abecc",
+      "defaultVariantKey": "4c5e42f5095c62dae53a93c7d9925e1728499361",
+      "category": "Utility",
+      "atomicLevel": "molecule",
+      "contains": [
+        {
+          "name": "wysiwyg-tooltip",
+          "figmaKey": "3439f0b4bb82a09a522c5c639c984cfaf4fb2111"
+        }
+      ],
+      "containedBy": [],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 1,
+        "dependedOnBy": 0
+      }
+    },
+    "wysiwyg-tooltip": {
+      "name": "WYSIWYG tooltip",
+      "figmaKey": "3439f0b4bb82a09a522c5c639c984cfaf4fb2111",
+      "defaultVariantKey": "17639847db58c54a068d5dc927f1e5e314a89698",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "wysiwyg-toolbar",
+          "figmaKey": "f845e3b39da3f4a75cf6383201394b974f3abecc"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 1
+      }
+    },
+    "calendar-cell": {
+      "name": "_Calendar cell",
+      "figmaKey": "a8559ac92a15fbc8d5ccf6774d448ebd6f704404",
+      "defaultVariantKey": "00cd756362d0e3fe5448dd74c8c318ca3a65bd87",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [
+        {
+          "name": "calendar",
+          "figmaKey": "6d78abb7e35a3f53a191351faf92d334130a790c"
+        },
+        {
+          "name": "date-picker-dropdown",
+          "figmaKey": "1a19794db51ea273fefaacd32adcab8e71aedcb3"
+        },
+        {
+          "name": "date-picker-modal",
+          "figmaKey": "e276e105c961a27b53267271ee43a98d69abfb93"
+        }
+      ],
+      "swappableWith": [],
+      "dependencyCount": {
+        "dependsOn": 0,
+        "dependedOnBy": 3
+      }
+    },
+    "section-divider": {
+      "name": "\u2013\u2013\u2013\u2013 Section divider \u2013\u2013\u2013\u2013",
+      "figmaKey": "330d5a425d0ba5a7c48000b27db1f8fefe57e326",
+      "defaultVariantKey": "7ba397f0847b2f18d3d357e1aefdc447956c3077",
+      "category": "Utility",
+      "atomicLevel": "atom",
+      "contains": [],
+      "containedBy": [],
+      "swappableWith": [],
       "dependencyCount": {
         "dependsOn": 0,
         "dependedOnBy": 0
       }
     }
   },
-
   "patterns": {
-    "action-buttons": {
-      "description": "Multiple components use Buttons/Button as action triggers",
-      "components": ["alert"],
+    "forms": {
+      "description": "Form input components with label + input + state pattern",
+      "components": [
+        "input-dropdown",
+        "input-field",
+        "textarea-input-field"
+      ],
       "sharedTraits": [
-        "All use Buttons/Button with Hierarchy=Tertiary or Link variants",
-        "All pair a primary and secondary action",
-        "Actions can be toggled off with a boolean prop"
+        "All have Label boolean toggle",
+        "All support State variant (Default, Placeholder, Focus, Disabled, Filled)",
+        "All use spacing tokens for internal gap",
+        "Several support Destructive error state"
       ]
     },
-    "avatar-compositions": {
-      "description": "Avatar is used as a building block in multiple group/label components",
-      "components": ["avatar-group", "avatar-label-group", "activity-feed"],
+    "navigation": {
+      "description": "Navigation components with route/page awareness",
+      "components": [
+        "breadcrumbs",
+        "dropdown-header-navigation",
+        "footer",
+        "full-width-header-navigation",
+        "header-navigation",
+        "horizontal-tabs",
+        "pagination",
+        "sidebar-navigation",
+        "vertical-tabs"
+      ],
       "sharedTraits": [
-        "All contain Avatar instances",
-        "All support size variants that cascade to the Avatar size",
-        "Avatar status icons propagate through composition"
+        "Most have Breakpoint variant (Desktop/Mobile)",
+        "Several have Open state for mobile menus",
+        "Share navigation token patterns"
       ]
     },
-    "status-indicators": {
-      "description": "Multiple components use dot/badge indicators for status",
-      "components": ["button", "avatar"],
+    "progress": {
+      "description": "Progress indicator components",
+      "components": [
+        "progress-bar",
+        "progress-circle",
+        "progress-circle",
+        "progress-steps-progress-icons-centered",
+        "progress-steps-progress-icons-with-text",
+        "progress-steps-progress-minimal-icons",
+        "progress-steps-progress-minimal-icons-connected",
+        "progress-steps-progress-text-with-line",
+        "video-progress"
+      ],
       "sharedTraits": [
-        "Button uses _Dot for dot-leading variant",
-        "Avatar uses _Avatar online indicator and Verified tick",
-        "Both use small overlay elements positioned relative to the main element"
+        "Multiple size options",
+        "Sequential step patterns",
+        "Shared progress/completion visual language"
+      ]
+    },
+    "interactive_state": {
+      "description": "Components sharing interactive state model (Default, Hover, Focus, Disabled)",
+      "components": [
+        "buttons-button",
+        "buttons-button-close-x",
+        "buttons-button-destructive",
+        "buttons-button-utility",
+        "social-button",
+        "table-cell",
+        "table-header",
+        "social-icon",
+        "checkbox",
+        "date-picker-dropdown",
+        "input-dropdown",
+        "input-field",
+        "textarea-input-field",
+        "toggle",
+        "avatar-add-button",
+        "command-dropdown-menu-item",
+        "command-input",
+        "map-location-marker",
+        "nav-menu-item-card",
+        "play-button",
+        "badge-group",
+        "checkbox-group-item",
+        "cursor",
+        "calendar-cell"
+      ],
+      "sharedTraits": [
+        "All have State variant property",
+        "Follow consistent hover/focus/disabled visual transitions",
+        "Share interaction token patterns"
       ]
     }
   },
-
   "atomicHierarchy": {
-    "atoms": ["button-close-x", "placeholder", "_Dot", "user-01", "info-circle", "alert-circle", "check-circle", "x-close", "Verified tick", "_Avatar company icon", "_Avatar online indicator", "Featured icon", "Featured icon outline"],
-    "molecules": ["button", "avatar", "avatar-group", "avatar-label-group", "input-field", "input-dropdown", "button-group", "progress-bar", "table-header"],
-    "organisms": ["alert", "activity-feed", "activity-gauge", "calendar", "header-navigation", "404-section"]
+    "atoms": [
+      "32-screen-mockup",
+      "activity-gauge",
+      "avatar",
+      "avatar-add-button",
+      "background-overlay",
+      "background-pattern-decorative",
+      "breadcrumbs",
+      "browser-toolbar",
+      "browser-toolbar",
+      "buttons-button-close-x",
+      "calendar-cell",
+      "carousel-image",
+      "check-icon",
+      "check-item-text",
+      "checkbox",
+      "command-bar-menu-section",
+      "command-menu-header",
+      "command-shortcut",
+      "company-logo",
+      "content-divider",
+      "credit-card-mockup",
+      "cursor",
+      "design-system-header",
+      "emoji",
+      "feature-tab",
+      "featured-icon",
+      "featured-icon-outline",
+      "file-type-icon",
+      "folder-icon",
+      "footer-links-column",
+      "hand-drawn-accents",
+      "hand-drawn-arrow",
+      "hand-drawn-line",
+      "hand-drawn-pen-scribble",
+      "hand-drawn-underlines",
+      "horizontal-tabs",
+      "illustration",
+      "legend",
+      "line-pattern",
+      "loading-indicator",
+      "map-location-marker",
+      "measure-spacing-guide",
+      "mobile-app-store-badge",
+      "modern-screen-mockup",
+      "nav-menu-item-card",
+      "navigation-actions",
+      "numeric-key",
+      "pagination",
+      "pagination-dot-group",
+      "payment-method-icon",
+      "pie-chart",
+      "play-button",
+      "press-logo",
+      "pricing-tier-card",
+      "progress-bar",
+      "progress-circle",
+      "progress-circle",
+      "progress-steps-progress-icons-centered",
+      "progress-steps-progress-icons-with-text",
+      "progress-steps-progress-minimal-icons",
+      "progress-steps-progress-minimal-icons-connected",
+      "progress-steps-progress-text-with-line",
+      "section-divider",
+      "slide-out-menu-header",
+      "slider",
+      "social-button",
+      "social-icon",
+      "star-icon",
+      "table-cell",
+      "table-header-cell",
+      "tag-count",
+      "toggle",
+      "tooltip",
+      "verification-code-input-field",
+      "verified-tick",
+      "vertical-tabs",
+      "video-progress",
+      "wysiwyg-tooltip"
+    ],
+    "molecules": [
+      "activity-feed",
+      "alert",
+      "avatar-group",
+      "avatar-label-group",
+      "avatar-profile-photo",
+      "background-pattern",
+      "badge",
+      "badge-group",
+      "banner",
+      "blog-post-card",
+      "blog-subscribe-card",
+      "button-group",
+      "buttons-button",
+      "buttons-button-destructive",
+      "buttons-button-utility",
+      "calendar",
+      "chart-marker",
+      "checkbox-group",
+      "checkbox-group-item",
+      "code-snippet",
+      "command-dropdown-menu-item",
+      "command-input",
+      "content-item",
+      "date-picker-dropdown",
+      "date-picker-modal",
+      "design-note",
+      "dropdown",
+      "email-template",
+      "file-upload",
+      "header-navigation",
+      "help-icon",
+      "inline-cta",
+      "input-dropdown",
+      "input-field",
+      "job-post",
+      "line-and-bar-chart",
+      "message",
+      "message-reaction",
+      "metric-item",
+      "notification",
+      "numeric-key-combo",
+      "pie-chart",
+      "radar-chart",
+      "section-footer",
+      "section-label",
+      "slide-out-menu",
+      "social-button-groups",
+      "table",
+      "table-header",
+      "tag",
+      "textarea-input-field",
+      "video-player",
+      "wysiwyg-toolbar"
+    ],
+    "organisms": [
+      "card-header",
+      "command-bar",
+      "dropdown-header-navigation",
+      "empty-state",
+      "footer",
+      "full-width-header-navigation",
+      "modal",
+      "page-header",
+      "section-header",
+      "sidebar-navigation"
+    ],
+    "templates": [
+      "404-section",
+      "blog-page-header",
+      "blog-post-page-header",
+      "blog-section",
+      "careers-section",
+      "contact-page-header",
+      "contact-sections",
+      "content-section",
+      "cta-section",
+      "email-verification",
+      "faq-section",
+      "features-section",
+      "forgot-password",
+      "header-section",
+      "hero-header-section",
+      "log-in",
+      "metrics-section",
+      "newsletter-cta-section",
+      "press-mentions-section",
+      "pricing-page-header",
+      "pricing-section",
+      "sign-up",
+      "social-proof-section",
+      "team-section",
+      "testimonial-section"
+    ]
   },
-
   "dependencyHotspots": [
     {
-      "component": "Buttons/Button",
-      "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35",
-      "dependedOnBy": 3,
-      "impact": "high",
-      "note": "Used in Alert actions, Header sections, and custom dashboard layouts. Changes cascade to any component with action buttons."
+      "component": "buttons-button",
+      "name": "Buttons/Button",
+      "dependedOnBy": 35,
+      "impact": "critical"
     },
     {
-      "component": "Avatar",
-      "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
-      "dependedOnBy": 3,
-      "impact": "high",
-      "note": "Foundation for Avatar group, Avatar label group, and Activity feed. Size changes cascade through all compositions."
+      "component": "avatar",
+      "name": "Avatar",
+      "dependedOnBy": 13,
+      "impact": "critical"
     },
     {
-      "component": "placeholder",
-      "componentId": "3465:410042",
-      "dependedOnBy": 2,
-      "impact": "medium",
-      "note": "Default icon placeholder used in Button and potentially other components with instance swap slots."
+      "component": "badge",
+      "name": "Badge",
+      "dependedOnBy": 12,
+      "impact": "critical"
+    },
+    {
+      "component": "input-field",
+      "name": "Input field",
+      "dependedOnBy": 10,
+      "impact": "critical"
+    },
+    {
+      "component": "featured-icon",
+      "name": "Featured icon",
+      "dependedOnBy": 8,
+      "impact": "high"
+    },
+    {
+      "component": "buttons-button-close-x",
+      "name": "Buttons/Button close X",
+      "dependedOnBy": 5,
+      "impact": "high"
+    },
+    {
+      "component": "content-divider",
+      "name": "Content divider",
+      "dependedOnBy": 5,
+      "impact": "high"
+    },
+    {
+      "component": "help-icon",
+      "name": "Help icon",
+      "dependedOnBy": 5,
+      "impact": "high"
+    },
+    {
+      "component": "social-button",
+      "name": "Social button",
+      "dependedOnBy": 3,
+      "impact": "moderate"
+    },
+    {
+      "component": "legend",
+      "name": "_Legend",
+      "dependedOnBy": 3,
+      "impact": "moderate"
+    },
+    {
+      "component": "checkbox",
+      "name": "Checkbox",
+      "dependedOnBy": 3,
+      "impact": "moderate"
+    },
+    {
+      "component": "navigation-actions",
+      "name": "_Navigation actions",
+      "dependedOnBy": 3,
+      "impact": "moderate"
+    },
+    {
+      "component": "horizontal-tabs",
+      "name": "Horizontal tabs",
+      "dependedOnBy": 3,
+      "impact": "moderate"
+    },
+    {
+      "component": "calendar-cell",
+      "name": "_Calendar cell",
+      "dependedOnBy": 3,
+      "impact": "moderate"
     }
   ],
-
   "swapGroups": {
-    "buttonIconSlot": {
-      "description": "Icons that can be swapped into Button leading/trailing icon slots",
-      "slotProps": ["🔀 Icon leading swap#3466:91", "🔀 Icon trailing swap#3466:852"],
-      "defaultComponent": { "name": "placeholder", "componentId": "3465:410042" },
-      "usedIn": ["button", "alert"]
+    "iconSlot": {
+      "description": "Components that fit iconSlot slots",
+      "usedIn": [
+        "badge",
+        "buttons-button",
+        "buttons-button-destructive",
+        "buttons-button-utility",
+        "featured-icon",
+        "featured-icon-outline",
+        "input-dropdown",
+        "input-field",
+        "command-dropdown-menu-item"
+      ],
+      "members": [
+        {
+          "name": "check-icon",
+          "figmaKey": "981e8bd8f4b854deb45350349aee7a79f5cb3e0d"
+        },
+        {
+          "name": "featured-icon",
+          "figmaKey": "b020c5071873eaddffcb3b68d6016e31aab4f312"
+        },
+        {
+          "name": "featured-icon-outline",
+          "figmaKey": "1667e635bc1d40b0816f9dcbdffddbbb7f47aa4e"
+        },
+        {
+          "name": "file-type-icon",
+          "figmaKey": "2f1d0be33bbe89caecf38eaa98d4ef5cd9ad434c"
+        },
+        {
+          "name": "folder-icon",
+          "figmaKey": "959ec67142428348051d7e67bd06178c540b199f"
+        },
+        {
+          "name": "payment-method-icon",
+          "figmaKey": "659efa33b6fbdce904d083dc0d50c1650f0af798"
+        },
+        {
+          "name": "social-icon",
+          "figmaKey": "b9d46bf066c1abdd65ca5d63ca674bbc0893304f"
+        }
+      ]
     },
-    "alertIconSlot": {
-      "description": "Featured icons used in Alert component",
-      "members": ["info-circle", "alert-circle", "check-circle"],
-      "usedIn": ["alert"]
+    "flagSlot": {
+      "description": "Components that fit flagSlot slots",
+      "usedIn": [
+        "badge",
+        "tag"
+      ]
     },
-    "avatarStatusSlot": {
-      "description": "Status indicators overlaid on Avatar",
-      "members": ["_Avatar online indicator", "_Avatar company icon", "Verified tick"],
-      "usedIn": ["avatar"]
+    "emojiSlot": {
+      "description": "Components that fit emojiSlot slots",
+      "usedIn": [
+        "message-reaction"
+      ]
     }
   },
-
-  "dashboardUsage": {
-    "$description": "Components and tokens used in the Dashboard frame (7:2) — demonstrates real-world composition",
-    "libraryInstances": [
-      {
-        "component": "Buttons/Button",
-        "variant": "Size=md, Hierarchy=Secondary gray, Icon=Default, State=Default",
-        "variantKey": "0d4b46142ad80966cfaf4c86d99b457d4924595e",
-        "usage": "Export action in header"
-      },
-      {
-        "component": "Buttons/Button",
-        "variant": "Size=md, Hierarchy=Primary, Icon=Default, State=Default",
-        "variantKey": "c7b6f17162347f1cf7e6689f70b24a4ab487d216",
-        "usage": "Add Widget primary action in header"
-      }
-    ],
-    "tokenBindings": 411,
-    "totalNodes": 123,
-    "composition": {
-      "Dashboard": {
-        "contains": ["Sidebar", "Main Content"],
-        "layout": "horizontal"
-      },
-      "Sidebar": {
-        "contains": ["Logo", "Navigation"],
-        "layout": "vertical"
-      },
-      "Main Content": {
-        "contains": ["Header", "Stats Cards", "Recent Activity"],
-        "layout": "vertical"
-      },
-      "Header": {
-        "contains": ["HeaderLeft", "Actions"],
-        "layout": "horizontal, space-between"
-      },
-      "Actions": {
-        "contains": ["Buttons/Button (Secondary gray)", "Buttons/Button (Primary)"],
-        "note": "Real library instances, instantiated via variant keys from button.json"
-      },
-      "Stats Cards": {
-        "contains": ["StatCard/Total Revenue", "StatCard/Active Users", "StatCard/Bounce Rate", "StatCard/Avg. Session"],
-        "layout": "horizontal, fill"
-      }
-    }
-  }
+  "isolated": [
+    "32-screen-mockup",
+    "activity-gauge",
+    "background-overlay",
+    "browser-toolbar",
+    "browser-toolbar",
+    "buttons-button-destructive",
+    "buttons-button-utility",
+    "carousel-image",
+    "check-icon",
+    "check-item-text",
+    "credit-card-mockup",
+    "design-system-header",
+    "emoji",
+    "featured-icon-outline",
+    "folder-icon",
+    "hand-drawn-accents",
+    "hand-drawn-arrow",
+    "hand-drawn-line",
+    "hand-drawn-pen-scribble",
+    "hand-drawn-underlines",
+    "line-pattern",
+    "loading-indicator",
+    "measure-spacing-guide",
+    "mobile-app-store-badge",
+    "modern-screen-mockup",
+    "pagination",
+    "pagination-dot-group",
+    "payment-method-icon",
+    "progress-circle",
+    "progress-circle",
+    "progress-steps-progress-icons-centered",
+    "progress-steps-progress-icons-with-text",
+    "progress-steps-progress-minimal-icons",
+    "progress-steps-progress-minimal-icons-connected",
+    "progress-steps-progress-text-with-line",
+    "section-divider",
+    "slider",
+    "tag",
+    "toggle",
+    "vertical-tabs"
+  ]
 }

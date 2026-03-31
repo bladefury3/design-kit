@@ -1,0 +1,710 @@
+{
+  "$schema": "design-kit/plan/v1",
+  "$metadata": {
+    "createdAt": "2026-03-31T01:30:00Z",
+    "description": "User Insights Dashboard — Unified Pulse: chronological stream merging NPS, feedback, and tickets into one narrative",
+    "size": { "width": 1440, "height": "auto" },
+    "libraryFileKey": "JhsFSqLI1lWfDZq5I4crsQ",
+    "brainstorm": {
+      "variationIndex": 3,
+      "variationName": "Unified Pulse",
+      "scamperLens": "Combine → Monitor",
+      "userJob": "When I check the pulse of my product, I want a single chronological stream of all user signals so I can read the narrative of user health without switching between tools.",
+      "thesis": "Merging NPS + feedback + tickets into one chronological stream gives PMs a narrative of user health."
+    }
+  },
+
+  "componentCoverage": {
+    "total": 17,
+    "fromLibrary": 11,
+    "tokenBuilt": 6,
+    "percentage": 65
+  },
+
+  "textContent": [
+    { "element": "Sidebar product name", "property": "text", "value": "InsightOS" },
+    { "element": "Sidebar nav: Dashboard", "property": "text", "value": "Dashboard" },
+    { "element": "Sidebar nav: Feedback", "property": "text", "value": "Feedback" },
+    { "element": "Sidebar nav: Tickets", "property": "text", "value": "Tickets" },
+    { "element": "Sidebar nav: NPS", "property": "text", "value": "NPS" },
+    { "element": "Sidebar nav: Segments", "property": "text", "value": "Segments" },
+    { "element": "Sidebar nav: Reports", "property": "text", "value": "Reports" },
+    { "element": "Sidebar user name", "property": "text", "value": "Sarah Chen" },
+    { "element": "Sidebar user role", "property": "text", "value": "Product Manager" },
+    { "element": "Page title", "property": "text", "value": "Pulse" },
+    { "element": "Page subtitle", "property": "text", "value": "Live feed of user sentiment" },
+    { "element": "Date filter", "property": "text", "value": "Last 7 days" },
+    { "element": "Hero NPS label", "property": "text", "value": "NPS Score" },
+    { "element": "Hero NPS value", "property": "text", "value": "72" },
+    { "element": "Hero NPS trend", "property": "text", "value": "+4 this month" },
+    { "element": "Metric 1 label", "property": "text", "value": "CSAT" },
+    { "element": "Metric 1 value", "property": "text", "value": "4.2/5" },
+    { "element": "Metric 2 label", "property": "text", "value": "Open Tickets" },
+    { "element": "Metric 2 value", "property": "text", "value": "34" },
+    { "element": "Metric 3 label", "property": "text", "value": "Feedback This Week" },
+    { "element": "Metric 3 value", "property": "text", "value": "128" },
+    { "element": "Feed entry 1", "property": "text", "value": "NPS dropped 3 points in Mobile segment" },
+    { "element": "Feed entry 1 time", "property": "text", "value": "10 min ago" },
+    { "element": "Feed entry 2 user", "property": "text", "value": "Alex Kim" },
+    { "element": "Feed entry 2 quote", "property": "text", "value": "The new checkout flow is so much better. Completed my purchase in under a minute!" },
+    { "element": "Feed entry 2 time", "property": "text", "value": "25 min ago" },
+    { "element": "Feed entry 3", "property": "text", "value": "Support ticket #4521 escalated — Mobile app crash on file upload" },
+    { "element": "Feed entry 3 time", "property": "text", "value": "1 hour ago" },
+    { "element": "Feed entry 4 user", "property": "text", "value": "Jamie Liu" },
+    { "element": "Feed entry 4 quote", "property": "text", "value": "Search is still painfully slow. I gave up and used Google to find what I needed on your site." },
+    { "element": "Feed entry 4 time", "property": "text", "value": "2 hours ago" },
+    { "element": "Feed entry 5", "property": "text", "value": "NPS recovered to 72 after onboarding fix shipped" },
+    { "element": "Feed entry 5 time", "property": "text", "value": "4 hours ago" }
+  ],
+
+  "layout": {
+    "name": "User Insights — Unified Pulse",
+    "type": "frame",
+    "direction": "horizontal",
+    "width": 1440,
+    "height": "auto",
+    "tokens": {
+      "fills": { "ref": "color.background.bg-primary", "figmaKey": "b6157f22907f5eae9c352ab74d3b634423186136" }
+    },
+    "children": [
+
+      {
+        "name": "Sidebar",
+        "type": "frame",
+        "direction": "vertical",
+        "sizing": { "width": 240, "height": "fill" },
+        "tokens": {
+          "fills": { "ref": "color.background.bg-secondary", "figmaKey": "bbf85cb9ee4f0d282fafffad03f716c5ac99bb30" },
+          "paddingTop": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "paddingBottom": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "paddingLeft": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+          "paddingRight": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+          "itemSpacing": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "strokes": { "ref": "color.border.border-secondary", "figmaKey": "eaa71a1a239f2de12e8ee5b93d4d0c0f754e8d04", "side": "right" }
+        },
+        "children": [
+          {
+            "name": "Product Name",
+            "type": "text",
+            "content": "InsightOS",
+            "style": "Semi Bold",
+            "tokens": {
+              "fontSize": { "ref": "typography.fontSize.text-md", "figmaKey": "b7a5042a02cca3b12ca7b47e536d58c51b08690c" },
+              "lineHeight": { "ref": "typography.lineHeight.text-md", "figmaKey": "f7c9bf7a22f49bef31f290d0af838186ad10bd7b" },
+              "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+            }
+          },
+          {
+            "name": "Nav Items",
+            "type": "frame",
+            "direction": "vertical",
+            "sizing": { "width": "fill", "height": "hug" },
+            "tokens": {
+              "itemSpacing": { "ref": "spacing.spacing-xs", "figmaKey": "c857c26c5d5fd2282129932a4afb8561cc9e9dfc" }
+            },
+            "children": [
+              { "name": "Nav: Dashboard", "type": "library-component", "component": "button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "variantKey": "af2b0b90b38a1cd8efb7bf968ac2740a6f5bb86a", "variant": "Size=sm, Hierarchy=Tertiary gray, Icon=Default, State=Default", "sizing": { "width": "fill", "height": "hug" }, "overrides": { "text": "Dashboard" } },
+              { "name": "Nav: Feedback", "type": "library-component", "component": "button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "variantKey": "af2b0b90b38a1cd8efb7bf968ac2740a6f5bb86a", "variant": "Size=sm, Hierarchy=Tertiary gray, Icon=Default, State=Default", "sizing": { "width": "fill", "height": "hug" }, "overrides": { "text": "Feedback" } },
+              { "name": "Nav: Tickets", "type": "library-component", "component": "button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "variantKey": "af2b0b90b38a1cd8efb7bf968ac2740a6f5bb86a", "variant": "Size=sm, Hierarchy=Tertiary gray, Icon=Default, State=Default", "sizing": { "width": "fill", "height": "hug" }, "overrides": { "text": "Tickets" } },
+              { "name": "Nav: NPS", "type": "library-component", "component": "button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "variantKey": "af2b0b90b38a1cd8efb7bf968ac2740a6f5bb86a", "variant": "Size=sm, Hierarchy=Tertiary gray, Icon=Default, State=Default", "sizing": { "width": "fill", "height": "hug" }, "overrides": { "text": "NPS" } },
+              { "name": "Nav: Segments", "type": "library-component", "component": "button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "variantKey": "af2b0b90b38a1cd8efb7bf968ac2740a6f5bb86a", "variant": "Size=sm, Hierarchy=Tertiary gray, Icon=Default, State=Default", "sizing": { "width": "fill", "height": "hug" }, "overrides": { "text": "Segments" } },
+              { "name": "Nav: Reports", "type": "library-component", "component": "button", "figmaKey": "aa53b4bdab230880d4c65891a3ef1a8f02320d35", "variantKey": "af2b0b90b38a1cd8efb7bf968ac2740a6f5bb86a", "variant": "Size=sm, Hierarchy=Tertiary gray, Icon=Default, State=Default", "sizing": { "width": "fill", "height": "hug" }, "overrides": { "text": "Reports" } }
+            ]
+          },
+          {
+            "name": "Sidebar Spacer",
+            "type": "frame",
+            "direction": "vertical",
+            "sizing": { "width": "fill", "height": "fill" }
+          },
+          {
+            "name": "User Profile",
+            "type": "library-component",
+            "component": "avatar-label-group",
+            "figmaKey": "337026164a08c3bb2e4659aa1e534c1f607d05ef",
+            "variantKey": "360054184886a747d00b6c36a2f6e4f6609213b8",
+            "variant": "default",
+            "sizing": { "width": "fill", "height": "hug" },
+            "overrides": { "name": "Sarah Chen", "supportingText": "Product Manager" }
+          }
+        ]
+      },
+
+      {
+        "name": "Main Content",
+        "type": "frame",
+        "direction": "vertical",
+        "sizing": { "width": "fill", "height": "hug" },
+        "tokens": {
+          "fills": { "ref": "color.background.bg-primary", "figmaKey": "b6157f22907f5eae9c352ab74d3b634423186136" },
+          "paddingTop": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "paddingBottom": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "paddingLeft": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "paddingRight": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+          "itemSpacing": { "ref": "spacing.spacing-3xl", "figmaKey": "ac8c94142fa65bbd12319f6487489b4b1f21389a" }
+        },
+        "children": [
+
+          {
+            "name": "Page Header",
+            "type": "frame",
+            "direction": "horizontal",
+            "sizing": { "width": "fill", "height": "hug" },
+            "tokens": {
+              "primaryAxisAlignItems": "SPACE_BETWEEN",
+              "counterAxisAlignItems": "CENTER"
+            },
+            "children": [
+              {
+                "name": "Header Left",
+                "type": "frame",
+                "direction": "vertical",
+                "sizing": { "width": "hug", "height": "hug" },
+                "tokens": {
+                  "itemSpacing": { "ref": "spacing.spacing-xs", "figmaKey": "c857c26c5d5fd2282129932a4afb8561cc9e9dfc" }
+                },
+                "children": [
+                  {
+                    "name": "Page Title",
+                    "type": "text",
+                    "content": "Pulse",
+                    "style": "Semi Bold",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.display-xs", "figmaKey": "ac2dc937114fa773304149e6ef2781f71da11f1e" },
+                      "lineHeight": { "ref": "typography.lineHeight.display-xs", "figmaKey": "f33498690a950c748600b3a97f0e490c499adb05" },
+                      "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+                    }
+                  },
+                  {
+                    "name": "Page Subtitle",
+                    "type": "text",
+                    "content": "Live feed of user sentiment",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                      "fills": { "ref": "color.text.text-tertiary", "figmaKey": "6f3cd6df4cac1025f3bf9cb141f67eb29a97b897" }
+                    }
+                  }
+                ]
+              },
+              {
+                "name": "Header Actions",
+                "type": "frame",
+                "direction": "horizontal",
+                "sizing": { "width": "hug", "height": "hug" },
+                "tokens": {
+                  "itemSpacing": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "counterAxisAlignItems": "CENTER"
+                },
+                "children": [
+                  {
+                    "name": "Date Range Filter",
+                    "type": "library-component",
+                    "component": "input-dropdown",
+                    "figmaKey": "efeced1b944239f911189841a317f63c1bdf9ffe",
+                    "variantKey": "cacec70cefc3c9113c54f859f76e71e8caa3c3fd",
+                    "variant": "default",
+                    "sizing": { "width": 180, "height": "hug" },
+                    "overrides": { "text": "Last 7 days" }
+                  }
+                ]
+              }
+            ]
+          },
+
+          {
+            "name": "Hero NPS Block",
+            "type": "frame",
+            "direction": "vertical",
+            "sizing": { "width": "fill", "height": "hug" },
+            "tokens": {
+              "fills": { "ref": "color.background.bg-brand-primary", "figmaKey": "0eebb4d68e653dfbbc3f7898e51999a919bb1170" },
+              "paddingTop": { "ref": "spacing.spacing-3xl", "figmaKey": "ac8c94142fa65bbd12319f6487489b4b1f21389a" },
+              "paddingBottom": { "ref": "spacing.spacing-3xl", "figmaKey": "ac8c94142fa65bbd12319f6487489b4b1f21389a" },
+              "paddingLeft": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+              "paddingRight": { "ref": "spacing.spacing-4xl", "figmaKey": "284dbace262b54952e1dd9780925a4dbbbbfd7de" },
+              "itemSpacing": { "ref": "spacing.spacing-sm", "figmaKey": "65f3ae17d4fd05921017913fada26643e3fb1481" },
+              "cornerRadius": { "ref": "radius.radius-xl", "figmaKey": "5bae1c84656e446891f1da206b6a0adcdde6a48b" },
+              "counterAxisAlignItems": "CENTER"
+            },
+            "children": [
+              {
+                "name": "Hero NPS Label",
+                "type": "text",
+                "content": "NPS Score",
+                "style": "Semi Bold",
+                "tokens": {
+                  "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                  "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                  "fills": { "ref": "color.text.text-brand-secondary", "figmaKey": "6813ee50c150551422d088487902d2dd75a14fa8" }
+                }
+              },
+              {
+                "name": "Hero NPS Value",
+                "type": "text",
+                "content": "72",
+                "style": "Bold",
+                "tokens": {
+                  "fontSize": { "ref": "typography.fontSize.display-sm", "figmaKey": "16d9fd91c7392e05c6f71a546cafae348dfb4f69" },
+                  "lineHeight": { "ref": "typography.lineHeight.display-sm", "figmaKey": "e5abaaa22c009c0c0e4abb7237bd8c3cbb67b003" },
+                  "fills": { "ref": "color.text.text-brand-secondary", "figmaKey": "6813ee50c150551422d088487902d2dd75a14fa8" }
+                }
+              },
+              {
+                "name": "Hero NPS Trend",
+                "type": "text",
+                "content": "+4 this month",
+                "style": "Regular",
+                "tokens": {
+                  "fontSize": { "ref": "typography.fontSize.text-md", "figmaKey": "b7a5042a02cca3b12ca7b47e536d58c51b08690c" },
+                  "lineHeight": { "ref": "typography.lineHeight.text-md", "figmaKey": "f7c9bf7a22f49bef31f290d0af838186ad10bd7b" },
+                  "fills": { "ref": "color.text.text-brand-secondary", "figmaKey": "6813ee50c150551422d088487902d2dd75a14fa8" }
+                }
+              }
+            ]
+          },
+
+          {
+            "name": "Metric Cards Row",
+            "type": "frame",
+            "direction": "horizontal",
+            "sizing": { "width": "fill", "height": "hug" },
+            "tokens": {
+              "itemSpacing": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" }
+            },
+            "children": [
+              {
+                "name": "Metric: CSAT",
+                "type": "library-component",
+                "component": "metric-item",
+                "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed",
+                "variantKey": "0077391d4c99c5cfac7ebf146fb836bf449b4cf0",
+                "variant": "default",
+                "sizing": { "width": "fill", "height": "hug" },
+                "overrides": { "label": "CSAT", "value": "4.2/5" }
+              },
+              {
+                "name": "Metric: Open Tickets",
+                "type": "library-component",
+                "component": "metric-item",
+                "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed",
+                "variantKey": "0077391d4c99c5cfac7ebf146fb836bf449b4cf0",
+                "variant": "default",
+                "sizing": { "width": "fill", "height": "hug" },
+                "overrides": { "label": "Open Tickets", "value": "34" }
+              },
+              {
+                "name": "Metric: Feedback This Week",
+                "type": "library-component",
+                "component": "metric-item",
+                "figmaKey": "97a73c80fabc1ce614c737ff0360983f6ac81aed",
+                "variantKey": "0077391d4c99c5cfac7ebf146fb836bf449b4cf0",
+                "variant": "default",
+                "sizing": { "width": "fill", "height": "hug" },
+                "overrides": { "label": "Feedback This Week", "value": "128" }
+              }
+            ]
+          },
+
+          {
+            "name": "Unified Feed",
+            "type": "frame",
+            "direction": "vertical",
+            "sizing": { "width": "fill", "height": "hug" },
+            "tokens": {
+              "itemSpacing": { "ref": "spacing.spacing-none", "figmaKey": "90f125ea0850ee901c1f79879b0225f565ef6b17" }
+            },
+            "children": [
+
+              {
+                "name": "Feed Entry 1 — NPS Alert",
+                "type": "frame",
+                "direction": "horizontal",
+                "sizing": { "width": "fill", "height": "hug" },
+                "tokens": {
+                  "paddingTop": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingBottom": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingLeft": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "paddingRight": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "itemSpacing": { "ref": "spacing.spacing-md", "figmaKey": "cc421a9ecf3b7f29ec46cd009fac26e033dddb1f" },
+                  "counterAxisAlignItems": "CENTER",
+                  "strokes": { "ref": "color.border.border-secondary", "figmaKey": "eaa71a1a239f2de12e8ee5b93d4d0c0f754e8d04", "side": "bottom" }
+                },
+                "children": [
+                  {
+                    "name": "Entry 1 Badge",
+                    "type": "library-component",
+                    "component": "badge",
+                    "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+                    "variantKey": "6af9a9e21cfe20e8594b1097891fd08c1dcaff08",
+                    "variant": "default",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "overrides": { "text": "NPS", "color": "warning" }
+                  },
+                  {
+                    "name": "Entry 1 Text",
+                    "type": "text",
+                    "content": "NPS dropped 3 points in Mobile segment",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                      "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+                    }
+                  },
+                  {
+                    "name": "Entry 1 Spacer",
+                    "type": "frame",
+                    "direction": "horizontal",
+                    "sizing": { "width": "fill", "height": 1 }
+                  },
+                  {
+                    "name": "Entry 1 Time",
+                    "type": "text",
+                    "content": "10 min ago",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-xs", "figmaKey": "8075202d8ad8a1dcfb50181771a46286f011d042" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-xs", "figmaKey": "66209237f3596d7c62f2fb709ba23cd763fbc400" },
+                      "fills": { "ref": "color.text.text-quaternary", "figmaKey": "3e91753c369e0f66d88c769c72037ff3c232eef5" }
+                    }
+                  }
+                ]
+              },
+
+              {
+                "name": "Feed Entry 2 — Positive Feedback",
+                "type": "frame",
+                "direction": "horizontal",
+                "sizing": { "width": "fill", "height": "hug" },
+                "tokens": {
+                  "paddingTop": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingBottom": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingLeft": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "paddingRight": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "itemSpacing": { "ref": "spacing.spacing-md", "figmaKey": "cc421a9ecf3b7f29ec46cd009fac26e033dddb1f" },
+                  "counterAxisAlignItems": "CENTER",
+                  "strokes": { "ref": "color.border.border-secondary", "figmaKey": "eaa71a1a239f2de12e8ee5b93d4d0c0f754e8d04", "side": "bottom" }
+                },
+                "children": [
+                  {
+                    "name": "Entry 2 Avatar",
+                    "type": "library-component",
+                    "component": "avatar",
+                    "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
+                    "variantKey": "007d8db3975dba63b8fb5111a55fa294ad93165c",
+                    "variant": "default",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "overrides": { "initials": "AK" }
+                  },
+                  {
+                    "name": "Entry 2 Content",
+                    "type": "frame",
+                    "direction": "vertical",
+                    "sizing": { "width": "fill", "height": "hug" },
+                    "tokens": {
+                      "itemSpacing": { "ref": "spacing.spacing-xxs", "figmaKey": "625b2f2f2566f593614d577d116642306d99f044" }
+                    },
+                    "children": [
+                      {
+                        "name": "Entry 2 User",
+                        "type": "text",
+                        "content": "Alex Kim",
+                        "style": "Semi Bold",
+                        "tokens": {
+                          "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                          "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                          "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+                        }
+                      },
+                      {
+                        "name": "Entry 2 Quote",
+                        "type": "text",
+                        "content": "The new checkout flow is so much better. Completed my purchase in under a minute!",
+                        "style": "Regular",
+                        "tokens": {
+                          "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                          "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                          "fills": { "ref": "color.text.text-secondary", "figmaKey": "8c8adda33a941e2fc771c22dfc49adec9d804ddf" }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Entry 2 Tags",
+                    "type": "frame",
+                    "direction": "horizontal",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "tokens": {
+                      "itemSpacing": { "ref": "spacing.spacing-xs", "figmaKey": "c857c26c5d5fd2282129932a4afb8561cc9e9dfc" }
+                    },
+                    "children": [
+                      {
+                        "name": "Entry 2 Sentiment Badge",
+                        "type": "library-component",
+                        "component": "badge",
+                        "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+                        "variantKey": "6af9a9e21cfe20e8594b1097891fd08c1dcaff08",
+                        "variant": "default",
+                        "sizing": { "width": "hug", "height": "hug" },
+                        "overrides": { "text": "Positive", "color": "success" }
+                      },
+                      {
+                        "name": "Entry 2 Category Tag",
+                        "type": "library-component",
+                        "component": "tag",
+                        "figmaKey": "4641442bd521086f873060945bbe25c81c2cd484",
+                        "variantKey": "f141a6a0c1464b2fac4e1f1d2afecce9382e36d5",
+                        "variant": "default",
+                        "sizing": { "width": "hug", "height": "hug" },
+                        "overrides": { "text": "Checkout" }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Entry 2 Time",
+                    "type": "text",
+                    "content": "25 min ago",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-xs", "figmaKey": "8075202d8ad8a1dcfb50181771a46286f011d042" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-xs", "figmaKey": "66209237f3596d7c62f2fb709ba23cd763fbc400" },
+                      "fills": { "ref": "color.text.text-quaternary", "figmaKey": "3e91753c369e0f66d88c769c72037ff3c232eef5" }
+                    }
+                  }
+                ]
+              },
+
+              {
+                "name": "Feed Entry 3 — Ticket Escalation",
+                "type": "frame",
+                "direction": "horizontal",
+                "sizing": { "width": "fill", "height": "hug" },
+                "tokens": {
+                  "paddingTop": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingBottom": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingLeft": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "paddingRight": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "itemSpacing": { "ref": "spacing.spacing-md", "figmaKey": "cc421a9ecf3b7f29ec46cd009fac26e033dddb1f" },
+                  "counterAxisAlignItems": "CENTER",
+                  "strokes": { "ref": "color.border.border-secondary", "figmaKey": "eaa71a1a239f2de12e8ee5b93d4d0c0f754e8d04", "side": "bottom" }
+                },
+                "children": [
+                  {
+                    "name": "Entry 3 Badge",
+                    "type": "library-component",
+                    "component": "badge",
+                    "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+                    "variantKey": "6af9a9e21cfe20e8594b1097891fd08c1dcaff08",
+                    "variant": "default",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "overrides": { "text": "Ticket", "color": "error" }
+                  },
+                  {
+                    "name": "Entry 3 Text",
+                    "type": "text",
+                    "content": "Support ticket #4521 escalated — Mobile app crash on file upload",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                      "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+                    }
+                  },
+                  {
+                    "name": "Entry 3 Priority Tag",
+                    "type": "library-component",
+                    "component": "tag",
+                    "figmaKey": "4641442bd521086f873060945bbe25c81c2cd484",
+                    "variantKey": "f141a6a0c1464b2fac4e1f1d2afecce9382e36d5",
+                    "variant": "default",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "overrides": { "text": "Critical" }
+                  },
+                  {
+                    "name": "Entry 3 Spacer",
+                    "type": "frame",
+                    "direction": "horizontal",
+                    "sizing": { "width": "fill", "height": 1 }
+                  },
+                  {
+                    "name": "Entry 3 Time",
+                    "type": "text",
+                    "content": "1 hour ago",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-xs", "figmaKey": "8075202d8ad8a1dcfb50181771a46286f011d042" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-xs", "figmaKey": "66209237f3596d7c62f2fb709ba23cd763fbc400" },
+                      "fills": { "ref": "color.text.text-quaternary", "figmaKey": "3e91753c369e0f66d88c769c72037ff3c232eef5" }
+                    }
+                  }
+                ]
+              },
+
+              {
+                "name": "Feed Entry 4 — Negative Feedback",
+                "type": "frame",
+                "direction": "horizontal",
+                "sizing": { "width": "fill", "height": "hug" },
+                "tokens": {
+                  "paddingTop": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingBottom": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingLeft": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "paddingRight": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "itemSpacing": { "ref": "spacing.spacing-md", "figmaKey": "cc421a9ecf3b7f29ec46cd009fac26e033dddb1f" },
+                  "counterAxisAlignItems": "CENTER",
+                  "strokes": { "ref": "color.border.border-secondary", "figmaKey": "eaa71a1a239f2de12e8ee5b93d4d0c0f754e8d04", "side": "bottom" }
+                },
+                "children": [
+                  {
+                    "name": "Entry 4 Avatar",
+                    "type": "library-component",
+                    "component": "avatar",
+                    "figmaKey": "219d8b854f400b3690b3b844e3d6474e631b572e",
+                    "variantKey": "007d8db3975dba63b8fb5111a55fa294ad93165c",
+                    "variant": "default",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "overrides": { "initials": "JL" }
+                  },
+                  {
+                    "name": "Entry 4 Content",
+                    "type": "frame",
+                    "direction": "vertical",
+                    "sizing": { "width": "fill", "height": "hug" },
+                    "tokens": {
+                      "itemSpacing": { "ref": "spacing.spacing-xxs", "figmaKey": "625b2f2f2566f593614d577d116642306d99f044" }
+                    },
+                    "children": [
+                      {
+                        "name": "Entry 4 User",
+                        "type": "text",
+                        "content": "Jamie Liu",
+                        "style": "Semi Bold",
+                        "tokens": {
+                          "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                          "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                          "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+                        }
+                      },
+                      {
+                        "name": "Entry 4 Quote",
+                        "type": "text",
+                        "content": "Search is still painfully slow. I gave up and used Google to find what I needed on your site.",
+                        "style": "Regular",
+                        "tokens": {
+                          "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                          "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                          "fills": { "ref": "color.text.text-secondary", "figmaKey": "8c8adda33a941e2fc771c22dfc49adec9d804ddf" }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Entry 4 Tags",
+                    "type": "frame",
+                    "direction": "horizontal",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "tokens": {
+                      "itemSpacing": { "ref": "spacing.spacing-xs", "figmaKey": "c857c26c5d5fd2282129932a4afb8561cc9e9dfc" }
+                    },
+                    "children": [
+                      {
+                        "name": "Entry 4 Sentiment Badge",
+                        "type": "library-component",
+                        "component": "badge",
+                        "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+                        "variantKey": "6af9a9e21cfe20e8594b1097891fd08c1dcaff08",
+                        "variant": "default",
+                        "sizing": { "width": "hug", "height": "hug" },
+                        "overrides": { "text": "Negative", "color": "error" }
+                      },
+                      {
+                        "name": "Entry 4 Category Tag",
+                        "type": "library-component",
+                        "component": "tag",
+                        "figmaKey": "4641442bd521086f873060945bbe25c81c2cd484",
+                        "variantKey": "f141a6a0c1464b2fac4e1f1d2afecce9382e36d5",
+                        "variant": "default",
+                        "sizing": { "width": "hug", "height": "hug" },
+                        "overrides": { "text": "Search" }
+                      }
+                    ]
+                  },
+                  {
+                    "name": "Entry 4 Time",
+                    "type": "text",
+                    "content": "2 hours ago",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-xs", "figmaKey": "8075202d8ad8a1dcfb50181771a46286f011d042" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-xs", "figmaKey": "66209237f3596d7c62f2fb709ba23cd763fbc400" },
+                      "fills": { "ref": "color.text.text-quaternary", "figmaKey": "3e91753c369e0f66d88c769c72037ff3c232eef5" }
+                    }
+                  }
+                ]
+              },
+
+              {
+                "name": "Feed Entry 5 — NPS Recovery",
+                "type": "frame",
+                "direction": "horizontal",
+                "sizing": { "width": "fill", "height": "hug" },
+                "tokens": {
+                  "paddingTop": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingBottom": { "ref": "spacing.spacing-lg", "figmaKey": "48917321c93a54c18fbc6a0ae275eee124a357d6" },
+                  "paddingLeft": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "paddingRight": { "ref": "spacing.spacing-xl", "figmaKey": "f4d6b399310f344b480a3ea8e3d0e03522bde8bd" },
+                  "itemSpacing": { "ref": "spacing.spacing-md", "figmaKey": "cc421a9ecf3b7f29ec46cd009fac26e033dddb1f" },
+                  "counterAxisAlignItems": "CENTER"
+                },
+                "children": [
+                  {
+                    "name": "Entry 5 Badge",
+                    "type": "library-component",
+                    "component": "badge",
+                    "figmaKey": "9b49e57229fde2a6eb4b39c75fa7ec0e29f445bb",
+                    "variantKey": "6af9a9e21cfe20e8594b1097891fd08c1dcaff08",
+                    "variant": "default",
+                    "sizing": { "width": "hug", "height": "hug" },
+                    "overrides": { "text": "NPS", "color": "success" }
+                  },
+                  {
+                    "name": "Entry 5 Text",
+                    "type": "text",
+                    "content": "NPS recovered to 72 after onboarding fix shipped",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-sm", "figmaKey": "4f043a0379a699a8282e5d2304b486df67f3dd2d" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-sm", "figmaKey": "8f225c521db8dd7cf41dc05420c2d3bd1a7b956b" },
+                      "fills": { "ref": "color.text.text-primary", "figmaKey": "eae542da99a02a25edccc6bcd94a9d50b0192e74" }
+                    }
+                  },
+                  {
+                    "name": "Entry 5 Spacer",
+                    "type": "frame",
+                    "direction": "horizontal",
+                    "sizing": { "width": "fill", "height": 1 }
+                  },
+                  {
+                    "name": "Entry 5 Time",
+                    "type": "text",
+                    "content": "4 hours ago",
+                    "style": "Regular",
+                    "tokens": {
+                      "fontSize": { "ref": "typography.fontSize.text-xs", "figmaKey": "8075202d8ad8a1dcfb50181771a46286f011d042" },
+                      "lineHeight": { "ref": "typography.lineHeight.text-xs", "figmaKey": "66209237f3596d7c62f2fb709ba23cd763fbc400" },
+                      "fills": { "ref": "color.text.text-quaternary", "figmaKey": "3e91753c369e0f66d88c769c72037ff3c232eef5" }
+                    }
+                  }
+                ]
+              }
+
+            ]
+          }
+
+        ]
+      }
+    ]
+  }
+}

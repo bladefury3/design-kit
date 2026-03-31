@@ -1,0 +1,455 @@
+{
+  "$schema": "design-kit/stress-report/v1",
+  "$metadata": {
+    "testedAt": "2026-03-30T22:00:00Z",
+    "figmaFile": "Design Kit Test",
+    "figmaFileKey": "PPvZgY6JlxWE48iABJZQyc",
+    "frame": "Product Overview Dashboard [Revised]",
+    "frameNodeId": "59:13417",
+    "categoriesTested": ["length", "format", "identity", "state", "temporal", "volume"]
+  },
+
+  "summary": {
+    "overallScore": "D+",
+    "totalTests": 44,
+    "passed": 11,
+    "warnings": 19,
+    "failed": 14,
+    "resilience": 0.47
+  },
+
+  "categories": {
+    "length": {
+      "score": "C-",
+      "passed": 4,
+      "warnings": 5,
+      "failed": 3,
+      "resilience": 0.54,
+      "findings": [
+        {
+          "element": "Sidebar navigation labels",
+          "test": "30+ character nav labels (e.g. 'Home & Advanced Configuration Settings')",
+          "result": "fail",
+          "issue": "Nav items push the 296px sidebar significantly wider, breaking the two-column layout. The sidebar expands horizontally, compressing the main content area.",
+          "suggestion": "Add text truncation with ellipsis to nav labels. Set max-width on the text node or use ENDING truncation. Tooltip on hover for full label."
+        },
+        {
+          "element": "User names in table",
+          "test": "60-character name ('Wolfeschlegelsteinhausenbergerdorff McAllister-Worthington')",
+          "result": "fail",
+          "issue": "Long names overflow the name column, pushing into the status and role columns. Table alignment breaks. Names are WIDTH_AND_HEIGHT auto-resize with no truncation.",
+          "suggestion": "Apply ENDING text truncation to user name text nodes in the table. Set a max-width of 200px. Add tooltip for full name on hover."
+        },
+        {
+          "element": "Role titles in table",
+          "test": "67-character role ('Senior Principal Staff Software Engineering Manager & Technical Lead')",
+          "result": "fail",
+          "issue": "Long role titles overflow their column, overlapping with adjacent content. The table's fixed column widths cannot accommodate extreme role lengths.",
+          "suggestion": "Apply ENDING truncation to role text. Consider allowing role column to be wider or wrap to 2 lines max."
+        },
+        {
+          "element": "Metric numbers",
+          "test": "'$1,234,567,890' (13 characters at 30px font)",
+          "result": "warning",
+          "issue": "Large numbers expand the metric card width. The 4-column metric row becomes uneven — some cards are 50% wider than others, breaking visual rhythm.",
+          "suggestion": "Add abbreviated number formatting (e.g. '$1.2B'). Or set fixed card widths with number truncation."
+        },
+        {
+          "element": "Metric headings",
+          "test": "55-character heading ('Total Registered Active Enterprise Users (Last 90 Days)')",
+          "result": "warning",
+          "issue": "Headings wrap to 2-3 lines, making metric cards uneven heights. The row loses visual consistency.",
+          "suggestion": "Apply 1-line truncation to metric headings. Or increase the heading container to max 2 lines."
+        },
+        {
+          "element": "Email addresses",
+          "test": "80-character email in sidebar profile",
+          "result": "warning",
+          "issue": "Long emails overflow the 141px profile area. The ENDING truncation is applied but the parent container is narrow.",
+          "suggestion": "Email truncation is already present — this is a minor issue. Consider showing full email in a tooltip."
+        },
+        {
+          "element": "Button labels in section footers",
+          "test": "40+ character button labels",
+          "result": "warning",
+          "issue": "Long button labels expand buttons. Multiple wide buttons in a row push against each other and may overflow the footer container.",
+          "suggestion": "Set max-width on button text. Truncate with ellipsis for very long labels."
+        },
+        {
+          "element": "Activity feed names",
+          "test": "60-character names in activity entries",
+          "result": "warning",
+          "issue": "Long names cause more text wrapping in each activity entry. Layout holds but entries become much taller.",
+          "suggestion": "Truncate user names in the activity feed to 30 characters max."
+        },
+        {
+          "element": "Dashboard title",
+          "test": "80-character title",
+          "result": "pass",
+          "issue": "Wraps gracefully in the 1016px container. No overflow."
+        },
+        {
+          "element": "Alert title and description",
+          "test": "150-char title, 300-char description",
+          "result": "pass",
+          "issue": "Both wrap gracefully in the wide 1048px container."
+        },
+        {
+          "element": "Section header titles",
+          "test": "50+ character section titles",
+          "result": "pass",
+          "issue": "Wide containers handle wrapping well."
+        },
+        {
+          "element": "Supporting text blocks",
+          "test": "200+ character descriptions",
+          "result": "pass",
+          "issue": "Multi-line text wraps correctly in fill-width containers."
+        }
+      ]
+    },
+
+    "format": {
+      "score": "C+",
+      "passed": 1,
+      "warnings": 4,
+      "failed": 1,
+      "resilience": 0.50,
+      "findings": [
+        {
+          "element": "Sidebar badge counts",
+          "test": "5-digit numbers ('10,000') in 30px-wide badges",
+          "result": "fail",
+          "issue": "Badge component stretches to 60px+ for '10,000', pushing nav item text left and breaking the sidebar alignment. Badges are designed for 1-2 digit numbers.",
+          "suggestion": "Abbreviate large counts (99+ or 9,999+). Set max-width on badge component."
+        },
+        {
+          "element": "Metric numbers - negative currency",
+          "test": "'-$1,999,999.99' (15 characters at 30px)",
+          "result": "warning",
+          "issue": "Negative sign + dollar sign + commas + decimals create the widest possible metric number. Card stretches unevenly compared to siblings.",
+          "suggestion": "Use abbreviated format for large values. Consider fixed-width metric cards."
+        },
+        {
+          "element": "Change percentages",
+          "test": "'-1,234.5%' and '+10,000%' in change badges",
+          "result": "warning",
+          "issue": "Wide percentage values push the change badge wider, which shifts the metric number layout.",
+          "suggestion": "Cap percentage display at +/-999.9%. Show tooltip for exact value."
+        },
+        {
+          "element": "Tab badge counts",
+          "test": "'9,999' in tab badges",
+          "result": "warning",
+          "issue": "Tab badges expand, making some tabs wider than others. Tab row alignment becomes inconsistent.",
+          "suggestion": "Abbreviate to '9.9K' or '9999' without comma."
+        },
+        {
+          "element": "Metric numbers - large positive",
+          "test": "'12,345,678' (10 characters at 30px)",
+          "result": "warning",
+          "issue": "The number pushes the card wider. Not as bad as negative currency but still breaks the even grid.",
+          "suggestion": "Use abbreviated format: '12.3M'."
+        },
+        {
+          "element": "Pagination text",
+          "test": "'Page 1 of 10,000'",
+          "result": "pass",
+          "issue": "Text wraps acceptably in its container."
+        }
+      ]
+    },
+
+    "identity": {
+      "score": "A-",
+      "passed": 5,
+      "warnings": 2,
+      "failed": 0,
+      "resilience": 0.86,
+      "findings": [
+        {
+          "element": "Arabic RTL names",
+          "test": "'محمد بن سلمان' in LTR layout",
+          "result": "warning",
+          "issue": "RTL text renders in LTR context without direction override. Arabic names display correctly character-by-character but reading order may confuse RTL readers. No bidi support designed.",
+          "suggestion": "Add text-direction auto detection or dir='auto' equivalent in implementation. For Figma: note as implementation requirement."
+        },
+        {
+          "element": "Mixed script supporting text",
+          "test": "French + Japanese + Arabic in one text block",
+          "result": "warning",
+          "issue": "Mixed scripts render but Arabic portion flows LTR, making the mixed text awkward. Not a common scenario but worth noting.",
+          "suggestion": "Document that mixed-script content needs bidi handling in code. Figma does not support inline direction changes."
+        },
+        {
+          "element": "CJK names",
+          "test": "'田中太郎' (4 CJK characters)",
+          "result": "pass",
+          "issue": "CJK characters render correctly. Compact width — no overflow issues."
+        },
+        {
+          "element": "Thai script",
+          "test": "'สมชาย เข็มกลัด' (Thai with tall ascenders)",
+          "result": "pass",
+          "issue": "Thai characters render with proper diacritical marks. No clipping of tall characters."
+        },
+        {
+          "element": "Diacritics",
+          "test": "'Björk Guðmundsdóttir' (Icelandic diacritics)",
+          "result": "pass",
+          "issue": "Accented characters render correctly with Inter font."
+        },
+        {
+          "element": "Emoji in names",
+          "test": "'Alex 🚀 Johnson' (emoji between Latin text)",
+          "result": "pass",
+          "issue": "Emoji renders inline. Line height accommodates emoji without clipping."
+        },
+        {
+          "element": "Diverse role titles",
+          "test": "Japanese, Arabic, French, German role labels",
+          "result": "pass",
+          "issue": "All script systems render in the role column without overflow."
+        }
+      ]
+    },
+
+    "state": {
+      "score": "F",
+      "passed": 0,
+      "warnings": 1,
+      "failed": 5,
+      "resilience": 0.08,
+      "findings": [
+        {
+          "element": "Dashboard empty state",
+          "test": "Zero data across all metrics and sections",
+          "result": "fail",
+          "issue": "No designed empty state exists. Metrics show '0' while charts still display data — contradictory. The dashboard looks broken, not intentionally empty. A new user would see confusing zero-valued metrics with populated charts.",
+          "suggestion": "Design a dedicated empty state: illustration + 'Welcome! Connect a data source to get started' + primary CTA button. Use the existing Empty State component from the library."
+        },
+        {
+          "element": "Error alert styling",
+          "test": "Error message in info-styled alert",
+          "result": "fail",
+          "issue": "The alert says 'Connection to analytics service failed' but uses purple/info styling. There is no visual urgency — it looks like a routine info message, not a critical error.",
+          "suggestion": "Switch to the error/destructive Alert variant. The library has Alert variants with red styling — use them for error states."
+        },
+        {
+          "element": "Zero-count badges",
+          "test": "'0' displayed in sidebar badges",
+          "result": "fail",
+          "issue": "All sidebar navigation badges show '0'. Badges should be hidden when the count is zero — showing '0' adds visual noise without information value.",
+          "suggestion": "Hide badges when count equals 0. Use the badge component's boolean visibility property."
+        },
+        {
+          "element": "Charts with contradictory data",
+          "test": "Charts populated while metrics show zero",
+          "result": "fail",
+          "issue": "The User Growth chart and Traffic Sources pie chart still display data even though the metric values are set to 0. This creates a trust-breaking contradiction — which number is correct?",
+          "suggestion": "Design an empty chart variant with a placeholder message: 'No data available for this time period.'"
+        },
+        {
+          "element": "Table and feed without empty variant",
+          "test": "Zero items in table and activity feed",
+          "result": "fail",
+          "issue": "The table still shows 10 team members and the activity feed still shows entries even in a 'zero data' scenario. No empty state variant exists for these compound components.",
+          "suggestion": "Use the library's Empty State component inside the table/feed containers when there are zero items."
+        },
+        {
+          "element": "Disabled button styling",
+          "test": "'No data yet' text in active button style",
+          "result": "warning",
+          "issue": "Buttons say 'No data yet' but use the same active button styling. Users might click them expecting a result.",
+          "suggestion": "Use a disabled button variant (grayed out) when there is no data to view."
+        }
+      ]
+    },
+
+    "temporal": {
+      "score": "D",
+      "passed": 1,
+      "warnings": 4,
+      "failed": 2,
+      "resilience": 0.43,
+      "findings": [
+        {
+          "element": "Stale metric headings",
+          "test": "'Total Users (as of March 2019)' — 7-year-old data",
+          "result": "fail",
+          "issue": "Data from 2019 looks identical to fresh 2026 data. No visual indicator that this information is dangerously stale. Users would trust old numbers without realizing they are years out of date.",
+          "suggestion": "Add a staleness indicator: warning icon + amber text color when data is older than a configurable threshold. Consider a 'Last updated: X ago' badge on each metric card."
+        },
+        {
+          "element": "Syncing state",
+          "test": "'Open Tickets (syncing...)' — loading text without visual indicator",
+          "result": "fail",
+          "issue": "The word '(syncing...)' appears in the heading but there is no spinner, skeleton, or loading indicator. It looks like static text, not an active process.",
+          "suggestion": "Design a loading/syncing variant for metric cards: skeleton placeholder or spinner icon next to the value."
+        },
+        {
+          "element": "Expired alert urgency",
+          "test": "'Trial expired 14 days ago' in info-styled alert",
+          "result": "warning",
+          "issue": "Trial expiration with data deletion warning uses the same purple info styling. There is no sense of urgency despite the impending data loss.",
+          "suggestion": "Use the error/warning Alert variant for expiration notices. Add a countdown or deadline emphasis."
+        },
+        {
+          "element": "Timestamp format inconsistency",
+          "test": "Mix: 'Just now', '847 days ago', 'March 15, 2019'",
+          "result": "warning",
+          "issue": "No visual hierarchy between recent and very old timestamps. '847 days ago' gets the same visual treatment as 'Just now'. Users cannot quickly scan for recent vs. old activity.",
+          "suggestion": "Use relative time for recent items (<7 days), absolute date for older items. Add visual weight (bold, color) to indicate recency."
+        },
+        {
+          "element": "Long date strings",
+          "test": "'Wednesday, September 28, 2025 at 3:47:22 PM PST (UTC-8)'",
+          "result": "warning",
+          "issue": "Full timestamp with day name, full month, time with seconds, and timezone is very long (58 characters). It dominates the supporting text area.",
+          "suggestion": "Use abbreviated format: 'Sep 28, 2025, 3:47 PM PST'. Show full timestamp in tooltip."
+        },
+        {
+          "element": "Stale section data",
+          "test": "'Last updated: March 2019 (7 years ago)' in supporting text",
+          "result": "warning",
+          "issue": "The text states the data is 7 years old but the visual treatment is identical to current data. The section header and content have no staleness styling.",
+          "suggestion": "Add a visual staleness indicator: amber/red border, muted content opacity, or a prominent 'Data may be outdated' banner."
+        },
+        {
+          "element": "Future dates",
+          "test": "'Scheduled: Dec 2027' in activity timestamp",
+          "result": "pass",
+          "issue": "Future dates render correctly. No overflow."
+        }
+      ]
+    },
+
+    "volume": {
+      "score": "C-",
+      "passed": 0,
+      "warnings": 3,
+      "failed": 3,
+      "resilience": 0.25,
+      "findings": [
+        {
+          "element": "Table (0 items)",
+          "test": "Empty table with zero team members",
+          "result": "fail",
+          "issue": "No empty state designed for the table. The table component has no zero-row variant. A new user with no team would see the default populated table — confusing and misleading.",
+          "suggestion": "Design an empty state variant for the table: 'No team members yet. Invite your first team member.' with a CTA button."
+        },
+        {
+          "element": "Activity feed (0 items)",
+          "test": "Empty activity feed",
+          "result": "fail",
+          "issue": "No empty state for the activity feed. New users see default activity from fictional users instead of their own empty state.",
+          "suggestion": "Design an empty feed state: 'No activity yet. Actions from your team will appear here.'"
+        },
+        {
+          "element": "Metric cards (0 data sources)",
+          "test": "Metrics with no connected data",
+          "result": "fail",
+          "issue": "No loading or empty state variant for metric cards. The component shows zero values without explaining why there is no data.",
+          "suggestion": "Design a metric card empty state: dashed border, '—' value, 'Connect a data source' link."
+        },
+        {
+          "element": "Table (100+ items)",
+          "test": "Large team with 100+ members",
+          "result": "warning",
+          "issue": "Pagination exists ('Page 1 of 15') but for 100+ items at 10 per page, the pagination is page-number based with no total count displayed. Users cannot quickly see how many total items exist.",
+          "suggestion": "Add total count to pagination: 'Showing 1-10 of 156 members'. Consider adding a page size selector."
+        },
+        {
+          "element": "Table (10,000 items)",
+          "test": "Enterprise-scale team directory",
+          "result": "warning",
+          "issue": "For 10,000 items at 10 per page = 1,000 pages. The pagination UI (prev/next with page number) would require 999 clicks to reach the last page. No search or filter mechanism is visible in the table.",
+          "suggestion": "Add search/filter to the table. Consider a jump-to-page input. At scale, switch to server-side pagination with search."
+        },
+        {
+          "element": "Sidebar badges (high counts)",
+          "test": "100+ items per navigation section",
+          "result": "warning",
+          "issue": "Badge numbers grow wider with 3+ digit counts, pushing sidebar layout. No abbreviation strategy (e.g. '99+').",
+          "suggestion": "Abbreviate badge counts: show '99+' for counts over 99."
+        }
+      ]
+    }
+  },
+
+  "topIssues": [
+    {
+      "priority": 1,
+      "element": "Dashboard empty state",
+      "category": "state",
+      "issue": "No designed empty state exists for the dashboard",
+      "impact": "Every new user sees zero-valued metrics alongside populated charts and tables — contradictory and confusing. The first impression is a broken product.",
+      "fix": "Design a dedicated dashboard empty state using the library's Empty State component. Show onboarding guidance and a 'Connect data source' CTA."
+    },
+    {
+      "priority": 2,
+      "element": "User names in table",
+      "category": "length",
+      "issue": "Long names (35+ characters) overflow the table name column",
+      "impact": "Users with long names (common in German, Spanish, hyphenated names) see broken table alignment. Names overlap with status and role columns.",
+      "fix": "Apply ENDING text truncation to the name column. Set max-width of 200px. Show full name in tooltip on hover."
+    },
+    {
+      "priority": 3,
+      "element": "Error alert styling",
+      "category": "state",
+      "issue": "Error messages use info-styled alert (purple) instead of error styling (red)",
+      "impact": "Users cannot distinguish critical errors from routine information. A connection failure looks identical to a release announcement.",
+      "fix": "Use the library's error/destructive Alert variant for error states. Map alert severity to visual style: info=purple, warning=amber, error=red."
+    },
+    {
+      "priority": 4,
+      "element": "Stale data indicators",
+      "category": "temporal",
+      "issue": "No visual differentiation between fresh and stale data",
+      "impact": "Users trust 7-year-old data because it looks identical to today's data. No staleness badge, no color change, no warning.",
+      "fix": "Add staleness indicators: amber warning icon + 'Data from March 2019' badge when data is older than a threshold. Consider muted opacity for stale sections."
+    },
+    {
+      "priority": 5,
+      "element": "Sidebar navigation labels",
+      "category": "length",
+      "issue": "Long nav labels push the sidebar wider, breaking the two-column layout",
+      "impact": "Applications with verbose navigation labels (common in enterprise dashboards) see layout collapse. The sidebar overflows into the main content area.",
+      "fix": "Apply ENDING text truncation to sidebar navigation labels. Set max-width on the text node. Show full label in tooltip."
+    }
+  ],
+
+  "clonedFrames": [
+    {
+      "name": "Dashboard — Stress: Length",
+      "nodeId": "67:16951",
+      "category": "length"
+    },
+    {
+      "name": "Dashboard — Stress: Format",
+      "nodeId": "67:16979",
+      "category": "format"
+    },
+    {
+      "name": "Dashboard — Stress: Identity",
+      "nodeId": "67:17007",
+      "category": "identity"
+    },
+    {
+      "name": "Dashboard — Stress: State",
+      "nodeId": "67:17035",
+      "category": "state"
+    },
+    {
+      "name": "Dashboard — Stress: Temporal",
+      "nodeId": "67:17063",
+      "category": "temporal"
+    },
+    {
+      "name": "Dashboard — Stress: Volume",
+      "nodeId": "67:17091",
+      "category": "volume"
+    }
+  ]
+}
