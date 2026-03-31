@@ -1,0 +1,74 @@
+{
+  "$schema": "design-kit/eval-rubric/v1",
+  "name": "Shared evaluation criteria",
+  "description": "Criteria that every skill must pass regardless of its specific function",
+  "weight": 0.35,
+  "criteria": {
+    "gracefulDegradation": {
+      "weight": 0.20,
+      "description": "When design system data is missing, does the skill try figma_get_design_system_kit before telling the user to extract?",
+      "scoring": {
+        "10": "Tries fallback silently, proceeds smoothly, user barely notices data was missing",
+        "7": "Tries fallback, warns user, proceeds with limitations noted",
+        "4": "Warns about missing data but offers to proceed",
+        "1": "Hard-stops and refuses to work without extracted data",
+        "0": "Crashes or produces an error"
+      }
+    },
+    "questionQuality": {
+      "weight": 0.20,
+      "description": "Does every AskUserQuestion follow the format: re-ground, simplify, recommend, options?",
+      "scoring": {
+        "10": "Every question is perfectly formatted, grounded, and has a clear recommendation",
+        "7": "Most questions follow format, recommendations are clear",
+        "4": "Questions are asked but without recommendations or grounding",
+        "1": "Questions are confusing, use jargon, or combine multiple decisions",
+        "0": "No questions asked when they should be, or questions are incomprehensible"
+      }
+    },
+    "questionEconomy": {
+      "weight": 0.20,
+      "description": "Does the skill ask the MINIMUM necessary questions? Uses escape hatch for obvious defaults?",
+      "scoring": {
+        "10": "Asks only genuinely ambiguous questions, defaults everything obvious, proceeds fast",
+        "7": "Asks 1-2 unnecessary questions but moves quickly overall",
+        "4": "Asks 3+ setup questions before doing any work",
+        "1": "Asks a survey of questions that feel like a form, not a conversation",
+        "0": "Blocks on every decision, even trivial ones"
+      }
+    },
+    "designerLanguage": {
+      "weight": 0.15,
+      "description": "Is the language designer-friendly? No engineering jargon, no Figma API terminology?",
+      "scoring": {
+        "10": "Reads like a conversation with a design colleague",
+        "7": "Mostly designer-friendly with occasional technical terms explained",
+        "4": "Mix of designer and engineer language",
+        "1": "Heavy engineering jargon (figmaKey, variantKey, nodeId, importVariableByKeyAsync)",
+        "0": "Incomprehensible to a non-engineer"
+      }
+    },
+    "outputCompleteness": {
+      "weight": 0.15,
+      "description": "Does the output include everything needed for the next step in the workflow?",
+      "scoring": {
+        "10": "Output is immediately actionable by the next skill in the chain",
+        "7": "Output is mostly complete, minor gaps that won't block the next step",
+        "4": "Output has gaps that require manual intervention before the next step",
+        "1": "Output is incomplete and the next skill would fail",
+        "0": "No usable output produced"
+      }
+    },
+    "nextStepGuidance": {
+      "weight": 0.10,
+      "description": "Does the skill suggest what to do next?",
+      "scoring": {
+        "10": "Clear next step with the specific skill command to run",
+        "7": "Mentions next step but not the specific command",
+        "4": "Vague suggestion to 'continue'",
+        "1": "No next step mentioned",
+        "0": "Misleading next step suggestion"
+      }
+    }
+  }
+}

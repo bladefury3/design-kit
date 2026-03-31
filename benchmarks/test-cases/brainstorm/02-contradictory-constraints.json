@@ -1,0 +1,30 @@
+{
+  "id": "brainstorm-02",
+  "skill": "brainstorm",
+  "name": "Contradictory constraints — tests constraint handling",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Brainstorm variations for a pricing page. Constraints: must show all 4 tiers, must feel simple and uncluttered, must include feature comparison matrix, must have prominent CTAs for each tier",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Identifies the tension: 4 tiers + comparison matrix + 'simple and uncluttered' are contradictory",
+    "Explicitly addresses the contradiction before generating variations",
+    "At least one variation resolves via progressive disclosure (hide matrix, reveal on demand)",
+    "At least one variation resolves via hierarchy (highlight 1-2 tiers, de-emphasize others)",
+    "Does NOT try to show everything at once and call it 'clean'",
+    "Asks user which constraint to prioritize if genuinely unresolvable"
+  ],
+  "antiPatterns": [
+    "Ignores the contradiction and produces 4 cluttered variations",
+    "Produces a standard 4-column pricing grid and calls it 'simple'",
+    "Never mentions that the constraints conflict",
+    "All variations show the full comparison matrix at all times"
+  ],
+  "evaluationCriteria": {
+    "contradictionAwareness": "Does it identify and address the tension between constraints?",
+    "creativeResolution": "Does at least one variation resolve the tension creatively?",
+    "honesty": "Does it tell the user some constraints may need to be relaxed?"
+  }
+}

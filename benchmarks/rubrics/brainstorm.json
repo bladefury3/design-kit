@@ -1,0 +1,67 @@
+{
+  "$schema": "design-kit/eval-rubric/v1",
+  "name": "brainstorm specific criteria",
+  "weight": 0.65,
+  "criteria": {
+    "variationDiversity": {
+      "weight": 0.25,
+      "description": "Are variations MEANINGFULLY different in layout, hierarchy, and IA — not just cosmetic shuffles?",
+      "scoring": {
+        "10": "Each variation explores a fundamentally different approach to the same problem",
+        "7": "Most variations differ meaningfully, 1 feels like a minor tweak",
+        "4": "Variations differ in arrangement but not in approach",
+        "1": "All variations are essentially the same layout with different spacing/colors"
+      }
+    },
+    "scamperApplication": {
+      "weight": 0.20,
+      "description": "Does each variation apply a specific, named SCAMPER lens with clear rationale?",
+      "scoring": {
+        "10": "Each variation names its SCAMPER lens and explains what specifically was substituted/eliminated/etc.",
+        "7": "SCAMPER lenses named but rationale is thin",
+        "4": "Lenses mentioned but don't actually drive the variation",
+        "1": "No SCAMPER framework visible"
+      }
+    },
+    "jtbdAlignment": {
+      "weight": 0.15,
+      "description": "Does each variation state which user job (Monitor/Investigate/Act/Configure/Learn/Decide) it optimizes for?",
+      "scoring": {
+        "10": "Each variation explicitly names its target job and explains how the design serves it",
+        "7": "Jobs mentioned but connection to design decisions is implicit",
+        "4": "Generic job assignment without design reasoning",
+        "1": "No JTBD framing"
+      }
+    },
+    "contradictionHandling": {
+      "weight": 0.15,
+      "description": "When constraints conflict, does the skill identify and address the tension?",
+      "scoring": {
+        "10": "Explicitly names the contradiction, explores creative resolutions, asks user to prioritize",
+        "7": "Acknowledges tension but doesn't fully resolve it",
+        "4": "Ignores contradictions",
+        "0": "N/A — no contradictions in the test case"
+      }
+    },
+    "recommendationQuality": {
+      "weight": 0.15,
+      "description": "Is the recommendation grounded in user behavior, not aesthetic preference?",
+      "scoring": {
+        "10": "'Variation 2 works for ops teams because the status bar eliminates scrolling before knowing if something's broken'",
+        "7": "Recommendation cites user behavior but could be more specific",
+        "4": "'Variation 2 has a cleaner layout'",
+        "1": "No recommendation or 'they're all good'"
+      }
+    },
+    "buildability": {
+      "weight": 0.10,
+      "description": "Is each variation a complete, buildable design — not a half-thought?",
+      "scoring": {
+        "10": "Each variation has specific components, tokens, text content, and could be built immediately",
+        "7": "Mostly buildable, 1-2 vague areas",
+        "4": "Conceptual sketches, not buildable plans",
+        "1": "Abstract ideas without concrete design decisions"
+      }
+    }
+  }
+}

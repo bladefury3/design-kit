@@ -1,0 +1,32 @@
+{
+  "id": "plan-component-02",
+  "skill": "plan-component",
+  "name": "Complex component with many axes — tests variant architecture decisions",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Plan a data table row component. It needs to support: selectable rows (checkbox), expandable rows (arrow to show details), different row heights (compact/default/relaxed), row states (default/selected/hover/disabled), and cells can contain text, numbers, badges, avatars, or action buttons",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Identifies that naive variant matrix would be enormous (2×2×3×4 = 48 variants before cell types)",
+    "Recommends boolean props for selectable and expandable (not variant axes — they're on/off toggles)",
+    "Keeps variant axes to: Height (3 values) × State (4 values) = 12 variants",
+    "Plans cell content as instance swap slots, not variants",
+    "Studies existing table/table-cell/table-header components for convention matching",
+    "Plans relationship with existing table components (this is contained by Table)"
+  ],
+  "antiPatterns": [
+    "Creates a 48+ variant matrix by making everything a variant axis",
+    "Uses variants for selectable/expandable instead of boolean props",
+    "Creates separate variant for each cell content type",
+    "Ignores existing table components in the library",
+    "Doesn't address the combinatorial explosion"
+  ],
+  "evaluationCriteria": {
+    "variantArchitecture": "Does it use the RIGHT mechanism (variant vs boolean vs swap) for each property?",
+    "matrixManagement": "Does it keep variant count reasonable (<20)?",
+    "conventionMatching": "Does it study existing table components for patterns?",
+    "compositionAwareness": "Does it plan how this fits with existing Table and Table cell?"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "id": "plan-component-01",
+  "skill": "plan-component",
+  "name": "Component that likely duplicates existing — tests duplicate detection",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "I need a notification banner component that shows success, warning, and error messages with a close button",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "existingComponents": ["alert", "toast", "badge", "button-close-x"]
+  },
+  "expectedBehaviors": [
+    "Immediately identifies Alert as a likely duplicate — it has color variants (success, warning, error) and a close button",
+    "Searches by FUNCTION ('feedback notification') not just name ('notification banner')",
+    "Presents the Alert component's existing capabilities: variants, props, anatomy",
+    "Asks: 'Alert already does this. What does your notification banner need that Alert doesn't?'",
+    "Does NOT start planning a new component before the duplicate check resolves",
+    "If user says 'Alert is different because X', THEN proceeds to plan with awareness of how it differs"
+  ],
+  "antiPatterns": [
+    "Skips duplicate detection and immediately plans a new component",
+    "Searches only by name ('notification banner') and misses Alert",
+    "Plans a component that is functionally identical to Alert",
+    "Says 'no duplicates found' when Alert clearly overlaps"
+  ],
+  "evaluationCriteria": {
+    "duplicateDetection": "Does it find Alert as a functional match?",
+    "searchByFunction": "Does it search by what the component DOES, not what it's called?",
+    "blockBeforeProceeding": "Does it STOP and ask before planning a potentially duplicate component?",
+    "existingCapabilityPresentation": "Does it show what Alert already offers?"
+  }
+}

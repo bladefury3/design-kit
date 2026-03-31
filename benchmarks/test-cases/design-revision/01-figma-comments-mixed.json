@@ -1,0 +1,43 @@
+{
+  "id": "design-revision-01",
+  "skill": "design-revision",
+  "name": "Mixed Figma comments — tests classification + priority",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "/design-revision",
+    "feedbackSource": "figma-comments",
+    "comments": [
+      { "author": "@sarah", "text": "The spacing between cards feels too tight", "resolved": false },
+      { "author": "@mike", "text": "Can we try a purple color scheme instead of blue?", "resolved": false },
+      { "author": "@sarah", "text": "Users in testing couldn't find the save button — 3/5 failed the task", "resolved": false },
+      { "author": "@alex", "text": "Can we add a bulk export feature?", "resolved": false },
+      { "author": "@mike", "text": "The loading spinner overlaps the header on slow connections", "resolved": false },
+      { "author": "@sarah", "text": "Love the card design", "resolved": true }
+    ],
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Asks user to choose feedback source (A/B/C/D) — user picks B (Figma comments)",
+    "Pulls comments and presents them in a table with author, text, resolved status",
+    "Filters to unresolved comments only (5 of 6)",
+    "Classifies each correctly: spacing=principle, purple=preference, save button=usability, export=scope, overlap=bug",
+    "Prioritizes: save button (usability) > spacing (principle) > overlap (bug) > purple (preference, needs decision) > export (deferred as scope change)",
+    "Does NOT apply the purple color change without asking — it's preference-based",
+    "Flags the export feature as a scope change for /plan-design, not a revision",
+    "Applies the save button fix using Fitts's Law (larger, more prominent)"
+  ],
+  "antiPatterns": [
+    "Applies all feedback without classifying first",
+    "Changes the color to purple without asking (preference = ask first)",
+    "Tries to implement the bulk export (scope change = defer)",
+    "Treats all feedback as equal priority",
+    "Doesn't present the classification table before acting"
+  ],
+  "evaluationCriteria": {
+    "classificationAccuracy": "Are all 5 comments classified into the correct feedback type?",
+    "priorityOrder": "Does it apply usability > principle > bug > preference > scope?",
+    "preferenceHandling": "Does it ASK about the purple change instead of just doing it?",
+    "scopeRecognition": "Does it flag export as a scope change and defer it?"
+  }
+}

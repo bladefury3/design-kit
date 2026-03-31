@@ -1,0 +1,29 @@
+{
+  "id": "plan-design-01",
+  "skill": "plan-design",
+  "name": "Vague brief — tests clarification behavior",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "make a settings page",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Rates brief clarity below 5 and asks clarifying questions",
+    "Does NOT immediately start planning — asks what the user DOES on settings",
+    "Asks about scope: account settings? app settings? admin settings?",
+    "Uses AskUserQuestion format with recommendation",
+    "Does not assume desktop — asks or defaults with escape hatch"
+  ],
+  "antiPatterns": [
+    "Immediately outputs a plan without clarifying",
+    "Produces a generic settings page with sidebar + form without asking what settings",
+    "Uses placeholder text like 'Setting 1', 'Option A'",
+    "Asks more than 3 questions before doing any work"
+  ],
+  "evaluationCriteria": {
+    "clarificationQuality": "Does it ask WHAT the user does on settings, not just what it looks like?",
+    "questionEconomy": "Does it ask 1-2 focused questions, not a survey?",
+    "designThinking": "Does it think about the user's job before layout?"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "id": "brainstorm-01",
+  "skill": "brainstorm",
+  "name": "Simple settings page — tests meaningful variation vs cosmetic shuffling",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "Brainstorm variations for this settings page",
+    "frameDescription": "Simple settings page with left sidebar navigation (Profile, Security, Notifications, Billing, Integrations) and right content area showing Profile settings form (avatar upload, name, email, bio textarea, save/cancel buttons)",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Each variation uses a DIFFERENT SCAMPER lens (not just rearranging the same elements)",
+    "At least one variation challenges the sidebar pattern (Eliminate: what if tabs instead?)",
+    "At least one variation changes the HIERARCHY (Modify: what if the most-changed settings are promoted?)",
+    "Each variation states which user job it optimizes for (Configure vs Learn vs Act)",
+    "Variations are labeled with their SCAMPER lens and rationale",
+    "Recommendation is grounded in user behavior, not 'cleaner layout'"
+  ],
+  "antiPatterns": [
+    "All variations are the same layout with different spacing/colors",
+    "Variations only differ in sidebar position (left vs right vs top)",
+    "No variation challenges the fundamental IA (all keep sidebar + form)",
+    "Recommendation says 'Variation 2 looks cleanest' instead of citing user behavior",
+    "Produces 4 variations that are essentially the same with minor tweaks"
+  ],
+  "evaluationCriteria": {
+    "variationDiversity": "Are the variations MEANINGFULLY different in layout/hierarchy/IA?",
+    "scamperApplication": "Does each variation apply a specific, named SCAMPER lens?",
+    "jtbdAlignment": "Does each variation state which user job it serves?",
+    "recommendationQuality": "Is the recommendation grounded in behavior, not aesthetics?"
+  }
+}

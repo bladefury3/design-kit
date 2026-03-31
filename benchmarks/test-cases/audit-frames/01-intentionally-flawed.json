@@ -1,0 +1,37 @@
+{
+  "id": "audit-frames-01",
+  "skill": "audit-frames",
+  "name": "Frame with known issues — tests detection accuracy",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "/audit-frames on current selection",
+    "frameDescription": "A checkout form with: 12 form fields visible at once (no grouping), a tiny 28px 'Pay now' button in bottom-right corner, 3 error messages that say 'Error: field validation failed (code: E_INVALID_INPUT)', hardcoded #3B82F6 blue on the CTA (not token-bound), all text is 13px with no size hierarchy, a modal that appears on submit with no close button or escape path",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Hick's Law violation: 12 ungrouped fields = critical (threshold >12)",
+    "Fitts's Law violation: 28px button = critical (threshold <44px)",
+    "Nielsen #9 (error recovery): jargon error messages = critical",
+    "Token compliance: hardcoded #3B82F6 = critical",
+    "Nielsen #8 (aesthetic/minimalist): no text hierarchy = warning",
+    "Nielsen #3 (user control): modal with no close = critical",
+    "Miller's Law: 12 fields exceed 5-9 chunk threshold = warning",
+    "Overall score should be LOW (below 4) — this frame has multiple critical issues",
+    "Each issue has a specific fix suggestion, not just 'improve this'"
+  ],
+  "antiPatterns": [
+    "Gives a passing score (>6) despite critical issues",
+    "Misses the Fitts's Law violation on the small button",
+    "Doesn't flag the error message jargon",
+    "Catches token issues but misses usability issues (or vice versa)",
+    "Suggestions are vague ('improve the form') instead of specific ('group into 3 sections of 4')"
+  ],
+  "evaluationCriteria": {
+    "detectionRate": "Does it catch ALL 6 planted issues?",
+    "severityAccuracy": "Are critical issues rated critical, not just warnings?",
+    "heuristicCorrectness": "Does it cite the RIGHT heuristic for each issue?",
+    "fixSpecificity": "Are suggestions actionable with specific values (not 'make it bigger')?",
+    "overallScoreCalibration": "Is the overall score appropriately low for this many critical issues?"
+  }
+}

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Kit Benchmark Dashboard</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0a0a0f; color: #e4e4e7; line-height: 1.6; padding: 32px; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 24px; font-weight: 600; margin-bottom: 4px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #a1a1aa; }
+  h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px; }
+  .subtitle { color: #71717a; font-size: 14px; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+  .grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 20px; }
+  .card-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 16px; }
+  .score-big { font-size: 48px; font-weight: 700; line-height: 1; }
+  .score-label { font-size: 13px; color: #71717a; }
+  .score-change { font-size: 13px; font-weight: 500; padding: 2px 8px; border-radius: 9999px; }
+  .score-change.up { background: #052e16; color: #4ade80; }
+  .score-change.down { background: #450a0a; color: #f87171; }
+  .score-change.neutral { background: #27272a; color: #a1a1aa; }
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .bar-label { width: 160px; font-size: 13px; color: #a1a1aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { flex: 1; height: 8px; background: #27272a; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .bar-score { width: 36px; text-align: right; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .color-excellent { background: #22c55e; }
+  .color-good { background: #3b82f6; }
+  .color-adequate { background: #f59e0b; }
+  .color-poor { background: #ef4444; }
+  .text-excellent { color: #4ade80; }
+  .text-good { color: #60a5fa; }
+  .text-adequate { color: #fbbf24; }
+  .text-poor { color: #f87171; }
+  .test-case { border-top: 1px solid #27272a; padding: 12px 0; }
+  .test-case:first-child { border-top: none; padding-top: 0; }
+  .test-case-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .test-case-name { font-size: 13px; font-weight: 500; }
+  .test-case-score { font-size: 13px; font-weight: 600; }
+  .check { font-size: 12px; margin-bottom: 2px; }
+  .check.pass { color: #4ade80; }
+  .check.fail { color: #f87171; }
+  .trend-row { display: flex; gap: 2px; align-items: flex-end; height: 32px; }
+  .trend-bar { width: 12px; border-radius: 2px 2px 0 0; transition: height 0.4s ease; }
+  .section { margin-bottom: 40px; }
+  .empty-state { text-align: center; padding: 60px 20px; color: #52525b; }
+  .empty-state p { margin-bottom: 16px; }
+  .empty-state code { background: #27272a; padding: 4px 8px; border-radius: 4px; font-size: 13px; color: #a1a1aa; }
+  .regression-item { background: #1c1917; border: 1px solid #44403c; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; }
+  .regression-item .cause { font-size: 12px; color: #a1a1aa; margin-top: 4px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 8px 12px; color: #71717a; font-weight: 500; border-bottom: 1px solid #27272a; }
+  td { padding: 8px 12px; border-bottom: 1px solid #1c1c1e; }
+  .file-input { margin-bottom: 24px; }
+  .file-input label { display: inline-block; padding: 8px 16px; background: #27272a; border: 1px solid #3f3f46; border-radius: 8px; cursor: pointer; font-size: 13px; }
+  .file-input label:hover { background: #3f3f46; }
+  .file-input input { display: none; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab { padding: 6px 14px; border-radius: 6px; font-size: 13px; cursor: pointer; background: transparent; border: none; color: #71717a; }
+  .tab.active { background: #27272a; color: #e4e4e7; }
+  .tab:hover { color: #e4e4e7; }
+</style>
+</head>
+<body>
+
+<h1>Design Kit Benchmarks</h1>
+<p class="subtitle">Skill quality evaluation over time</p>
+
+<div class="file-input">
+  <label>Load results JSON <input type="file" id="fileInput" accept=".json" multiple></label>
+  <span id="fileStatus" style="margin-left: 12px; font-size: 13px; color: #71717a;"></span>
+</div>
+
+<div id="dashboard">
+  <div class="empty-state">
+    <p>No benchmark results loaded.</p>
+    <p>Run <code>/eval-skills</code> to generate results, then load the JSON file here.</p>
+    <p style="margin-top: 24px; font-size: 12px;">Results are saved to <code>benchmarks/results/&lt;date&gt;.json</code></p>
+  </div>
+</div>
+
+<script>
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => [...document.querySelectorAll(sel)];
+
+function scoreColor(score) {
+  if (score >= 8) return 'excellent';
+  if (score >= 6) return 'good';
+  if (score >= 4) return 'adequate';
+  return 'poor';
+}
+
+function renderBar(label, score, max = 10) {
+  const pct = (score / max) * 100;
+  const color = scoreColor(score);
+  return `
+    <div class="bar-row">
+      <span class="bar-label" title="${label}">${label}</span>
+      <div class="bar-track"><div class="bar-fill color-${color}" style="width:${pct}%"></div></div>
+      <span class="bar-score text-${color}">${score.toFixed(1)}</span>
+    </div>`;
+}
+
+function renderScoreChange(current, baseline) {
+  if (baseline === undefined || baseline === null) return '<span class="score-change neutral">baseline</span>';
+  const diff = current - baseline;
+  if (Math.abs(diff) < 0.1) return '<span class="score-change neutral">→ 0.0</span>';
+  if (diff > 0) return `<span class="score-change up">↑ +${diff.toFixed(1)}</span>`;
+  return `<span class="score-change down">↓ ${diff.toFixed(1)}</span>`;
+}
+
+function renderTestCase(tc) {
+  const checks = [];
+  if (tc.expectedBehaviors) {
+    for (const [behavior, result] of Object.entries(tc.expectedBehaviors)) {
+      const pass = typeof result === 'string' ? result.startsWith('PASS') : result;
+      checks.push(`<div class="check ${pass ? 'pass' : 'fail'}">${pass ? '✓' : '✗'} ${behavior}</div>`);
+    }
+  }
+  if (tc.antiPatterns) {
+    for (const [pattern, result] of Object.entries(tc.antiPatterns)) {
+      const pass = typeof result === 'string' ? result.startsWith('PASS') : result;
+      checks.push(`<div class="check ${pass ? 'pass' : 'fail'}">${pass ? '✓ Avoided:' : '✗ Fell into:'} ${pattern}</div>`);
+    }
+  }
+  return `
+    <div class="test-case">
+      <div class="test-case-header">
+        <span class="test-case-name">${tc.name || tc.id || 'Test case'}</span>
+        <span class="test-case-score text-${scoreColor(tc.score)}">${tc.score.toFixed(1)}</span>
+      </div>
+      ${checks.length ? checks.join('') : ''}
+    </div>`;
+}
+
+function renderTrend(history) {
+  if (!history || history.length < 2) return '';
+  const bars = history.slice(-12).map(h => {
+    const pct = (h.score / 10) * 100;
+    return `<div class="trend-bar color-${scoreColor(h.score)}" style="height:${pct}%" title="${h.date}: ${h.score.toFixed(1)}"></div>`;
+  });
+  return `<div style="margin-top:12px"><h3>Trend</h3><div class="trend-row">${bars.join('')}</div></div>`;
+}
+
+function renderDashboard(results, baseline) {
+  const bySkill = results.bySkill || {};
+  const skills = Object.keys(bySkill);
+  const overall = results.overall || 0;
+  const baselineOverall = baseline ? baseline.overall : null;
+
+  // Overall score card
+  let html = `
+    <div class="section">
+      <div class="grid grid-3">
+        <div class="card">
+          <div class="score-label">Overall Score</div>
+          <div class="score-big text-${scoreColor(overall)}">${overall.toFixed(1)}</div>
+          <div style="margin-top:8px">${renderScoreChange(overall, baselineOverall)}</div>
+        </div>
+        <div class="card">
+          <div class="score-label">Skills Evaluated</div>
+          <div class="score-big">${skills.length}</div>
+        </div>
+        <div class="card">
+          <div class="score-label">Test Cases Run</div>
+          <div class="score-big">${results.testCaseCount || Object.values(bySkill).reduce((n, s) => n + Object.keys(s.testCases || {}).length, 0)}</div>
+        </div>
+      </div>
+    </div>`;
+
+  // Skill scores
+  html += `<div class="section"><h2>Skill Scores</h2><div class="card">`;
+  for (const skill of skills.sort((a, b) => (bySkill[b].overall || 0) - (bySkill[a].overall || 0))) {
+    const s = bySkill[skill];
+    html += renderBar(skill, s.overall || 0);
+  }
+  html += `</div></div>`;
+
+  // Weakest criteria
+  const allCriteria = {};
+  for (const skill of skills) {
+    const cases = bySkill[skill].testCases || {};
+    for (const tc of Object.values(cases)) {
+      for (const [section, criteria] of [['shared', tc.shared], ['specific', tc.specific]]) {
+        if (!criteria) continue;
+        for (const [name, data] of Object.entries(criteria)) {
+          if (!allCriteria[name]) allCriteria[name] = { total: 0, count: 0 };
+          allCriteria[name].total += (typeof data === 'object' ? data.score : data);
+          allCriteria[name].count++;
+        }
+      }
+    }
+  }
+  const sortedCriteria = Object.entries(allCriteria)
+    .map(([name, d]) => ({ name, avg: d.total / d.count }))
+    .sort((a, b) => a.avg - b.avg)
+    .slice(0, 6);
+
+  if (sortedCriteria.length) {
+    html += `<div class="section"><h2>Weakest Criteria</h2><div class="card">`;
+    for (const c of sortedCriteria) {
+      html += renderBar(c.name, c.avg);
+    }
+    html += `</div></div>`;
+  }
+
+  // Regressions
+  if (results.regressions && results.regressions.length) {
+    html += `<div class="section"><h2>Regressions</h2>`;
+    for (const r of results.regressions) {
+      html += `
+        <div class="regression-item">
+          <strong>${r.skill}</strong>: ${r.criterion} ${r.from.toFixed(1)} → ${r.to.toFixed(1)}
+          ${r.cause ? `<div class="cause">${r.cause}</div>` : ''}
+        </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Per-skill details
+  html += `<div class="section"><h2>Test Case Details</h2><div class="grid">`;
+  for (const skill of skills) {
+    const s = bySkill[skill];
+    const cases = s.testCases || {};
+    html += `<div class="card"><div class="card-header"><h3 style="margin:0">${skill}</h3><span class="text-${scoreColor(s.overall)}" style="font-size:18px;font-weight:700">${(s.overall || 0).toFixed(1)}</span></div>`;
+    for (const tc of Object.values(cases)) {
+      html += renderTestCase(tc);
+    }
+    html += `</div>`;
+  }
+  html += `</div></div>`;
+
+  // Timestamp
+  html += `<p style="text-align:center;color:#52525b;font-size:12px;margin-top:40px">Run: ${results.runAt || 'unknown'} | Mode: ${results.mode || 'simulated'}</p>`;
+
+  return html;
+}
+
+// File loading
+let allResults = [];
+let baseline = null;
+
+$('#fileInput').addEventListener('change', (e) => {
+  const files = Array.from(e.target.files);
+  let loaded = 0;
+
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const data = JSON.parse(ev.target.result);
+        allResults.push({ name: file.name, data });
+
+        // Use the first file as current, check for baseline
+        if (file.name === 'baseline.json') {
+          baseline = data;
+        }
+
+        loaded++;
+        if (loaded === files.length) {
+          // Sort by date, latest first
+          allResults.sort((a, b) => (b.data.runAt || '').localeCompare(a.data.runAt || ''));
+
+          const current = allResults[0].data;
+          if (!baseline && allResults.length > 1) {
+            baseline = allResults[allResults.length - 1].data;
+          }
+
+          $('#fileStatus').textContent = `${loaded} file(s) loaded`;
+          $('#dashboard').innerHTML = renderDashboard(current, baseline);
+        }
+      } catch (err) {
+        $('#fileStatus').textContent = `Error parsing ${file.name}: ${err.message}`;
+      }
+    };
+    reader.readAsText(file);
+  });
+});
+
+// Also try to auto-load from a known path (won't work in all browsers)
+</script>
+</body>
+</html>

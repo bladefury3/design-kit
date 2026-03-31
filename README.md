@@ -262,6 +262,31 @@ See [PRINCIPLES.md](PRINCIPLES.md) for the full framework reference.
 
 ---
 
+## Benchmarking
+
+Design Kit includes an AI-based evaluation system to test skill quality over time.
+
+```
+/eval-skills             # run benchmarks against test cases
+```
+
+Test cases feed varied inputs to each skill (vague briefs, contradictory constraints,
+intentionally flawed designs) and score the output against rubrics. This catches
+regressions when skills are edited and identifies weaknesses.
+
+```
+benchmarks/
+├── test-cases/          # Diverse inputs per skill (vague, complex, edge-case)
+├── rubrics/             # Shared + per-skill scoring criteria
+├── results/             # Timestamped scores + baseline
+└── dashboard.html       # Visual benchmark dashboard (open in browser)
+```
+
+Open `benchmarks/dashboard.html` in a browser and load a results JSON to see
+score trends, weakest criteria, and per-test-case breakdowns.
+
+---
+
 ## Project structure
 
 ```

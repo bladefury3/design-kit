@@ -1,0 +1,35 @@
+{
+  "id": "review-component-01",
+  "skill": "review-component",
+  "name": "Mediocre button component — tests calibrated scoring (should NOT score high)",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "/review-component on the selected Button component",
+    "componentDescription": "Button with 3 variants: Primary, Secondary, Outline. Each has Default and Hover states only (no Focus, no Disabled). Size is fixed at medium only. No icon support. Background colors are hardcoded hex values (#3B82F6, #E5E7EB, transparent). Layer names are 'Frame 1' and 'Text'. No component description. Boolean props: none. Instance swap slots: none.",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Variant Completeness should score LOW (4-5): missing Focus, Disabled states; only 1 size; no icon variant",
+    "Token Compliance should score LOW (2-3): hardcoded hex colors instead of token bindings",
+    "Naming Consistency should score LOW (2-3): 'Frame 1' and 'Text' are default layer names",
+    "Documentation should score LOW (0-2): no description at all",
+    "Prop Design should score LOW (3-4): no boolean toggles for icons, no instance swap slots",
+    "OVERALL should be BELOW 5 — this is a mediocre component",
+    "Does NOT give a passing score out of politeness",
+    "Each low score has specific evidence and a 'what would make it a 10' suggestion"
+  ],
+  "antiPatterns": [
+    "Overall score above 6 (too generous for this component)",
+    "Scores Token Compliance above 5 when colors are hardcoded",
+    "Praises the component before listing issues (frontloading praise dilutes urgency)",
+    "Vague suggestions like 'add more variants' instead of 'add Focus and Disabled states'",
+    "Scoring Documentation above 3 when there is no description"
+  ],
+  "evaluationCriteria": {
+    "scoreCalibration": "Is the overall score appropriately low (3-5) for a component with these issues?",
+    "honestAssessment": "Does it give genuinely low scores, not inflated ones?",
+    "specificity": "Does each score cite the exact evidence (hardcoded #3B82F6, layer named 'Frame 1')?",
+    "actionability": "Does each suggestion name the specific fix ('bind #3B82F6 to color.bg.brand-solid')?"
+  }
+}
