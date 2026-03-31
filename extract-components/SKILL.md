@@ -43,7 +43,7 @@ for each component.
 
 1. Confirm Figma is connected by checking open files.
 
-2. Check if `tokens.json` exists in the working directory. If yes, load it — you'll
+2. Check if `design-system/tokens.json` exists in the working directory. If yes, load it — you'll
    reference token names in component specs AND use the `$extensions.figma.key` values
    for direct variable lookups via `figma.variables.importVariableByKeyAsync(key)`
    instead of scanning collections.
@@ -228,7 +228,7 @@ why the fallback is needed.
 | Can't open library file | 6: Reverse from instances | 1 call + user action |
 
 Present a summary:
-> "Found **24 components** across 4 categories. I'll build `components/index.json`
+> "Found **24 components** across 4 categories. I'll build `design-system/components/index.json`
 > with keys for all of them — this is the catalog that all other skills reference.
 >
 > - **Inputs** (7): Button, TextField, Select, Checkbox, Radio, Toggle, Slider
@@ -240,7 +240,7 @@ Present a summary:
 > **on-demand** — the first time you or another skill works with a specific
 > component, I'll extract its full spec and save it for future use."
 
-## Step 2: Build `components/index.json` (the catalog)
+## Step 2: Build `design-system/components/index.json` (the catalog)
 
 The index is the **primary output** of this skill. It contains every component's
 name, description, category, figmaKey, and defaultVariantKey — enough for any
@@ -248,7 +248,7 @@ downstream skill to instantiate components without searching.
 
 Build the index from the discovery data in Step 1. For each component set, capture:
 - `name` — component name
-- `file` — path to individual JSON (e.g., `button.json`) — may not exist yet
+- `file` — path to individual JSON (e.g., `design-system/components/button.json`) — may not exist yet
 - `category` — category/group
 - `description` — short description
 - `figmaKey` — component set key (hash)
@@ -256,7 +256,7 @@ Build the index from the discovery data in Step 1. For each component set, captu
 - `variantCount` — how many variants exist
 - `status` — published/draft
 
-Write `components/index.json`. This is the one file that MUST be produced. Everything
+Write `design-system/components/index.json`. This is the one file that MUST be produced. Everything
 else is on-demand.
 
 ## Step 3: On-demand deep extraction (per component)
@@ -275,7 +275,7 @@ A downstream skill (or the user) triggers extraction when:
 
 ### The on-demand extraction flow
 
-1. Check if `components/<name>.json` exists
+1. Check if `design-system/components/<name>.json` exists
    - If yes → read it and use it (zero MCP calls)
    - If no → extract it now (Steps 3a/3b below), write the JSON, then use it
 2. **Every extraction pays for itself twice** — first use extracts + acts,
@@ -313,7 +313,7 @@ const result = {
   // Component properties (props)
   componentPropertyDefinitions: node.componentPropertyDefinitions,
 
-  // Bound variables (token usage) — cross-reference with tokens.json
+  // Bound variables (token usage) — cross-reference with design-system/tokens.json
   boundTokens: []
 };
 
@@ -391,7 +391,7 @@ Use figma_get_component_image for a rendered screenshot of each variant.
 **Token usage**
 - Which tokens are applied (colors, spacing, typography, radii, shadows)
 - Map each visual property to its token reference
-- **Include the figma hash key for each token** (from tokens.json `$extensions.figma.key`)
+- **Include the figma hash key for each token** (from design-system/tokens.json `$extensions.figma.key`)
 - Flag any hardcoded values that should be tokens (linting opportunity)
 
 **Sizing & spacing**
@@ -410,20 +410,20 @@ Use figma_get_component_image for a rendered screenshot of each variant.
 
 ## Step 3: Structure the output
 
-Create one JSON file per component in a `components/` directory.
+Create one JSON file per component in the `design-system/components/` directory.
 
 ### File naming
 
 Use kebab-case matching the component name:
-- `Button` → `components/button.json`
-- `Text Field` → `components/text-field.json`
-- `Navigation/Breadcrumb` → `components/breadcrumb.json` (flatten hierarchy)
+- `Button` → `design-system/components/button.json`
+- `Text Field` → `design-system/components/text-field.json`
+- `Navigation/Breadcrumb` → `design-system/components/breadcrumb.json` (flatten hierarchy)
 
 ### Component JSON format
 
 The output must include `$extensions.figma` with the **component key** (hash string)
 for direct instantiation, and **variant keys** for each variant combination. This is
-the component equivalent of `$extensions.figma.key` in tokens.json — it eliminates
+the component equivalent of `$extensions.figma.key` in design-system/tokens.json — it eliminates
 MCP search calls entirely.
 
 ```json
@@ -585,7 +585,7 @@ For each component, check for quality signals:
 - Fixed sizing where auto-layout would be better
 
 Present a report:
-> "Built `components/index.json` with **24 component sets** cataloged:
+> "Built `design-system/components/index.json` with **24 component sets** cataloged:
 >
 > **Categories:**
 > - Inputs (7): Button, TextField, Select, Checkbox, Radio, Toggle, Slider
@@ -597,7 +597,7 @@ Present a report:
 >
 > **Individual component JSONs** are built on-demand. The first time you work with
 > a component (e.g., `/lofi-to-hifi` instantiates a Button), its full spec gets
-> extracted and cached as `components/button.json`. No wasted extraction.
+> extracted and cached as `design-system/components/button.json`. No wasted extraction.
 >
 > Want me to extract full specs for any specific components now?"
 
@@ -624,15 +624,15 @@ Present a report:
 - Still extract — document props, tokens, layout
 - Variant section can be empty or omitted
 
-### How to use tokens.json for Figma operations
+### How to use design-system/tokens.json for Figma operations
 
 When you need to bind a design token to a Figma node via `figma_execute`:
 
-1. Read `tokens.json` from the working directory
+1. Read `design-system/tokens.json` from the working directory
 2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
 3. Get the Figma key from `$extensions.figma.key`
 4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
-5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when design-system/tokens.json exists
 
 This turns O(n) collection scanning into O(1) direct key lookup per token.
 

@@ -1,7 +1,7 @@
 ---
 name: extract-relationships
 description: |
-  Map component relationships and dependencies into a structured relationships.json.
+  Map component relationships and dependencies into a structured design-system/relationships.json.
   Documents containment hierarchies, shared token usage, variant families, and
   composition patterns. Use after extract-components to complete the design system graph.
 allowed-tools:
@@ -31,7 +31,7 @@ allowed-tools:
 
 You are a design system architect. Your job is to map how components relate to each
 other — what contains what, what shares tokens with what, and how components compose
-into larger patterns. You produce a `relationships.json` that captures the full
+into larger patterns. You produce a `design-system/relationships.json` that captures the full
 dependency graph.
 
 ## Before you begin
@@ -39,16 +39,16 @@ dependency graph.
 1. Confirm Figma is connected.
 
    **Note on library components**: Unlike variables, the Figma Plugin API has NO
-   discovery method for library components. If `components/index.json` exists,
+   discovery method for library components. If `design-system/components/index.json` exists,
    use it as the primary source — it already contains component keys. If not,
    the user should run `/extract-components` first, which handles the multi-step
    library discovery process.
 
 2. Check for existing artifacts:
-   - `tokens.json` — for shared token analysis. When present, use the
+   - `design-system/tokens.json` — for shared token analysis. When present, use the
      `$extensions.figma.key` values for any variable lookups via
      `figma.variables.importVariableByKeyAsync(key)` instead of scanning collections.
-   - `components/index.json` — for the component inventory. When present, use
+   - `design-system/components/index.json` — for the component inventory. When present, use
      component node IDs and Figma keys from the JSON rather than re-querying Figma.
 3. If neither exists, try `figma_get_design_system_kit` before asking the user to run extraction skills:
 
@@ -71,9 +71,9 @@ and you need library data, ask the user:
 
 ## Step 1: Build the component graph
 
-### If components/index.json exists (preferred — zero MCP discovery calls)
+### If design-system/components/index.json exists (preferred — zero MCP discovery calls)
 
-Read `components/index.json` and the individual component JSONs. These already
+Read `design-system/components/index.json` and the individual component JSONs. These already
 contain component keys, variant keys, token keys, anatomy, and props. You can
 build the entire relationship graph from this data without touching Figma:
 
@@ -84,7 +84,7 @@ build the entire relationship graph from this data without touching Figma:
 
 This is O(n) over the JSON files — no Figma MCP calls needed.
 
-### If components/index.json doesn't exist (fallback — uses MCP)
+### If design-system/components/index.json doesn't exist (fallback — uses MCP)
 
 ```
 Use figma_get_library_components or figma_search_components to get all components.
@@ -216,7 +216,7 @@ Look for common design system patterns in the relationships:
 
 ## Step 4: Structure the output
 
-### relationships.json format
+### design-system/relationships.json format
 
 ```json
 {
@@ -367,7 +367,7 @@ Look for common design system patterns in the relationships:
 }
 ```
 
-### Why every key matters in relationships.json
+### Why every key matters in design-system/relationships.json
 
 The relationships file serves two purposes:
 
@@ -382,7 +382,7 @@ The relationships file serves two purposes:
 | `swapGroups[*].members[*].figmaKey` | Swap slot contents by key | Search for compatible components |
 | `sharesTokens[*].figmaKey` | Audit token usage without re-extracting | Re-scan all variable bindings |
 
-If a downstream skill reads `relationships.json` and finds a `figmaKey`, it should
+If a downstream skill reads `design-system/relationships.json` and finds a `figmaKey`, it should
 **never** call `figma_search_components` for that component. The key IS the answer.
 
 ## Step 5: Visualize (optional)
@@ -404,13 +404,13 @@ text-field ← form, login-form, search-bar, settings-page
 >
 > These are your foundation. Changes to them cascade across the system.
 >
-> Want me to save `relationships.json`?"
+> Want me to save `design-system/relationships.json`?"
 
 ## Step 6: Write and cross-reference
 
-Write `relationships.json` to the working directory.
+Write `design-system/relationships.json` to the working directory (create the `design-system/` directory if it doesn't exist).
 
-If component JSONs exist in `components/`, offer to back-fill relationship data
+If component JSONs exist in `design-system/components/`, offer to back-fill relationship data
 into each component file by adding a `relationships` key:
 
 ```json
@@ -442,15 +442,15 @@ into each component file by adding a `relationships` key:
 - **Components with no relationships**: Standalone utility components. List them
   under `"isolated"` in the output.
 
-### How to use tokens.json for Figma operations
+### How to use design-system/tokens.json for Figma operations
 
 When you need to bind a design token to a Figma node via `figma_execute`:
 
-1. Read `tokens.json` from the working directory
+1. Read `design-system/tokens.json` from the working directory
 2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
 3. Get the Figma key from `$extensions.figma.key`
 4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
-5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when design-system/tokens.json exists
 
 This turns O(n) collection scanning into O(1) direct key lookup per token.
 

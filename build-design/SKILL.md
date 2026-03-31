@@ -1,7 +1,7 @@
 ---
 name: build-design
 description: |
-  Execute a plan.json in Figma. Reads the structured build plan and mechanically
+  Execute a plan from plans/ in Figma. Reads the structured build plan and mechanically
   creates frames, instantiates library components, binds tokens, and sets text.
   No planning, no guessing — just execution. Use after plan-design.
 allowed-tools:
@@ -34,7 +34,7 @@ allowed-tools:
 
 # Build Design
 
-You are a design builder. Your job is to execute a `plan.json` file in Figma —
+You are a design builder. Your job is to execute a plan from `plans/` in Figma —
 mechanically, precisely, and without improvisation. Every component, token, and
 text value is already decided in the plan. You just build it.
 
@@ -45,19 +45,19 @@ plan, ask the user — don't guess. All decisions were made in `/plan-design`.
 
 1. Confirm Figma is connected.
 
-2. Read `plan.json` from the working directory. This is your build spec.
-   If it doesn't exist:
-   > "No plan.json found. Run `/plan-design` first to create a build plan."
+2. Read the plan from `plans/` (e.g. `plans/<name>.json`). This is your build spec.
+   If no plan exists in `plans/`:
+   > "No plan found in `plans/`. Run `/plan-design` first to create a build plan."
 
-3. Read `tokens.json` and `components/index.json` — you'll need these for
+3. Read `design-system/tokens.json` and `design-system/components/index.json` — you'll need these for
    on-demand component extraction if any components haven't been fully extracted yet.
 
 4. **Pre-build validation (mandatory):**
 
-   a. **Verify token keys**: Scan all `figmaKey` values in plan.json. Every key must
+   a. **Verify token keys**: Scan all `figmaKey` values in the plan. Every key must
       be a 40-character hex hash. If any key contains `/` (path-style), STOP and warn:
       > "Plan contains path-style token keys that won't work. Run `/extract-tokens`
-      > to refresh, or manually fix the keys in tokens.json."
+      > to refresh, or manually fix the keys in design-system/tokens.json."
 
    b. **Verify component coverage**: Check the plan's `componentCoverage.percentage`.
       If below 60%, warn:
@@ -70,7 +70,7 @@ plan, ask the user — don't guess. All decisions were made in `/plan-design`.
       > "Text node '[name]' is missing typography token bindings. The plan must
       > specify fontSize, lineHeight, and fills for every text node."
 
-   d. **Check relationships.json**: If it exists, verify that composition patterns
+   d. **Check `design-system/relationships.json`**: If it exists, verify that composition patterns
       are respected (e.g., if Avatar label group contains Avatar, don't instantiate
       a standalone Avatar where the label group should be used).
 
@@ -88,7 +88,7 @@ Extract all unique figmaKey values from the plan into a flat key map. This gets
 embedded into `figma_execute` calls for O(1) variable binding.
 
 ```javascript
-// Read plan.json, build: { "shortAlias": "figmaHashKey" }
+// Read plans/<name>.json, build: { "shortAlias": "figmaHashKey" }
 // e.g., { "bg.primary": "b6157f22...", "s.4xl": "284dbace..." }
 ```
 
@@ -138,7 +138,7 @@ Instantiate from the library using the variant key:
 
 ```
 Use figma_instantiate_component with:
-  - componentKey: node.variantKey (the hash from plan.json)
+  - componentKey: node.variantKey (the hash from the plan)
   - parentId: parent frame's ID
 ```
 
@@ -167,7 +167,7 @@ if (node.sizing?.height === 'fill') instance.layoutSizingVertical = 'FILL';
 ### type: "text"
 
 Create a text node with **ALL properties token-bound**. Never hardcode font sizes,
-line heights, or text colors — always bind to variables from tokens.json.
+line heights, or text colors — always bind to variables from design-system/tokens.json.
 
 ```javascript
 await figma.loadFontAsync({family: 'Inter', style: node.style || 'Regular'});
@@ -190,7 +190,7 @@ for (const [prop, token] of Object.entries(node.tokens)) {
 ```
 
 **CRITICAL**: If a figmaKey fails to import (returns undefined), it may be a
-path-style key instead of a hash. Check tokens.json — all keys must be 40-char
+path-style key instead of a hash. Check design-system/tokens.json — all keys must be 40-char
 hex hashes. Fall back to hardcoded `$value` ONLY as a last resort, and flag it
 in the build output so the user knows which tokens need key fixes.
 
@@ -215,7 +215,7 @@ if (node.textStyleKey) {
 
 Text styles give proper Figma compliance — the design panel shows the style name
 instead of raw values, and changes to the library style propagate everywhere.
-Only fall back to individual variable bindings when `tokens.json` has no `textStyles` section.
+Only fall back to individual variable bindings when `design-system/tokens.json` has no `textStyles` section.
 
 ### type: "ellipse"
 
@@ -230,10 +230,10 @@ ellipse.resize(node.width, node.height);
 ## Step 3: On-demand component extraction
 
 If the plan references a component that needs a specific variant but
-`components/<name>.json` doesn't exist yet:
+`design-system/components/<name>.json` doesn't exist yet:
 
 1. Use `figma_get_library_components` with the component's figmaKey to get variant keys
-2. Write `components/<name>.json` with the full variant map
+2. Write `design-system/components/<name>.json` with the full variant map
 3. Then instantiate the requested variant
 
 This is the on-demand pattern — first use extracts, all future uses read from cache.
@@ -265,6 +265,17 @@ This batching reduces total MCP calls from ~50+ (one per node) to ~5-8.
 
 ## Step 5: Screenshot and verify
 
+### AI Slop Check (post-build)
+
+Before presenting the result, visually verify the built design doesn't fall into
+AI slop traps. See PRINCIPLES.md for the full checklist. Key checks:
+- Is hierarchy clear? (What does the user see first, second, third?)
+- Are spacing and sizing varied intentionally, or uniform everywhere?
+- Does the layout feel designed, or assembled from a template?
+
+If the build looks sloppy, flag specific issues rather than rebuilding — the plan
+is the source of truth. Suggest plan revisions if the issues are structural.
+
 ```
 Use figma_take_screenshot to capture the result.
 ```
@@ -280,7 +291,7 @@ Present the result:
 >
 > [screenshot]
 >
-> Does this match your plan? If anything needs adjustment, update `plan.json`
+> Does this match your plan? If anything needs adjustment, update `plans/<name>.json`
 > and run `/build-design` again — or tell me what to change."
 
 ## Step 6: Handle issues
@@ -293,7 +304,7 @@ Present the result:
 ### Token binding fails
 - Check if the figmaKey is a valid hash (not a variable name)
 - Verify the library is enabled in the file
-- Fall back to hardcoded values from tokens.json `$value` field
+- Fall back to hardcoded values from design-system/tokens.json `$value` field
 
 ### Text override doesn't apply
 - Library components may nest text nodes deeply
@@ -305,11 +316,11 @@ Present the result:
 - Don't improvise. Ask the user:
   > "The plan doesn't specify [missing detail]. What should I do?"
 
-## How to use tokens.json for Figma operations
+## How to use design-system/tokens.json for Figma operations
 
 When you need to bind a design token to a Figma node via `figma_execute`:
 
-1. Read `plan.json` — it already contains figmaKey for every token
+1. Read the plan from `plans/` — it already contains figmaKey for every token
 2. Build a flat key map from all token references in the plan
 3. Embed the key map in your `figma_execute` code
 4. Use `figma.variables.importVariableByKeyAsync(key)` directly

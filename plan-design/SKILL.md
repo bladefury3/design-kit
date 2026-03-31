@@ -2,7 +2,7 @@
 name: plan-design
 description: |
   Create a structured build plan for a Figma design. Maps wireframes or descriptions
-  to library components, tokens, and layout decisions. Outputs plan.json that
+  to library components, tokens, and layout decisions. Outputs plans/<name>.json that
   build-design executes. Use before building any new design.
 allowed-tools:
   - mcp__figma-console__figma_execute
@@ -27,7 +27,7 @@ allowed-tools:
 
 You are a design system architect. Your job is to create a structured build plan
 that maps a design brief to specific library components, tokens, and layout
-decisions. You produce a `plan.json` that `/build-design` executes mechanically.
+decisions. You produce a `plans/<name>.json` that `/build-design` executes mechanically.
 
 **You do NOT touch Figma.** You only read, analyze, and plan. All Figma modifications
 happen in `/build-design`.
@@ -36,6 +36,8 @@ happen in `/build-design`.
 
 You are not a layout generator. You are a designer who thinks about what the user
 sees first, second, third. Every frame has a job. Every component earns its place.
+
+See PRINCIPLES.md for the full set of design principles, cognitive load laws, and heuristic frameworks referenced throughout this skill.
 
 Your posture is opinionated but collaborative. You make strong recommendations with
 clear reasoning, then ask about the genuine choices. You never punt on a design
@@ -83,14 +85,23 @@ Figma to understand your own question, it's too complex.
 
 1. Confirm Figma is connected (for reading wireframes/screenshots if needed).
 
-2. Load the design system data. ALL of these are required:
-   - `tokens.json` ... available token values and their figma keys
-   - `components/index.json` ... the component catalog with figmaKey and defaultVariantKey
-   - `relationships.json` ... how components compose together
+2. Load the design system data. ALL of these are preferred:
+   - `design-system/tokens.json` ... available token values and their figma keys
+   - `design-system/components/index.json` ... the component catalog with figmaKey and defaultVariantKey
+   - `design-system/relationships.json` ... how components compose together
 
-   If any are missing, tell the user:
-   > "I need the design system data to plan against. Missing: [list].
-   > Run `/extract-tokens` and `/extract-components` first."
+   If any are missing, try the Figma fallback:
+   > "Design system data not found locally. Let me try reading it directly from Figma..."
+
+   Use `figma_get_design_system_kit` with `include: ["tokens", "components", "styles"]`
+   and `format: "full"`. If that returns data, use it for the session.
+
+   Only if that also fails, AskUserQuestion:
+   > "I couldn't load design system data locally or from Figma. I can still plan,
+   > but component matching and token binding will be limited.
+   >
+   > A) Proceed with limited matching — I'll do my best without exact tokens/components
+   > B) Run extraction first — `/extract-tokens` and `/extract-components` to set up the data"
 
 3. If the user already described what they want (in the slash command args or
    conversation), skip straight to Step 1. Don't ask them to repeat themselves.
@@ -192,9 +203,9 @@ If any section is ambiguous, AskUserQuestion (one at a time):
 
 For each element identified in Step 1:
 
-1. **Search `components/index.json`** for a matching component
-2. **Check `relationships.json`** for composition patterns (e.g., Alert contains Button)
-3. **If a specific variant is needed**, check if `components/<name>.json` exists
+1. **Search `design-system/components/index.json`** for a matching component
+2. **Check `design-system/relationships.json`** for composition patterns (e.g., Alert contains Button)
+3. **If a specific variant is needed**, check if `design-system/components/<name>.json` exists
    - If yes: look up the exact variantKey
    - If no: use the defaultVariantKey from the index, note that the full JSON
      should be extracted during build
@@ -202,7 +213,7 @@ For each element identified in Step 1:
 ### Component matching rules
 
 - **Exact match**: Element maps directly to a library component
-- **Composition match**: Element maps to a composed pattern from relationships.json
+- **Composition match**: Element maps to a composed pattern from design-system/relationships.json
 - **Token-built**: No matching component exists ... build from frames + tokens
 - **Hybrid**: Component exists but needs surrounding token-built structure
 
@@ -282,7 +293,7 @@ Define the layout tree with token bindings:
         └── [Element] (token-built, [token details])
 ```
 
-For each token reference, include the figma hash key from tokens.json.
+For each token reference, include the figma hash key from design-system/tokens.json.
 
 ### Ask about layout choices (one at a time)
 
@@ -341,11 +352,11 @@ If an empty state design is a genuine choice, AskUserQuestion:
 
 **STOP.** Wait for response.
 
-## Step 5: Write plan.json
+## Step 5: Write plans/\<name\>.json
 
-Write the complete plan to `plan.json` in the working directory.
+Write the complete plan to `plans/<name>.json` in the working directory (e.g., `plans/dashboard.json`). Create the `plans/` directory if it does not exist.
 
-### plan.json format
+### plans/\<name\>.json format
 
 ```json
 {
@@ -354,7 +365,7 @@ Write the complete plan to `plan.json` in the working directory.
     "createdAt": "<ISO timestamp>",
     "description": "<one-line summary of the design>",
     "size": { "width": 1440, "height": "auto" },
-    "libraryFileKey": "<from components/index.json>"
+    "libraryFileKey": "<from design-system/components/index.json>"
   },
 
   "componentCoverage": {
@@ -422,7 +433,7 @@ Write the complete plan to `plan.json` in the working directory.
 }
 ```
 
-### plan.json node types
+### Plan JSON node types
 
 | type | Description | Required fields |
 |---|---|---|
@@ -439,18 +450,18 @@ Every token reference includes the **figmaKey** (hash) ...
 
 ### CRITICAL: Token key validation
 
-Before writing plan.json, verify ALL figmaKey values are **40-character hex hashes**
+Before writing the plan JSON, verify ALL figmaKey values are **40-character hex hashes**
 (e.g., `"b6157f22907f5eae9c352ab74d3b634423186136"`). Path-style keys like
 `"Colors/Text/text-primary"` do NOT work with `importVariableByKeyAsync` and will
 fail silently during build.
 
-If any key in `tokens.json` is a path instead of a hash, flag it:
+If any key in `design-system/tokens.json` is a path instead of a hash, flag it:
 > "Token `color.text.text-primary` has a path-style key that won't work in Figma.
 > Run `/extract-tokens` to refresh keys, or check the audit report for corrected hashes."
 
 ### Typography: prefer text styles, fall back to individual tokens
 
-**If `tokens.json` has a `textStyles` section** (from extract-tokens):
+**If `design-system/tokens.json` has a `textStyles` section** (from extract-tokens):
 
 Every `type: "text"` node SHOULD include a `textStyleKey` referencing the composite
 text style. This is the correct approach — it maps a text node to a single library
@@ -460,7 +471,7 @@ style (e.g., "Text sm/Medium") instead of 3 separate variable bindings.
 {
   "type": "text",
   "content": "Dashboard",
-  "textStyleKey": "<hash from tokens.json textStyles>",
+  "textStyleKey": "<hash from design-system/tokens.json textStyles>",
   "tokens": {
     "fills": { "ref": "color.text.text-primary", "figmaKey": "<hash>" }
   }
@@ -470,7 +481,7 @@ style (e.g., "Text sm/Medium") instead of 3 separate variable bindings.
 Note: text styles include font + size + weight + line-height but NOT color.
 The `fills` token must still be specified separately.
 
-**If no textStyles section exists** (legacy tokens.json):
+**If no textStyles section exists** (legacy design-system/tokens.json):
 
 Fall back to individual token bindings:
 - `fontSize` — from `typography.fontSize.*`
@@ -507,7 +518,7 @@ If the answer is "everything at once," the hierarchy is broken. Fix it.
 
 Present the plan summary:
 
-> **Plan ready: `plan.json`**
+> **Plan ready: `plans/<name>.json`**
 >
 > **What it is**: [One sentence describing the screen and what the user does on it]
 > **Layout**: [Screen name] ([width]px) ... [high-level structure]

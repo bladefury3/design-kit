@@ -48,23 +48,23 @@ Every token value, every state, every responsive behavior — documented and exp
 
 1. Confirm Figma is connected.
 2. Load available design system docs:
-   - `tokens.json` — for token name → value mappings
-   - `components/index.json` — for component API reference
-   - `relationships.json` — for understanding composition
+   - `design-system/tokens.json` — for token name → value mappings
+   - `design-system/components/index.json` — for component API reference
+   - `design-system/relationships.json` — for understanding composition
 ### JSON-first approach (mandatory)
 
 Pre-extracted JSONs are the required source for handoff documentation. You MUST generate
 handoff docs primarily from the JSON files, with Figma MCP only called for screenshots
 and frame-specific visual validation:
 
-- `tokens.json` — Token names, values, Figma keys (`$extensions.figma.key`), and mode
+- `design-system/tokens.json` — Token names, values, Figma keys (`$extensions.figma.key`), and mode
   variants. Use these directly — do NOT re-extract token data from Figma.
-- `components/index.json` — The catalog. Check if `components/<name>.json` exists for
+- `design-system/components/index.json` — The catalog. Check if `design-system/components/<name>.json` exists for
   each component you're documenting. If not, extract it on the spot using
   `figma_get_component_for_development_deep` or `figma_get_library_components`,
-  write `components/<name>.json`, then generate the handoff docs from it.
+  write `design-system/components/<name>.json`, then generate the handoff docs from it.
   This caches the full spec for future handoffs.
-- `relationships.json` — Component dependency graph. Helps document which components
+- `design-system/relationships.json` — Component dependency graph. Helps document which components
   are used together and their composition patterns.
 
 **With JSONs**: Load files → generate handoff docs directly from structured data → only call Figma MCP for screenshots and visual validation
@@ -301,7 +301,7 @@ Create `handoff/` directory with:
 handoff/
 ├── overview.json          # Page-level specs, layout tree, responsive rules
 ├── components.json        # Component instances with specific configurations
-├── tokens-used.json       # Subset of tokens.json actually used in this design
+├── tokens-used.json       # Subset of design-system/tokens.json actually used in this design
 ├── states.json            # Interaction states, transitions, animations
 ├── content.json           # All text content and media specs
 ├── notes.json             # Edge cases, accessibility, implementation notes
@@ -350,15 +350,15 @@ Present the summary:
 > The developer should be able to implement this without asking a single question.
 > Want me to adjust anything before you share it?"
 
-### How to use tokens.json for Figma operations
+### How to use design-system/tokens.json for Figma operations
 
 When you need to bind a design token to a Figma node via `figma_execute`:
 
-1. Read `tokens.json` from the working directory
+1. Read `design-system/tokens.json` from the working directory
 2. Look up the token by its path (e.g., `tokens.spacing["spacing-xl"]`)
 3. Get the Figma key from `$extensions.figma.key`
 4. In your `figma_execute` code, use `figma.variables.importVariableByKeyAsync(key)` directly
-5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when tokens.json exists
+5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when design-system/tokens.json exists
 
 This turns O(n) collection scanning into O(1) direct key lookup per token.
 

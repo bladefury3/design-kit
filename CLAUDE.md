@@ -14,19 +14,68 @@ extract, audit, and optimize design systems.
 
 ```
 design-kit/
-├── extract-tokens/          # Skill: extract design tokens → tokens.json
-├── extract-components/      # Skill: extract component specs → components/index.json + on-demand JSONs
-├── extract-relationships/   # Skill: map component relationships → relationships.json
-├── plan-design/             # Skill: plan a design → plan.json (spec, no Figma changes)
-├── build-design/            # Skill: execute plan.json → Figma frames + library components
-├── audit-frames/            # Skill: audit frames against design system
-├── handoff-dev/             # Skill: developer handoff documentation
-├── handoff-mcp/             # Skill: optimize Figma file for MCP consumption
-├── setup                    # Installation script
-├── CLAUDE.md                # This file
-├── ETHOS.md                 # Design philosophy
-└── VERSION                  # Current version
+├── design-system/                # Extracted design system data (output of extract-* skills)
+│   ├── tokens.json               #   Design tokens with Figma variable keys
+│   ├── components/               #   Component specs
+│   │   ├── index.json            #     Component catalog (figmaKey, defaultVariantKey)
+│   │   └── <name>.json           #     On-demand per-component specs
+│   └── relationships.json        #   Component dependency graph
+├── plans/                        # Build plans (output of plan-design)
+│   └── <name>.json               #   Structured plan for build-design to execute
+├── reports/                      # QA artifacts (output of audit/stress/diff skills)
+│   ├── audit-report.json         #   Design system compliance audit
+│   ├── stress-report.json        #   Content stress test results
+│   └── diff-report.json          #   Design system diff report
+├── extract-tokens/               # Skill: extract design tokens
+├── extract-components/           # Skill: extract component specs
+├── extract-relationships/        # Skill: map component relationships
+├── plan-design/                  # Skill: plan a design (spec, no Figma changes)
+├── build-design/                 # Skill: execute a plan in Figma
+├── brainstorm/                   # Skill: generate design variations (SCAMPER + JTBD)
+├── responsive-adapt/             # Skill: desktop → tablet → mobile adaptation
+├── design-flow/                  # Skill: multi-screen connected flow design
+├── revision/                     # Skill: surgical updates from feedback
+├── audit-frames/                 # Skill: audit frames (heuristics + tokens + Gestalt)
+├── diff-system/                  # Skill: diff current Figma vs extracted data
+├── content-stress/               # Skill: stress-test with edge-case content
+├── handoff-dev/                  # Skill: developer handoff documentation
+├── handoff-mcp/                  # Skill: optimize Figma file for MCP consumption
+├── setup                         # Installation script
+├── CLAUDE.md                     # This file
+├── ETHOS.md                      # Design philosophy
+├── PRINCIPLES.md                 # Shared design principles (Nielsen, Gestalt, SCAMPER, etc.)
+└── VERSION                       # Current version
 ```
+
+## Designer Workflow
+
+Skills follow a natural design process. You don't need to use them all — start where you are.
+
+```
+Brief/screenshot ──→ /brainstorm ──→ pick a direction
+                         │
+                    /plan-design ──→ /build-design ──→ see it in Figma
+                         │                │
+                    /design-flow      /responsive-adapt
+                    (multi-screen)    (tablet + mobile)
+                         │                │
+                    /content-stress ──→ /audit-frames ──→ /revision
+                    (break it)        (check it)       (fix it)
+                         │
+                    /handoff-dev ──→ ship to engineering
+```
+
+### First time? Start here:
+1. Open your Figma file with the Desktop Bridge plugin running
+2. Run `/extract-tokens` → `/extract-components` → `/extract-relationships`
+3. Now use any skill — your design system data is cached locally
+
+### Already have design-system/ data?
+Jump straight to `/plan-design`, `/brainstorm`, or `/audit-frames`.
+
+### No design system data yet?
+Most skills will fall back to `figma_get_design_system_kit` to read directly
+from Figma. Extraction is faster for repeated use, but not required for a first try.
 
 ## Skill format
 
@@ -40,6 +89,9 @@ Claude Code via the setup script and invoked as slash commands (e.g., `/extract-
 - Always validate with screenshots after making changes
 - Output structured JSON following W3C Design Tokens format where applicable
 - Ask the user before making assumptions about their design system
+- Skills should degrade gracefully without pre-extracted data — use
+  `figma_get_design_system_kit` as a fallback before telling the user to
+  run extraction skills
 
 ## Figma MCP interaction
 
@@ -53,7 +105,7 @@ Skills use these MCP tool groups:
 
 ## Output formats
 
-### tokens.json
+### design-system/tokens.json
 Follows [W3C Design Tokens](https://design-tokens.github.io/community-group/format/) format:
 ```json
 {
@@ -67,8 +119,8 @@ Follows [W3C Design Tokens](https://design-tokens.github.io/community-group/form
 }
 ```
 
-### Component JSON
-Per-component spec files in `components/` directory:
+### design-system/components/<name>.json
+Per-component spec files:
 ```json
 {
   "$schema": "design-kit/component/v1",
@@ -79,7 +131,7 @@ Per-component spec files in `components/` directory:
 }
 ```
 
-### relationships.json
+### design-system/relationships.json
 Component dependency graph:
 ```json
 {

@@ -1,7 +1,7 @@
 ---
 name: extract-tokens
 description: |
-  Extract design tokens from a Figma file into a structured tokens.json.
+  Extract design tokens from a Figma file into a structured design-system/tokens.json.
   Pulls colors, typography, spacing, radii, shadows, and opacity from
   Figma variables and styles. Use when starting design system documentation
   or when tokens need to be synced.
@@ -28,7 +28,7 @@ allowed-tools:
 # Extract Design Tokens
 
 You are a design system specialist. Your job is to extract design tokens from the
-user's Figma file and produce a clean, structured `tokens.json` file.
+user's Figma file and produce a clean, structured `design-system/tokens.json` file.
 
 ## Before you begin
 
@@ -306,7 +306,7 @@ for (const s of styles) {
 }
 ```
 
-Write text styles to a `textStyles` section in tokens.json:
+Write text styles to a `textStyles` section in `design-system/tokens.json`:
 ```json
 {
   "textStyles": {
@@ -503,13 +503,13 @@ Present a summary:
 >
 > I found 3 color styles that aren't variables yet — want me to include those too?"
 
-## Step 6: Write tokens.json
+## Step 6: Write design-system/tokens.json
 
-Write the file to the user's preferred location. Default to `./tokens.json` in the
-current working directory.
+Write the file to the user's preferred location. Default to `./design-system/tokens.json`
+in the current working directory.
 
 Ask the user:
-> "Where should I save tokens.json? Default is the current directory."
+> "Where should I save design-system/tokens.json? Default is the current directory."
 
 After writing, confirm with a summary of what was produced.
 
@@ -552,13 +552,13 @@ After writing, confirm with a summary of what was produced.
 
 ## Output format: `$extensions.figma.key` is critical
 
-When writing `tokens.json`, every token MUST include the Figma variable key in
+When writing `design-system/tokens.json`, every token MUST include the Figma variable key in
 `$extensions.figma.key`. This key is the direct lookup handle that all other
 design-kit skills use to perform O(1) variable imports via
 `figma.variables.importVariableByKeyAsync(key)`.
 
 Without this key, downstream skills (`extract-components`, `audit-frames`,
-`lofi-to-hifi`, `handoff-dev`, `handoff-mcp`) are forced to fall back to
+`build-design`, `handoff-dev`, `handoff-mcp`) are forced to fall back to
 expensive O(n) collection scanning with
 `getAvailableLibraryVariableCollectionsAsync()` +
 `getVariablesInLibraryCollectionAsync()`.
@@ -611,11 +611,11 @@ that `figma.variables.importVariableByKeyAsync(key)` accepts.
 
 ### Verify the key works
 
-After writing tokens.json, spot-check a few keys by running:
+After writing `design-system/tokens.json`, spot-check a few keys by running:
 
 ```javascript
-// Run via figma_execute — verify keys from tokens.json
-const testKey = '<hash from tokens.json>';
+// Run via figma_execute — verify keys from design-system/tokens.json
+const testKey = '<hash from design-system/tokens.json>';
 const v = await figma.variables.importVariableByKeyAsync(testKey);
 return { name: v.name, id: v.id, success: true };
 ```
