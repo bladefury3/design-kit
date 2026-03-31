@@ -98,14 +98,15 @@ content from real users — not inventing impossible scenarios.
    > RECOMMENDATION: Choose All for a complete resilience report. If you're
    > short on time, Length and State catch the most common production bugs.
    >
-   > A) **All** — Full battery: Length, Volume, Format, Identity, State, Permissions
+   > A) **All** — Full battery: Length, Volume, Format, Identity, State, Permissions, Temporal
    > B) **Length** — Short text (1 char), medium (50 chars), long (200 chars)
    > C) **Volume** — 0 items, 1 item, 100 items, 10,000 items
    > D) **Format** — Currencies, percentages, dates, negative numbers
    > E) **Identity** — Long names, non-Latin scripts, RTL text, emoji
    > F) **State** — Empty/new user, power user, error states
    > G) **Permissions** — Admin vs. editor vs. viewer vs. guest visibility
-   > H) **Custom** — Tell me which specific categories
+   > H) **Temporal** — Stale dates, future dates, expired content, cross-timezone
+   > I) **Custom** — Tell me which specific categories
 
    **STOP.** Wait for response before proceeding.
 
@@ -249,6 +250,23 @@ Test what different roles see.
 | **Editor** | Edit actions visible, no delete/settings | Reduced actions: is it clear what you CAN do? |
 | **Viewer** | Read-only, no actions | No actions: is it clear you're viewing, not editing? |
 | **Guest** | Minimal data, upgrade prompts | Limited access: is there a path to more? |
+
+### Temporal stress
+
+Test time-based content for staleness, urgency, and edge cases:
+
+| Test | Content | What to check |
+|---|---|---|
+| **Stale dates** | "March 2019", "2 years ago" | Does the design indicate staleness? Should there be a warning badge, different color, or "outdated" label? |
+| **Just now** | "Just now", "1 second ago" | Does the timestamp format work at this extreme? |
+| **Future dates** | "Scheduled: Dec 2027" | Does the design handle future-dated content differently? |
+| **Expired** | "Expired 3 days ago", "Trial ended" | Is there a visual indicator? A CTA to renew/extend? |
+| **Cross-timezone** | "3:00 AM PST (6:00 AM EST)" | Does the design show timezone context? |
+| **Long duration** | "Running for 847 days" | Do large time values overflow or look absurd? |
+
+When injecting stale dates, check whether the design has ANY visual indicator that
+the data is old. If a date says "March 2019" and looks identical to "March 2026,"
+flag it: "No staleness indicator — users won't know this data is 7 years old."
 
 ## Step 3: Clone and test
 

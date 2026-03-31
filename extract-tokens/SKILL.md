@@ -33,8 +33,13 @@ user's Figma file and produce a clean, structured `design-system/tokens.json` fi
 ## Before you begin
 
 1. Confirm Figma is connected by checking the status of open files.
-2. Ask the user which file/page contains their design system tokens.
-3. Understand the scope — are we extracting everything, or specific token categories?
+2. **Determine scope.** If the user said "extract tokens" or "extract tokens from this file",
+   default to: extract ALL tokens from ALL collections in the current file, all modes.
+
+   Only ask scope questions if the user explicitly narrowed scope or if multiple files
+   are open and it's unclear which one.
+
+3. Proceed to Step 1: Discover what's in the file.
 
 ## Step 1: Discover what's in the file
 
@@ -169,6 +174,10 @@ Present a summary to the user:
 Ask the user:
 > "Here's what I found in your file. Which collections should I extract?
 > Should I include all modes, or just the default?"
+
+   If the user asked for "all tokens" or didn't specify, extract everything.
+   Only ask this question if the file has collections that are clearly unrelated
+   (e.g., a "Deprecated" collection alongside active ones).
 
 ## Step 2: Extract token values
 
@@ -625,6 +634,13 @@ is wrong (likely a variable name was stored instead of the hash).
 
 This single field makes every downstream Figma operation a direct key lookup
 instead of a brute-force search.
+
+## Next steps
+
+> "Tokens extracted. Next:
+> - Run `/extract-components` to catalog your component library
+> - Or run `/extract-icons` to catalog the icon library
+> - These use the token keys you just extracted for O(1) lookups"
 
 ## Tone
 

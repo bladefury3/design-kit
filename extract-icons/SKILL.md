@@ -338,6 +338,12 @@ For each icon discovered, capture the following data:
 
 - **`tags`** — Searchable keywords for fuzzy matching. See tag generation rules below.
 
+- **`primaryUse`** — one sentence describing when to use THIS icon vs similar ones.
+  Generated from the icon's Figma description if available, or inferred from name
+  and context. Example: search-md → "Default search icon for search bars and inputs",
+  magnifying-glass → "Inspect/zoom icon for detail views", find-icon → "Advanced
+  search or discovery features"
+
 - **`size`** — Default dimensions as `{ "width": 24, "height": 24 }`.
 
 ### Optional fields
@@ -407,7 +413,12 @@ Auto-generate tags for every icon based on three sources:
 | `alert-triangle` | warning, caution, danger, error |
 | `help-circle` | question, support, faq |
 
-**3. Related concepts** — Add functional context:
+**4. From Figma description** — Read the component description field. Parse nouns
+   and verbs as additional tags. Example: description "Used for inspect and zoom
+   features" adds tags ["inspect", "zoom", "features"]. This is the primary
+   disambiguator for icons with similar names.
+
+**5. Related concepts** — Add functional context:
 - Navigation icons get: `navigate`
 - Status icons get: `status`, `feedback`
 - Action icons get: `action`, `toolbar`
@@ -550,13 +561,16 @@ catalog. This is the primary output of this skill.
       "nodeId": "3463:405123",
       "category": "Actions",
       "tags": ["search", "find", "magnifying glass", "lookup", "query"],
-      "size": { "width": 24, "height": 24 }
+      "primaryUse": "Default search icon for search bars and inputs",
+      "size": { "width": 24, "height": 24 },
+      "alternatives": ["magnifying-glass", "find-icon"]
     },
     "arrow-left": {
       "key": "def456...40-char-hash",
       "nodeId": "3463:405234",
       "category": "Navigation",
       "tags": ["arrow", "left", "back", "previous", "navigate"],
+      "primaryUse": "Back navigation and previous-step actions",
       "size": { "width": 24, "height": 24 }
     },
     "check": {
@@ -564,11 +578,18 @@ catalog. This is the primary output of this skill.
       "nodeId": "3463:404967",
       "category": "Status",
       "tags": ["check", "checkmark", "tick", "done", "complete", "success", "confirm"],
+      "primaryUse": "Confirm completion or success state",
       "size": { "width": 24, "height": 24 },
       "variants": {
         "filled": "variant-key-hash-filled",
         "outline": "variant-key-hash-outline"
       }
+    }
+  },
+  "alternativeGroups": {
+    "search": {
+      "icons": ["search-md", "magnifying-glass", "find-icon"],
+      "disambiguation": "search-md for search bars, magnifying-glass for inspect/zoom, find-icon for advanced search/discovery"
     }
   },
   "categories": {
@@ -604,6 +625,16 @@ catalog. This is the primary output of this skill.
   The `propKey` is the full Figma property key string (e.g., `🔀 Icon leading swap#3466:91`)
   needed by `figma_set_instance_properties`. The `usedIn` array lists which
   components have this swap slot.
+
+- **`alternativeGroups`** — Groups icons that share a concept. When downstream skills
+  resolve "search icon," show the group so the user can pick the right one. Each
+  group has a `disambiguation` string explaining when to use each icon in the group.
+
+- **`alternatives`** (per icon) — List of icon names that serve a similar concept.
+  Cross-references the `alternativeGroups` for quick lookup from any icon in the set.
+
+- **`primaryUse`** (per icon) — One-sentence description of when to use THIS icon vs
+  similar ones. Generated from the Figma description or inferred from name/context.
 
 ### Writing the file
 

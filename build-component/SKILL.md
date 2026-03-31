@@ -89,9 +89,15 @@ Key Figma API differences:
    - `design-system/components/index.json` — component catalog for sub-component instantiation
    - `design-system/icons.json` — icon names, keys, and tags for instance swap defaults (optional)
 
-   If either file is missing, warn:
-   > "Missing `design-system/tokens.json` or `design-system/components/index.json`.
-   > Run `/extract-tokens` and `/extract-components` first."
+   If any are missing, try reading directly from Figma first:
+   ```
+   Use figma_get_design_system_kit with:
+     - include: ["tokens", "components"]
+     - format: "full"
+   ```
+   If that also fails, warn but proceed:
+   > "Design system data not available. I can still build the component, but
+   > token bindings may be incomplete. Run `/extract-tokens` for full coverage."
 
 4. **Pre-build validation (mandatory):**
 
@@ -409,6 +415,16 @@ Present the result:
 > Does this look correct? If anything needs adjustment, update `plans/components/<name>.json`
 > and run `/build-component` again."
 
+### User-facing language
+
+In all conversational output (confirmations, errors, summaries), use designer language:
+- Say "icon slot" not "instance swap property"
+- Say "toggle" not "boolean property"
+- Say "component key" not "variantKey hash"
+- Say "token binding failed" not "importVariableByKeyAsync returned undefined"
+
+Save technical details for the JSON output and code blocks.
+
 ## Post-build: Auto-register the new component
 
 After building successfully, register the new component so it's immediately
@@ -516,9 +532,14 @@ After presenting the build result:
 - **Check**: Is the `variantKey` correct? It must be the variant's key, not the
   component set's `figmaKey`.
 - **Check**: Is the library accessible? (Figma Desktop Bridge must be running.)
-- **Fallback**: Create a placeholder frame with the sub-component name and a note.
-  > "Could not instantiate `IconButton` — created placeholder frame instead.
-  > Check that the library is enabled and the variantKey is correct."
+
+Before creating a placeholder, try to resolve the component:
+
+1. **Search by name**: Use `figma_search_components` with the sub-component name from the plan
+2. **Present candidates**: If matches found, show the user: "Couldn't find Button close X by key. Found these alternatives: [list with keys]. Which one?"
+3. **Only then fall back**: If search returns nothing or user says none match, create a placeholder frame labeled `[Missing: Button close X]` and flag it in the build output
+
+Never silently skip a sub-component. Never create a placeholder without searching first.
 
 ### combineAsVariants fails
 - **Check**: Are ALL children `ComponentNode` types? `combineAsVariants` rejects

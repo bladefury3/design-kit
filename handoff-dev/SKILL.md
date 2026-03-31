@@ -89,21 +89,24 @@ If REST fails, fall back to extraction:
 > "I need pre-extracted design system data. Let me run `/extract-tokens` and
 > `/extract-components` first."
 
-3. Ask the user about scope and format:
+3. **Determine scope and context.**
 
-> "What are we handing off?
->
-> **A) Full page/screen** — Complete page with all sections
-> **B) Specific component** — One component with full spec
-> **C) Feature/flow** — A multi-screen flow (e.g., signup, checkout)
->
-> And what's your tech stack? This helps me tailor the specs:
->
-> **Framework**: React / Vue / SwiftUI / Flutter / Web (vanilla) / Other
-> **Styling**: Tailwind / CSS Modules / Styled Components / Other
-> **Component library**: Custom / Shadcn / MUI / Ant / None yet
->
-> Any specific things the devs always ask about? (I'll make sure to cover those)"
+   If the user specified what to hand off (e.g., "/handoff-dev for this signup form"),
+   skip the scope question — it's answered.
+
+   Default tech stack to the project's actual stack if detectable (check package.json,
+   framework files). Only ask if genuinely unknown:
+
+   > "Generating developer handoff for **[frame name]**. What's your tech stack?
+   >
+   > RECOMMENDATION: I'll format specs generically (works for any framework)
+   > unless you need framework-specific output.
+   >
+   > A) Generic — CSS properties, token names, component specs
+   > B) React + Tailwind — className strings, component props, hooks
+   > C) Other — tell me your stack"
+
+   One question max before starting work.
 
 ## Step 1: Capture the design
 
@@ -235,6 +238,31 @@ This is faster and more accurate than manual inspection.
 | Link | underline none | underline | — | ring 2px | gray text |
 | Card | shadow.sm | shadow.md + translateY(-2px) | — | ring 2px | — |
 | Input | gray border | blue border | — | blue border + ring | gray bg |
+
+### Per-field state documentation (forms)
+
+When handing off forms, document EACH input field individually — not "inputs have 5 states" generically:
+
+| Field | Default | Focused | Filled | Error | Disabled |
+|---|---|---|---|---|---|
+| Full Name | Gray border, placeholder "Jane Doe" | Blue border, cursor | Black text, value shown | Red border, "Name is required" below | Gray bg, no interaction |
+| Email | Gray border, placeholder "jane@company.com" | Blue border, cursor | Black text, value shown | Red border, "Enter a valid email" below | Gray bg, no interaction |
+| Password | Gray border, placeholder "••••••••" | Blue border, cursor, toggle visible | Dots shown, strength meter active | Red border, "Min 8 characters" below | Gray bg, no interaction |
+
+Every error message must be the ACTUAL string, not "shows error."
+Every placeholder must be the ACTUAL text, not "placeholder text."
+
+### Interactive sub-features
+
+Document behavior that lives INSIDE a component, not just the component's states:
+
+- **Password visibility toggle**: tap to show/hide, icon changes (eye → eye-off)
+- **Password strength indicator**: meter or bar, color thresholds (red/yellow/green), label text per level
+- **Autocomplete dropdowns**: trigger (on type vs on focus), result format, selection behavior, empty state
+- **Character counters**: position, format ("12/100"), color change at limit
+- **Validation timing**: on blur, on change, on submit, or debounced (specify ms)
+
+For each sub-feature, document: trigger, visual change, state transitions, and edge cases.
 
 ### Transitions
 

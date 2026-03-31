@@ -620,6 +620,35 @@ Present a report:
 - Show progress after each batch
 - Allow the user to pause/resume
 
+**Fault tolerance**: If extraction fails for a single component, log the error and
+continue with the rest. Never abort the entire batch for one failure.
+
+```javascript
+// Wrap each component extraction in try/catch
+for (const comp of batch) {
+  try {
+    const data = await extractComponent(comp);
+    results.push(data);
+  } catch (err) {
+    failures.push({ name: comp.name, error: err.message });
+    // Continue — don't abort
+  }
+}
+```
+
+After completing all batches, report failures:
+> "Extracted 108/112 components. 4 failed: [list with error reasons].
+> These can be retried individually."
+
+**Extraction order**: Process in dependency order when possible:
+1. **Atoms first** (no children) — icons, badges, dividers
+2. **Molecules next** (contain atoms) — buttons, inputs, toggles
+3. **Organisms last** (contain molecules) — cards, forms, navigation bars
+
+This ensures that when a molecule's anatomy references an atom, the atom's
+spec already exists. Use `design-system/relationships.json` for the dependency
+graph if available; otherwise extract flat and note unresolved references.
+
 **Components with no variants**
 - Still extract — document props, tokens, layout
 - Variant section can be empty or omitted
@@ -635,6 +664,13 @@ When you need to bind a design token to a Figma node via `figma_execute`:
 5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when design-system/tokens.json exists
 
 This turns O(n) collection scanning into O(1) direct key lookup per token.
+
+## Next steps
+
+> "Components cataloged. Next:
+> - Run `/extract-relationships` to map how they connect
+> - Run `/extract-icons` to catalog the icon library
+> - Or jump to `/plan-design` — your components are ready to use"
 
 ## Tone
 

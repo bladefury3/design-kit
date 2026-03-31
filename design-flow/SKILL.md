@@ -307,6 +307,48 @@ For each screen, produce the same output as `/plan-design` Step 1-4:
 Apply the same anti-token-built bias: search the full component index before
 marking anything as token-built. Target 80% or higher library coverage per screen.
 
+### Loading and processing states
+
+Every transition between screens needs a loading state. Users must never see
+a blank screen or wonder "did my action work?"
+
+For each transition, define:
+- **Trigger**: What action starts the transition (button click, form submit)
+- **Loading indicator**: What the user sees while waiting (spinner on button, skeleton screen, progress bar)
+- **Button behavior**: Does the button text change? ("Submit" → "Processing...") Does it disable?
+- **Field behavior**: Are form fields disabled during processing?
+- **Duration expectation**: < 1s (no indicator needed), 1-3s (spinner), 3s+ (progress with status text)
+- **Failure recovery**: If the processing fails, what does the user see? (Error inline, not a new screen)
+
+Example for checkout payment step:
+```
+User taps "Pay $49.99"
+→ Button: text changes to "Processing...", spinner replaces icon, disabled
+→ Fields: all disabled, slight opacity reduction
+→ Success (< 3s): redirect to Confirmation screen
+→ Failure: button reverts, inline error "Payment declined. Try another card."
+→ Timeout (> 10s): "This is taking longer than usual. Don't close this page."
+```
+
+Plan loading states in the flow plan JSON under each screen's `transitions` block:
+
+```json
+{
+  "transitions": {
+    "next": {
+      "trigger": "Submit payment",
+      "loading": {
+        "buttonText": "Processing...",
+        "buttonSpinner": true,
+        "fieldsDisabled": true,
+        "timeoutMessage": "This is taking longer than usual...",
+        "timeoutThreshold": "10s"
+      }
+    }
+  }
+}
+```
+
 ### Cross-screen consistency
 
 As you plan each screen, enforce consistency:
