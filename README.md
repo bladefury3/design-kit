@@ -7,7 +7,7 @@ breakpoints, stress-test with real content, and hand off to engineering — all 
 
 ## What you get
 
-**14 slash commands** that plug into your design workflow:
+**17 slash commands** that plug into your design workflow:
 
 | Command | What it does |
 |---|---|
@@ -23,6 +23,9 @@ breakpoints, stress-test with real content, and hand off to engineering — all 
 | `/audit-frames` | Nielsen's heuristics + Gestalt + cognitive load + token compliance |
 | `/diff-system` | What changed in your design system since last extraction? |
 | `/revision` | Apply feedback surgically — classifies, prioritizes, fixes |
+| `/plan-component` | Plan a new component — variants, props, tokens, anatomy |
+| `/build-component` | Build a component set in Figma from a plan |
+| `/review-component` | Score component quality across 9 dimensions |
 | `/handoff-dev` | Generate developer-ready specs with exact tokens and states |
 | `/handoff-mcp` | Optimize your Figma file for AI/MCP consumption |
 
@@ -142,6 +145,14 @@ It's a one-time step — the data is cached locally for all future commands.
 /diff-system             # what changed in the design system since last extraction?
 ```
 
+### Build a new component
+
+```
+/plan-component          # plan variants, props, tokens, anatomy
+/build-component         # create the component set in Figma
+/review-component        # score quality across 9 dimensions
+```
+
 ### Iterate and ship
 
 ```
@@ -165,15 +176,19 @@ Brief/screenshot ──→ /brainstorm ──→ pick a direction
                     (break it)        (check it)       (fix it)
                          │
                     /handoff-dev ──→ ship to engineering
+
+Need a new component?
+/plan-component ──→ /build-component ──→ /review-component
+(plan variants)    (build in Figma)    (score quality)
 ```
 
 Skills read from and write to three local directories:
 
 | Directory | What's in it | Created by |
 |---|---|---|
-| `design-system/` | Tokens, component specs, relationships | `/extract-*` skills |
-| `plans/` | Structured build plans | `/plan-design`, `/brainstorm` |
-| `reports/` | Audit, stress, and diff reports | `/audit-frames`, `/content-stress`, `/diff-system` |
+| `design-system/` | Tokens, component specs, relationships | `/extract-*` skills, `/build-component` |
+| `plans/` | Screen + component build plans | `/plan-design`, `/brainstorm`, `/plan-component` |
+| `reports/` | Audit, stress, diff, and review reports | `/audit-frames`, `/content-stress`, `/diff-system`, `/review-component` |
 
 You don't need to extract first — most skills can read directly from Figma as a
 fallback. But extraction is faster for repeated use and lets you track changes over time.
@@ -239,6 +254,7 @@ Design Kit embeds established design frameworks into every skill:
 - **Jobs-to-be-Done** — each variation optimizes for a specific user job
 - **Content Choreography** — responsive adaptation based on content priority
 - **AI Slop Check** — catches generic card grids, uniform spacing, and "clean modern" non-decisions
+- **Component Design Principles** — variant architecture, duplicate detection, token binding rules, quality dimensions
 
 See [PRINCIPLES.md](PRINCIPLES.md) for the full framework reference.
 
@@ -253,7 +269,8 @@ design-kit/
 │   ├── components/          #   Component specs (index.json + per-component)
 │   └── relationships.json   #   Component dependency graph
 ├── plans/                   # Build plans (generated)
-├── reports/                 # Audit/stress/diff reports (generated)
+│   └── components/          #   Component plans (from plan-component)
+├── reports/                 # Audit/stress/diff/review reports (generated)
 ├── extract-tokens/          # Skills (each contains a SKILL.md)
 ├── extract-components/
 ├── extract-relationships/
@@ -266,6 +283,9 @@ design-kit/
 ├── audit-frames/
 ├── diff-system/
 ├── revision/
+├── plan-component/
+├── build-component/
+├── review-component/
 ├── handoff-dev/
 ├── handoff-mcp/
 ├── setup                    # Installation script

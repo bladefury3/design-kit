@@ -38,6 +38,9 @@ design-kit/
 ├── audit-frames/                 # Skill: audit frames (heuristics + tokens + Gestalt)
 ├── diff-system/                  # Skill: diff current Figma vs extracted data
 ├── content-stress/               # Skill: stress-test with edge-case content
+├── plan-component/               # Skill: plan a new component (variants, props, tokens)
+├── build-component/              # Skill: build a component set in Figma from plan
+├── review-component/             # Skill: score component quality (9 dimensions)
 ├── handoff-dev/                  # Skill: developer handoff documentation
 ├── handoff-mcp/                  # Skill: optimize Figma file for MCP consumption
 ├── setup                         # Installation script
@@ -63,6 +66,10 @@ Brief/screenshot ──→ /brainstorm ──→ pick a direction
                     (break it)        (check it)       (fix it)
                          │
                     /handoff-dev ──→ ship to engineering
+
+Need a new component?
+/plan-component ──→ /build-component ──→ /review-component
+(plan variants)    (build in Figma)    (score quality)
 ```
 
 ### First time? Start here:

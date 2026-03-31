@@ -329,6 +329,9 @@ Available design-kit commands (reference by name):
 - extract-tokens: Pull tokens from Figma
 - extract-components: Document component specs
 - extract-relationships: Map component dependencies
+- plan-component: Plan a new component (variants, props, tokens)
+- build-component: Build a component set in Figma
+- review-component: Score component quality (9 dimensions)
 - handoff-dev: Developer handoff documentation
 - handoff-mcp: Optimize file for AI/MCP
 RULES

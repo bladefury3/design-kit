@@ -333,6 +333,109 @@ Before finalizing any design output, check for these common AI design traps:
 
 If the output falls into any of these traps, fix it before presenting. State what you changed and why.
 
+## Component Design Principles
+
+Used by: `/plan-component`, `/build-component`, `/review-component`
+
+### The Duplicate Problem
+
+The #1 failure mode in design systems is duplicate components. Toast vs Notification
+vs Snackbar vs Banner — same job, four implementations. Before creating ANY new
+component, exhaustively search for existing solutions:
+
+1. Search by **function** (what it does), not name (what it's called)
+2. Check if an existing component could be extended with a new variant
+3. Check if the need is actually a **composition** of existing components
+4. Only create new when no existing component serves the job
+
+### Variant Architecture
+
+Not every visual difference needs a variant axis. Choose the right mechanism:
+
+| Mechanism | When to use | Example |
+|---|---|---|
+| **Variant property** | Discrete visual modes the user switches between | Size: sm/md/lg |
+| **Boolean property** | Show/hide an optional element | Show icon: true/false |
+| **Text property** | Editable text content | Label: "Submit" |
+| **Instance swap** | Slot where different components plug in | Icon slot: any icon |
+
+**Rules:**
+- If a property has 2 values and one is "off", use a boolean, not a variant
+- If a property accepts any component, use an instance swap, not variants-per-icon
+- Interactive states (hover, focus, disabled) are variant axes, not boolean toggles
+- Keep variant axes under 5 — beyond that, the matrix becomes unmanageable
+
+### Variant Completeness Checklist
+
+Every interactive component needs at minimum:
+
+| State | Required? | What changes |
+|---|---|---|
+| **Default** | Always | Base appearance |
+| **Hover** | Always | Visual feedback on cursor |
+| **Focused** | Always | Keyboard navigation indicator (ring, outline) |
+| **Disabled** | Always | Reduced opacity, no interaction |
+| **Pressed/Active** | If clickable | Momentary pressed feedback |
+| **Error** | If validates | Error styling (destructive color) |
+| **Loading** | If async | Spinner or skeleton replacing content |
+
+Non-interactive components (Badge, Divider, Avatar) skip states but still need
+size variants if used in contexts with different density.
+
+### Token Binding Rules
+
+Every visual property must be token-bound. No hardcoded values.
+
+| Property | Token category | Example |
+|---|---|---|
+| Background | `color.background.*` | `bg-primary`, `bg-error-secondary` |
+| Text color | `color.text.*` | `text-primary`, `text-on-brand` |
+| Border | `color.border.*` | `border-primary`, `border-error` |
+| Padding | `spacing.*` | `spacing-md`, `spacing-xl` |
+| Gap | `spacing.*` | `spacing-sm` |
+| Border radius | `radius.*` | `radius-md`, `radius-full` |
+| Font size | `typography.fontSize.*` | `text-sm`, `text-md` |
+| Shadow | `shadow.*` | `shadow-sm`, `shadow-lg` |
+
+**Variant-conditional tokens**: When a property changes per variant (e.g., Primary
+button has brand-solid background, Secondary has primary background), map each
+variant value to its specific token.
+
+### Anatomy Best Practices
+
+- Use auto-layout everywhere — no absolute positioning inside components
+- Name every layer by its **role**, not its type ("iconSlot" not "Frame 3")
+- Set sizing intentionally: text wraps = fill, icons = fixed, containers = hug or fill
+- Clip content where overflow is possible (text truncation)
+- Set min-width on components that need to maintain readability
+
+### Naming Conventions
+
+Follow the existing library's patterns. Common conventions:
+
+- **Component name**: PascalCase with category prefix (`Buttons/Button`, `Input/TextField`)
+- **Variant properties**: PascalCase (`Size`, `State`, `Hierarchy`)
+- **Variant values**: lowercase (`sm`, `md`, `primary`, `default`)
+- **Boolean props**: Emoji prefix + descriptive name (`⬅️ Icon leading`, `📝 Supporting text`)
+- **Instance swap props**: Swap emoji + descriptive name (`🔀 Icon leading swap`)
+- **Layer names**: camelCase by role (`iconSlot`, `labelText`, `helperText`)
+
+### Component Quality Dimensions
+
+Used by `/review-component` for scoring:
+
+| Dimension | Weight | What it measures |
+|---|---|---|
+| Variant Completeness | 20% | All required states, sizes, types present |
+| Token Compliance | 20% | Zero hardcoded values, consistent token usage |
+| Accessibility | 15% | Contrast, touch targets, focus states, color independence |
+| Naming Consistency | 10% | Matches library conventions exactly |
+| Prop Design | 10% | Right mechanism (variant vs boolean vs swap) |
+| Relationship Fit | 10% | No duplicates, correct atomic level, good composition |
+| State Coverage | 5% | Interactive state matrix complete |
+| Layout Resilience | 5% | Handles overflow, works at different widths |
+| Documentation | 5% | Description, annotations, MCP-readable |
+
 ## Design System Maturity Model
 
 Used by: `/diff-system`
