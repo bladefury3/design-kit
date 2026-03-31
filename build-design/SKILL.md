@@ -138,10 +138,25 @@ for (const [prop, token] of Object.entries(node.tokens)) {
   }
 }
 
-// Apply sizing
-if (node.sizing?.width === 'fill') frame.layoutSizingHorizontal = 'FILL';
-if (node.sizing?.height === 'fill') frame.layoutSizingVertical = 'FILL';
-if (typeof node.width === 'number') frame.resize(node.width, node.height || 100);
+// Apply sizing — ALWAYS set explicitly, never rely on Figma defaults
+if (typeof node.width === 'number') {
+  frame.resize(node.width, node.height || 100);
+} else if (node.sizing?.width === 'fill') {
+  frame.layoutSizingHorizontal = 'FILL';
+} else {
+  frame.layoutSizingHorizontal = 'HUG'; // Default: hug content
+}
+
+if (node.sizing?.height === 'fill') {
+  frame.layoutSizingVertical = 'FILL';
+} else {
+  frame.layoutSizingVertical = 'HUG'; // Default: hug content height
+}
+
+// CRITICAL: Frames with text children must have width constraints.
+// Without this, child text nodes with FILL sizing have nothing to fill against,
+// causing text to render as a single line that clips at the frame boundary.
+// If a frame has no explicit width and isn't set to FILL, child text WILL truncate.
 
 // Apply alignment
 if (node.justify) frame.primaryAxisAlignItems = node.justify.toUpperCase().replace('-', '_');
@@ -160,6 +175,21 @@ Use figma_instantiate_component with:
 
 **CRITICAL: Use `variantKey`, not `figmaKey`.** The variantKey is the specific
 variant's component key. The figmaKey is the component set key (which will fail).
+
+**Post-instantiation sizing:** After instantiation, always set sizing on the instance:
+
+```javascript
+const instance = await figma.getNodeByIdAsync(instanceId);
+// Match the plan's sizing specification
+if (node.sizing?.width === 'fill') instance.layoutSizingHorizontal = 'FILL';
+if (node.sizing?.height === 'fill') instance.layoutSizingVertical = 'FILL';
+if (node.sizing?.width === 'hug') instance.layoutSizingHorizontal = 'HUG';
+if (node.sizing?.height === 'hug') instance.layoutSizingVertical = 'HUG';
+```
+
+Library components render with their default sizing. If the plan says `"sizing":
+{ "width": "fill" }`, the instance MUST be explicitly set to FILL — the plan's
+sizing won't apply automatically.
 
 After instantiation, apply overrides:
 
