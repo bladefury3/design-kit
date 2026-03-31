@@ -56,28 +56,23 @@ Skills are installed as slash commands. Type `/extract-tokens` in Claude Code to
 
 ### Option B: Cursor
 
-Cursor uses `.cursor/rules/` for custom instructions. Install design-kit skills as rule files:
+```bash
+git clone https://github.com/nicholasgriffintn/design-kit.git ~/.design-kit
+cd ~/.design-kit && ./setup --cursor=/path/to/your/project
+```
+
+This copies all skills to `.cursor/rules/` and creates a `.cursorrules` file automatically.
+
+To install into the current directory instead:
 
 ```bash
-# Clone into your project (or a shared location)
-git clone https://github.com/nicholasgriffintn/design-kit.git ~/.design-kit
-
-# Copy skills as Cursor rules
-mkdir -p .cursor/rules
-for skill in ~/.design-kit/*/SKILL.md; do
-  name=$(basename $(dirname "$skill"))
-  cp "$skill" ".cursor/rules/design-kit-${name}.md"
-done
+cd your-project
+~/.design-kit/setup --cursor
 ```
 
-Then reference them in Cursor by asking: *"Follow the design-kit-brainstorm rules to generate variations"*
-or create a `.cursorrules` file:
-
-```
-When I ask you to brainstorm, plan, build, audit, or extract design system data,
-follow the instructions in .cursor/rules/design-kit-*.md files.
-Use the Figma Console MCP tools to interact with Figma.
-```
+Then reference skills in Cursor by asking:
+*"Follow the design-kit-brainstorm rules to explore variations"* or
+*"Use design-kit-plan-design to plan a settings page"*
 
 ### Figma Console MCP setup
 
@@ -187,46 +182,48 @@ fallback. But extraction is faster for repeated use and lets you track changes o
 
 ## Staying up to date
 
-Design Kit is actively developed. To get the latest skills and improvements:
-
-### If you cloned globally (`~/.design-kit`)
+The `--update` flag pulls the latest version from git, shows what changed, and reinstalls:
 
 ```bash
-cd ~/.design-kit && git pull && ./setup
+# Claude Code (global)
+cd ~/.design-kit && ./setup --update
+
+# Claude Code (project-local)
+cd design-kit && ./setup --update
+
+# Cursor
+cd ~/.design-kit && ./setup --update --cursor=/path/to/your/project
 ```
 
-### If you cloned into a project
+The update shows you exactly what changed:
 
-```bash
-cd design-kit && git pull && ./setup --local
+```
+design-kit v0.2.0
+
+✓ Updated: v0.1.0 → v0.2.0
+
+What's new:
+  + new  /design-review
+  ~ updated  /audit-frames
+  ~ updated  /brainstorm
+  ~ updated  PRINCIPLES.md
+
+→ Installing 15 skills...
 ```
 
 ### Automatic updates (optional)
 
-Add a git hook or CI step to pull updates on a schedule:
+Set up a daily update with cron:
 
 ```bash
-# Add to your project's Makefile or package.json scripts
+(crontab -l 2>/dev/null; echo "0 9 * * * cd ~/.design-kit && ./setup --update") | crontab -
+```
+
+Or add to your project's Makefile:
+
+```makefile
 update-design-kit:
-  cd ~/.design-kit && git pull --ff-only && ./setup
-```
-
-Or use a cron job for daily updates:
-
-```bash
-# Run once to set up (updates daily at 9am)
-(crontab -l 2>/dev/null; echo "0 9 * * * cd ~/.design-kit && git pull --ff-only && ./setup") | crontab -
-```
-
-### Cursor: re-copy after updates
-
-After pulling updates, re-run the copy step to refresh your Cursor rules:
-
-```bash
-for skill in ~/.design-kit/*/SKILL.md; do
-  name=$(basename $(dirname "$skill"))
-  cp "$skill" ".cursor/rules/design-kit-${name}.md"
-done
+	cd ~/.design-kit && ./setup --update
 ```
 
 ---
