@@ -105,6 +105,7 @@ Figma to understand your own question, it's too complex.
    - `design-system/tokens.json` -- available token values and their figma keys
    - `design-system/components/index.json` -- the component catalog with figmaKey and defaultVariantKey
    - `design-system/relationships.json` -- how components compose together
+   - `design-system/icons.json` -- icon names, keys, tags, and swap slots (optional — if missing, icon swaps will use placeholder defaults)
 
    If any are missing, try the Figma fallback:
    > "Design system data not found locally. Let me try reading it directly from Figma..."
@@ -375,6 +376,28 @@ For each visual difference the component needs, verify you're using the right me
 | Editable text content | Text property | -- |
 | Slot where different components plug in | Instance swap | Variant per plugged component |
 | Interactive states (hover/focus/disabled) | Variant axis | Boolean `isHovered` |
+
+### Default icons for instance swap slots
+
+When defining an instance swap prop (e.g., icon slot), specify the default icon
+from `design-system/icons.json`:
+
+```json
+{
+  "iconSwap": {
+    "type": "instanceSwap",
+    "propName": "🔀 Icon swap",
+    "defaultIcon": {
+      "name": "check-circle",
+      "key": "from icons.json"
+    },
+    "compatible": ["info-circle", "alert-circle", "x-circle"],
+    "compatibleKeys": ["from icons.json for each"]
+  }
+}
+```
+
+If `icons.json` doesn't exist, use icon names only — build-component will resolve at build time.
 
 ### Instance swap compatibility
 

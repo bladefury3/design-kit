@@ -16,6 +16,7 @@ extract, audit, and optimize design systems.
 design-kit/
 ├── design-system/                # Extracted design system data (output of extract-* skills)
 │   ├── tokens.json               #   Design tokens with Figma variable keys
+│   ├── icons.json                #   Icon catalog with keys, categories, and tags
 │   ├── components/               #   Component specs
 │   │   ├── index.json            #     Component catalog (figmaKey, defaultVariantKey)
 │   │   └── <name>.json           #     On-demand per-component specs
@@ -29,6 +30,7 @@ design-kit/
 ├── extract-tokens/               # Skill: extract design tokens
 ├── extract-components/           # Skill: extract component specs
 ├── extract-relationships/        # Skill: map component relationships
+├── extract-icons/                # Skill: catalog icon library with search tags
 ├── plan-design/                  # Skill: plan a design (spec, no Figma changes)
 ├── build-design/                 # Skill: execute a plan in Figma
 ├── brainstorm/                   # Skill: generate design variations (SCAMPER + JTBD)
@@ -74,7 +76,7 @@ Need a new component?
 
 ### First time? Start here:
 1. Open your Figma file with the Desktop Bridge plugin running
-2. Run `/extract-tokens` → `/extract-components` → `/extract-relationships`
+2. Run `/extract-tokens` → `/extract-components` → `/extract-relationships` → `/extract-icons`
 3. Now use any skill — your design system data is cached locally
 
 ### Already have design-system/ data?

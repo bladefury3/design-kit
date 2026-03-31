@@ -7,13 +7,14 @@ breakpoints, stress-test with real content, and hand off to engineering — all 
 
 ## What you get
 
-**17 slash commands** that plug into your design workflow:
+**18 slash commands** that plug into your design workflow:
 
 | Command | What it does |
 |---|---|
 | `/extract-tokens` | Pull design tokens from Figma into structured JSON |
 | `/extract-components` | Document component specs, variants, and props |
 | `/extract-relationships` | Map how components depend on each other |
+| `/extract-icons` | Catalog icons with keys, categories, and search tags |
 | `/plan-design` | Create a build plan from a brief, wireframe, or screenshot |
 | `/build-design` | Execute a plan in Figma — components, tokens, layout |
 | `/brainstorm` | Generate 3-5 design variations using SCAMPER + Jobs-to-be-Done |
@@ -117,6 +118,7 @@ Then open your Figma file and run the **Desktop Bridge** plugin (Plugins > Devel
 /extract-tokens          # pulls colors, spacing, typography, radii
 /extract-components      # catalogs all components with variant keys
 /extract-relationships   # maps how components compose together
+/extract-icons           # catalogs icons with search tags
 ```
 
 This creates a `design-system/` directory with your tokens, component specs, and dependency graph.
@@ -186,7 +188,7 @@ Skills read from and write to three local directories:
 
 | Directory | What's in it | Created by |
 |---|---|---|
-| `design-system/` | Tokens, component specs, relationships | `/extract-*` skills, `/build-component` |
+| `design-system/` | Tokens, icons, component specs, relationships | `/extract-*` skills, `/build-component` |
 | `plans/` | Screen + component build plans | `/plan-design`, `/brainstorm`, `/plan-component` |
 | `reports/` | Audit, stress, diff, and review reports | `/audit-frames`, `/content-stress`, `/diff-system`, `/review-component` |
 
@@ -266,6 +268,7 @@ See [PRINCIPLES.md](PRINCIPLES.md) for the full framework reference.
 design-kit/
 ├── design-system/           # Extracted design system data (generated)
 │   ├── tokens.json          #   Design tokens with Figma variable keys
+│   ├── icons.json           #   Icon catalog with keys, categories, tags
 │   ├── components/          #   Component specs (index.json + per-component)
 │   └── relationships.json   #   Component dependency graph
 ├── plans/                   # Build plans (generated)
@@ -274,6 +277,7 @@ design-kit/
 ├── extract-tokens/          # Skills (each contains a SKILL.md)
 ├── extract-components/
 ├── extract-relationships/
+├── extract-icons/
 ├── plan-design/
 ├── build-design/
 ├── brainstorm/

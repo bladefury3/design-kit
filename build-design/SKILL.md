@@ -51,6 +51,7 @@ plan, ask the user — don't guess. All decisions were made in `/plan-design`.
 
 3. Read `design-system/tokens.json` and `design-system/components/index.json` — you'll need these for
    on-demand component extraction if any components haven't been fully extracted yet.
+   Also read `design-system/icons.json` if it exists — needed for resolving icon swaps.
 
 4. **Pre-build validation (mandatory):**
 
@@ -255,7 +256,26 @@ Don't build one node at a time with individual MCP calls. Instead:
 ### Phase 3: Configure instances (1-2 figma_execute calls)
 - Set text overrides on all instances
 - Set sizing (fill/hug) on all instances
+- Apply icon swaps (see below)
 - Reorder children if needed
+
+### Icon swaps
+
+If a library-component node has `iconOverrides`, apply them after instantiation:
+
+```
+Use figma_set_instance_properties with:
+  - nodeId: the instantiated component's ID
+  - properties: { "<propKey>": "<iconKey>" }
+```
+
+The `propKey` is the full instance swap property identifier (e.g., `🔀 Icon leading swap#3466:91`).
+The `iconKey` is the icon's component key from `design-system/icons.json`.
+
+If `iconOverrides` references an icon by name but no `iconKey` is provided:
+1. Look up the name in `design-system/icons.json`
+2. If not found, use `figma_search_components` as fallback
+3. If still not found, leave the default placeholder and flag it
 
 ### Phase 4: Screenshot and verify (1 call)
 - Take a screenshot of the result

@@ -89,6 +89,7 @@ Figma to understand your own question, it's too complex.
    - `design-system/tokens.json` ... available token values and their figma keys
    - `design-system/components/index.json` ... the component catalog with figmaKey and defaultVariantKey
    - `design-system/relationships.json` ... how components compose together
+   - `design-system/icons.json` ... icon names, keys, tags, and swap slots (optional — if missing, icon swaps will use placeholder defaults)
 
    If any are missing, try the Figma fallback:
    > "Design system data not found locally. Let me try reading it directly from Figma..."
@@ -209,6 +210,30 @@ For each element identified in Step 1:
    - If yes: look up the exact variantKey
    - If no: use the defaultVariantKey from the index, note that the full JSON
      should be extracted during build
+
+### Icon resolution
+
+When a design element needs a specific icon (button with search icon, status with check icon):
+
+1. Search `design-system/icons.json` by name (exact match first)
+2. If no exact match, search by tags (e.g., "magnifying glass" → `search-md`)
+3. Include the resolved icon in the plan JSON:
+   ```json
+   {
+     "type": "library-component",
+     "component": "button",
+     "variantKey": "...",
+     "overrides": { "text": "Search" },
+     "iconOverrides": {
+       "🔀 Icon leading swap#3466:91": {
+         "icon": "search-md",
+         "iconKey": "abc123..."
+       }
+     }
+   }
+   ```
+4. If `icons.json` doesn't exist, note the icon name in the plan and build-design
+   will search at runtime (slower but works).
 
 ### Component matching rules
 

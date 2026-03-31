@@ -87,6 +87,7 @@ Key Figma API differences:
 3. **Load design system data** for token lookups and sub-component instantiation:
    - `design-system/tokens.json` — token values and figmaKey hashes
    - `design-system/components/index.json` — component catalog for sub-component instantiation
+   - `design-system/icons.json` — icon names, keys, and tags for instance swap defaults (optional)
 
    If either file is missing, warn:
    > "Missing `design-system/tokens.json` or `design-system/components/index.json`.
@@ -351,6 +352,15 @@ Use figma_add_component_property with:
 
 Instance swap properties let consumers swap sub-components (e.g., change the icon
 inside a button) from the properties panel.
+
+### Instance swap defaults
+
+When adding an instance swap property with `figma_add_component_property`, set the
+default value to the icon's component key from `design-system/icons.json`:
+
+If the plan specifies `defaultIcon.key`, use it directly.
+If only `defaultIcon.name` is provided, look up the key in `design-system/icons.json`.
+If icons.json doesn't exist, use `figma_search_components` to find the icon.
 
 ## Phase 6: Arrange variant grid
 
