@@ -431,7 +431,8 @@ Before writing each plan JSON, validate:
 
 1. **Text sizing**: Every `type: "text"` node has a `sizing` property.
    Default to `{ "width": "fill", "height": "hug" }` for body text,
-   `{ "width": "hug", "height": "hug" }` for short labels.
+   `{ "width": "hug", "height": "hug" }` for labels under 15 characters
+   that will never grow.
 
 2. **Component coverage ≥ 75%**: Count library-component vs token-built nodes.
    If below 75%, re-scan token-built elements against the library. Common misses:
@@ -447,6 +448,19 @@ Before writing each plan JSON, validate:
 
 4. **Sizing propagation**: If a parent frame uses `"width": "fill"`, its text
    children must also have `"width": "fill"` to prevent clipping.
+
+5. **Parent container check**: Every text node's parent frame must have a width
+   constraint (either `"width": "fill"` or a specific pixel width). A text node
+   inside a parent with no width produces unpredictable wrapping.
+
+6. **Hierarchy check**: Can you answer "what does the user see first, second, third?"
+   for each variation? If everything competes, the hierarchy is broken.
+
+### Checkpoint between variations
+
+After completing each variation's plan JSON, re-read gates 1-6 before starting
+the next variation. Quality compliance degrades across long generations — this
+checkpoint prevents variation 4 from being sloppier than variation 1.
 
 ### Token key validation
 

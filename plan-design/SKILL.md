@@ -538,7 +538,8 @@ Rules:
 - **Default**: `"sizing": { "width": "fill", "height": "hug" }` — text fills
   its parent and wraps
 - **Single-line labels**: `"sizing": { "width": "hug", "height": "hug" }` — only
-  for short labels that should never wrap (nav items, button text)
+  for text under 15 characters that will never grow (nav items, button text, icon labels).
+  If the text could be longer in production (usernames, titles, stat values), use fill.
 - **Never omit sizing** — a text node without sizing is a plan error
 
 ### CRITICAL: Token key validation
