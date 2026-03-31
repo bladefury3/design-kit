@@ -135,7 +135,9 @@ Figma to understand your own question, it's too complex.
    > B) Tablet (768px)
    > C) Mobile (375px)
 
-   **STOP.** Wait for response.
+   Default to Desktop (1440px) and proceed. Only pause if the user specifies
+   a different viewport or the context clearly suggests mobile/tablet
+   (e.g., "design a mobile onboarding flow").
 
 ## Step 1: Understand the design intent
 
@@ -169,6 +171,23 @@ Read the screenshot and identify:
 - Layout structure (columns, rows, sections)
 - UI patterns (cards, tables, forms, navigation)
 - Content types (text, images, data, actions)
+
+### Theme detection
+
+When working from a screenshot or wireframe, identify the visual theme:
+- **Dark background** (black, near-black, dark gray) → use Dark mode tokens if `design-system/tokens.json` has mode variants
+- **Light background** (white, near-white, light gray) → use Light mode tokens (default)
+
+If the design system has multiple modes (check `$metadata.modes` in tokens.json),
+bind tokens to the matching mode. If unsure, AskUserQuestion:
+
+> The screenshot appears to use a dark theme. Your token system has Light and Dark modes.
+>
+> RECOMMENDATION: Use Dark mode tokens — they'll match the screenshot's visual intent.
+>
+> A) Dark mode — match the screenshot
+> B) Light mode — I want to redesign this in light theme
+> C) Both — plan the dark version, I'll adapt to light later
 
 ### Present the information architecture
 

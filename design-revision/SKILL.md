@@ -109,10 +109,17 @@ rebuild via `/plan-design` + `/build-design` instead.
    - `design-system/components/index.json` — component catalog
    - `design-system/relationships.json` — component dependency graph
 
-   If any are missing, you can still proceed — but warn the user:
-   > "Missing `design-system/tokens.json` (and/or components/relationships). I can still
-   > make revisions, but I won't be able to verify token compliance or suggest
-   > library components. Run `/extract-tokens` and `/extract-components` for full coverage."
+   If any are missing, try reading directly from Figma first:
+   ```
+   Use figma_get_design_system_kit with:
+     - include: ["tokens", "components", "styles"]
+     - format: "full"
+   ```
+
+   If that also fails, proceed without — but note the limitation:
+   > "Design system data isn't available locally or from Figma. I can still apply
+   > revisions, but I won't be able to verify token compliance or suggest library
+   > components. For full coverage, run `/extract-tokens` and `/extract-components`."
 
 3. **Get the target frame.**
 

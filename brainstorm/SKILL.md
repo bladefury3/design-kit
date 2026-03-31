@@ -191,6 +191,12 @@ Figma to understand your own question, it's too complex.
 
 5. **AskUserQuestion for constraints:**
 
+   If the user already stated constraints in their message (e.g., "brainstorm a
+   pricing page, must show 4 tiers and feel simple"), acknowledge them and proceed —
+   don't re-ask. Say: "Got it — working with your constraints: [list them]."
+
+   Only ask about constraints if the user didn't mention any:
+
    > Last setup question before I start exploring.
    >
    > Are there any elements that MUST stay? Things like: a specific header layout
@@ -579,8 +585,34 @@ present a variation where a user would squint and say "I don't see the differenc
 
 ### Contradictory constraints
 
-AskUserQuestion to resolve. Present both interpretations with a recommendation,
-let the user choose which constraint to relax. **STOP.** Wait for response.
+When user-provided constraints conflict (e.g., "show all 4 tiers" + "keep it simple
+and uncluttered" + "include full comparison matrix"), do NOT proceed silently.
+
+**Step 1: Name the tension explicitly.**
+> "Two of your constraints are in tension: showing all 4 tiers with a full comparison
+> matrix creates information density that works against 'simple and uncluttered.'
+> This is a real design tradeoff, not something I can finesse away."
+
+**Step 2: Propose creative resolutions.** At least 3 approaches:
+- **Progressive disclosure**: Show summary first, reveal matrix on demand (accordion, tabs, "Compare all" button)
+- **Hierarchy**: Highlight 1-2 recommended tiers, de-emphasize the rest. Matrix is accessible but not dominant.
+- **Segmentation**: Different views for different user jobs (quick decision vs. deep comparison)
+
+**Step 3: AskUserQuestion to resolve.**
+> Planning variations for [screen]. Your constraints conflict — I need to know
+> which to prioritize so each variation can resolve the tension differently.
+>
+> RECOMMENDATION: Choose A — most users need a quick decision, not a spreadsheet.
+>
+> A) Prioritize simplicity — I'll use progressive disclosure to hide complexity
+> B) Prioritize completeness — I'll show everything but use strong hierarchy
+> C) Give me one of each — different variations resolve the tension differently
+> D) Relax a constraint — tell me which one matters least
+
+**STOP.** Wait for response.
+
+Use the chosen resolution to guide SCAMPER lens selection. If the user picks C,
+each variation should resolve the tension via a DIFFERENT approach.
 
 ## How to use design-system/tokens.json for Figma operations
 

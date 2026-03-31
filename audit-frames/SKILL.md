@@ -93,15 +93,21 @@ This is the required workflow. It dramatically reduces MCP tool calls from ~50+ 
 >
 > Want to proceed with a Figma-native audit?"
 
-4. Ask the user what to audit:
+4. Ask the user what to audit (default to current selection if something is selected):
 
 > "What should I audit?
 >
 > **A) Current selection** — Just the frame(s) you've selected
 > **B) Current page** — Everything on this page
-> **C) Specific frames** — Tell me which frames by name
->
-> And what level of strictness?
+> **C) Specific frames** — Tell me which frames by name"
+
+   If the user has something selected in Figma, default to A without asking —
+   just confirm: "I'll audit the selected frame(s). Let me know if you'd prefer
+   a different scope."
+
+5. Ask strictness level (only if the user didn't already specify):
+
+> "What level of strictness?
 >
 > **Relaxed** — Only flag clear violations (wrong colors, broken components)
 > **Standard** — Flag violations + inconsistencies (spacing off by 1-2px, etc.)
@@ -312,6 +318,17 @@ Format the report clearly:
 > ## Audit Report: [Frame Name]
 >
 > **Overall score: 7.8/10** (weighted average — see breakdown below)
+>
+> ### Critical floor rule
+>
+> If ANY dimension has a Critical-severity finding (e.g., Fitts's Law target <36px,
+> Hick's Law >12 ungrouped choices, hardcoded colors, missing error recovery):
+>
+> **The overall score cannot exceed 5.0**, regardless of the weighted average.
+>
+> This prevents good scores on non-tested dimensions (naming, component compliance)
+> from masking critical usability or compliance failures. A frame with a 28px button
+> and hardcoded colors does NOT pass the audit.
 >
 > ### Score Breakdown
 >
