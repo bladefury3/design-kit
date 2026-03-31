@@ -434,13 +434,36 @@ Before writing each plan JSON, validate:
    `{ "width": "hug", "height": "hug" }` for labels under 15 characters
    that will never grow.
 
-2. **Component coverage ≥ 75%**: Count library-component vs token-built nodes.
-   If below 75%, re-scan token-built elements against the library. Common misses:
-   - Nav items → Button (Tertiary gray)
-   - User profiles → Avatar label group
-   - Status badges → Badge component
-   - Alert banners → Alert component
-   - Data lists → Activity feed or Table
+2. **Component coverage ≥ 85%**: Every visible UI element MUST use a library
+   component. Token-built frames are ONLY for structural containers (rows, columns,
+   wrappers) — never for visible UI elements that have library equivalents.
+
+   **Real-world lesson:** `/plan-design` achieved 100% visible UI coverage (21 library
+   instances, 14 unique types) for the same design system where `/brainstorm` only
+   hit 54-69%. The difference: plan-design mapped every element to a library component.
+   Brainstorm built custom frames for things that had direct library matches.
+
+   Mandatory library component mapping (from plan-design):
+   - Navigation → Sidebar navigation component
+   - Page titles → Page header or Section header component
+   - Tab bars → Horizontal tabs component
+   - Metric/stat displays → Metric item component
+   - Charts → Line and bar chart, Pie chart, Activity gauge components
+   - Data tables → Table component (with Table header, Table cell)
+   - Activity/event lists → Activity feed component
+   - Status alerts → Alert component
+   - Progress indicators → Progress bar component
+   - Section dividers → Content divider component
+   - Section titles → Section header component
+   - Section actions → Section footer component
+   - User profiles → Avatar label group component
+   - Status indicators → Badge or Tag component
+   - Nav items → Button (Tertiary gray variant)
+   - Action buttons → Button component (Primary/Secondary variant)
+
+   If you find yourself building a custom frame for any of these, STOP and use
+   the library component instead. The only legitimate token-built elements are
+   layout wrappers (metrics row container, charts row container, etc.).
 
 3. **No empty containers**: Every frame that represents visual content (charts,
    illustrations) must have at minimum a title, labels, and a distinguishing
