@@ -102,6 +102,12 @@ These patterns are banned:
 - **"Clean modern" handwaving** — Name the component, the variant, the token, the user job
 - **Hero + cards + table + CTA** — If your variation follows this rhythm, you haven't explored
 - **Centered everything** — Centering is a layout decision, not a default
+- **Empty rectangles posing as content** — chart areas, illustrations, or data
+  visualizations that are just colored frames with no labels or structure inside
+- **Text clipping** — text nodes without sizing constraints that will render as
+  "User Insi" or "Discover patter" instead of the full text
+- **Custom-built components** — elements that look like buttons, badges, or alerts
+  but are built from raw frames instead of library components
 
 ## AskUserQuestion Format
 
@@ -418,6 +424,29 @@ Each plan follows the exact schema from `/plan-design`:
 The `$metadata.brainstorm` object is the only addition to the standard plan schema.
 Everything else is identical — `/build-design` can execute any brainstorm plan
 without modification.
+
+### Quality gates per variation plan
+
+Before writing each plan JSON, validate:
+
+1. **Text sizing**: Every `type: "text"` node has a `sizing` property.
+   Default to `{ "width": "fill", "height": "hug" }` for body text,
+   `{ "width": "hug", "height": "hug" }` for short labels.
+
+2. **Component coverage ≥ 75%**: Count library-component vs token-built nodes.
+   If below 75%, re-scan token-built elements against the library. Common misses:
+   - Nav items → Button (Tertiary gray)
+   - User profiles → Avatar label group
+   - Status badges → Badge component
+   - Alert banners → Alert component
+   - Data lists → Activity feed or Table
+
+3. **No empty containers**: Every frame that represents visual content (charts,
+   illustrations) must have at minimum a title, labels, and a distinguishing
+   background fill. Never output an empty rectangle.
+
+4. **Sizing propagation**: If a parent frame uses `"width": "fill"`, its text
+   children must also have `"width": "fill"` to prevent clipping.
 
 ### Token key validation
 

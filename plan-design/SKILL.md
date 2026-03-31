@@ -285,6 +285,29 @@ Before marking ANY element as "token-built", you MUST:
 4. **Target >80% library coverage.** Below 60% means you're rebuilding the design
    system instead of using it. Re-examine your element list.
 
+### Mandatory component mapping
+
+These UI patterns MUST use library components, never token-built frames:
+
+| UI Pattern | Required Component | Why |
+|---|---|---|
+| Any button or action | `button` | Buttons have hover/focus/disabled states you can't replicate |
+| User display (name + role) | `avatar-label-group` | Includes avatar, name, subtitle layout |
+| Status indicators | `badge` or `progress-bar` | Token-bound colors per status type |
+| Warning/info banners | `alert` | Has icon, close button, action buttons built in |
+| Data in rows | `table` + `table-cell` + `table-header` | Sorting, selection, cell variants |
+| Activity timelines | `activity-feed` | Avatar, timestamp, content layout built in |
+| Metric cards (stat + trend) | Prefer library if exists, justify if token-built | Must document why no library match |
+| Navigation items | `button` (Tertiary gray variant) | Consistent hover/active states |
+| Form inputs | `input-field` or `input-dropdown` | Labels, validation, help text built in |
+| Toggle/switch | `toggle` | Accessible, animated, state-managed |
+
+If the plan builds ANY of these as token-built frames, it MUST include a `$note`
+explaining why the library component doesn't work. "I didn't look" is not a reason.
+
+**Coverage floor: 75%**. Plans below 75% library coverage are rejected. The planner
+must search harder before marking elements as token-built.
+
 ### Present the mapping
 
 > Here's how each element maps to your design system:
@@ -456,6 +479,7 @@ Write the complete plan to `plans/<name>.json` in the working directory (e.g., `
             "type": "text",
             "content": "<text content>",
             "style": "Semi Bold",
+            "sizing": { "width": "fill", "height": "hug" },
             "tokens": {
               "fontSize": { "ref": "<token path>", "figmaKey": "<hash>" },
               "lineHeight": { "ref": "<token path>", "figmaKey": "<hash>" },
@@ -491,6 +515,31 @@ Every `library-component` node includes the **variantKey** (hash) ...
 
 Every token reference includes the **figmaKey** (hash) ...
 `/build-design` calls `figma.variables.importVariableByKeyAsync(key)` directly with zero scanning.
+
+### CRITICAL: Mandatory text sizing
+
+Every `type: "text"` node MUST include a `sizing` property:
+
+```json
+{
+  "type": "text",
+  "content": "Dashboard",
+  "style": "Semi Bold",
+  "sizing": { "width": "fill", "height": "hug" },
+  "tokens": { ... }
+}
+```
+
+**CRITICAL**: Text nodes without `sizing` will clip in Figma. The most common
+failure is text like "User Insights" rendering as "User Insi" because the text
+node has no width constraint.
+
+Rules:
+- **Default**: `"sizing": { "width": "fill", "height": "hug" }` — text fills
+  its parent and wraps
+- **Single-line labels**: `"sizing": { "width": "hug", "height": "hug" }` — only
+  for short labels that should never wrap (nav items, button text)
+- **Never omit sizing** — a text node without sizing is a plan error
 
 ### CRITICAL: Token key validation
 
@@ -558,6 +607,22 @@ If the answer is "everything at once," the hierarchy is broken. Fix it.
 - Every component has a specific variant (not "default")
 - Layout tokens are bound to specific figma keys
 
+### Text Sizing Check
+Scan every `type: "text"` node in the plan. If ANY text node is missing a `sizing`
+property, add `"sizing": { "width": "fill", "height": "hug" }` before writing.
+This is a mechanical check, not a design decision.
+
+### Component Coverage Check
+Count library-component vs token-built nodes. If coverage is below 75%:
+1. Re-scan the token-built elements against the mandatory mapping table
+2. For each token-built element, check if a library component could replace it
+3. If coverage still below 75% after re-scan, flag it in the plan summary
+
+### Parent Container Check
+For every text node, verify its parent frame has a width constraint (either
+`"width": "fill"` or a specific pixel width). A text node inside a parent with
+no width produces unpredictable wrapping.
+
 ## Step 7: Present and iterate
 
 Present the plan summary:
@@ -594,6 +659,26 @@ without any Figma MCP calls. Only when they approve does `/build-design` execute
 
 - **Responsive variants**: If the user asked for mobile, use Mobile breakpoint
   variants. Note where Desktop and Mobile variants differ.
+
+### Charts and data visualization
+
+Charts are the ONE element where token-built is usually correct — most design system
+libraries don't include chart components. When planning a chart area:
+
+1. **Create a properly-sized container frame** with `"sizing": { "width": "fill", "height": "fixed" }`
+   and a specific height (200-400px depending on chart type)
+2. **Label it clearly**: name the frame "Chart: NPS Trend (Last 6 Months)" not "Rectangle 1"
+3. **Include a `$note`**: "Token-built: no chart component in library. This frame is a
+   placeholder for chart implementation."
+4. **Add chart title and legend** as text nodes INSIDE the chart container — these use
+   library text styles and tokens
+5. **Never leave chart containers visually empty** — add at minimum:
+   - A title text node above the chart area
+   - Axis labels or a legend below
+   - A subtle background fill to distinguish the chart area from the page
+
+The chart CONTENT (lines, bars, pie slices) will be implemented in code, but the
+container, title, labels, and legend should be designed with real tokens.
 
 ## Tone
 

@@ -75,6 +75,21 @@ plan, ask the user — don't guess. All decisions were made in `/plan-design`.
       are respected (e.g., if Avatar label group contains Avatar, don't instantiate
       a standalone Avatar where the label group should be used).
 
+   e. **Verify text sizing**: Scan all `type: "text"` nodes in the plan. If ANY
+      text node is missing a `sizing` property, auto-add `{ "width": "fill",
+      "height": "hug" }` and log a warning. Do NOT reject the plan — fix it
+      automatically.
+
+      ```javascript
+      // In figma_execute: ensure text fills parent
+      if (node.type === 'text') {
+        text.layoutSizingHorizontal = node.sizing?.width === 'hug' ? 'HUG' : 'FILL';
+        text.layoutSizingVertical = 'HUG';
+      }
+      ```
+
+      This single fix prevents the #1 build quality issue: text truncation.
+
 5. Confirm with the user:
    > "Ready to build: **[plan name]** ([width]px)
    > - [N] library components to instantiate
@@ -187,6 +202,16 @@ for (const [prop, token] of Object.entries(node.tokens)) {
   } else {
     text.setBoundVariable(prop, v);
   }
+}
+
+// CRITICAL: Set text sizing to prevent clipping
+// This is the #1 cause of "User Insi" truncation in builds
+text.layoutSizingHorizontal = 'FILL';  // Text fills parent width
+text.layoutSizingVertical = 'HUG';      // Text height wraps to content
+
+// Override only for short labels (nav items, button text)
+if (node.sizing?.width === 'hug') {
+  text.layoutSizingHorizontal = 'HUG';
 }
 ```
 

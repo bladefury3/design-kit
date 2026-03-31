@@ -1,0 +1,43 @@
+{
+  "id": "brainstorm-03",
+  "skill": "brainstorm",
+  "name": "Real failure: InsightOS dashboard — tests component usage + text sizing",
+  "difficulty": "hard",
+  "source": "Real brainstorm output from 2026-03-31 that produced truncated text, empty chart rectangles, and 65% component coverage",
+  "input": {
+    "userMessage": "Brainstorm variations for a user insights dashboard with NPS score, CSAT rating, ticket count, trend chart, feedback sentiment, and recent feedback list",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "libraryComponents": ["button", "avatar", "avatar-label-group", "badge", "alert", "table", "table-cell", "activity-feed", "progress-bar", "input-field", "toggle", "checkbox"]
+  },
+  "expectedBehaviors": [
+    "Every text node has a sizing property — either { width: fill, height: hug } for body text or { width: hug, height: hug } for short labels",
+    "Library component coverage is >= 75% per variation",
+    "Navigation items use Button (Tertiary gray variant), not custom text frames",
+    "User profile in sidebar uses Avatar label group, not custom text + circle",
+    "Alert/warning banners use the Alert component with appropriate color variant",
+    "Feedback list uses Activity feed component or Table, not raw text frames",
+    "Chart containers have a title, axis labels, and background fill — NOT empty rectangles",
+    "Stat metric cards document why they are token-built (no library match) with $note",
+    "No text truncation possible — parent frames have width constraints, text nodes have fill sizing",
+    "Badge component used for status indicators (Critical, High, Medium)"
+  ],
+  "antiPatterns": [
+    "Text nodes without sizing property — causes 'User Insi' truncation",
+    "Empty colored rectangles labeled as charts with no title, legend, or structure inside",
+    "Buttons built as custom text frames instead of library Button component",
+    "User profile built as text + ellipse instead of Avatar label group",
+    "Alert banners built as colored frames with text instead of Alert component",
+    "Feedback items built as raw text frames instead of Activity feed component",
+    "Component coverage below 70% — rebuilding the design system instead of using it",
+    "Badge/status indicators built as colored text instead of Badge component",
+    "Navigation items without hover/active/focus states (means they're not real Buttons)"
+  ],
+  "evaluationCriteria": {
+    "textSizingCompleteness": "Does EVERY text node in EVERY variation have an explicit sizing property?",
+    "componentCoverage": "Is library component coverage >= 75% in each variation?",
+    "chartContainerQuality": "Do chart areas have titles, labels, and fills — not empty rectangles?",
+    "mandatoryComponentMapping": "Are all mandatory patterns (buttons, avatars, alerts, feeds, badges) using library components?",
+    "noTruncationRisk": "Is there zero risk of text clipping? Every text has fill or hug, every parent has width?"
+  }
+}
