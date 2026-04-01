@@ -7,33 +7,33 @@
   "testCaseCount": 23,
   "previousRun": "2026-03-31-full.json",
   "bySkill": {
-    "design-flow": { "overall": 9.1 },
-    "extract-icons": { "overall": 9.0 },
+    "flow": { "overall": 9.1 },
+    "setup-icons": { "overall": 9.0 },
     "plan-component": { "overall": 8.85 },
     "review-component": { "overall": 8.8 },
-    "responsive-adapt": { "overall": 8.7 },
-    "handoff-dev": { "overall": 8.7 },
-    "audit-frames": { "overall": 8.7 },
+    "responsive": { "overall": 8.7 },
+    "handoff": { "overall": 8.7 },
+    "audit": { "overall": 8.7 },
     "brainstorm": { "overall": 8.6 },
-    "build-design": { "overall": 8.6 },
-    "content-stress": { "overall": 8.6 },
-    "design-revision": { "overall": 8.5 },
-    "diff-system": { "overall": 8.5 },
-    "handoff-mcp": { "overall": 8.4 },
-    "extract-components": { "overall": 8.3 },
-    "extract-tokens": { "overall": 8.3 },
-    "plan-design": { "overall": 7.87 },
+    "build": { "overall": 8.6 },
+    "stress-test": { "overall": 8.6 },
+    "revise": { "overall": 8.5 },
+    "diff": { "overall": 8.5 },
+    "handoff-ai": { "overall": 8.4 },
+    "setup-components": { "overall": 8.3 },
+    "setup-tokens": { "overall": 8.3 },
+    "plan": { "overall": 7.87 },
     "build-component": { "overall": 8.0 },
-    "extract-relationships": { "overall": 7.8 }
+    "setup-relationships": { "overall": 7.8 }
   },
   "improvements": [
-    { "skill": "handoff-dev", "from": 7.5, "to": 8.7, "delta": 1.2, "fixes": "Per-field state docs, interactive sub-features, reduced questions" },
-    { "skill": "extract-icons", "from": 8.1, "to": 9.0, "delta": 0.9, "fixes": "primaryUse field, description-based tags, alternatives grouping" },
+    { "skill": "handoff", "from": 7.5, "to": 8.7, "delta": 1.2, "fixes": "Per-field state docs, interactive sub-features, reduced questions" },
+    { "skill": "setup-icons", "from": 8.1, "to": 9.0, "delta": 0.9, "fixes": "primaryUse field, description-based tags, alternatives grouping" },
     { "skill": "build-component", "from": 7.1, "to": 8.0, "delta": 0.9, "fixes": "Search fallback, graceful degradation, designer language" },
-    { "skill": "extract-components", "from": 7.4, "to": 8.3, "delta": 0.9, "fixes": "Fault tolerance, dependency ordering, next steps" },
-    { "skill": "content-stress", "from": 7.9, "to": 8.6, "delta": 0.7, "fixes": "Temporal stress category with stale date detection" },
-    { "skill": "design-flow", "from": 8.4, "to": 9.1, "delta": 0.7, "fixes": "Loading/processing states per transition" },
-    { "skill": "extract-tokens", "from": 7.6, "to": 8.3, "delta": 0.7, "fixes": "Reduced questions, next-step guidance" }
+    { "skill": "setup-components", "from": 7.4, "to": 8.3, "delta": 0.9, "fixes": "Fault tolerance, dependency ordering, next steps" },
+    { "skill": "stress-test", "from": 7.9, "to": 8.6, "delta": 0.7, "fixes": "Temporal stress category with stale date detection" },
+    { "skill": "flow", "from": 8.4, "to": 9.1, "delta": 0.7, "fixes": "Loading/processing states per transition" },
+    { "skill": "setup-tokens", "from": 7.6, "to": 8.3, "delta": 0.7, "fixes": "Reduced questions, next-step guidance" }
   ],
   "regressions": [],
   "trendFromBaseline": {
@@ -44,9 +44,9 @@
     "trajectory": "7.8 → 8.0 → 8.6"
   },
   "skillsByTier": {
-    "excellent (9.0+)": ["design-flow", "extract-icons"],
-    "strong (8.5-8.9)": ["plan-component", "review-component", "responsive-adapt", "handoff-dev", "audit-frames", "brainstorm", "build-design", "content-stress", "design-revision", "diff-system"],
-    "solid (8.0-8.4)": ["handoff-mcp", "extract-components", "extract-tokens", "build-component"],
-    "needsWork (<8.0)": ["plan-design", "extract-relationships"]
+    "excellent (9.0+)": ["flow", "setup-icons"],
+    "strong (8.5-8.9)": ["plan-component", "review-component", "responsive", "handoff", "audit", "brainstorm", "build", "stress-test", "revise", "diff"],
+    "solid (8.0-8.4)": ["handoff-ai", "setup-components", "setup-tokens", "build-component"],
+    "needsWork (<8.0)": ["plan", "setup-relationships"]
   }
 }

@@ -47,15 +47,15 @@ Every variant, token, and prop is already decided in the plan. You just build it
 **You do NOT make design decisions.** If something is ambiguous or missing in the
 plan, ask the user — don't guess. All decisions were made in `/plan-component`.
 
-## CRITICAL: How this differs from build-design
+## CRITICAL: How this differs from build
 
-`/build-design` creates **frames** and instantiates **library components** into layouts.
+`/build` creates **frames** and instantiates **library components** into layouts.
 `/build-component` creates **component sets** with **variants** — the building blocks
-that `/build-design` later instantiates.
+that `/build` later instantiates.
 
 Key Figma API differences:
 
-| build-design | build-component |
+| build | build-component |
 |---|---|
 | `figma.createFrame()` | `figma.createComponent()` |
 | Instantiates existing components | Creates new components |
@@ -97,19 +97,19 @@ Key Figma API differences:
    ```
    If that also fails, warn but proceed:
    > "Design system data not available. I can still build the component, but
-   > token bindings may be incomplete. Run `/extract-tokens` for full coverage."
+   > token bindings may be incomplete. Run `/setup-tokens` for full coverage."
 
 4. **Pre-build validation (mandatory):**
 
    a. **Verify token keys**: Scan all `figmaKey` values in the plan. Every key must
       be a 40-character hex hash. If any key contains `/` (path-style), STOP and warn:
-      > "Plan contains path-style token keys that won't work. Run `/extract-tokens`
+      > "Plan contains path-style token keys that won't work. Run `/setup-tokens`
       > to refresh, or manually fix the keys in design-system/tokens.json."
 
    b. **Verify sub-component variantKeys**: Check that every sub-component reference
       in the plan has a valid `variantKey` that exists in `design-system/components/index.json`.
       If a referenced component is missing from the index:
-      > "Sub-component `[name]` not found in component index. Run `/extract-components`
+      > "Sub-component `[name]` not found in component index. Run `/setup-components`
       > to extract it, or check the component name in the plan."
 
    c. **Verify variant matrix total**: Count the total variant combinations from the
@@ -124,6 +124,38 @@ Key Figma API differences:
 
    **STOP.** Wait for user confirmation before proceeding.
 
+## Phase 0: Canvas scan (mandatory)
+
+Before creating anything, find clear space on the canvas. See PRINCIPLES.md
+"Canvas Positioning Protocol" for the full rationale.
+
+Run via `figma_execute`:
+
+```javascript
+const children = figma.currentPage.children;
+const selection = figma.currentPage.selection;
+let originX = 0;
+let originY = 0;
+
+if (selection.length > 0) {
+  const sel = selection[0];
+  originX = sel.x + sel.width + 200;
+  originY = sel.y;
+} else if (children.length > 0) {
+  let maxRight = -Infinity;
+  for (const child of children) {
+    const right = child.x + child.width;
+    if (right > maxRight) maxRight = right;
+  }
+  originX = maxRight + 200;
+}
+
+return { originX, originY };
+```
+
+Store `originX` and `originY`. After `combineAsVariants` in Phase 4, move the
+component set to `(originX, originY)` using `figma_move_node`.
+
 ## Phase 1: Create variant frames
 
 **Goal:** Create one `figma.createComponent()` per variant combination in the matrix.
@@ -134,7 +166,7 @@ Key Figma API differences:
 
 Extract all unique `figmaKey` values from the plan into a flat key map. This gets
 embedded into `figma_execute` calls for O(1) variable binding — same pattern as
-build-design.
+build.
 
 ```javascript
 // Build from plans/components/<name>.json:
@@ -314,6 +346,9 @@ componentSet.name = plan.componentName;
 After combining, the component set is a `COMPONENT_SET` node. Individual variants
 become children of this set with their variant property values parsed from the name.
 
+**Position the component set** at `(originX, originY)` from the Phase 0 canvas scan
+using `figma_move_node`. This prevents overlapping existing content on the page.
+
 ## Phase 5: Add component properties
 
 **Goal:** Add boolean, text, and instance swap properties. 1 figma_add_component_property call per property.
@@ -428,7 +463,7 @@ Save technical details for the JSON output and code blocks.
 ## Post-build: Auto-register the new component
 
 After building successfully, register the new component so it's immediately
-available to `/plan-design` and all other skills.
+available to `/plan` and all other skills.
 
 ### Step 1: Extract the new component's spec
 
@@ -515,7 +550,7 @@ After presenting the build result:
 
 > "Component built. Next:
 > - `/review-component` to validate quality and coverage
-> - Use it in `/plan-design` to include it in screen layouts
+> - Use it in `/plan` to include it in screen layouts
 > - `/build-component` again with a different plan to build more components"
 
 ## Error handling

@@ -121,7 +121,7 @@ Figma to understand your own question, it's too complex.
    > more accurate.
    >
    > A) Proceed with limited matching -- I'll do my best without exact tokens/components
-   > B) Run extraction first -- `/extract-tokens` and `/extract-components` to set up the data"
+   > B) Run extraction first -- `/setup-tokens` and `/setup-components` to set up the data"
 
    **STOP.** Wait for response.
 
@@ -508,7 +508,7 @@ fail silently during build.
 
 If any key in `design-system/tokens.json` is a path instead of a hash, flag it:
 > "Token `color.text.text-primary` has a path-style key that won't work in Figma.
-> Run `/extract-tokens` to refresh keys, or check the audit report for corrected hashes."
+> Run `/setup-tokens` to refresh keys, or check the audit report for corrected hashes."
 
 ## Step 7: Plan relationships
 
@@ -794,7 +794,7 @@ directory if it does not exist.
 | `props` | Boolean, text, instance swap properties | `/build-component` for property definitions |
 | `anatomy` | Layer tree with sizing and visibility | `/build-component` for frame structure |
 | `tokens` | Token refs with figmaKey for every visual property | `/build-component` for variable binding |
-| `relationships` | How this fits the existing system | `/extract-relationships` for graph updates |
+| `relationships` | How this fits the existing system | `/setup-relationships` for graph updates |
 | `componentDescription` | Human-readable summary for the component description field | `/build-component` for Figma description |
 
 ### Why every key matters
@@ -903,7 +903,7 @@ After the user approves the plan:
 - **Component with no tokens extracted**: If `design-system/tokens.json` doesn't exist or
   is incomplete, you can still plan the component with token REFERENCES (paths
   like `color.background.bg-primary`) but without figmaKey hashes. Flag that
-  `/extract-tokens` should be run before `/build-component`.
+  `/setup-tokens` should be run before `/build-component`.
 
 - **Library conventions are inconsistent**: If the existing library has mixed
   conventions (some components use PascalCase, others lowercase), pick the most

@@ -317,24 +317,32 @@ components, or design workflows, follow the instructions in the
 Use the Figma Console MCP tools (figma_*) to interact with Figma.
 
 Available design-kit commands (reference by name):
+
+Setup (one-time):
+- setup-tokens: Pull tokens from Figma
+- setup-components: Document component specs
+- setup-relationships: Map component dependencies
+- setup-icons: Catalog icon library with search tags
+
+Create:
 - brainstorm: Generate design variations using SCAMPER
-- plan-design: Create a structured build plan
-- build-design: Execute a plan in Figma
-- responsive-adapt: Desktop to tablet/mobile
-- design-flow: Multi-screen connected flows
-- content-stress: Stress-test with edge-case content
-- audit-frames: Heuristic + token + Gestalt audit
-- diff-system: Design system change detection
-- design-revision: Apply feedback from Figma comments or direct input
-- extract-tokens: Pull tokens from Figma
-- extract-components: Document component specs
-- extract-relationships: Map component dependencies
-- extract-icons: Catalog icon library with search tags
+- plan: Create a structured build plan
+- build: Execute a plan in Figma
 - plan-component: Plan a new component (variants, props, tokens)
 - build-component: Build a component set in Figma
+- flow: Multi-screen connected flows
+- responsive: Desktop to tablet/mobile
+
+Review:
+- audit: Heuristic + token + Gestalt audit
+- stress-test: Stress-test with edge-case content
 - review-component: Score component quality (9 dimensions)
-- handoff-dev: Developer handoff documentation
-- handoff-mcp: Optimize file for AI/MCP
+- revise: Apply feedback from Figma comments or direct input
+- diff: Design system change detection
+
+Handoff:
+- handoff: Developer handoff documentation
+- handoff-ai: Optimize file for AI/MCP
 RULES
     ok "Created ${BOLD}.cursorrules${RESET} with design-kit references"
   fi
@@ -344,8 +352,8 @@ RULES
   echo "  In Cursor, ask:"
   echo ""
   echo -e "    ${BLUE}\"Follow the design-kit-brainstorm rules to explore variations\"${RESET}"
-  echo -e "    ${BLUE}\"Use design-kit-plan-design to plan a settings page\"${RESET}"
-  echo -e "    ${BLUE}\"Run design-kit-audit-frames on my current selection\"${RESET}"
+  echo -e "    ${BLUE}\"Use design-kit-plan to plan a settings page\"${RESET}"
+  echo -e "    ${BLUE}\"Run design-kit-audit on my current selection\"${RESET}"
 else
   ok "Installed to ${BOLD}${INSTALL_DIR}${RESET}"
   echo ""

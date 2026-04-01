@@ -1,0 +1,98 @@
+{
+  "id": "handoff-01",
+  "skill": "handoff",
+  "name": "Complex interaction states — tests exhaustive state documentation",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Generate dev handoff for this signup form",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "figmaState": {
+      "frameName": "Signup Form",
+      "elements": [
+        {
+          "name": "Email Input",
+          "type": "INPUT",
+          "states": ["default", "focused", "filled", "error", "disabled"],
+          "errorMessages": ["Email is required", "Invalid email format", "Email already registered"],
+          "validation": "email format + uniqueness check"
+        },
+        {
+          "name": "Password Input",
+          "type": "INPUT",
+          "states": ["default", "focused", "filled", "error", "disabled"],
+          "errorMessages": ["Password is required", "Must be at least 8 characters", "Must include a number"],
+          "validation": "min 8 chars, at least 1 number",
+          "extras": ["password visibility toggle", "strength indicator (weak/medium/strong)"]
+        },
+        {
+          "name": "Full Name Input",
+          "type": "INPUT",
+          "states": ["default", "focused", "filled", "error", "disabled"],
+          "errorMessages": ["Name is required"],
+          "validation": "non-empty"
+        },
+        {
+          "name": "Company Input",
+          "type": "INPUT",
+          "states": ["default", "focused", "filled", "error", "disabled"],
+          "errorMessages": [],
+          "validation": "optional field",
+          "extras": ["autocomplete dropdown with company suggestions"]
+        },
+        {
+          "name": "Submit Button",
+          "type": "BUTTON",
+          "states": ["default", "hover", "pressed", "loading", "disabled"],
+          "label": "Create account",
+          "loadingLabel": "Creating..."
+        },
+        {
+          "name": "Terms Checkbox",
+          "type": "CHECKBOX",
+          "states": ["unchecked", "checked", "error"],
+          "errorMessages": ["You must accept the terms"],
+          "label": "I agree to the Terms of Service and Privacy Policy"
+        }
+      ],
+      "focusOrder": ["Full Name", "Email", "Password", "Company", "Terms Checkbox", "Submit Button"],
+      "formBehavior": {
+        "submitDisabledUntil": "all required fields valid + terms checked",
+        "validationTiming": "on blur for individual fields, on submit for all",
+        "loadingBehavior": "button shows spinner + 'Creating...' text, all fields disabled"
+      }
+    }
+  },
+  "expectedBehaviors": [
+    "Documents ALL 6 elements with ALL their individual states (not just default)",
+    "Produces a state matrix: 4 inputs x 5 states + button x 5 states + checkbox x 3 states = 28 state combinations",
+    "Lists every error message for every field — not 'shows error message' but the actual text",
+    "Documents the focus/tab order explicitly: Full Name -> Email -> Password -> Company -> Terms -> Submit",
+    "Documents transition timing between states (e.g., focus ring animation, error fade-in duration)",
+    "Describes the loading state flow: button text change, field disabling, spinner appearance",
+    "Documents password-specific extras: visibility toggle behavior, strength indicator thresholds",
+    "Documents Company input autocomplete dropdown behavior",
+    "Specifies validation timing: on blur for fields, on submit for full form",
+    "Documents the submit button disabled-until condition"
+  ],
+  "antiPatterns": [
+    "Only documents the default/resting state appearance of the form",
+    "Says 'shows error state' without listing specific error messages per field",
+    "Ignores focus order — no tab order documentation",
+    "Misses the loading state entirely or describes it as just 'disabled button'",
+    "Documents inputs generically ('all inputs have 5 states') instead of per-field specifics",
+    "Ignores the password strength indicator and visibility toggle",
+    "Ignores the Company autocomplete dropdown",
+    "No transition timing or animation details",
+    "Treats Terms Checkbox as a simple input instead of documenting its gate on submit"
+  ],
+  "evaluationCriteria": {
+    "stateCompleteness": "Are all 28 element-state combinations documented individually?",
+    "errorSpecificity": "Are the exact error message strings listed for each field, not generic 'shows error'?",
+    "focusOrder": "Is the tab order explicitly documented with the correct sequence?",
+    "transitionDetail": "Are animations, timing, and state transition triggers specified?",
+    "loadingFlow": "Is the full loading sequence documented (button text change, field disabling, spinner)?",
+    "interactiveExtras": "Are password toggle, strength indicator, and company autocomplete covered?",
+    "implementability": "Could a developer build this form from the handoff alone, without seeing the Figma file?"
+  }
+}

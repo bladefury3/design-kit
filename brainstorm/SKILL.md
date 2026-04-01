@@ -160,7 +160,7 @@ Figma to understand your own question, it's too complex.
    Only if `figma_get_design_system_kit` also fails, say:
    > "Couldn't read the design system from Figma either. I can still brainstorm
    > using basic frames and tokens, but component matching will be limited.
-   > Want to proceed, or run /extract-tokens first?"
+   > Want to proceed, or run /setup-tokens first?"
    >
    > A) Proceed without design system data
    > B) I'll run the extraction skills first
@@ -301,7 +301,7 @@ user job or reveal a different design truth.
 > | ... | ... | ... | ... | ... |
 >
 > Each variation will be a complete, buildable plan — not a sketch. You'll be able
-> to run `/build-design` on any of them.
+> to run `/build` on any of them.
 >
 > Does this exploration direction feel right, or should I swap any lenses?
 
@@ -318,7 +318,7 @@ you could defend in a design review.
 ## Step 3: Generate variation plans
 
 For each approved lens, create a complete plan file following the exact same
-format as `/plan-design` output.
+format as `/plan` output.
 
 ### Plan file naming
 
@@ -343,7 +343,7 @@ Don't just swap components. Rethink the information architecture:
 - How does the hierarchy change?
 
 **2. Map to library components.** Search `design-system/components/index.json`
-exhaustively. Apply `/plan-design` anti-token-built bias (text links = Button Link
+exhaustively. Apply `/plan` anti-token-built bias (text links = Button Link
 variant, nav items = Button Tertiary, etc.). Target >80% coverage. Check
 `design-system/relationships.json` for composition patterns.
 
@@ -357,7 +357,7 @@ what this variation emphasizes (e.g., "3 systems healthy, 1 needs attention").
 
 ### Plan JSON schema
 
-Each plan follows the exact schema from `/plan-design`:
+Each plan follows the exact schema from `/plan`:
 
 ```json
 {
@@ -422,7 +422,7 @@ Each plan follows the exact schema from `/plan-design`:
 ```
 
 The `$metadata.brainstorm` object is the only addition to the standard plan schema.
-Everything else is identical — `/build-design` can execute any brainstorm plan
+Everything else is identical — `/build` can execute any brainstorm plan
 without modification.
 
 ### Quality gates per variation plan
@@ -438,12 +438,12 @@ Before writing each plan JSON, validate:
    component. Token-built frames are ONLY for structural containers (rows, columns,
    wrappers) — never for visible UI elements that have library equivalents.
 
-   **Real-world lesson:** `/plan-design` achieved 100% visible UI coverage (21 library
+   **Real-world lesson:** `/plan` achieved 100% visible UI coverage (21 library
    instances, 14 unique types) for the same design system where `/brainstorm` only
-   hit 54-69%. The difference: plan-design mapped every element to a library component.
+   hit 54-69%. The difference: plan mapped every element to a library component.
    Brainstorm built custom frames for things that had direct library matches.
 
-   Mandatory library component mapping (from plan-design):
+   Mandatory library component mapping (from plan):
    - Navigation → Sidebar navigation component
    - Page titles → Page header or Section header component
    - Tab bars → Horizontal tabs component
@@ -489,7 +489,7 @@ checkpoint prevents variation 4 from being sloppier than variation 1.
 
 Before writing each plan, verify ALL figmaKey values are **40-character hex hashes**.
 Path-style keys like `"Colors/Text/text-primary"` fail silently during build. Flag
-any path-style keys and suggest running `/extract-tokens` to refresh.
+any path-style keys and suggest running `/setup-tokens` to refresh.
 
 ### Typography handling
 
@@ -500,14 +500,41 @@ token bindings otherwise. Never hardcode typography values.
 ## Step 4: Build all variations in Figma
 
 Execute each plan as a side-by-side frame in Figma. This follows the same build
-patterns as `/build-design` but adds variation labeling and side-by-side layout.
+patterns as `/build` but adds variation labeling and side-by-side layout.
+
+### Canvas scan (mandatory — do this first)
+
+Before placing any variations, find clear space. See PRINCIPLES.md "Canvas Positioning
+Protocol". Run via `figma_execute`:
+
+```javascript
+const children = figma.currentPage.children;
+const selection = figma.currentPage.selection;
+let originX = 0;
+let originY = 0;
+
+if (selection.length > 0) {
+  const sel = selection[0];
+  originX = sel.x + sel.width + 200;
+  originY = sel.y;
+} else if (children.length > 0) {
+  let maxRight = -Infinity;
+  for (const child of children) {
+    const right = child.x + child.width;
+    if (right > maxRight) maxRight = right;
+  }
+  originX = maxRight + 200;
+}
+
+return { originX, originY };
+```
 
 ### Frame arrangement
 
-Place variation frames horizontally with 100px gaps between them:
-- Variation 1: x = 0
-- Variation 2: x = frameWidth + 100
-- Variation 3: x = (frameWidth + 100) * 2
+Place variation frames horizontally with 100px gaps, starting at `(originX, originY)`:
+- Variation 1: x = originX
+- Variation 2: x = originX + frameWidth + 100
+- Variation 3: x = originX + (frameWidth + 100) * 2
 - etc.
 
 ### Label each variation
@@ -526,7 +553,7 @@ variation 1 completely before starting variation 2.
 
 ### Build process (per variation)
 
-Follow the same 4-phase batch strategy as `/build-design`:
+Follow the same 4-phase batch strategy as `/build`:
 
 1. **Build frame tree** (1-2 figma_execute calls) — create frames, apply token
    bindings via key map, set text content, return frame IDs
@@ -536,7 +563,7 @@ Follow the same 4-phase batch strategy as `/build-design`:
 4. **Position and label** — move frame to its x offset, add label above
 
 ```javascript
-// Key map pattern — same as build-design
+// Key map pattern — same as build
 const keys = { "bg.primary": "b6157f22...", "s.4xl": "284dbace..." };
 const vars = {};
 for (const [alias, key] of Object.entries(keys)) {
@@ -599,8 +626,8 @@ For each variation, present:
 > ---
 >
 > **Next steps:**
-> - Pick a variation and run `/build-design plans/<name>-vN.json` to refine it
-> - Want to stress-test a variation with real content? Run `/content-stress` on it
+> - Pick a variation and run `/build plans/<name>-vN.json` to refine it
+> - Want to stress-test a variation with real content? Run `/stress-test` on it
 > - Want to iterate on a specific variation? I can adjust its plan
 > - Want to merge elements from multiple variations? I can create a hybrid plan
 
@@ -634,7 +661,7 @@ Simplify before brainstorming:
 First try `figma_get_design_system_kit` as described in "Before you begin" step 2.
 If that also fails, use basic frames, auto-layout, and hardcoded values. Note all
 hardcoded colors for later token binding. State the limitation and suggest running
-`/extract-tokens` for a richer re-brainstorm.
+`/setup-tokens` for a richer re-brainstorm.
 
 ### User wants more/fewer variations
 
@@ -682,7 +709,7 @@ each variation should resolve the tension via a DIFFERENT approach.
 
 ## How to use design-system/tokens.json for Figma operations
 
-Same pattern as `/build-design`: read the plan for figmaKey values, build a flat
+Same pattern as `/build`: read the plan for figmaKey values, build a flat
 key map, embed in `figma_execute`, use `importVariableByKeyAsync(key)` directly.
 Never scan collections — every key is pre-resolved in the plan.
 

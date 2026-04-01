@@ -1,0 +1,77 @@
+{
+  "$schema": "design-kit/eval-rubric/v1",
+  "name": "plan specific criteria",
+  "weight": 0.65,
+  "criteria": {
+    "briefComprehension": {
+      "weight": 0.15,
+      "description": "Does the plan accurately reflect everything in the brief? Nothing added, nothing missed.",
+      "scoring": {
+        "10": "Every element from the brief is in the plan, nothing invented that wasn't asked for",
+        "7": "Most elements present, 1-2 minor omissions",
+        "4": "Major elements missing or significant elements added that weren't in the brief",
+        "1": "Plan bears little resemblance to the brief"
+      }
+    },
+    "iaPresentation": {
+      "weight": 0.15,
+      "description": "Does it present the Information Architecture BEFORE jumping to components?",
+      "scoring": {
+        "10": "Clear IA tree with user-job framing, hierarchy stated explicitly",
+        "7": "IA presented but hierarchy not explicitly stated",
+        "4": "Jumps to components without IA step",
+        "1": "No IA at all — goes straight to layout"
+      }
+    },
+    "componentCoverage": {
+      "weight": 0.15,
+      "description": "Does it achieve >80% library component coverage? Justifies every token-built element?",
+      "scoring": {
+        "10": ">85% coverage, every token-built element has a $note explaining why no library match",
+        "7": "70-85% coverage, most token-built elements justified",
+        "4": "50-70% coverage, rebuilding components that exist in the library",
+        "1": "<50% coverage, essentially building everything from scratch"
+      }
+    },
+    "textSpecificity": {
+      "weight": 0.10,
+      "description": "Does every text node have SPECIFIC content, not placeholder?",
+      "scoring": {
+        "10": "Every text node has real, specific content appropriate to the context",
+        "7": "Most text is specific, 1-2 placeholder-like items",
+        "4": "Mix of specific and placeholder text",
+        "1": "Lorem ipsum, 'Button text', 'Title here' throughout"
+      }
+    },
+    "edgeCaseCoverage": {
+      "weight": 0.15,
+      "description": "Are empty, loading, and error states planned for every section?",
+      "scoring": {
+        "10": "Every section has empty, loading, and error states with specific designs",
+        "7": "Most sections have edge cases, 1-2 gaps",
+        "4": "Only happy path designed",
+        "1": "No edge cases mentioned"
+      }
+    },
+    "antiSlop": {
+      "weight": 0.15,
+      "description": "Does the output avoid AI design traps? No generic card grids, uniform spacing, or 'clean modern'.",
+      "scoring": {
+        "10": "Layout is specific to the content, hierarchy is clear, spacing is intentional",
+        "7": "Mostly specific, one section feels generic",
+        "4": "Falls into 1-2 slop patterns (card grid, uniform spacing)",
+        "1": "Generic card grid dashboard with uniform spacing"
+      }
+    },
+    "planJsonValidity": {
+      "weight": 0.15,
+      "description": "Is the plan JSON structurally valid with all required fields? figmaKeys are 40-char hashes?",
+      "scoring": {
+        "10": "Valid JSON, all fields present, all keys are proper hashes, ready for build",
+        "7": "Valid JSON, minor gaps but buildable",
+        "4": "Structural issues that would cause build to fail",
+        "1": "Invalid or missing plan JSON"
+      }
+    }
+  }
+}

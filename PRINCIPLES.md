@@ -5,7 +5,7 @@ from the relevant sections — this is the "design brain" that runs across every
 
 ## Nielsen's 10 Usability Heuristics
 
-Used by: `/audit-frames`, `/brainstorm`, `/design-revision`, `/design-flow`
+Used by: `/audit`, `/brainstorm`, `/revise`, `/flow`
 
 | # | Heuristic | What to check |
 |---|---|---|
@@ -33,7 +33,7 @@ Always cite the specific element, location, and why it scored that way.
 
 ## Gestalt Principles
 
-Used by: `/audit-frames`, `/plan-design`, `/brainstorm`
+Used by: `/audit`, `/plan`, `/brainstorm`
 
 - **Proximity** — Elements near each other are perceived as related. Group related
   controls; separate unrelated sections with whitespace.
@@ -63,7 +63,7 @@ When auditing or planning, check each section of the design:
 
 ## Cognitive Load Laws
 
-Used by: `/audit-frames`, `/design-flow`, `/responsive-adapt`, `/brainstorm`
+Used by: `/audit`, `/flow`, `/responsive`, `/brainstorm`
 
 ### Hick's Law
 Decision time increases logarithmically with the number of choices.
@@ -142,7 +142,7 @@ For each variation, state:
 
 ## Jobs-to-be-Done Framework
 
-Used by: `/brainstorm`, `/design-flow`
+Used by: `/brainstorm`, `/flow`
 
 Every screen serves a user job. Common product design jobs:
 
@@ -165,7 +165,7 @@ When brainstorming or planning flows:
 
 ## Responsive Design Patterns
 
-Used by: `/responsive-adapt`
+Used by: `/responsive`
 
 ### Layout Patterns (Luke Wroblewski)
 
@@ -205,7 +205,7 @@ Don't design for breakpoints — design for content. Break when the content brea
 
 ## Flow Design Principles
 
-Used by: `/design-flow`
+Used by: `/flow`
 
 ### Screen Architecture
 - **One primary action** per screen — if you can't name it, the screen has no job
@@ -244,7 +244,7 @@ Used by: `/design-flow`
 
 ## Edge Case Taxonomy
 
-Used by: `/content-stress`, `/design-flow`, `/plan-design`
+Used by: `/stress-test`, `/flow`, `/plan`
 
 ### Content Extremes
 
@@ -278,7 +278,7 @@ Not all edge cases matter equally. Test in this order:
 
 ## Feedback Classification
 
-Used by: `/design-revision`
+Used by: `/revise`
 
 | Type | How to handle | Example |
 |---|---|---|
@@ -295,11 +295,11 @@ Used by: `/design-revision`
 2. **Prioritize**: Usability > Principle > Content > Bug > Preference > Scope
 3. **Apply** changes for types 1-4 directly
 4. **Flag** preference-based feedback — ask the user before acting on taste
-5. **Separate** scope changes — these become new plan-design tasks, not revisions
+5. **Separate** scope changes — these become new /plan tasks, not revisions
 
 ## AskUserQuestion Format
 
-Used by: `/brainstorm`, `/responsive-adapt`, `/design-flow`, `/design-revision`, `/plan-design`, `/content-stress`, `/audit-frames`
+Used by: `/brainstorm`, `/responsive`, `/flow`, `/revise`, `/plan`, `/stress-test`, `/audit`
 
 **ALWAYS follow this structure for every AskUserQuestion call:**
 
@@ -320,7 +320,7 @@ Figma to understand your own question, it's too complex.
 
 ## AI Slop Check
 
-Used by: `/brainstorm`, `/plan-design`, `/build-design`, `/design-revision`, `/design-flow`
+Used by: `/brainstorm`, `/plan`, `/build`, `/revise`, `/flow`
 
 Before finalizing any design output, check for these common AI design traps:
 
@@ -436,9 +436,88 @@ Used by `/review-component` for scoring:
 | Layout Resilience | 5% | Handles overflow, works at different widths |
 | Documentation | 5% | Description, annotations, MCP-readable |
 
+## Canvas Positioning Protocol
+
+Used by: `/build`, `/build-component`, `/flow`, `/brainstorm`, `/responsive`
+
+Every skill that places frames on the Figma canvas **must scan existing content first**
+to avoid overlapping other work. Never assume the page is empty. Never hardcode (0, 0).
+
+### The Rule
+
+Before placing any new frame, run a canvas scan via `figma_execute` to find clear space:
+
+```javascript
+// Canvas scan — returns the safe starting x for new content
+const children = figma.currentPage.children;
+let originX = 0;
+let originY = 0;
+
+if (children.length > 0) {
+  let maxRight = -Infinity;
+  for (const child of children) {
+    const right = child.x + child.width;
+    if (right > maxRight) {
+      maxRight = right;
+    }
+  }
+  originX = maxRight + 200; // 200px clear gap from existing content
+}
+
+return { originX, originY };
+```
+
+All subsequent frame positions are **offsets from `originX, originY`** — not from (0, 0).
+
+### Gap Constants
+
+| Between | Gap | Purpose |
+|---|---|---|
+| Existing content → new content | 200px | Clear visual separation from prior work |
+| Sibling frames (within a skill) | 80-100px | Breathing room between related frames |
+| Row 1 → Row 2 (flow edge screens) | 200px vertical | Separate happy path from edge cases |
+
+### Per-Skill Application
+
+| Skill | What gets offset |
+|---|---|
+| `/build` | The root frame's x position |
+| `/build-component` | The component set's x position after `combineAsVariants` |
+| `/flow` | Row 1 starting x; all screen x positions shift by `originX` |
+| `/brainstorm` | Variation 1 starts at `originX` instead of 0 |
+| `/responsive` | Desktop frame starts at `originX` instead of 0 |
+
+### Selection-Aware Placement
+
+If the user has an active selection when running a skill, place new content relative
+to the selection instead of the page bounding box:
+
+```javascript
+const selection = figma.currentPage.selection;
+if (selection.length > 0) {
+  // Place to the right of the selected frame
+  const sel = selection[0];
+  originX = sel.x + sel.width + 200;
+  originY = sel.y;
+} else {
+  // Fall back to page-level scan (code above)
+}
+```
+
+This lets designers control where new content appears by selecting a nearby frame first.
+
+### What NOT To Do
+
+- **Don't place at (0, 0)** — other content is almost certainly already there
+- **Don't assume the page is empty** — skills may be run multiple times
+- **Don't scan only top-level children** — `figma.currentPage.children` is sufficient;
+  nested content is already bounded by its parent
+- **Don't create sections as wrappers** — place frames directly on the canvas at the
+  calculated offset; sections are for the designer to organize later
+
 ## Design System Maturity Model
 
-Used by: `/diff-system`
+Used by: `/diff`
 
 ### Maturity Levels
 

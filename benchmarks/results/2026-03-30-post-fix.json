@@ -7,12 +7,12 @@
   "testCaseCount": 11,
   "previousBaseline": "baseline.json",
   "bySkill": {
-    "plan-design": {
+    "plan": {
       "overall": 7.87,
       "testCases": {
-        "plan-design-01": { "name": "Vague brief", "score": 8.0 },
-        "plan-design-02": { "name": "Rich brief, no design system", "score": 7.6 },
-        "plan-design-03": { "name": "Complex dark dashboard", "score": 8.0 }
+        "plan-01": { "name": "Vague brief", "score": 8.0 },
+        "plan-02": { "name": "Rich brief, no design system", "score": 7.6 },
+        "plan-03": { "name": "Complex dark dashboard", "score": 8.0 }
       }
     },
     "brainstorm": {
@@ -22,11 +22,11 @@
         "brainstorm-02": { "name": "Contradictory constraints", "score": 8.6 }
       }
     },
-    "design-revision": {
+    "revise": {
       "overall": 8.5,
       "testCases": {
-        "design-revision-01": { "name": "Mixed Figma comments", "score": 9.0 },
-        "design-revision-02": { "name": "Direct feedback", "score": 9.0 }
+        "revise-01": { "name": "Mixed Figma comments", "score": 9.0 },
+        "revise-02": { "name": "Direct feedback", "score": 9.0 }
       }
     },
     "plan-component": {
@@ -36,10 +36,10 @@
         "plan-component-02": { "name": "Complex variant architecture", "score": 8.5 }
       }
     },
-    "audit-frames": {
+    "audit": {
       "overall": 8.7,
       "testCases": {
-        "audit-frames-01": { "name": "Intentionally flawed frame", "score": 8.7 }
+        "audit-01": { "name": "Intentionally flawed frame", "score": 8.7 }
       }
     },
     "review-component": {
@@ -51,20 +51,20 @@
   },
   "regressions": [],
   "improvements": [
-    { "skill": "plan-design", "criterion": "dark theme detection", "from": "FAIL", "to": "PASS", "cause": "Added Theme detection section" },
-    { "skill": "plan-design", "criterion": "questionEconomy", "from": 7, "to": 8.3, "cause": "Viewport escape hatch" },
+    { "skill": "plan", "criterion": "dark theme detection", "from": "FAIL", "to": "PASS", "cause": "Added Theme detection section" },
+    { "skill": "plan", "criterion": "questionEconomy", "from": 7, "to": 8.3, "cause": "Viewport escape hatch" },
     { "skill": "brainstorm", "criterion": "contradictionHandling", "from": 6, "to": 9, "cause": "Expanded to 3-step workflow" },
     { "skill": "brainstorm", "criterion": "questionEconomy", "from": 5.5, "to": 7.5, "cause": "Inline constraints escape hatch" },
-    { "skill": "audit-frames", "criterion": "overallScoreCalibration", "from": 6, "to": 9, "cause": "Critical floor rule" },
-    { "skill": "audit-frames", "criterion": "questionQuality", "from": 7, "to": 9, "cause": "Split scope/strictness questions" },
+    { "skill": "audit", "criterion": "overallScoreCalibration", "from": 6, "to": 9, "cause": "Critical floor rule" },
+    { "skill": "audit", "criterion": "questionQuality", "from": 7, "to": 9, "cause": "Split scope/strictness questions" },
     { "skill": "review-component", "criterion": "scoreCalibration", "from": 7, "to": 9, "cause": "Lead with impact, not praise" },
     { "skill": "review-component", "criterion": "frontloadsPraise", "from": "FAIL", "to": "PASS", "cause": "New tone instruction" },
-    { "skill": "design-revision", "criterion": "gracefulDegradation", "from": 8, "to": 9, "cause": "Added figma_get_design_system_kit fallback" }
+    { "skill": "revise", "criterion": "gracefulDegradation", "from": 8, "to": 9, "cause": "Added figma_get_design_system_kit fallback" }
   ],
   "criticalGaps": [],
   "remainingMinorGaps": [
-    "audit-frames: strictness question lacks explicit RECOMMENDATION line (9 → 10)",
-    "audit-frames: critical floor is flat cap at 5.0 — no gradation for 1 vs 6 criticals (9 → 10)",
+    "audit: strictness question lacks explicit RECOMMENDATION line (9 → 10)",
+    "audit: critical floor is flat cap at 5.0 — no gradation for 1 vs 6 criticals (9 → 10)",
     "review-component: scoring guides use qualitative bands with interpretation room (9 → 10)"
   ]
 }

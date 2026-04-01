@@ -6,10 +6,10 @@
   "skillCount": 6,
   "testCaseCount": 11,
   "bySkill": {
-    "plan-design": {
+    "plan": {
       "overall": 7.4,
       "testCases": {
-        "plan-design-01": {
+        "plan-01": {
           "name": "Vague brief — tests clarification behavior",
           "score": 7.8,
           "shared": {
@@ -43,7 +43,7 @@
             "Asks more than 3 questions before doing any work": "PASS"
           }
         },
-        "plan-design-02": {
+        "plan-02": {
           "name": "Rich brief but no design system data",
           "score": 7.5,
           "shared": {
@@ -52,7 +52,7 @@
             "questionEconomy": { "score": 8, "evidence": "Skips clarification (brief is rich). 2 questions max." },
             "designerLanguage": { "score": 8, "evidence": "Uses team members, role badge, invite button — not figmaKey/nodeId." },
             "outputCompleteness": { "score": 8, "evidence": "Plan covers all elements from brief." },
-            "nextStepGuidance": { "score": 9, "evidence": "Explicitly says 'Run /build-design to execute this plan.'" }
+            "nextStepGuidance": { "score": 9, "evidence": "Explicitly says 'Run /build to execute this plan.'" }
           },
           "specific": {
             "briefComprehension": { "score": 9, "evidence": "Captures all 5 columns, 3 roles, 3 statuses, 3 admin actions, search, filter." },
@@ -71,14 +71,14 @@
             "Plans edge cases": "PASS"
           },
           "antiPatterns": {
-            "Hard-stops with 'Run /extract-tokens first'": "PASS",
+            "Hard-stops with 'Run /setup-tokens first'": "PASS",
             "Produces a plan with placeholder text": "PASS",
             "Ignores the role/permission model": "PASS",
             "Doesn't plan deactivation confirmation": "PASS",
             "Uses generic card grid instead of table": "PASS"
           }
         },
-        "plan-design-03": {
+        "plan-03": {
           "name": "Screenshot of complex dashboard — visual parsing + anti-slop",
           "score": 6.9,
           "shared": {
@@ -87,7 +87,7 @@
             "questionEconomy": { "score": 7, "evidence": "2 questions. Viewport question forced by STOP despite obvious desktop context." },
             "designerLanguage": { "score": 7, "evidence": "Mostly designer-friendly. Token-built elements may involve technical frame language." },
             "outputCompleteness": { "score": 7, "evidence": "Covers ~15 elements. Sparklines and progress bars less detailed as token-built." },
-            "nextStepGuidance": { "score": 9, "evidence": "Clear /build-design guidance." }
+            "nextStepGuidance": { "score": 9, "evidence": "Clear /build guidance." }
           },
           "specific": {
             "briefComprehension": { "score": 7, "evidence": "Captures most elements. 1-2 subtle details may be missed." },
@@ -131,7 +131,7 @@
             "questionEconomy": { "score": 6, "evidence": "Constraints question is formulaic — asked every time even when user mentioned none." },
             "designerLanguage": { "score": 8, "evidence": "Designer-friendly. Internal figmaKey references don't leak to user." },
             "outputCompleteness": { "score": 9, "evidence": "Plan JSONs, built frames, screenshots, comparison with recommendations." },
-            "nextStepGuidance": { "score": 10, "evidence": "4 specific next steps with exact commands including /content-stress." }
+            "nextStepGuidance": { "score": 10, "evidence": "4 specific next steps with exact commands including /stress-test." }
           },
           "specific": {
             "variationDiversity": { "score": 8, "evidence": "Strong guards against cosmetic variation. Thesis requirement forces articulation." },
@@ -192,10 +192,10 @@
         }
       }
     },
-    "design-revision": {
+    "revise": {
       "overall": 8.1,
       "testCases": {
-        "design-revision-01": {
+        "revise-01": {
           "name": "Mixed Figma comments — classification + priority",
           "score": 8.9,
           "shared": {
@@ -204,13 +204,13 @@
             "questionEconomy": { "score": 8, "evidence": "4 questions total. Feedback source necessary. 'Include resolved?' could be defaulted." },
             "designerLanguage": { "score": 9, "evidence": "Plain design language throughout. No API jargon in user-facing text." },
             "outputCompleteness": { "score": 8, "evidence": "Before/after screenshots, classification table, deferred items. No structured JSON output." },
-            "nextStepGuidance": { "score": 7, "evidence": "Mentions /plan-design for scope changes. No explicit end-of-revision guidance." }
+            "nextStepGuidance": { "score": 7, "evidence": "Mentions /plan for scope changes. No explicit end-of-revision guidance." }
           },
           "specific": {
             "classificationAccuracy": { "score": 9, "evidence": "All 5 comments correctly classified: spacing=principle, purple=preference, save=usability, export=scope, overlap=bug." },
             "priorityOrder": { "score": 9, "evidence": "Explicit priority: Usability > Principle > Content > Bug > Preference > Scope." },
             "preferenceHandling": { "score": 10, "evidence": "Never applies preference changes without asking. Airtight." },
-            "scopeRecognition": { "score": 10, "evidence": "Export correctly flagged as scope change and deferred to /plan-design." }
+            "scopeRecognition": { "score": 10, "evidence": "Export correctly flagged as scope change and deferred to /plan." }
           },
           "expectedBehaviors": {
             "Asks feedback source": "PASS",
@@ -230,7 +230,7 @@
             "No classification table": "PASS"
           }
         },
-        "design-revision-02": {
+        "revise-02": {
           "name": "Simple direct feedback — surgical modification",
           "score": 8.9,
           "shared": {
@@ -332,10 +332,10 @@
         }
       }
     },
-    "audit-frames": {
+    "audit": {
       "overall": 7.3,
       "testCases": {
-        "audit-frames-01": {
+        "audit-01": {
           "name": "Intentionally flawed frame — detection accuracy",
           "score": 7.3,
           "shared": {
@@ -344,7 +344,7 @@
             "questionEconomy": { "score": 8, "evidence": "2 questions total. No escape hatch for obvious defaults." },
             "designerLanguage": { "score": 8, "evidence": "Uses design terms. 'nodeId' appears in JSON schema." },
             "outputCompleteness": { "score": 8, "evidence": "Comprehensive report. No 'top 3 fixes' priority summary." },
-            "nextStepGuidance": { "score": 9, "evidence": "Suggests /design-revision or /handoff-dev." }
+            "nextStepGuidance": { "score": 9, "evidence": "Suggests /revise or /handoff." }
           },
           "specific": {
             "detectionRate": { "score": 7, "evidence": "Framework covers all 6 issues. Miller's vs Hick's overlap could cause confusion." },
@@ -385,7 +385,7 @@
             "questionEconomy": { "score": 8, "evidence": "2 questions: component ID + depth. Economical." },
             "designerLanguage": { "score": 8, "evidence": "Design-professional language. Some technical terms (WCAG, CSS pseudo-class)." },
             "outputCompleteness": { "score": 9, "evidence": "Visual score bars, issues, strengths, evidence, JSON report." },
-            "nextStepGuidance": { "score": 10, "evidence": "Score-graduated guidance: <5 → /plan-component, 5-8 → /design-revision, 8+ → /handoff-dev." }
+            "nextStepGuidance": { "score": 10, "evidence": "Score-graduated guidance: <5 → /plan-component, 5-8 → /revise, 8+ → /handoff." }
           },
           "specific": {
             "scoreCalibration": { "score": 7, "evidence": "Scoring guides produce ~3.6 weighted average. Well-calibrated. Tone creates slight inflation risk." },
@@ -417,7 +417,7 @@
   "improvements": [],
   "criticalGaps": [
     {
-      "skill": "plan-design",
+      "skill": "plan",
       "gap": "No dark theme detection from screenshots",
       "impact": "FAIL on dark-themed dashboard test case",
       "suggestedFix": "Add a step to detect theme from visual input and apply matching token mode"
@@ -435,7 +435,7 @@
       "suggestedFix": "Skip constraints question when user already stated constraints in message"
     },
     {
-      "skill": "audit-frames",
+      "skill": "audit",
       "gap": "No 'critical floor' rule in scoring",
       "impact": "Weighted average could give passing score despite multiple critical issues",
       "suggestedFix": "Add rule: 'If any dimension has a Critical finding, overall score cannot exceed 5'"
@@ -447,7 +447,7 @@
       "suggestedFix": "Change to 'Lead with the most impactful finding, whether positive or negative'"
     },
     {
-      "skill": "design-revision",
+      "skill": "revise",
       "gap": "Missing figma_get_design_system_kit fallback in data loading",
       "impact": "Warns about missing data without trying silent fallback first",
       "suggestedFix": "Add figma_get_design_system_kit attempt before warning"

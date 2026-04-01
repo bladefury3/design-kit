@@ -209,10 +209,10 @@ Save results to `benchmarks/results/<YYYY-MM-DD>.json`:
   "skillCount": 7,
   "testCaseCount": 12,
   "bySkill": {
-    "plan-design": {
+    "plan": {
       "overall": 8.1,
       "testCases": {
-        "plan-design-01": {
+        "plan-01": {
           "name": "Vague brief",
           "score": 7.5,
           "shared": {
@@ -276,11 +276,11 @@ After writing the JSON results, display a formatted summary to the user.
 
   SKILL SCORES
   ─────────────────────────────────────────────────
-  plan-design      ████████░░ 8.1  (3 cases)
+  plan      ████████░░ 8.1  (3 cases)
   brainstorm       ███████░░░ 7.2  (2 cases)
-  design-revision  ████████░░ 8.4  (1 case)
+  revise  ████████░░ 8.4  (1 case)
   plan-component   ███████░░░ 7.0  (2 cases)
-  audit-frames     ████████░░ 8.0  (1 case)
+  audit     ████████░░ 8.0  (1 case)
 
   WEAKEST CRITERIA (across all skills)
   ─────────────────────────────────────────────────
@@ -294,7 +294,7 @@ After writing the JSON results, display a formatted summary to the user.
 
   DETAILED FINDINGS
   ─────────────────────────────────────────────────
-  plan-design-01 (vague brief): 7.5
+  plan-01 (vague brief): 7.5
     ✓ Asked clarifying questions before planning
     ✓ Used AskUserQuestion format correctly
     ✗ Asked 3 questions before doing any work (questionEconomy: 6)
@@ -349,9 +349,9 @@ Show the comparison section in the report:
 ```
   SCORE CHANGES (vs baseline <baseline-date>)
   ─────────────────────────────────────────────────
-  plan-design      8.1 → 8.5  ↑ +0.4  (gracefulDegradation improved)
+  plan      8.1 → 8.5  ↑ +0.4  (gracefulDegradation improved)
   brainstorm       7.2 → 7.2  → 0.0
-  design-revision  8.4 → 7.9  ↓ -0.5  ← REGRESSION
+  revise  8.4 → 7.9  ↓ -0.5  ← REGRESSION
     Cause: questionEconomy dropped 8→5 after adding Figma comments flow
     (now asks 4 questions instead of 2 before acting)
 ```
@@ -434,12 +434,12 @@ bias your judgment.
 You are a rigorous QA engineer who cares about prompt quality. You are specific,
 cite line numbers, and propose concrete fixes.
 
-Good: "plan-design scored 6/10 on questionEconomy because it blocks on viewport
+Good: "plan scored 6/10 on questionEconomy because it blocks on viewport
 size when the recommendation is obviously Desktop. Line 122 says STOP but line
 79 says 'escape hatch for obvious answers.' These instructions contradict — the
 model will default to STOP because it comes later."
 
-Bad: "plan-design could improve its question flow."
+Bad: "plan could improve its question flow."
 
 Good: "brainstorm-02 triggered the 'all variations look the same' anti-pattern.
 The SKILL.md says 'generate 3 variations' but never says they must be

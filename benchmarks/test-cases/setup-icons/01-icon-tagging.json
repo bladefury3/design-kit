@@ -1,0 +1,51 @@
+{
+  "id": "setup-icons-01",
+  "skill": "setup-icons",
+  "name": "Ambiguous similar icons — tests tag disambiguation and search resolution",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Extract icons from this library",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "iconLibrary": {
+      "totalIcons": 48,
+      "ambiguousSet": [
+        { "name": "search-md", "description": "Medium-sized magnifying glass icon, standard search" },
+        { "name": "magnifying-glass", "description": "Magnifying glass icon, slightly different style, used for inspect/zoom" },
+        { "name": "find-icon", "description": "Binoculars-style icon, used for advanced find/filter features" }
+      ],
+      "otherAmbiguousSets": [
+        { "icons": ["close-sm", "x-mark", "dismiss"], "concept": "close/dismiss" },
+        { "icons": ["arrow-right", "chevron-right", "caret-right"], "concept": "rightward navigation" }
+      ],
+      "note": "Multiple icons map to the same concept. Downstream skills like plan need to resolve 'I need a search icon' to the RIGHT component."
+    }
+  },
+  "expectedBehaviors": [
+    "Generates unique tags for each of the three search-related icons that distinguish their use case",
+    "search-md gets tags like ['search', 'find', 'magnifying glass', 'lookup', 'query', 'search bar'] — emphasizing standard search",
+    "magnifying-glass gets tags like ['inspect', 'zoom', 'magnify', 'examine', 'magnifying glass', 'zoom in'] — emphasizing inspect/zoom",
+    "find-icon gets tags like ['find', 'filter', 'binoculars', 'advanced search', 'discover', 'explore'] — emphasizing advanced find",
+    "Tags include BOTH shared terms (so all three appear for 'search') AND unique terms (so each can be individually resolved)",
+    "Applies the same disambiguation logic to close-sm/x-mark/dismiss and arrow-right/chevron-right/caret-right",
+    "Each icon entry includes a 'primaryUse' or 'usage' field that distinguishes when to use which",
+    "Downstream resolution test: 'search icon' should rank search-md highest, 'zoom icon' should rank magnifying-glass highest"
+  ],
+  "antiPatterns": [
+    "All three search icons get identical tags ['search', 'find', 'icon'], making them indistinguishable",
+    "Tags are derived only from the icon name (splitting on hyphens) with no semantic enrichment",
+    "No usage context — tags exist but there is no guidance on WHEN to use which icon",
+    "Ignores the ambiguity entirely — treats each icon independently without cross-referencing similar ones",
+    "Tags are too generic: every icon gets ['icon', 'ui', 'interface'] as filler tags",
+    "Does not group similar icons or flag the ambiguity for downstream consumers",
+    "Only processes the three search icons and ignores the close/dismiss and arrow/chevron sets"
+  ],
+  "evaluationCriteria": {
+    "tagUniqueness": "Do the three search-related icons have overlapping BUT distinguishable tag sets?",
+    "semanticRichness": "Are tags semantically meaningful (e.g., 'zoom', 'inspect') not just name-derived (e.g., 'magnifying', 'glass')?",
+    "usageDisambiguation": "Does each icon have a usage hint that explains WHEN to use it vs its siblings?",
+    "downstreamResolution": "Can a query like 'search icon' resolve to search-md and 'zoom icon' resolve to magnifying-glass based on tags alone?",
+    "crossSetConsistency": "Is the same disambiguation logic applied to ALL ambiguous icon sets, not just the search set?",
+    "groupingAwareness": "Does the output flag or group icons that share a concept, so consumers know alternatives exist?"
+  }
+}

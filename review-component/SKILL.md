@@ -43,8 +43,8 @@ component against the 9 Component Quality Dimensions from PRINCIPLES.md. You are
 constructive — you celebrate what works, flag what needs fixing, and explain
 exactly what would make each dimension a 10.
 
-**CRITICAL DIFFERENCE from `/audit-frames`:**
-`/audit-frames` evaluates SCREENS using Nielsen's heuristics, Gestalt principles,
+**CRITICAL DIFFERENCE from `/audit`:**
+`/audit` evaluates SCREENS using Nielsen's heuristics, Gestalt principles,
 and cognitive load laws. `/review-component` evaluates individual COMPONENTS using
 component-specific quality dimensions: variant completeness, token compliance,
 prop design, naming consistency, and relationship fit. These are fundamentally
@@ -111,7 +111,7 @@ Component Design Principles for the rules referenced in each dimension.
 
    If REST API fails (404), fall back to suggesting extraction skills:
    > "I need pre-extracted design system data to review efficiently. Let me run
-   > `/extract-tokens` and `/extract-components` first. This is a one-time setup
+   > `/setup-tokens` and `/setup-components` first. This is a one-time setup
    > that speeds up all future reviews."
 
    **Without any JSONs or kit data**: You can still review using Figma's built-in
@@ -119,7 +119,7 @@ Component Design Principles for the rules referenced in each dimension.
 
    > "I don't see design system docs in this directory. I can still review the
    > component against the variables and styles defined in your Figma file. For
-   > a deeper review, run `/extract-tokens` and `/extract-components` first.
+   > a deeper review, run `/setup-tokens` and `/setup-components` first.
    >
    > Want to proceed with a Figma-native review?"
 
@@ -820,7 +820,7 @@ After applying fixes, take a new screenshot and re-score the affected dimensions
 to show improvement.
 
 **If B (plan fixes):**
-Suggest running `/design-revision` with the review findings as input. Or if the issues
+Suggest running `/revise` with the review findings as input. Or if the issues
 are fundamental (wrong variant architecture, missing atomic decomposition),
 suggest `/plan-component` to redesign the component structure.
 
@@ -830,7 +830,7 @@ Generate a summary of what needs to change:
 > 2. Increase close button target size to 44px (resize + constraint update)
 > 3. Add Loading state variant (new row in variant matrix)
 >
-> Run `/design-revision` to apply these changes, or `/plan-component` to redesign
+> Run `/revise` to apply these changes, or `/plan-component` to redesign
 > the variant structure from scratch."
 
 **If C (just the report):**
@@ -845,20 +845,20 @@ After presenting the review, suggest what to do next based on the overall score:
 
 **Score >= 8:**
 > "This component scores well. You can:
-> - Use it in `/plan-design` to include it in screen layouts
-> - Run `/handoff-dev` to generate developer documentation for it
-> - Run `/content-stress` to test it with extreme content"
+> - Use it in `/plan` to include it in screen layouts
+> - Run `/handoff` to generate developer documentation for it
+> - Run `/stress-test` to test it with extreme content"
 
 **Score 5-7.9:**
 > "This component needs some work. You can:
-> - Run `/design-revision` to apply targeted fixes from this review
+> - Run `/revise` to apply targeted fixes from this review
 > - Fix the top issues manually and re-run `/review-component` to check progress
 > - Focus on the highest-weight dimensions first (Variant Completeness and Token Compliance)"
 
 **Score < 5:**
 > "This component needs significant rework. Consider:
 > - Running `/plan-component` to redesign the variant architecture
-> - Running `/extract-components` on a well-built reference component first
+> - Running `/setup-components` on a well-built reference component first
 > - Addressing Token Compliance and Variant Completeness before anything else"
 
 

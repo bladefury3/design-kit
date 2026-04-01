@@ -1,0 +1,58 @@
+{
+  "id": "setup-relationships-01",
+  "skill": "setup-relationships",
+  "name": "Circular dependency — tests cycle detection and graceful handling",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Map the component relationships for this file",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "figmaState": {
+      "components": [
+        {
+          "name": "CardA",
+          "contains": ["HeaderBar"],
+          "description": "A card that embeds a HeaderBar for its top section"
+        },
+        {
+          "name": "HeaderBar",
+          "contains": ["UserMenu"],
+          "description": "A horizontal bar with navigation items and a UserMenu dropdown"
+        },
+        {
+          "name": "UserMenu",
+          "contains": ["CardA"],
+          "description": "A dropdown menu that renders its content inside a CardA for visual consistency"
+        },
+        {
+          "name": "Avatar",
+          "contains": [],
+          "description": "A simple image component with no children, used in UserMenu and HeaderBar"
+        }
+      ]
+    }
+  },
+  "expectedBehaviors": [
+    "Detects the circular dependency: CardA -> HeaderBar -> UserMenu -> CardA",
+    "Explicitly flags the cycle in the output (e.g., a 'cycles' or 'warnings' field)",
+    "Still produces a valid relationships.json — does not crash or hang",
+    "Lists which specific components form the cycle so the user can fix it",
+    "Correctly maps Avatar as a non-cyclic leaf component used by multiple parents",
+    "Does not silently omit any component from the output"
+  ],
+  "antiPatterns": [
+    "Infinite loop or timeout while traversing the dependency graph",
+    "Crashes with an unhandled error",
+    "Silently omits the cycle — produces output that looks correct but hides the problem",
+    "Drops one of the circular edges to 'fix' the cycle without telling the user",
+    "Only reports contains relationships and misses that Avatar is shared across components",
+    "Produces an empty or partial relationships.json"
+  ],
+  "evaluationCriteria": {
+    "cycleDetection": "Does it explicitly identify the CardA -> HeaderBar -> UserMenu -> CardA cycle?",
+    "outputValidity": "Is the output a valid relationships.json with all 4 components present?",
+    "userGuidance": "Does it tell the user which components form the cycle so they can fix their Figma structure?",
+    "nonCyclicAccuracy": "Does it correctly handle Avatar as a normal leaf component despite the cycle elsewhere?",
+    "noHang": "Does the skill complete in a reasonable time without infinite recursion?"
+  }
+}

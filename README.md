@@ -2,33 +2,50 @@
 
 AI-powered design system skills for product designers. Works with Figma through Claude Code and Cursor.
 
-Extract tokens, audit designs against heuristics, brainstorm layout variations, generate responsive
-breakpoints, stress-test with real content, and hand off to engineering — all from your terminal.
+Catalog your tokens, explore variations, audit designs, stress-test with real content,
+and hand off to engineering — all from your terminal.
 
 ## What you get
 
-**18 slash commands** that plug into your design workflow:
+**19 slash commands** organized into 4 phases:
+
+### Phase 1: Setup (one-time — catalog what you have)
 
 | Command | What it does |
 |---|---|
-| `/extract-tokens` | Pull design tokens from Figma into structured JSON |
-| `/extract-components` | Document component specs, variants, and props |
-| `/extract-relationships` | Map how components depend on each other |
-| `/extract-icons` | Catalog icons with keys, categories, and search tags |
-| `/plan-design` | Create a build plan from a brief, wireframe, or screenshot |
-| `/build-design` | Execute a plan in Figma — components, tokens, layout |
+| `/setup-tokens` | Pull design tokens from Figma into structured JSON |
+| `/setup-components` | Document component specs, variants, and props |
+| `/setup-relationships` | Map how components depend on each other |
+| `/setup-icons` | Catalog icons with keys, categories, and search tags |
+
+### Phase 2: Create (the design loop)
+
+| Command | What it does |
+|---|---|
 | `/brainstorm` | Generate 3-5 design variations using SCAMPER + Jobs-to-be-Done |
-| `/responsive-adapt` | Desktop to tablet and mobile with content choreography |
-| `/design-flow` | Design multi-screen flows (onboarding, checkout, settings) |
-| `/content-stress` | Break your design with edge-case content before users do |
-| `/audit-frames` | Nielsen's heuristics + Gestalt + cognitive load + token compliance |
-| `/diff-system` | What changed in your design system since last extraction? |
-| `/design-revision` | Apply feedback from Figma comments or direct input — classifies, prioritizes, fixes |
+| `/plan` | Create a build plan from a brief, wireframe, or screenshot |
+| `/build` | Execute a plan in Figma — components, tokens, layout |
 | `/plan-component` | Plan a new component — variants, props, tokens, anatomy |
 | `/build-component` | Build a component set in Figma from a plan |
+| `/flow` | Design multi-screen flows (onboarding, checkout, settings) |
+| `/responsive` | Desktop to tablet and mobile with content choreography |
+
+### Phase 3: Review (check and fix)
+
+| Command | What it does |
+|---|---|
+| `/audit` | Nielsen's heuristics + Gestalt + cognitive load + token compliance |
+| `/stress-test` | Break your design with edge-case content before users do |
 | `/review-component` | Score component quality across 9 dimensions |
-| `/handoff-dev` | Generate developer-ready specs with exact tokens and states |
-| `/handoff-mcp` | Optimize your Figma file for AI/MCP consumption |
+| `/revise` | Apply feedback from Figma comments or direct input |
+| `/diff` | What changed in your design system since last extraction? |
+
+### Phase 4: Handoff (ship to engineering)
+
+| Command | What it does |
+|---|---|
+| `/handoff` | Generate developer-ready specs with exact tokens and states |
+| `/handoff-ai` | Optimize your Figma file for AI/MCP consumption |
 
 ## Prerequisites
 
@@ -56,9 +73,9 @@ git clone https://github.com/nicholasgriffintn/design-kit.git
 cd design-kit && ./setup --local
 ```
 
-Skills are installed as slash commands. Type `/extract-tokens` in Claude Code to start.
+Skills are installed as slash commands. Type `/setup-tokens` in Claude Code to start.
 
-### Option B: Cursor
+### Option B: Cursor (with setup script)
 
 ```bash
 git clone https://github.com/nicholasgriffintn/design-kit.git ~/.design-kit
@@ -76,7 +93,118 @@ cd your-project
 
 Then reference skills in Cursor by asking:
 *"Follow the design-kit-brainstorm rules to explore variations"* or
-*"Use design-kit-plan-design to plan a settings page"*
+*"Use design-kit-plan to plan a settings page"*
+
+### Option C: Add to an existing Cursor project (no install script)
+
+Each skill is just a text file. You can drop them into any project and Cursor
+will pick them up automatically. No command line required beyond the initial download.
+
+**Step 1: Download design-kit into your project**
+
+Open Terminal, navigate to your project folder, and run:
+
+```bash
+git clone https://github.com/nicholasgriffintn/design-kit.git .design-kit
+```
+
+This creates a hidden `.design-kit` folder inside your project with all the skills.
+
+> **What if I don't have Terminal experience?**
+> Open Cursor, press `Ctrl+`` ` (backtick) to open the built-in terminal, paste
+> the command above, and press Enter. That's it.
+
+**Step 2: Copy the skills Cursor needs**
+
+Still in Terminal (or Cursor's built-in terminal), run:
+
+```bash
+mkdir -p .cursor/rules
+for skill in .design-kit/*/SKILL.md; do
+  name=$(basename "$(dirname "$skill")")
+  cp "$skill" ".cursor/rules/design-kit-${name}.md"
+done
+```
+
+This copies each skill into `.cursor/rules/` where Cursor automatically reads them.
+
+**Step 3: Add a `.cursorrules` file**
+
+Create a file called `.cursorrules` in your project root (not inside any folder)
+with this content:
+
+```
+When the user asks you to work with Figma, design systems, design tokens,
+components, or design workflows, follow the instructions in the
+.cursor/rules/design-kit-*.md files.
+
+Use the Figma Console MCP tools (figma_*) to interact with Figma.
+
+Available design-kit commands (reference by name):
+
+Setup (one-time — catalog your design system):
+- setup-tokens: Pull tokens from Figma
+- setup-components: Document component specs
+- setup-relationships: Map component dependencies
+- setup-icons: Catalog icon library with search tags
+
+Create (design new screens and components):
+- brainstorm: Generate design variations using SCAMPER
+- plan: Create a structured build plan
+- build: Execute a plan in Figma
+- plan-component: Plan a new component (variants, props, tokens)
+- build-component: Build a component set in Figma
+- flow: Multi-screen connected flows
+- responsive: Desktop to tablet/mobile
+
+Review (check and fix your work):
+- audit: Heuristic + token + Gestalt audit
+- stress-test: Stress-test with edge-case content
+- review-component: Score component quality (9 dimensions)
+- revise: Apply feedback from Figma comments or direct input
+- diff: Design system change detection
+
+Handoff (ship to engineering):
+- handoff: Developer handoff documentation
+- handoff-ai: Optimize file for AI/MCP
+```
+
+> **Tip:** You can create this file in Cursor — just right-click your project root
+> in the sidebar, choose "New File", name it `.cursorrules`, and paste the text above.
+
+**Step 4: Use skills in Cursor**
+
+That's it. Now just tell Cursor which skill to use in plain English:
+
+- *"Follow the design-kit-brainstorm rules to explore variations for my dashboard"*
+- *"Use design-kit-plan to plan a settings page"*
+- *"Run design-kit-audit on my current Figma selection"*
+
+Cursor reads the rules from `.cursor/rules/` and follows the skill instructions
+automatically. No slash commands needed.
+
+**Updating to the latest version**
+
+When new skills are added or existing ones improve, update by running:
+
+```bash
+cd .design-kit && git pull && cd ..
+for skill in .design-kit/*/SKILL.md; do
+  name=$(basename "$(dirname "$skill")")
+  cp "$skill" ".cursor/rules/design-kit-${name}.md"
+done
+```
+
+**Only want specific skills?**
+
+You don't have to install everything. Just copy the ones you need:
+
+```bash
+mkdir -p .cursor/rules
+cp .design-kit/plan/SKILL.md .cursor/rules/design-kit-plan.md
+cp .design-kit/build/SKILL.md .cursor/rules/design-kit-build.md
+cp .design-kit/audit/SKILL.md .cursor/rules/design-kit-audit.md
+```
 
 ### Figma Console MCP setup
 
@@ -112,13 +240,13 @@ Then open your Figma file and run the **Desktop Bridge** plugin (Plugins > Devel
 
 ## Quick start
 
-### First time: extract your design system
+### First time: catalog your design system
 
 ```
-/extract-tokens          # pulls colors, spacing, typography, radii
-/extract-components      # catalogs all components with variant keys
-/extract-relationships   # maps how components compose together
-/extract-icons           # catalogs icons with search tags
+/setup-tokens          # pulls colors, spacing, typography, radii
+/setup-components      # catalogs all components with variant keys
+/setup-relationships   # maps how components compose together
+/setup-icons           # catalogs icons with search tags
 ```
 
 This creates a `design-system/` directory with your tokens, component specs, and dependency graph.
@@ -127,39 +255,39 @@ It's a one-time step — the data is cached locally for all future commands.
 ### Design something new
 
 ```
-/plan-design             # describe what you want, or paste a screenshot
-/build-design            # executes the plan in Figma
+/plan                  # describe what you want, or paste a screenshot
+/build                 # executes the plan in Figma
 ```
 
 ### Explore variations
 
 ```
-/brainstorm              # generates 3-5 alternative layouts from your design
-/responsive-adapt        # creates tablet + mobile versions
-/design-flow             # plans a multi-screen flow (onboarding, checkout)
+/brainstorm            # generates 3-5 alternative layouts from your design
+/responsive            # creates tablet + mobile versions
+/flow                  # plans a multi-screen flow (onboarding, checkout)
 ```
 
 ### Check your work
 
 ```
-/content-stress          # injects extreme content — long names, empty states, RTL
-/audit-frames            # scores against Nielsen's 10, Gestalt, cognitive load
-/diff-system             # what changed in the design system since last extraction?
+/stress-test           # injects extreme content — long names, empty states, RTL
+/audit                 # scores against Nielsen's 10, Gestalt, cognitive load
+/diff                  # what changed in the design system since last extraction?
 ```
 
 ### Build a new component
 
 ```
-/plan-component          # plan variants, props, tokens, anatomy
-/build-component         # create the component set in Figma
-/review-component        # score quality across 9 dimensions
+/plan-component        # plan variants, props, tokens, anatomy
+/build-component       # create the component set in Figma
+/review-component      # score quality across 9 dimensions
 ```
 
 ### Iterate and ship
 
 ```
-/design-revision                # apply feedback without rebuilding from scratch
-/handoff-dev             # generate developer specs with exact tokens and states
+/revise                # apply feedback without rebuilding from scratch
+/handoff               # generate developer specs with exact tokens and states
 ```
 
 ---
@@ -167,30 +295,35 @@ It's a one-time step — the data is cached locally for all future commands.
 ## How it works
 
 ```
-Brief/screenshot ──→ /brainstorm ──→ pick a direction
-                         │
-                    /plan-design ──→ /build-design ──→ see it in Figma
-                         │                │
-                    /design-flow      /responsive-adapt
-                    (multi-screen)    (tablet + mobile)
-                         │                │
-                    /content-stress ──→ /audit-frames ──→ /design-revision
-                    (break it)        (check it)       (fix it)
-                         │
-                    /handoff-dev ──→ ship to engineering
+Phase 1: SETUP (one-time)
+  /setup-tokens → /setup-components → /setup-relationships → /setup-icons
+
+Phase 2: CREATE
+  /brainstorm ──→ pick a direction
+       │
+  /plan ──→ /build ──→ see it in Figma
+       │         │
+  /flow       /responsive
+  (multi-screen)  (tablet + mobile)
+
+Phase 3: REVIEW
+  /stress-test ──→ /audit ──→ /revise
+  (break it)      (check it)   (fix it)
+
+Phase 4: HANDOFF
+  /handoff ──→ done
 
 Need a new component?
-/plan-component ──→ /build-component ──→ /review-component
-(plan variants)    (build in Figma)    (score quality)
+  /plan-component ──→ /build-component ──→ /review-component
 ```
 
 Skills read from and write to three local directories:
 
 | Directory | What's in it | Created by |
 |---|---|---|
-| `design-system/` | Tokens, icons, component specs, relationships | `/extract-*` skills, `/build-component` |
-| `plans/` | Screen + component build plans | `/plan-design`, `/brainstorm`, `/plan-component` |
-| `reports/` | Audit, stress, diff, and review reports | `/audit-frames`, `/content-stress`, `/diff-system`, `/review-component` |
+| `design-system/` | Tokens, icons, component specs, relationships | `/setup-*` skills, `/build-component` |
+| `plans/` | Screen + component build plans | `/plan`, `/brainstorm`, `/plan-component` |
+| `reports/` | Audit, stress, diff, and review reports | `/audit`, `/stress-test`, `/diff`, `/review-component` |
 
 You don't need to extract first — most skills can read directly from Figma as a
 fallback. But extraction is faster for repeated use and lets you track changes over time.
@@ -220,12 +353,12 @@ design-kit v0.2.0
 ✓ Updated: v0.1.0 → v0.2.0
 
 What's new:
-  + new  /design-review
-  ~ updated  /audit-frames
+  + new  /responsive
+  ~ updated  /audit
   ~ updated  /brainstorm
   ~ updated  PRINCIPLES.md
 
-→ Installing 15 skills...
+→ Installing 19 skills...
 ```
 
 ### Automatic updates (optional)
@@ -299,24 +432,24 @@ design-kit/
 ├── plans/                   # Build plans (generated)
 │   └── components/          #   Component plans (from plan-component)
 ├── reports/                 # Audit/stress/diff/review reports (generated)
-├── extract-tokens/          # Skills (each contains a SKILL.md)
-├── extract-components/
-├── extract-relationships/
-├── extract-icons/
-├── plan-design/
-├── build-design/
+├── setup-tokens/            # Skills (each contains a SKILL.md)
+├── setup-components/
+├── setup-relationships/
+├── setup-icons/
+├── plan/
+├── build/
 ├── brainstorm/
-├── responsive-adapt/
-├── design-flow/
-├── content-stress/
-├── audit-frames/
-├── diff-system/
-├── revision/
+├── responsive/
+├── flow/
+├── stress-test/
+├── audit/
+├── diff/
+├── revise/
 ├── plan-component/
 ├── build-component/
 ├── review-component/
-├── handoff-dev/
-├── handoff-mcp/
+├── handoff/
+├── handoff-ai/
 ├── setup                    # Installation script
 ├── CLAUDE.md                # Project instructions for Claude
 ├── PRINCIPLES.md            # Shared design frameworks

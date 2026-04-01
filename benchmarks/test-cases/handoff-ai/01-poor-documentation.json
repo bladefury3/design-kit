@@ -1,0 +1,86 @@
+{
+  "id": "handoff-ai-01",
+  "skill": "handoff-ai",
+  "name": "Poor documentation coverage — tests gap assessment and prioritization",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Optimize this file for MCP consumption",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "figmaState": {
+      "components": {
+        "total": 24,
+        "withDescriptions": 8,
+        "withoutDescriptions": 16,
+        "examples": {
+          "documented": [
+            { "name": "Button", "description": "Primary action trigger. Variants: primary, secondary, ghost. Sizes: sm, md, lg." },
+            { "name": "Input", "description": "Text input field with label, placeholder, helper text, and error state." }
+          ],
+          "undocumented": [
+            { "name": "Card", "description": "" },
+            { "name": "Badge", "description": "" },
+            { "name": "Tooltip", "description": "" },
+            { "name": "Modal", "description": "" },
+            { "name": "Sidebar", "description": "" },
+            { "name": "DataTable", "description": "" }
+          ]
+        }
+      },
+      "variables": {
+        "total": 120,
+        "withDescriptions": 12,
+        "withoutDescriptions": 108,
+        "examples": {
+          "documented": [
+            { "name": "color/primary/500", "description": "Main brand color, used for primary buttons and links" }
+          ],
+          "undocumented": [
+            { "name": "color/primary/100", "description": "" },
+            { "name": "color/neutral/700", "description": "" },
+            { "name": "spacing/4", "description": "" },
+            { "name": "radius/md", "description": "" }
+          ]
+        }
+      },
+      "layerNaming": {
+        "totalLayers": 400,
+        "meaningfulNames": 100,
+        "defaultNames": 300,
+        "examples": {
+          "meaningful": ["Header Nav", "User Avatar", "Search Input Container"],
+          "defaults": ["Frame 47", "Group 12", "Rectangle 89", "Frame 103", "Group 7", "Frame 22"]
+        }
+      }
+    }
+  },
+  "expectedBehaviors": [
+    "Reports exact coverage numbers: 33% component descriptions (8/24), 10% variable descriptions (12/120), 25% meaningful layer names (100/400)",
+    "Prioritizes component descriptions first — highest impact for MCP tool consumption (search, instantiation)",
+    "Prioritizes layer naming second — affects MCP node traversal and selection accuracy",
+    "Prioritizes variable descriptions third — least impact since variable names are often self-documenting",
+    "Provides structured templates for missing component descriptions (not just 'add a description')",
+    "Lists the 16 undocumented components by name so the user knows exactly what to fix",
+    "Estimates effort: e.g., '~30 minutes to document all 16 components with templates'",
+    "Explains WHY each gap matters for MCP specifically (not generic 'documentation is important')"
+  ],
+  "antiPatterns": [
+    "Reports vague 'documentation needs improvement' without specific coverage percentages",
+    "Treats all gaps as equally important instead of prioritizing by MCP impact",
+    "Says 'add descriptions to components' without providing templates or examples",
+    "Only addresses component descriptions and ignores layer naming and variable descriptions",
+    "Reports percentages but does not list which specific components/variables are missing descriptions",
+    "Suggests renaming all 300 default-named layers manually without a strategy (e.g., rename by component boundary)",
+    "Does not explain the MCP-specific impact of each documentation gap",
+    "Overwrites the 8 existing good descriptions while 'fixing' documentation"
+  ],
+  "evaluationCriteria": {
+    "coverageAccuracy": "Does it report 33%, 10%, and 25% (or equivalent fractions) for the three documentation categories?",
+    "prioritization": "Does it rank component descriptions > layer naming > variable descriptions by MCP impact?",
+    "actionability": "Does it provide templates or examples for the missing descriptions, not just 'add descriptions'?",
+    "specificity": "Does it list the 16 undocumented components by name?",
+    "mcpAwareness": "Does it explain how each gap specifically affects MCP tool behavior (search, instantiation, traversal)?",
+    "preserveExisting": "Does it avoid overwriting or degrading the 8 components that already have good descriptions?",
+    "effortEstimate": "Does it give the user a realistic sense of how much work the fixes require?"
+  }
+}
