@@ -178,7 +178,7 @@ cp .design-kit/audit/SKILL.md .cursor/skills/audit/SKILL.md
 
 ### Figma Console MCP setup
 
-Both Claude Code and Cursor need the Figma Console MCP server to talk to Figma.
+Both Claude Code and Cursor need the [Figma Console MCP](https://github.com/nicholasgriffintn/figma-console-mcp) server to talk to Figma. See the [full setup guide](https://github.com/nicholasgriffintn/figma-console-mcp#readme) for details and troubleshooting.
 
 **Claude Code** — add to `~/.claude/settings.json`:
 ```json
