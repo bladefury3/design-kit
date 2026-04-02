@@ -1,3 +1,10 @@
+# Generated output (recreated by running skills)
+design-system/
+plans/
+reports/
+benchmarks/results/
+
+# Editor / OS
 .claude/
 node_modules/
 .DS_Store
