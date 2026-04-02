@@ -47,6 +47,10 @@ and hand off to engineering — all from your terminal.
 | `/handoff` | Generate developer-ready specs with exact tokens and states |
 | `/handoff-ai` | Optimize your Figma file for AI/MCP consumption |
 
+## Workshop deck (designers)
+
+A **browser slide deck** walks through setup, workflow, commands, and pitfalls: open [docs/presentations/designers-guide.html](docs/presentations/designers-guide.html). Use arrow keys or the on-screen controls to navigate. Presenter notes and **15 / 30 / 45 minute** trims are in [docs/presentations/README.md](docs/presentations/README.md); design-review notes are in [docs/presentations/designers-guide-notes.md](docs/presentations/designers-guide-notes.md).
+
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Cursor](https://cursor.com)
@@ -82,7 +86,8 @@ git clone https://github.com/nicholasgriffintn/design-kit.git ~/.design-kit
 cd ~/.design-kit && ./setup --cursor=/path/to/your/project
 ```
 
-This copies all skills to `.cursor/rules/` and creates a `.cursorrules` file automatically.
+This installs skills to `.cursor/skills/` — Cursor auto-discovers them and you
+can invoke them with `/skill-name`, same as Claude Code.
 
 To install into the current directory instead:
 
@@ -91,18 +96,18 @@ cd your-project
 ~/.design-kit/setup --cursor
 ```
 
-Then reference skills in Cursor by asking:
-*"Follow the design-kit-brainstorm rules to explore variations"* or
-*"Use design-kit-plan to plan a settings page"*
+Then type `/brainstorm`, `/plan`, `/audit`, etc. directly in Cursor's chat.
 
 ### Option C: Add to an existing Cursor project (no install script)
 
-Each skill is just a text file. You can drop them into any project and Cursor
-will pick them up automatically. No command line required beyond the initial download.
+Each skill is just a text file in a folder. Drop them into `.cursor/skills/`
+and Cursor discovers them automatically — you get `/slash-commands` just like
+Claude Code. No install script needed.
 
 **Step 1: Download design-kit into your project**
 
-Open Terminal, navigate to your project folder, and run:
+Open Terminal (or press `` Ctrl+` `` in Cursor to use the built-in terminal),
+navigate to your project folder, and run:
 
 ```bash
 git clone https://github.com/nicholasgriffintn/design-kit.git .design-kit
@@ -110,100 +115,65 @@ git clone https://github.com/nicholasgriffintn/design-kit.git .design-kit
 
 This creates a hidden `.design-kit` folder inside your project with all the skills.
 
-> **What if I don't have Terminal experience?**
-> Open Cursor, press `Ctrl+`` ` (backtick) to open the built-in terminal, paste
-> the command above, and press Enter. That's it.
-
-**Step 2: Copy the skills Cursor needs**
-
-Still in Terminal (or Cursor's built-in terminal), run:
+**Step 2: Copy skills into Cursor's skills directory**
 
 ```bash
-mkdir -p .cursor/rules
 for skill in .design-kit/*/SKILL.md; do
   name=$(basename "$(dirname "$skill")")
-  cp "$skill" ".cursor/rules/design-kit-${name}.md"
+  mkdir -p ".cursor/skills/$name"
+  cp "$skill" ".cursor/skills/$name/SKILL.md"
 done
 ```
 
-This copies each skill into `.cursor/rules/` where Cursor automatically reads them.
-
-**Step 3: Add a `.cursorrules` file**
-
-Create a file called `.cursorrules` in your project root (not inside any folder)
-with this content:
+This creates the structure Cursor expects:
 
 ```
-When the user asks you to work with Figma, design systems, design tokens,
-components, or design workflows, follow the instructions in the
-.cursor/rules/design-kit-*.md files.
-
-Use the Figma Console MCP tools (figma_*) to interact with Figma.
-
-Available design-kit commands (reference by name):
-
-Setup (one-time — catalog your design system):
-- setup-tokens: Pull tokens from Figma
-- setup-components: Document component specs
-- setup-relationships: Map component dependencies
-- setup-icons: Catalog icon library with search tags
-
-Create (design new screens and components):
-- brainstorm: Generate design variations using SCAMPER
-- plan: Create a structured build plan
-- build: Execute a plan in Figma
-- plan-component: Plan a new component (variants, props, tokens)
-- build-component: Build a component set in Figma
-- flow: Multi-screen connected flows
-- responsive: Desktop to tablet/mobile
-
-Review (check and fix your work):
-- audit: Heuristic + token + Gestalt audit
-- stress-test: Stress-test with edge-case content
-- review-component: Score component quality (9 dimensions)
-- revise: Apply feedback from Figma comments or direct input
-- diff: Design system change detection
-
-Handoff (ship to engineering):
-- handoff: Developer handoff documentation
-- handoff-ai: Optimize file for AI/MCP
+.cursor/skills/
+├── plan/
+│   └── SKILL.md
+├── build/
+│   └── SKILL.md
+├── audit/
+│   └── SKILL.md
+├── brainstorm/
+│   └── SKILL.md
+└── ... (19 skills total)
 ```
 
-> **Tip:** You can create this file in Cursor — just right-click your project root
-> in the sidebar, choose "New File", name it `.cursorrules`, and paste the text above.
+**Step 3: Use skills in Cursor**
 
-**Step 4: Use skills in Cursor**
+That's it. Type `/` in Cursor's chat to see the available skills, or invoke
+them directly:
 
-That's it. Now just tell Cursor which skill to use in plain English:
+- `/brainstorm` — explore design variations
+- `/plan` — create a build plan from a brief or screenshot
+- `/build` — execute a plan in Figma
+- `/audit` — check your design against heuristics
 
-- *"Follow the design-kit-brainstorm rules to explore variations for my dashboard"*
-- *"Use design-kit-plan to plan a settings page"*
-- *"Run design-kit-audit on my current Figma selection"*
-
-Cursor reads the rules from `.cursor/rules/` and follows the skill instructions
-automatically. No slash commands needed.
+Same slash commands, same behavior as Claude Code.
 
 **Updating to the latest version**
 
-When new skills are added or existing ones improve, update by running:
+When new skills are added or existing ones improve:
 
 ```bash
 cd .design-kit && git pull && cd ..
 for skill in .design-kit/*/SKILL.md; do
   name=$(basename "$(dirname "$skill")")
-  cp "$skill" ".cursor/rules/design-kit-${name}.md"
+  mkdir -p ".cursor/skills/$name"
+  cp "$skill" ".cursor/skills/$name/SKILL.md"
 done
 ```
 
 **Only want specific skills?**
 
-You don't have to install everything. Just copy the ones you need:
+Copy just the ones you need:
 
 ```bash
-mkdir -p .cursor/rules
-cp .design-kit/plan/SKILL.md .cursor/rules/design-kit-plan.md
-cp .design-kit/build/SKILL.md .cursor/rules/design-kit-build.md
-cp .design-kit/audit/SKILL.md .cursor/rules/design-kit-audit.md
+mkdir -p .cursor/skills/plan .cursor/skills/build .cursor/skills/audit
+cp .design-kit/plan/SKILL.md .cursor/skills/plan/SKILL.md
+cp .design-kit/build/SKILL.md .cursor/skills/build/SKILL.md
+cp .design-kit/audit/SKILL.md .cursor/skills/audit/SKILL.md
 ```
 
 ### Figma Console MCP setup
@@ -465,7 +435,7 @@ design-kit/
 cd ~/.design-kit && ./setup --uninstall
 ```
 
-For Cursor, delete the `.cursor/rules/design-kit-*.md` files.
+For Cursor, delete the `.cursor/skills/` directories that were installed.
 
 ---
 

@@ -53,8 +53,8 @@ for arg in "$@"; do
       echo ""
       echo "Options:"
       echo "  --local         Install to .claude/commands/ in current directory"
-      echo "  --cursor        Install to .cursor/rules/ in current directory"
-      echo "  --cursor=/path  Install to a specific project's .cursor/rules/"
+      echo "  --cursor        Install to .cursor/skills/ in current directory"
+      echo "  --cursor=/path  Install to a specific project's .cursor/skills/"
       echo "  --update        Pull latest version from git, then reinstall"
       echo "  --uninstall     Remove installed skills"
       echo "  -h, --help      Show this help"
@@ -62,7 +62,7 @@ for arg in "$@"; do
       echo "Examples:"
       echo "  ./setup                          # Global install for Claude Code"
       echo "  ./setup --local                  # Project-local Claude Code install"
-      echo "  ./setup --cursor                 # Install as Cursor rules (current dir)"
+      echo "  ./setup --cursor                 # Install as Cursor skills (current dir)"
       echo "  ./setup --cursor=/path/to/proj   # Install to another project's Cursor"
       echo "  ./setup --update                 # Pull latest + reinstall everywhere"
       echo "  ./setup --update --cursor        # Pull latest + reinstall for Cursor too"
@@ -180,20 +180,17 @@ fi
 # ─── Determine install path ─────────────────────────────────────────────
 if [ "$CURSOR" = true ]; then
   if [ -n "$CURSOR_DIR" ]; then
-    INSTALL_DIR="${CURSOR_DIR}/.cursor/rules"
+    INSTALL_DIR="${CURSOR_DIR}/.cursor/skills"
   else
-    INSTALL_DIR="$(pwd)/.cursor/rules"
+    INSTALL_DIR="$(pwd)/.cursor/skills"
   fi
-  INSTALL_PREFIX="design-kit-"
-  INSTALL_SUFFIX=".md"
+  INSTALL_MODE="cursor"
 elif [ "$LOCAL" = true ]; then
   INSTALL_DIR="$(pwd)/.claude/commands"
-  INSTALL_PREFIX=""
-  INSTALL_SUFFIX=".md"
+  INSTALL_MODE="claude"
 else
   INSTALL_DIR="$HOME/.claude/commands"
-  INSTALL_PREFIX=""
-  INSTALL_SUFFIX=".md"
+  INSTALL_MODE="claude"
 fi
 
 # ─── Uninstall ───────────────────────────────────────────────────────────
@@ -201,23 +198,32 @@ if [ "$UNINSTALL" = true ]; then
   header
   removed=false
 
-  if [ "$CURSOR" = true ]; then
-    # Remove Cursor rule files
+  if [ "$INSTALL_MODE" = "cursor" ]; then
+    # Remove Cursor skill directories
     for dir in "$SCRIPT_DIR"/*/; do
       if [ -f "$dir/SKILL.md" ]; then
         skill_name="$(basename "$dir")"
-        target="$INSTALL_DIR/${INSTALL_PREFIX}${skill_name}${INSTALL_SUFFIX}"
-        if [ -f "$target" ]; then
-          rm "$target"
+        target="$INSTALL_DIR/$skill_name"
+        if [ -d "$target" ]; then
+          rm -rf "$target"
           ok "Removed $target"
           removed=true
         fi
       fi
     done
-    # Remove .cursorrules entry hint
-    if [ -f "$(dirname "$INSTALL_DIR")/.cursorrules" ]; then
-      dim "Note: check .cursorrules for any design-kit references to remove"
-    fi
+    # Clean up legacy .cursor/rules/ installs
+    LEGACY_RULES="$(dirname "$INSTALL_DIR")/rules"
+    for dir in "$SCRIPT_DIR"/*/; do
+      if [ -f "$dir/SKILL.md" ]; then
+        skill_name="$(basename "$dir")"
+        legacy_file="$LEGACY_RULES/design-kit-${skill_name}.md"
+        if [ -f "$legacy_file" ]; then
+          rm "$legacy_file"
+          ok "Removed legacy rule $legacy_file"
+          removed=true
+        fi
+      fi
+    done
   else
     # Remove Claude Code command files
     for dir in "$SCRIPT_DIR"/*/; do
@@ -230,13 +236,6 @@ if [ "$UNINSTALL" = true ]; then
         fi
       fi
     done
-    # Also clean up old skills/ location if it exists
-    OLD_DIR="$(dirname "$INSTALL_DIR")/skills/design-kit"
-    if [ -d "$OLD_DIR" ]; then
-      rm -rf "$OLD_DIR"
-      ok "Removed legacy $OLD_DIR"
-      removed=true
-    fi
   fi
 
   if [ "$removed" = false ]; then
@@ -274,7 +273,15 @@ UPDATED_COUNT=0
 
 for skill in "${SKILLS[@]}"; do
   skill_src="$SCRIPT_DIR/$skill/SKILL.md"
-  skill_dst="$INSTALL_DIR/${INSTALL_PREFIX}${skill}${INSTALL_SUFFIX}"
+
+  if [ "$INSTALL_MODE" = "cursor" ]; then
+    # Cursor: each skill is a directory with SKILL.md inside
+    skill_dst="$INSTALL_DIR/$skill/SKILL.md"
+    mkdir -p "$INSTALL_DIR/$skill"
+  else
+    # Claude Code: flat files named <skill>.md
+    skill_dst="$INSTALL_DIR/${skill}.md"
+  fi
 
   if [ -f "$skill_dst" ]; then
     # Check if actually changed
@@ -301,59 +308,16 @@ done
 echo ""
 
 # Summary
-if [ "$CURSOR" = true ]; then
+if [ "$INSTALL_MODE" = "cursor" ]; then
   ok "Installed to ${BOLD}${INSTALL_DIR}${RESET}"
   echo ""
-
-  # Write a .cursorrules hint if it doesn't exist
-  CURSORRULES_DIR="$(dirname "$INSTALL_DIR")"
-  CURSORRULES_FILE="${CURSORRULES_DIR}/.cursorrules"
-  if [ ! -f "$CURSORRULES_FILE" ]; then
-    cat > "$CURSORRULES_FILE" << 'RULES'
-When the user asks you to work with Figma, design systems, design tokens,
-components, or design workflows, follow the instructions in the
-.cursor/rules/design-kit-*.md files.
-
-Use the Figma Console MCP tools (figma_*) to interact with Figma.
-
-Available design-kit commands (reference by name):
-
-Setup (one-time):
-- setup-tokens: Pull tokens from Figma
-- setup-components: Document component specs
-- setup-relationships: Map component dependencies
-- setup-icons: Catalog icon library with search tags
-
-Create:
-- brainstorm: Generate design variations using SCAMPER
-- plan: Create a structured build plan
-- build: Execute a plan in Figma
-- plan-component: Plan a new component (variants, props, tokens)
-- build-component: Build a component set in Figma
-- flow: Multi-screen connected flows
-- responsive: Desktop to tablet/mobile
-
-Review:
-- audit: Heuristic + token + Gestalt audit
-- stress-test: Stress-test with edge-case content
-- review-component: Score component quality (9 dimensions)
-- revise: Apply feedback from Figma comments or direct input
-- diff: Design system change detection
-
-Handoff:
-- handoff: Developer handoff documentation
-- handoff-ai: Optimize file for AI/MCP
-RULES
-    ok "Created ${BOLD}.cursorrules${RESET} with design-kit references"
-  fi
-
   echo -e "${BOLD}Quick start:${RESET}"
   echo ""
-  echo "  In Cursor, ask:"
+  echo "  Open a Figma file, then in Cursor type:"
   echo ""
-  echo -e "    ${BLUE}\"Follow the design-kit-brainstorm rules to explore variations\"${RESET}"
-  echo -e "    ${BLUE}\"Use design-kit-plan to plan a settings page\"${RESET}"
-  echo -e "    ${BLUE}\"Run design-kit-audit on my current selection\"${RESET}"
+  for skill in "${SKILLS[@]}"; do
+    echo -e "    ${BLUE}/${skill}${RESET}"
+  done
 else
   ok "Installed to ${BOLD}${INSTALL_DIR}${RESET}"
   echo ""
