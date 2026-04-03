@@ -89,19 +89,41 @@ Step 4:  You're ready. Try any skill below.
 
 ### What can I do?
 
+**Setup (one-time)**
+
+| I want to... | Run this | What happens |
+|---|---|---|
+| **Catalog my design tokens** | `/setup-tokens` | Reads colors, spacing, radii, typography from Figma → `design-system/tokens.json` |
+| **Catalog my components** | `/setup-components` | Reads every component with variant keys, props, overrides → `design-system/components/` |
+| **Map component relationships** | `/setup-relationships` | Builds dependency graph → `design-system/relationships.json` |
+| **Catalog icons** | `/setup-icons` | Maps icon names to keys with search tags → `design-system/icons.json` |
+
+**Create**
+
 | I want to... | Run this | What happens |
 |---|---|---|
 | **Design a new screen** | `/plan` then `/build` | Describe the screen → get a plan → build it in Figma with library components |
-| **Design a multi-screen flow** | `/flow` | Describe the user journey → get connected screens with annotations |
+| **Design a multi-screen flow** | `/flow` | Describe the user journey → get connected screens with flow annotations |
 | **Explore design variations** | `/brainstorm` | Get 3-5 layout variations using SCAMPER + Jobs-to-be-Done |
 | **Create a new component** | `/plan-component` then `/build-component` | Define variants, props, tokens → build as a component set |
-| **Check my design quality** | `/audit` | Score against heuristics, Gestalt, cognitive load, token compliance |
+| **Generate responsive variants** | `/responsive` | Convert a desktop design to tablet + mobile breakpoints |
+
+**Review**
+
+| I want to... | Run this | What happens |
+|---|---|---|
+| **Check my design quality** | `/audit` | Score against Nielsen heuristics, Gestalt, cognitive load, token compliance |
 | **Break-test with extreme content** | `/stress-test` | Inject long names, huge numbers, empty states to find what breaks |
 | **Review a component** | `/review-component` | Score 9 quality dimensions: variants, tokens, accessibility, naming |
-| **Generate responsive variants** | `/responsive` | Convert a desktop design to tablet + mobile breakpoints |
-| **Prepare for dev handoff** | `/handoff` | Add token specs, interaction states, and implementation notes |
 | **Fix issues from review** | `/revise` | Apply targeted fixes without rebuilding from scratch |
 | **Track design system changes** | `/diff` | Compare current Figma state against your last extraction |
+
+**Handoff**
+
+| I want to... | Run this | What happens |
+|---|---|---|
+| **Prepare for dev handoff** | `/handoff` | Add token specs, interaction states, and implementation notes to Figma |
+| **Optimize for AI tools** | `/handoff-ai` | Enrich descriptions, standardize naming for MCP/AI consumption |
 
 ### Common workflows
 
@@ -115,13 +137,22 @@ Step 4:  You're ready. Try any skill below.
 → check quality, get a score
 ```
 
+**"I need a user flow from signup to dashboard"**
+```
+/flow user signs up, verifies email, completes onboarding, lands on dashboard
+→ review the flow map → approve
+→ 5 connected screens built in Figma with flow annotations
+/stress-test
+→ test each screen with extreme content
+```
+
 **"I need a new Toast component"**
 ```
 /plan-component toast notification with success, error, warning types
 → duplicate check runs automatically
 → review variant matrix → approve
 /build-component
-→ component set appears in Figma
+→ component set appears in Figma with all variants
 /review-component
 → 9-dimension quality score
 ```
@@ -130,7 +161,13 @@ Step 4:  You're ready. Try any skill below.
 ```
 /audit                    → design system compliance check
 /stress-test              → content edge cases
-/handoff                  → developer specs
+/handoff                  → developer specs with token names and states
+```
+
+**"I just want to check what I have"**
+```
+/diff                     → what changed since last extraction
+/review-component         → how good is this component
 ```
 
 ### Tips
@@ -140,14 +177,34 @@ Step 4:  You're ready. Try any skill below.
   makes everything faster and more accurate.
 - **Skills ask before acting.** You'll get options (A/B/C) at each decision
   point. No surprises.
+- **Duplicate detection is automatic.** When you run `/plan-component`, it
+  searches your library for existing components that might already do the job.
+  It won't let you create duplicates.
 - **Findings go to Figma comments.** Audit results, stress test failures, and
   review scores are posted as comments on your Figma frames — not buried in
   JSON files.
 - **Everything is token-bound.** Skills use your design system tokens for
   every color, spacing, and radius. No hardcoded values.
-- **Button icons are auto-disabled.** When building with Untitled UI PRO,
-  `typicalOverrides` from the component index automatically disables default
-  icon placeholders on buttons and inputs.
+- **Component defaults are smart.** After running `/setup-components`, the
+  component index includes `typicalOverrides` — boolean properties that get
+  automatically disabled when building (e.g., icon placeholders on buttons,
+  hint text on inputs).
+- **You can skip `/plan-component` for simple components.** Describe what you
+  want directly to `/build-component` if you know the structure. The plan step
+  is most valuable for complex components where duplicate detection and variant
+  architecture matter.
+
+### Troubleshooting
+
+| Problem | Fix |
+|---|---|
+| "Figma is not connected" | Open Figma Desktop → Plugins → Development → Figma Desktop Bridge → Run |
+| Skills not found as `/commands` | Run `./setup` from the design-kit directory. Restart Claude Code. |
+| Token binding fails silently | Run `/setup-tokens` to refresh — keys may be stale from a library update |
+| Component search returns nothing | Run `/setup-components` — the component index may not exist yet |
+| Build uses wrong variant (Mobile, Banner) | The component index needs `recommendedDesktopKey`. Re-run `/setup-components`. |
+| Buttons show circle icon placeholders | The component index needs `typicalOverrides`. Re-run `/setup-components`. |
+| Arrange destroys my component | Known issue with `figma_arrange_component_set`. Build props/description AFTER arranging, not before. |
 
 ## Skill Phases
 
@@ -175,6 +232,12 @@ Phase 4: HANDOFF (ship to engineering)
 Need a new component?
   /plan-component ──→ /build-component ──→ /review-component
 ```
+
+---
+
+## For Skill Developers
+
+Everything below is for people writing or modifying skills, not for designers using them.
 
 ## Skill format
 
