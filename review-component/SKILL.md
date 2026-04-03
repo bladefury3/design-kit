@@ -3,8 +3,8 @@ name: review-component
 description: |
   Review an existing or new component for quality. Scores 9 dimensions including
   variant completeness, token compliance, accessibility, naming consistency, and
-  relationship fit. Outputs a scored report to reports/. Use after build-component
-  or on any existing component.
+  relationship fit. Presents findings inline and posts as Figma comments.
+  Use after build-component or on any existing component.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_selection

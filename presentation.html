@@ -475,14 +475,6 @@ function showSlide(i) {
   });
   counter.textContent = `${i + 1} / ${slides.length}`;
 
-  // Animate score bars on slide 10
-  if (i === 9) {
-    setTimeout(() => {
-      document.querySelectorAll('.score-fill').forEach(f => {
-        f.style.width = f.style.width; // trigger reflow
-      });
-    }, 100);
-  }
 }
 
 function go(delta) {

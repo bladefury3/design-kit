@@ -403,7 +403,7 @@ design-kit/
 │   └── relationships.json   #   Component dependency graph
 ├── plans/                   # Build plans (generated)
 │   └── components/          #   Component plans (from plan-component)
-├── reports/                 # Audit/stress/diff/review reports (generated)
+├── reports/                 # (deprecated — findings go to Figma comments)
 ├── setup-tokens/            # Skills (each contains a SKILL.md)
 ├── setup-components/
 ├── setup-relationships/
