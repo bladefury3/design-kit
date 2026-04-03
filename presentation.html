@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Kit — Designer Guide</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111114;
+    --surface2: #18181b;
+    --border: #27272a;
+    --text: #e4e4e7;
+    --text2: #a1a1aa;
+    --text3: #71717a;
+    --text4: #52525b;
+    --brand: #818cf8;
+    --brand2: #6366f1;
+    --green: #4ade80;
+    --amber: #fbbf24;
+    --red: #f87171;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow: hidden;
+    height: 100vh;
+  }
+
+  /* Navigation */
+  .nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px 16px;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+  .nav button {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 6px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+  .nav button:hover { background: var(--surface2); color: var(--text); }
+  .nav button.active { background: var(--brand2); color: white; border-color: var(--brand); }
+  .nav .counter { font-size: 12px; color: var(--text4); font-variant-numeric: tabular-nums; min-width: 60px; text-align: center; }
+
+  /* Slide container */
+  .slides { height: 100vh; width: 100vw; position: relative; }
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.4s, transform 0.4s;
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+  }
+
+  /* Typography */
+  .slide h1 { font-size: 56px; font-weight: 700; letter-spacing: -1.5px; line-height: 1.1; margin-bottom: 16px; text-align: center; }
+  .slide h2 { font-size: 36px; font-weight: 700; letter-spacing: -0.8px; line-height: 1.2; margin-bottom: 12px; }
+  .slide h3 { font-size: 20px; font-weight: 600; color: var(--text2); margin-bottom: 24px; }
+  .slide p { font-size: 20px; color: var(--text2); max-width: 700px; text-align: center; line-height: 1.7; }
+  .slide .subtitle { font-size: 14px; color: var(--brand); font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 16px; }
+
+  /* Gradient text */
+  .grad { background: linear-gradient(135deg, var(--brand), #c084fc, var(--text)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  /* Cards */
+  .card-grid { display: grid; gap: 16px; margin-top: 32px; width: 100%; max-width: 1100px; }
+  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--text4); }
+  .card .card-icon { font-size: 28px; margin-bottom: 12px; }
+  .card .card-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .card .card-desc { font-size: 13px; color: var(--text3); line-height: 1.5; }
+  .card .card-cmd { font-size: 13px; color: var(--brand); font-family: 'SF Mono', monospace; margin-top: 8px; }
+
+  /* Phase indicator */
+  .phase-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  .phase-setup { background: #172554; color: #60a5fa; }
+  .phase-create { background: #052e16; color: #4ade80; }
+  .phase-review { background: #422006; color: #fbbf24; }
+  .phase-handoff { background: #3b0764; color: #c084fc; }
+
+  /* Flow diagram */
+  .flow { display: flex; align-items: center; gap: 12px; margin-top: 32px; flex-wrap: wrap; justify-content: center; }
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .flow-step.highlight { border-color: var(--brand); color: var(--brand); }
+  .flow-arrow { color: var(--text4); font-size: 18px; }
+
+  /* Code block */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 32px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text2);
+    margin-top: 24px;
+    max-width: 700px;
+    width: 100%;
+    text-align: left;
+  }
+  .code-block .cmd { color: var(--brand); }
+  .code-block .comment { color: var(--text4); }
+  .code-block .result { color: var(--green); }
+
+  /* Score bars */
+  .score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; width: 100%; max-width: 600px; }
+  .score-label { width: 180px; font-size: 14px; color: var(--text2); text-align: right; flex-shrink: 0; }
+  .score-track { flex: 1; height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 5px; transition: width 0.8s ease; }
+  .score-value { width: 40px; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  /* Table */
+  .info-table { width: 100%; max-width: 900px; margin-top: 24px; border-collapse: collapse; }
+  .info-table th { text-align: left; font-size: 12px; font-weight: 600; color: var(--text4); text-transform: uppercase; letter-spacing: 0.5px; padding: 8px 16px; border-bottom: 1px solid var(--border); }
+  .info-table td { font-size: 14px; padding: 12px 16px; border-bottom: 1px solid var(--surface2); vertical-align: top; }
+  .info-table td:first-child { font-weight: 500; color: var(--text); }
+  .info-table td:nth-child(2) { color: var(--brand); font-family: 'SF Mono', monospace; font-size: 13px; }
+  .info-table td:last-child { color: var(--text3); }
+
+  /* Big number */
+  .big-num { font-size: 72px; font-weight: 700; line-height: 1; }
+  .big-num-row { display: flex; gap: 60px; margin-top: 32px; text-align: center; }
+  .big-num-item .big-num-label { font-size: 13px; color: var(--text4); text-transform: uppercase; letter-spacing: 1px; margin-top: 8px; }
+
+  /* Two-column layout */
+  .two-col { display: flex; gap: 48px; width: 100%; max-width: 1100px; align-items: flex-start; margin-top: 24px; }
+  .two-col .col { flex: 1; }
+  .two-col .col h3 { font-size: 16px; color: var(--text); margin-bottom: 16px; }
+  .two-col .col ul { list-style: none; }
+  .two-col .col li { font-size: 14px; color: var(--text2); padding: 6px 0; border-bottom: 1px solid var(--surface2); }
+  .two-col .col li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 10px; vertical-align: middle; }
+  .col-green li::before { background: var(--green); }
+  .col-amber li::before { background: var(--amber); }
+
+  /* Keyboard hint */
+  .key-hint {
+    position: fixed;
+    top: 20px;
+    right: 24px;
+    font-size: 12px;
+    color: var(--text4);
+    z-index: 100;
+  }
+  kbd { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-size: 11px; font-family: inherit; }
+</style>
+</head>
+<body>
+
+<div class="key-hint"><kbd>&larr;</kbd> <kbd>&rarr;</kbd> to navigate</div>
+
+<div class="nav">
+  <button onclick="go(-1)">&larr; Prev</button>
+  <span class="counter" id="counter">1 / 12</span>
+  <button onclick="go(1)">Next &rarr;</button>
+</div>
+
+<div class="slides" id="slides">
+
+  <!-- Slide 1: Title -->
+  <div class="slide active">
+    <div class="subtitle">Design Kit</div>
+    <h1>Design system skills<br>for <span class="grad">Claude Code</span></h1>
+    <p>19 slash commands that talk directly to your Figma file.<br>Describe what you want. See it built.</p>
+    <div class="big-num-row">
+      <div class="big-num-item"><div class="big-num grad">19</div><div class="big-num-label">Skills</div></div>
+      <div class="big-num-item"><div class="big-num grad">4</div><div class="big-num-label">Phases</div></div>
+      <div class="big-num-item"><div class="big-num grad">0</div><div class="big-num-label">Code required</div></div>
+    </div>
+  </div>
+
+  <!-- Slide 2: How it works -->
+  <div class="slide">
+    <div class="subtitle">How it works</div>
+    <h2>You describe. It builds.</h2>
+    <p>Type a slash command in Claude Code. Describe what you want in plain English. The skill talks to Figma through the MCP bridge and builds it — with your library components and tokens.</p>
+    <div class="flow">
+      <div class="flow-step">You type <strong>/plan</strong></div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">Describe the screen</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step highlight">AI maps to your components</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">Review the plan</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step highlight">Built in Figma</div>
+    </div>
+  </div>
+
+  <!-- Slide 3: Prerequisites -->
+  <div class="slide">
+    <div class="subtitle">Getting started</div>
+    <h2>3 things you need</h2>
+    <div class="card-grid cols-3" style="margin-top:32px">
+      <div class="card">
+        <div class="card-icon">1</div>
+        <div class="card-title">Claude Code</div>
+        <div class="card-desc">The CLI tool from Anthropic. Install it and open it in your terminal.</div>
+        <div class="card-cmd">claude.ai/code</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">2</div>
+        <div class="card-title">Figma Desktop</div>
+        <div class="card-desc">With the Figma Console MCP plugin running. This is the bridge between Claude and Figma.</div>
+        <div class="card-cmd">Plugins &rarr; Figma Desktop Bridge</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">3</div>
+        <div class="card-title">Design Kit</div>
+        <div class="card-desc">Clone the repo and run the setup script. This installs all 19 skills as slash commands.</div>
+        <div class="card-cmd">./setup</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 4: First 5 minutes -->
+  <div class="slide">
+    <div class="subtitle">Your first session</div>
+    <h2>5 minutes to ready</h2>
+    <div class="code-block">
+      <span class="comment"># Step 1: Open Figma, run Desktop Bridge plugin</span><br><br>
+      <span class="comment"># Step 2: Extract your design system</span><br>
+      <span class="cmd">/setup-tokens</span> <span class="comment">&nbsp;&nbsp;← reads colors, spacing, radii</span><br>
+      <span class="cmd">/setup-components</span> <span class="comment">&nbsp;&nbsp;← catalogs every component + variant keys</span><br><br>
+      <span class="comment"># Step 3: Build something</span><br>
+      <span class="cmd">/plan</span> dashboard with sidebar, stats cards, activity feed<br>
+      <span class="result">→ plan generated, review it, approve</span><br>
+      <span class="cmd">/build</span><br>
+      <span class="result">→ built in Figma with your library components</span>
+    </div>
+  </div>
+
+  <!-- Slide 5: Phase 1 — Setup -->
+  <div class="slide">
+    <span class="phase-tag phase-setup">Phase 1: Setup</span>
+    <h2>Catalog what you have</h2>
+    <p>One-time extraction. Caches your design system locally so every skill runs fast.</p>
+    <div class="card-grid cols-4" style="margin-top:32px">
+      <div class="card">
+        <div class="card-title">/setup-tokens</div>
+        <div class="card-desc">Colors, spacing, radii, typography from Figma variables</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/setup-components</div>
+        <div class="card-desc">Every component with variant keys, props, and smart defaults</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/setup-relationships</div>
+        <div class="card-desc">How components depend on each other</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/setup-icons</div>
+        <div class="card-desc">Icon names mapped to keys with search tags</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 6: Phase 2 — Create -->
+  <div class="slide">
+    <span class="phase-tag phase-create">Phase 2: Create</span>
+    <h2>The design loop</h2>
+    <p>Describe what you need. Get a plan. Build it in Figma. All with your library components and tokens.</p>
+    <div class="card-grid cols-3" style="margin-top:32px">
+      <div class="card">
+        <div class="card-title">/plan &rarr; /build</div>
+        <div class="card-desc">Design a screen. Maps your brief to library components, tokens, and layout. Then builds it.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/flow</div>
+        <div class="card-desc">Multi-screen flows. Connected sequences with annotations between screens.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/brainstorm</div>
+        <div class="card-desc">3-5 design variations using SCAMPER + Jobs-to-be-Done. Pick the best direction.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/plan-component &rarr; /build-component</div>
+        <div class="card-desc">New components. Duplicate check, variant matrix, props, tokens. Builds as a component set.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/responsive</div>
+        <div class="card-desc">Desktop to tablet + mobile. Content choreography and touch-first adaptation.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Phase 3 — Review -->
+  <div class="slide">
+    <span class="phase-tag phase-review">Phase 3: Review</span>
+    <h2>Check and fix</h2>
+    <p>Automated quality checks. Scores with evidence. Findings posted as Figma comments.</p>
+    <div class="card-grid cols-3" style="margin-top:32px">
+      <div class="card">
+        <div class="card-title">/audit</div>
+        <div class="card-desc">Nielsen heuristics, Gestalt, cognitive load, token compliance. Weighted score out of 10.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/stress-test</div>
+        <div class="card-desc">Break it before users do. Long names, huge numbers, empty states, RTL text.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/review-component</div>
+        <div class="card-desc">9 quality dimensions: variants, tokens, accessibility, naming, props, relationships.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/revise</div>
+        <div class="card-desc">Targeted fixes from audit or review. Modifies frames without rebuilding.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/diff</div>
+        <div class="card-desc">What changed in the design system since your last extraction.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 8: Phase 4 — Handoff -->
+  <div class="slide">
+    <span class="phase-tag phase-handoff">Phase 4: Handoff</span>
+    <h2>Ship to engineering</h2>
+    <p>Annotate designs with specs that Dev Mode doesn't show. Token names, interaction states, focus order.</p>
+    <div class="card-grid cols-2" style="margin-top:32px; max-width:700px">
+      <div class="card">
+        <div class="card-title">/handoff</div>
+        <div class="card-desc">Developer-ready specs. Token names, conditional logic, content rules, animation specs. Creates a spec section next to your design.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/handoff-ai</div>
+        <div class="card-desc">Optimize for AI tools. Enrich descriptions, standardize naming, add structured annotations for MCP consumption.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 9: What makes it different -->
+  <div class="slide">
+    <div class="subtitle">Why this works</div>
+    <h2>Not just AI generation</h2>
+    <div class="two-col">
+      <div class="col col-green">
+        <h3>Design Kit does</h3>
+        <ul>
+          <li>Uses YOUR library components (not generic shapes)</li>
+          <li>Binds every value to YOUR tokens</li>
+          <li>Checks for duplicates before creating</li>
+          <li>Applies typicalOverrides automatically</li>
+          <li>Posts findings as Figma comments</li>
+          <li>Asks before making decisions</li>
+          <li>Scores with evidence, not opinions</li>
+        </ul>
+      </div>
+      <div class="col col-amber">
+        <h3>Generic AI doesn't</h3>
+        <ul>
+          <li>Invents components that already exist</li>
+          <li>Hardcodes colors and spacing</li>
+          <li>Creates duplicates without checking</li>
+          <li>Leaves icon placeholders visible</li>
+          <li>Outputs JSON files nobody reads</li>
+          <li>Makes assumptions without asking</li>
+          <li>Gives vague "looks good" feedback</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 10: Audit example -->
+  <div class="slide">
+    <div class="subtitle">Example output</div>
+    <h2>What an audit looks like</h2>
+    <p style="margin-bottom:24px">Real scores with real evidence. Every dimension is weighted and actionable.</p>
+    <div style="width:100%;max-width:600px">
+      <div class="score-row"><span class="score-label">Token Compliance</span><div class="score-track"><div class="score-fill" style="width:85%;background:var(--green)"></div></div><span class="score-value" style="color:var(--green)">8.5</span></div>
+      <div class="score-row"><span class="score-label">Component Usage</span><div class="score-track"><div class="score-fill" style="width:90%;background:var(--green)"></div></div><span class="score-value" style="color:var(--green)">9.0</span></div>
+      <div class="score-row"><span class="score-label">Heuristic Evaluation</span><div class="score-track"><div class="score-fill" style="width:71%;background:#3b82f6"></div></div><span class="score-value" style="color:#60a5fa">7.1</span></div>
+      <div class="score-row"><span class="score-label">Cognitive Load</span><div class="score-track"><div class="score-fill" style="width:90%;background:var(--green)"></div></div><span class="score-value" style="color:var(--green)">9.0</span></div>
+      <div class="score-row"><span class="score-label">Gestalt Compliance</span><div class="score-track"><div class="score-fill" style="width:85%;background:var(--green)"></div></div><span class="score-value" style="color:var(--green)">8.5</span></div>
+      <div class="score-row"><span class="score-label">Naming Quality</span><div class="score-track"><div class="score-fill" style="width:80%;background:#3b82f6"></div></div><span class="score-value" style="color:#60a5fa">8.0</span></div>
+    </div>
+  </div>
+
+  <!-- Slide 11: Troubleshooting -->
+  <div class="slide">
+    <div class="subtitle">Common questions</div>
+    <h2>Troubleshooting</h2>
+    <table class="info-table">
+      <tr><th>Problem</th><th>Command</th><th>Fix</th></tr>
+      <tr><td>Figma not connected</td><td>—</td><td>Open Figma Desktop &rarr; Plugins &rarr; Desktop Bridge &rarr; Run</td></tr>
+      <tr><td>Skills not found</td><td>./setup</td><td>Run from design-kit directory. Restart Claude Code.</td></tr>
+      <tr><td>Wrong variant (Mobile/Banner)</td><td>/setup-components</td><td>Re-run to refresh recommendedDesktopKey</td></tr>
+      <tr><td>Button shows circle icons</td><td>/setup-components</td><td>Re-run to refresh typicalOverrides</td></tr>
+      <tr><td>Token binding fails</td><td>/setup-tokens</td><td>Re-run to refresh stale variable keys</td></tr>
+      <tr><td>Duplicate component created</td><td>/plan-component</td><td>Always run plan first — it checks for duplicates</td></tr>
+    </table>
+  </div>
+
+  <!-- Slide 12: Get started -->
+  <div class="slide">
+    <div class="subtitle">Ready?</div>
+    <h1>Start with <span class="grad">/setup-tokens</span></h1>
+    <p>Open Figma. Run the Desktop Bridge plugin.<br>Type the command. Everything else follows.</p>
+    <div class="code-block" style="text-align:center;max-width:500px">
+      <span class="cmd">/setup-tokens</span><br>
+      <span class="cmd">/setup-components</span><br>
+      <span class="comment">...then try any skill</span>
+    </div>
+    <p style="margin-top:24px;font-size:14px;color:var(--text4)">github.com/bladefury3/design-kit</p>
+  </div>
+
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('counter');
+
+function showSlide(i) {
+  slides.forEach((s, idx) => {
+    s.classList.toggle('active', idx === i);
+  });
+  counter.textContent = `${i + 1} / ${slides.length}`;
+
+  // Animate score bars on slide 10
+  if (i === 9) {
+    setTimeout(() => {
+      document.querySelectorAll('.score-fill').forEach(f => {
+        f.style.width = f.style.width; // trigger reflow
+      });
+    }, 100);
+  }
+}
+
+function go(delta) {
+  current = Math.max(0, Math.min(slides.length - 1, current + delta));
+  showSlide(current);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+});
+
+// Touch support
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+});
+
+showSlide(0);
+</script>
+</body>
+</html>
