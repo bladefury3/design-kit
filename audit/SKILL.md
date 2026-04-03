@@ -401,163 +401,25 @@ After presenting findings, offer graduated assistance:
 >
 > **A) Auto-fix safe issues** — Bind unbound tokens, fix spacing to nearest scale value
 > **B) Walk through each** — I'll suggest a fix for each issue and you approve
-> **C) Just the report** — Save findings as `reports/audit-report.json` for tracking
-> **D) Post as comments** — Add findings as comments on the Figma frame"
+> **C) Post as comments** — Add findings as comments on the Figma frame"
 
 If the user chooses to fix, use the appropriate Figma MCP tools to make changes,
 then take a new screenshot to verify.
 
-## Step 6: Save audit results
+## Step 6: Post findings to Figma
 
-Create the `reports/` directory if it doesn't exist, then write `reports/audit-report.json`:
+**Do NOT write report JSON files to disk.** Reports go stale within hours — the
+Figma file is the source of truth. Instead:
 
-```json
-{
-  "$schema": "design-kit/audit/v1",
-  "$metadata": {
-    "auditedAt": "<ISO timestamp>",
-    "figmaFile": "<file name>",
-    "frames": ["<frame names>"],
-    "strictness": "standard"
-  },
-  "score": 7.81,
-  "scoreWeights": {
-    "tokenCompliance": 0.20,
-    "componentCompliance": 0.20,
-    "heuristicEvaluation": 0.30,
-    "cognitiveLoad": 0.15,
-    "gestaltCompliance": 0.10,
-    "namingQuality": 0.05
-  },
-  "summary": {
-    "tokenCompliance": 0.85,
-    "componentCompliance": 0.90,
-    "heuristicEvaluation": 0.72,
-    "cognitiveLoad": 0.70,
-    "gestaltCompliance": 0.80,
-    "namingQuality": 0.60,
-    "accessibilityBasics": 0.75
-  },
-  "heuristicScores": {
-    "visibility": {
-      "score": 8,
-      "evidence": "Progress indicators present on all multi-step flows; loading states shown for async operations",
-      "suggestion": "Add save confirmation toast after form submission"
-    },
-    "matchRealWorld": {
-      "score": 7,
-      "evidence": "Labels use plain language; icons are standard Material/SF Symbols",
-      "suggestion": "Replace 'Initiate Process' with 'Get Started'"
-    },
-    "userControl": {
-      "score": 9,
-      "evidence": "Back/cancel buttons present; undo available for destructive actions",
-      "suggestion": "Add keyboard shortcut hint for undo (Cmd+Z)"
-    },
-    "consistency": {
-      "score": 8,
-      "evidence": "Same button component used for all primary actions",
-      "suggestion": "Footer links use a different hover style than nav links"
-    },
-    "errorPrevention": {
-      "score": 6,
-      "evidence": "Form validation present but only triggers on submit",
-      "suggestion": "Add inline validation on field blur for email and required fields"
-    },
-    "recognition": {
-      "score": 7,
-      "evidence": "Navigation is always visible; key actions exposed in toolbar",
-      "suggestion": "Add recent items to search dropdown for faster access"
-    },
-    "flexibility": {
-      "score": 6,
-      "evidence": "No keyboard shortcuts visible; no bulk action support",
-      "suggestion": "Add bulk select with checkboxes for list views"
-    },
-    "aesthetic": {
-      "score": 8,
-      "evidence": "Clean layout with good signal-to-noise ratio",
-      "suggestion": "Reduce decorative dividers between card sections"
-    },
-    "errorRecovery": {
-      "score": 5,
-      "evidence": "Error states exist but show generic messages without next steps",
-      "suggestion": "Add specific recovery actions: 'Try again', 'Go back', 'Contact support'"
-    },
-    "helpDocs": {
-      "score": 8,
-      "evidence": "Tooltips on complex fields; empty state has guidance text",
-      "suggestion": "Add onboarding tooltip sequence for first-time users"
-    }
-  },
-  "gestaltCompliance": {
-    "proximity": {
-      "status": "pass",
-      "evidence": "Related controls grouped together; clear section separation",
-      "suggestion": null
-    },
-    "similarity": {
-      "status": "warning",
-      "evidence": "Secondary buttons share visual styling with text links",
-      "suggestion": "Differentiate button and link styles — buttons should have visible boundaries"
-    },
-    "continuity": {
-      "status": "pass",
-      "evidence": "Consistent left alignment across all content sections",
-      "suggestion": null
-    },
-    "figureGround": {
-      "status": "pass",
-      "evidence": "Modal overlays have clear scrim and elevation",
-      "suggestion": null
-    },
-    "commonRegion": {
-      "status": "warning",
-      "evidence": "Filter controls are visually floating without a container boundary",
-      "suggestion": "Wrap filter controls in a card or bordered region"
-    }
-  },
-  "cognitiveLoad": {
-    "hicksLaw": {
-      "choiceCount": 12,
-      "grouped": false,
-      "severity": "warning",
-      "evidence": "Main navigation presents 12 items in a flat list",
-      "suggestion": "Group navigation into 3-4 categories with sub-menus"
-    },
-    "millersLaw": {
-      "maxUnchunkedItems": 4,
-      "chunked": true,
-      "severity": "pass",
-      "evidence": "Form fields organized into groups of 3-4",
-      "suggestion": null
-    },
-    "fittsLaw": {
-      "smallestTarget": "32px",
-      "severity": "critical",
-      "evidence": "Submit button height is 32px, below 44px minimum",
-      "suggestion": "Increase button height to at least 44px for touch accessibility"
-    },
-    "vonRestorff": {
-      "primaryCtaDistinct": true,
-      "competingElements": 0,
-      "severity": "pass",
-      "evidence": "Primary CTA uses brand color with no competing bold elements",
-      "suggestion": null
-    }
-  },
-  "findings": [
-    {
-      "severity": "critical",
-      "category": "token-compliance",
-      "message": "Hardcoded color #3B82F6 should use {color.semantic.action.primary}",
-      "location": "Frame > Hero Section > CTA Button > Fill",
-      "nodeId": "123:456",
-      "autoFixable": true
-    }
-  ]
-}
-```
+1. **Post a summary comment** on the audited frame via `figma_post_comment` with
+   the overall score, category breakdown, and top issues.
+2. **Post specific comments** on individual frames/nodes for critical and warning
+   findings so they're visible in Figma's comment panel.
+3. **Present the full report inline** in the conversation — the user sees it
+   immediately and can act on it.
+
+This keeps findings where designers actually look (Figma comments) rather than
+in JSON files nobody opens twice.
 
 ## Next steps
 

@@ -551,6 +551,12 @@ All variations are independent frames. Build Phase 1 (frame trees) for ALL varia
 in parallel, then Phase 2 (component instantiation) for ALL in parallel. Do not build
 variation 1 completely before starting variation 2.
 
+**IMPORTANT: Parallel build does NOT mean skipping validation.** Build the
+frame trees in parallel, but then validate EACH variation sequentially with
+property configuration, text sweep, structural cleanup, and a screenshot
+before presenting. The validation pass cannot be parallelized because each
+variation needs individual attention to its specific content needs.
+
 ### Build process (per variation)
 
 Follow the same 4-phase batch strategy as `/build`:
@@ -579,6 +585,40 @@ Each variation: 4-6 MCP calls. 4 variations total: 16-24 calls, not 80+.
 and library access, then fall back to a placeholder frame. If token binding
 fails, verify 40-char hex hash and fall back to `$value` from `design-system/tokens.json`.
 Flag all fallbacks in build output.
+
+### Per-variation validation (MANDATORY)
+
+Apply the same validation process from `/build` to EACH variation. Do NOT
+batch-build all variations without validating each one.
+
+After building each variation:
+1. **Configure component properties** — disable irrelevant boolean props
+   (Search, Actions, Tabs, Hint text, Dropdown icon, Icon leading/trailing)
+2. **Text content sweep** — update ALL placeholder text in library components.
+   Every "Team members", "Olivia Rhye", "Product Designer", "Marketing site
+   redesign" must be replaced with content that matches the variation's thesis.
+   Use `figma_set_text` for each node. For mixed-font nodes, use the
+   `setRangeFontName()` fallback.
+3. **Structural cleanup** — hide irrelevant sub-components when repurposing
+   library components (avatars in non-person tables, checkboxes, "Used space"
+   notifications in sidebars)
+4. **Shared component customization** — if multiple variations use sidebars,
+   update nav labels, user profile, and hidden nodes on EACH sidebar instance.
+   Don't customize one and leave the rest as defaults.
+5. **Screenshot and verify** — take a screenshot of each variation BEFORE
+   moving to the next one. Check for:
+   - Placeholder content that wasn't updated
+   - Default nav labels ("Home", "Dashboard", "Projects", "Users")
+   - Default user profiles ("Olivia Rhye", "olivia@untitledui.com")
+   - "Used space" / "Upgrade plan" notifications
+   - Irrelevant component elements (avatars, checkboxes in data tables)
+   - Progress step components with wrong labels for the context
+
+**Why this matters for brainstorm specifically:** Brainstorm generates 3-5
+variations, which creates pressure to rush. But a variation with "Olivia Rhye"
+and "Product Designer" in a learning app destroys the comparison — the viewer
+focuses on the wrong content instead of evaluating the design direction. Each
+variation must be contextually complete to be evaluable.
 
 ## Step 5: Screenshot and present
 

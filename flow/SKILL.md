@@ -592,6 +592,67 @@ Same rules as `/plan`:
   and `fills` token bindings.
 - Never hardcode font sizes, line heights, or text colors in the plan.
 
+### Variant research phase (do this ONCE before building)
+
+Before building any screens, research the correct variants for ALL components
+that will appear in the flow. Do this once upfront, not per-screen.
+
+1. **List all unique components** across all screens in the flow plan
+2. **For each component**, import it and discover available variants:
+   ```javascript
+   const comp = await figma.importComponentByKeyAsync('<any_variant_key>');
+   const parent = comp.parent;
+   if (parent?.type === 'COMPONENT_SET') {
+     for (const child of parent.children) {
+       // Find: Style=Simple, Breakpoint=Desktop
+     }
+   }
+   ```
+3. **Select the right variant** for each component:
+   - Always pick `Breakpoint=Desktop` for desktop flows
+   - Prefer `Style=Simple` over `Banner`, `Chart`, etc.
+   - Prefer `State=Default`/`Placeholder` over `Open`/`Focused`
+   - Prefer `Actions=False` unless the screen needs action buttons
+4. **Store the selected variant keys** for use during build
+5. **Discover component properties** — note which booleans to disable
+   (Search, Actions, Tabs, Hint text, etc.)
+
+This prevents the #1 flow build failure: using defaultVariantKey which is
+frequently a Mobile, Banner, or Open variant.
+
+### Shared component registry
+
+Components that appear on multiple screens (sidebar, header) need identical
+customization on each instance. Track these centrally:
+
+After customizing a shared component on the first screen, record:
+- **Text changes**: Which text nodes were updated and to what values
+- **Property overrides**: Which booleans were toggled
+- **Hidden nodes**: Which sub-components were made invisible (e.g., "Used space" notification)
+
+Then replay these exact changes on subsequent screen instances. This prevents
+sidebar Screen 1 showing "Students" while sidebar Screen 3 still shows "Projects".
+
+Example tracking:
+```json
+{
+  "sidebar": {
+    "textUpdates": {
+      "1161:8600;...": "Students",
+      "1161:8601;...": "Attendance",
+      "1161:8602;...": "Messages",
+      "1161:8603;...": "Calendar",
+      "1161:8604;...": "Reports"
+    },
+    "hiddenNodes": ["1161:8609"],
+    "userProfile": {
+      "name": "Sarah Thompson",
+      "email": "sarah.thompson@email.com"
+    }
+  }
+}
+```
+
 ## Step 5: Build in Figma
 
 Build all screens as a horizontal sequence in Figma. The flow reads left to right
@@ -630,34 +691,124 @@ All screen positions below are **offsets from `(originX, originY)`**, not from (
 
 ```
 Row 1 (happy path), starting at (originX, originY):
-[Screen 1] --- 80px gap --- [Screen 2] --- 80px gap --- [Screen 3] --- 80px gap --- [Screen 4]
+[Screen 1] --- 200px gap --- [Screen 2] --- 200px gap --- [Screen 3] --- 200px gap --- [Screen 4]
 
 Row 2 (edge screens, offset 200px below originY):
-[Error Screen] --- 80px gap --- [Timeout Screen] --- 80px gap --- [Empty State]
+[Error Screen] --- 200px gap --- [Timeout Screen] --- 200px gap --- [Empty State]
 ```
 
 - Happy-path screens in a single horizontal row, left to right, in flow order.
 - Edge screens (errors, empty states, timeouts, completed states) in a second row
   below, aligned under the screen they relate to where possible.
-- 80px gap between screens for visual breathing room.
+- **200px gap** between screens — enough for readable pill annotations.
 - 200px vertical offset between happy-path row and edge row.
+
+### Frame sizing
+
+- Screen frames: **1440 × 1024px** (not 900px — taller frames show more content)
+- `clipsContent: false` on all page screens (let content overflow visually)
+- `clipsContent: true` ONLY on modal overlay screens (Screen 4 in our example)
+- Auto-height main content frames (`layoutSizingVertical: 'FILL'`)
 
 ### Flow annotations
 
-After building all screens, add flow annotations to show connections:
+After building all screens, add flow annotations to show connections.
 
-1. **Screen labels.** Each screen gets a text label above it:
-   - Happy path: "1. [Screen Name]", "2. [Screen Name]", etc.
-   - Edge screens: "Error: [description]", "Empty: [section]", etc.
+**Use pill-shaped annotation cards** — NOT floating text. Floating text is
+unreadable at typical zoom levels and has no contrast against the canvas.
 
-2. **Flow direction indicators.** Between happy-path screens, add arrow annotations
-   or connector labels showing the transition trigger:
-   - "Continue (form valid)" between Screen 1 and Screen 2
-   - "Back" showing the reverse direction
+#### Screen labels
+Each screen gets a text label above it:
+- Happy path: "1. [Screen Name]", "2. [Screen Name]", etc.
+- Edge screens: "Error: [description]", "Empty: [section]", etc.
+- Font: Inter Bold 20px, color `{ r: 0.4, g: 0.4, b: 0.45 }`
 
-3. **Edge screen connections.** Below each happy-path screen, add a label indicating
-   which edge screens relate to it:
-   - "Error states: validation (inline), network (overlay)"
+#### Flow connector pills (MANDATORY pattern)
+
+Between each pair of screens, place pill-shaped annotation cards showing
+the transition triggers. These must be readable at any zoom level.
+
+**Pill specification:**
+- Frame with `layoutMode: 'HORIZONTAL'`, `cornerRadius: 20`
+- White fill, 1px border `{ r: 0.85, g: 0.85, b: 0.87 }`
+- Subtle drop shadow (y: 2, radius: 4, opacity: 0.06)
+- Padding: 8px top/bottom, 16px left/right
+- Text: Inter Medium 13px, color `{ r: 0.2, g: 0.2, b: 0.25 }`
+- Centered vertically between the two screens
+
+**Layout between screens:**
+```
+[Screen 1]     [ Continue → ]     [Screen 2]
+               [  ← Back    ]
+```
+
+- Forward pill on top (e.g., "Continue →", "Submit →", "Continue → or Skip")
+- Back pill below it with 12px gap (e.g., "← Back")
+- Both horizontally centered in the 200px gap
+
+**Code pattern:**
+```javascript
+function createPill(parent, text, x, y) {
+  const pill = figma.createFrame();
+  pill.name = "Flow Annotation";
+  pill.layoutMode = 'HORIZONTAL';
+  pill.primaryAxisSizingMode = 'AUTO';
+  pill.counterAxisSizingMode = 'AUTO';
+  pill.counterAxisAlignItems = 'CENTER';
+  pill.paddingTop = 8; pill.paddingBottom = 8;
+  pill.paddingLeft = 16; pill.paddingRight = 16;
+  pill.itemSpacing = 6;
+  pill.cornerRadius = 20;
+  pill.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+  pill.strokes = [{ type: 'SOLID', color: { r: 0.85, g: 0.85, b: 0.87 } }];
+  pill.strokeWeight = 1;
+  pill.effects = [{
+    type: 'DROP_SHADOW',
+    color: { r: 0, g: 0, b: 0, a: 0.06 },
+    offset: { x: 0, y: 2 }, radius: 4, spread: 0,
+    visible: true, blendMode: 'NORMAL'
+  }];
+
+  const label = figma.createText();
+  label.characters = text;
+  label.fontSize = 13;
+  label.fontName = { family: "Inter", style: "Medium" };
+  label.fills = [{ type: 'SOLID', color: { r: 0.2, g: 0.2, b: 0.25 } }];
+  pill.appendChild(label);
+
+  parent.appendChild(pill);
+  pill.x = x; pill.y = y;
+  return pill;
+}
+```
+
+#### Edge screen connections
+Below each happy-path screen, add a label indicating which edge screens relate to it:
+- "Error states: validation (inline), network (overlay)"
+
+### Sequential build with validation (MANDATORY)
+
+Do NOT batch-build all screens at once. Build one screen at a time with
+validation between each:
+
+```
+For each screen in flow order:
+  1. Build frame structure + sidebar
+  2. Instantiate library components (using specific variant keys from plan)
+  3. Configure component properties (disable Search, Actions, etc.)
+  4. Update ALL text content (headings, labels, data, breadcrumbs)
+  5. Screenshot the screen
+  6. Analyze the screenshot — check for:
+     - Wrong variants (Banner header, Mobile sidebar, Open dropdown)
+     - Placeholder content ("Team members", "Marketing site redesign")
+     - Clipped or hidden content
+     - Irrelevant sub-components (avatars in date tables, checkboxes)
+  7. Fix issues found (max 2 fix iterations per screen)
+  8. Only then move to the next screen
+```
+
+This prevents error compounding — fixing Screen 1 issues before building
+Screen 2 means you don't discover 4 screens of problems at the end.
 
 ### Build execution
 

@@ -23,10 +23,9 @@ design-kit/
 │   └── relationships.json        #   Component dependency graph
 ├── plans/                        # Build plans (output of /plan)
 │   └── <name>.json               #   Structured plan for /build to execute
-├── reports/                      # QA artifacts (output of audit/stress/diff skills)
-│   ├── audit-report.json         #   Design system compliance audit
-│   ├── stress-report.json        #   Content stress test results
-│   └── diff-report.json          #   Design system diff report
+├── reports/                      # (deprecated — QA findings go to Figma comments)
+│   └── ...                       #   Audit/stress/diff results are presented inline
+│                                 #   and posted as Figma comments, not saved as JSON
 │
 │── ── Phase 1: Setup ─────────────────────────────────────────────────
 ├── setup-tokens/                 # Catalog your design tokens from Figma
@@ -63,7 +62,94 @@ design-kit/
 └── VERSION                       # Current version
 ```
 
-## Designer Workflow
+## Quick Start for Designers
+
+### What is this?
+
+Design Kit gives you slash commands in Claude Code that talk directly to your
+Figma file. You describe what you want in plain English, and it builds, audits,
+and documents your designs — all without leaving the conversation.
+
+### Prerequisites
+
+1. **Claude Code** — installed and running ([claude.ai/code](https://claude.ai/code))
+2. **Figma Desktop** — with the [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) plugin running
+3. **This repo** — cloned and skills installed via `./setup`
+
+### Your first 5 minutes
+
+```
+Step 1:  Open your Figma file. Run the Desktop Bridge plugin.
+Step 2:  In Claude Code, run /setup-tokens
+         → This reads your colors, spacing, radii from Figma and caches them.
+Step 3:  Run /setup-components
+         → This catalogs every component in your library with variant keys.
+Step 4:  You're ready. Try any skill below.
+```
+
+### What can I do?
+
+| I want to... | Run this | What happens |
+|---|---|---|
+| **Design a new screen** | `/plan` then `/build` | Describe the screen → get a plan → build it in Figma with library components |
+| **Design a multi-screen flow** | `/flow` | Describe the user journey → get connected screens with annotations |
+| **Explore design variations** | `/brainstorm` | Get 3-5 layout variations using SCAMPER + Jobs-to-be-Done |
+| **Create a new component** | `/plan-component` then `/build-component` | Define variants, props, tokens → build as a component set |
+| **Check my design quality** | `/audit` | Score against heuristics, Gestalt, cognitive load, token compliance |
+| **Break-test with extreme content** | `/stress-test` | Inject long names, huge numbers, empty states to find what breaks |
+| **Review a component** | `/review-component` | Score 9 quality dimensions: variants, tokens, accessibility, naming |
+| **Generate responsive variants** | `/responsive` | Convert a desktop design to tablet + mobile breakpoints |
+| **Prepare for dev handoff** | `/handoff` | Add token specs, interaction states, and implementation notes |
+| **Fix issues from review** | `/revise` | Apply targeted fixes without rebuilding from scratch |
+| **Track design system changes** | `/diff` | Compare current Figma state against your last extraction |
+
+### Common workflows
+
+**"I need to design a settings page"**
+```
+/plan settings page with sidebar navigation, account section, notification preferences
+→ review the plan → approve
+/build
+→ see it in Figma
+/audit
+→ check quality, get a score
+```
+
+**"I need a new Toast component"**
+```
+/plan-component toast notification with success, error, warning types
+→ duplicate check runs automatically
+→ review variant matrix → approve
+/build-component
+→ component set appears in Figma
+/review-component
+→ 9-dimension quality score
+```
+
+**"Is my design ready to ship?"**
+```
+/audit                    → design system compliance check
+/stress-test              → content edge cases
+/handoff                  → developer specs
+```
+
+### Tips
+
+- **You don't need setup to try a skill.** Most skills fall back to reading
+  directly from Figma. But extraction (`/setup-tokens` + `/setup-components`)
+  makes everything faster and more accurate.
+- **Skills ask before acting.** You'll get options (A/B/C) at each decision
+  point. No surprises.
+- **Findings go to Figma comments.** Audit results, stress test failures, and
+  review scores are posted as comments on your Figma frames — not buried in
+  JSON files.
+- **Everything is token-bound.** Skills use your design system tokens for
+  every color, spacing, and radius. No hardcoded values.
+- **Button icons are auto-disabled.** When building with Untitled UI PRO,
+  `typicalOverrides` from the component index automatically disables default
+  icon placeholders on buttons and inputs.
+
+## Skill Phases
 
 Skills are organized into 4 phases. You don't need them all — start where you are.
 
@@ -89,18 +175,6 @@ Phase 4: HANDOFF (ship to engineering)
 Need a new component?
   /plan-component ──→ /build-component ──→ /review-component
 ```
-
-### First time? Start here:
-1. Open your Figma file with the Desktop Bridge plugin running
-2. Run `/setup-tokens` → `/setup-components` → `/setup-relationships` → `/setup-icons`
-3. Now use any skill — your design system data is cached locally
-
-### Already have design-system/ data?
-Jump straight to `/plan`, `/brainstorm`, or `/audit`.
-
-### No design system data yet?
-Most skills will fall back to `figma_get_design_system_kit` to read directly
-from Figma. Extraction is faster for repeated use, but not required for a first try.
 
 ## Skill format
 

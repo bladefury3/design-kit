@@ -670,11 +670,12 @@ below the summary. For Quick reviews, keep evidence to 1-2 bullet points.
 For Standard and Deep reviews, include full evidence.
 
 
-## Step 5: Write report
+## Step 5: Present review (no file output)
 
-Create the `reports/` directory if it doesn't exist. Save the review to
-`reports/component-review-<name>.json` where `<name>` is the component name
-in lowercase kebab-case.
+**Do NOT write report JSON files to disk.** Component reviews are session artifacts.
+Present findings inline and post as Figma comments on the component node instead.
+
+The JSON schema below is retained as a reference for the data structure only.
 
 ```json
 {
@@ -834,9 +835,9 @@ Generate a summary of what needs to change:
 > the variant structure from scratch."
 
 **If C (just the report):**
-Confirm the report was saved:
-> "Report saved to `reports/component-review-<name>.json`. You can reference
-> it in future reviews to track improvement."
+Post findings as Figma comments on the component node:
+> "Review posted as Figma comments on the component. You can see them
+> in Figma's comment panel."
 
 
 ## Next steps

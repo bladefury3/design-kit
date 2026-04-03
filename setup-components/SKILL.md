@@ -253,11 +253,78 @@ Build the index from the discovery data in Step 1. For each component set, captu
 - `description` — short description
 - `figmaKey` — component set key (hash)
 - `defaultVariantKey` — key of the default variant (hash) for `figma_instantiate_component`
+- `recommendedDesktopKey` — key of simplest Desktop variant (prefer Simple/Default over Banner/Chart)
+- `variantClassification` — variants grouped by breakpoint (Desktop vs Mobile)
+- `typicalOverrides` — boolean properties usually turned OFF in practice
+- `hasPlaceholderContent` — whether the component ships with domain-specific sample data
 - `variantCount` — how many variants exist
 - `status` — published/draft
 
 Write `design-system/components/index.json`. This is the one file that MUST be produced. Everything
 else is on-demand.
+
+Each entry in the index should include the variant intelligence fields:
+
+```json
+{
+  "name": "Page header",
+  "figmaKey": "abc123...",
+  "defaultVariantKey": "def456...",
+  "recommendedDesktopKey": "<key of simplest Desktop variant — prefer Simple/Default over Banner/Chart>",
+  "variantClassification": {
+    "Desktop": ["Simple", "Avatar", "Banner simple"],
+    "Mobile": ["Simple", "Avatar", "Banner simple"]
+  },
+  "typicalOverrides": {
+    "Search": false,
+    "Actions": false
+  },
+  "hasPlaceholderContent": true
+}
+```
+
+### Variant Intelligence (mandatory)
+
+For EACH component set with multiple variants, classify the variants and pick
+the recommended Desktop key. This prevents downstream skills from using wrong
+variants (e.g., Mobile sidebar, Banner page header, Open dropdown).
+
+**Classification rules:**
+1. **Split by breakpoint**: Group variants into Desktop vs Mobile
+2. **Rank by complexity**: Within Desktop variants, rank from simplest to most complex
+   - Prefer: `Simple`, `Default`, `Placeholder` styles
+   - Avoid as default: `Banner`, `Chart`, `Open`, `Avatar leading`
+3. **Set `recommendedDesktopKey`**: The simplest Desktop variant that would work
+   for a generic use case
+4. **Document typical overrides**: For each component, note which boolean properties
+   are usually turned OFF in practice:
+   - Page header: `Search=false`, `Actions=false` (most pages don't need these)
+   - Section header: `Tabs=False`, `Actions=false`, `Dropdown icon=false`
+   - Input dropdown: `Hint text=false`, `Supporting text=false`
+   - Metric item: `Actions=False`, `Dropdown icon=false`
+   - Button: `Icon leading=false`, `Icon trailing=false`
+   - Textarea: `Destructive=False`, `Hint text=false`
+5. **Flag placeholder content**: Set `hasPlaceholderContent: true` if the component
+   ships with domain-specific sample data (e.g., "Team members", "Marketing site
+   redesign", "Olivia Rhye", "Product Designer"). Downstream skills use this flag
+   to know a text sweep is required after instantiation.
+
+**How to discover variants:**
+```javascript
+// Import any variant, then walk the component set
+const comp = await figma.importComponentByKeyAsync('<any_variant_key>');
+const parent = comp.parent;
+if (parent?.type === 'COMPONENT_SET') {
+  for (const child of parent.children) {
+    // child.name = "Style=Simple, Breakpoint=Desktop"
+    // child.key = "a5d7e41..."
+  }
+}
+```
+
+This is a one-time cost during extraction that saves repeated debugging during
+every build session. Without this, `/plan` and `/build` default to `defaultVariantKey`
+which is frequently a Mobile or complex variant.
 
 ## Step 3: On-demand deep extraction (per component)
 

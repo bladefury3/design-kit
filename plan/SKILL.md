@@ -308,6 +308,30 @@ explaining why the library component doesn't work. "I didn't look" is not a reas
 **Coverage floor: 75%**. Plans below 75% library coverage are rejected. The planner
 must search harder before marking elements as token-built.
 
+### Variant Selection (mandatory)
+
+For every `library-component` node in the plan, you MUST select the specific
+variant — not just the component name. Never use `defaultVariantKey` from the
+index without checking what it is.
+
+**Selection process:**
+1. Check `recommendedDesktopKey` in `design-system/components/index.json` first
+2. If not available, search for the variant with:
+   - `Breakpoint=Desktop` (never Mobile for desktop designs)
+   - `Style=Simple` or `Type=Default` (prefer minimal over complex)
+   - `State=Default` or `State=Placeholder` (not Open, Focused, etc.)
+   - `Actions=False` (unless the screen needs action buttons)
+3. If the index doesn't have variant details, use `figma_search_components`
+   with the library file key to discover variants
+4. Document your selection rationale in the plan
+
+**Common mistakes to avoid:**
+- Page header: `Banner simple` shows a gradient banner — use `Simple` instead
+- Sidebar: `Breakpoint=Mobile` shows a collapsed/overlay nav — use `Desktop`
+- Input dropdown: `State=Open` shows expanded options list — use `Placeholder`
+- Metric item: `Type=Chart 02` shows sparkline charts — use `Simple` for clean numbers
+- Button: `Icon=Dot leading` shows circle icons — use `Icon=Default` for text-only
+
 ### Present the mapping
 
 > Here's how each element maps to your design system:
@@ -515,6 +539,43 @@ Every `library-component` node includes the **variantKey** (hash) ...
 
 Every token reference includes the **figmaKey** (hash) ...
 `/build` calls `figma.variables.importVariableByKeyAsync(key)` directly with zero scanning.
+
+#### Extended library-component node
+
+```json
+{
+  "name": "Page header",
+  "type": "library-component",
+  "component": "Page header",
+  "variantKey": "<40-char hash of SPECIFIC variant>",
+  "variant": "Simple, Desktop",
+  "variantRationale": "Simple has no banner/gradient, cleaner for app pages",
+  "propertyOverrides": {
+    "Search": false,
+    "Actions": false,
+    "Breadcrumbs": true,
+    "Supporting text": true
+  },
+  "textOverrides": {
+    "I...;1239:122645": "Student Details",
+    "I...;1239:122646": "View profile and attendance."
+  },
+  "structuralCleanup": [
+    "Hide avatars in table rows (component repurposed for date-based records)",
+    "Hide checkboxes (no bulk selection needed)"
+  ]
+}
+```
+
+**`propertyOverrides`**: Boolean/variant properties to set after instantiation.
+Sourced from `typicalOverrides` in the component index, adjusted per screen.
+
+**`textOverrides`**: Map of text node suffixes to content. These are the text
+nodes that need updating from placeholder content. Use suffix patterns (the
+part after the instance ID prefix) so they work regardless of instance ID.
+
+**`structuralCleanup`**: Notes for `/build` on what sub-components to hide
+when repurposing a component for a different domain than its default.
 
 ### CRITICAL: Mandatory text sizing
 

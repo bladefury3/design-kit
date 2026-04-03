@@ -370,6 +370,87 @@ If `iconOverrides` references an icon by name but no `iconKey` is provided:
 - Take a screenshot of the result
 - Compare against the plan
 
+### Phase 5: Configure component properties (mandatory)
+
+After instantiating all library components, configure their properties:
+
+1. Read `propertyOverrides` from the plan for each component
+2. Call `figma_set_instance_properties` on each instance to disable irrelevant features
+3. If no overrides in the plan, apply defaults from component index's `typicalOverrides`
+
+Common overrides:
+- **Page header**: `Search=false`, `Actions=false` (unless actions are planned)
+- **Section header**: `Tabs=False`, `Actions=false`, `Dropdown icon=false`
+- **Input dropdown**: `State=Placeholder`, `Type=Default`, `Hint text=false`, `Supporting text=false`
+- **Textarea**: `Destructive=False`, `Hint text=false`
+- **Metric item**: `Type=Simple`, `Actions=False` (unless charts are specified)
+- **Button**: `Icon leading=false`, `Icon trailing=false` (unless icons are specified)
+- **Content divider**: Check Type — `Button icon` shows a "+" button, use a simpler type or hide the button
+
+This step is critical because component defaults rarely match what the screen needs.
+Skipping it results in search bars on every page, action buttons everywhere, and
+expanded dropdowns showing option lists.
+
+### Phase 6: Text content sweep (mandatory)
+
+Library components ship with placeholder content ("Team members", "Olivia Rhye",
+"Product Designer", "Marketing site redesign"). EVERY text node needs updating.
+
+1. For each screen, find all text nodes within the frame:
+   ```javascript
+   function findTexts(node, depth) {
+     if (depth > 8) return;
+     if (node.type === 'TEXT') {
+       texts.push({ id: node.id, chars: node.characters });
+     }
+     if ('children' in node) {
+       for (const c of node.children) findTexts(c, depth + 1);
+     }
+   }
+   ```
+2. Match against `textOverrides` from the plan
+3. Update using `figma_set_text` for each node
+4. **Mixed-font fallback**: If `figma_set_text` fails with "Cannot unwrap symbol",
+   the text has mixed fonts (e.g., bold links within regular text). Use this fallback:
+   ```javascript
+   const node = await figma.getNodeByIdAsync(id);
+   if (node?.type === 'TEXT') {
+     const len = node.characters.length;
+     node.setRangeFontName(0, len, { family: "Inter", style: "Regular" });
+     node.characters = newText;
+   }
+   ```
+5. After the sweep, screenshot and verify no placeholder content remains visible
+
+### Phase 7: Structural cleanup (when repurposing components)
+
+When a component is used for a different purpose than its default design
+(e.g., team member table → attendance records), hide irrelevant sub-components:
+
+1. Read `structuralCleanup` from the plan
+2. Find and hide the specified elements:
+   - **Avatars in date-based tables**: Each table row has an avatar — hide them
+     when rows represent dates, not people
+   - **Checkboxes**: Hide when bulk selection isn't needed
+   - **File attachments**: Hide PDF/file upload previews in activity feeds
+   - **Notification banners**: Hide "Used space" or upgrade prompts in sidebars
+3. Use `node.visible = false` to hide without removing
+
+```javascript
+// Example: hide all avatars in a table
+function hideByName(node, targetName, depth) {
+  if (depth > 8) return;
+  if (node.type === 'INSTANCE' && node.name === targetName) {
+    node.visible = false;
+  }
+  if ('children' in node) {
+    for (const c of node.children) hideByName(c, targetName, depth + 1);
+  }
+}
+hideByName(table, 'Avatar', 0);
+hideByName(table, 'Checkbox', 0);
+```
+
 This batching reduces total MCP calls from ~50+ (one per node) to ~5-8.
 
 ## Step 5: Screenshot and verify
@@ -424,6 +505,32 @@ Present the result:
 ### Plan is incomplete
 - Don't improvise. Ask the user:
   > "The plan doesn't specify [missing detail]. What should I do?"
+
+### Mixed-font text nodes
+
+**Symptom:** `figma_set_text` fails with "in loadFontAsync: Cannot unwrap symbol"
+**Cause:** The text node has mixed font styles (e.g., bold for linked text, regular
+for the rest). `fontName` returns a Symbol (mixed) which can't be passed to `loadFontAsync`.
+**Fix:** Normalize the font before setting text:
+```javascript
+await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+const node = await figma.getNodeByIdAsync(nodeId);
+if (node?.type === 'TEXT') {
+  node.setRangeFontName(0, node.characters.length, { family: "Inter", style: "Regular" });
+  node.characters = newText;
+}
+```
+This loses the mixed formatting but ensures the text is readable and contextually correct.
+
+### Wrong component variant instantiated
+
+**Symptom:** Mobile sidebar, gradient banner page header, expanded dropdown with avatar list
+**Cause:** Used `defaultVariantKey` from the index which is often a Mobile or complex variant
+**Fix:** Always use the specific variant key from the plan's `variantKey` field.
+If the plan doesn't specify one, search for the right variant:
+- Filter for `Breakpoint=Desktop`
+- Prefer `Style=Simple` or `Type=Default`
+- Prefer `State=Default` or `State=Placeholder`
 
 ## How to use design-system/tokens.json for Figma operations
 

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Kit Viewer</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: #0a0a0f; color: #e4e4e7; line-height: 1.6; display: flex; height: 100vh; overflow: hidden; }
+
+  /* Sidebar */
+  .sidebar { width: 280px; min-width: 280px; background: #111114; border-right: 1px solid #27272a; display: flex; flex-direction: column; overflow: hidden; }
+  .sidebar-header { padding: 20px; border-bottom: 1px solid #27272a; }
+  .sidebar-header h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .sidebar-header p { font-size: 12px; color: #52525b; margin-top: 2px; }
+  .sidebar-nav { flex: 1; overflow-y: auto; padding: 12px 0; }
+  .nav-group { margin-bottom: 8px; }
+  .nav-group-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; color: #52525b; padding: 8px 20px 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 20px; font-size: 13px; color: #a1a1aa; cursor: pointer; transition: all 0.15s; border-left: 2px solid transparent; }
+  .nav-item:hover { background: #18181b; color: #e4e4e7; }
+  .nav-item.active { background: #1a1a2e; color: #818cf8; border-left-color: #818cf8; }
+  .nav-item .icon { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0; }
+  .nav-item .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nav-item .size { font-size: 11px; color: #3f3f46; margin-left: auto; flex-shrink: 0; }
+
+  /* Main content */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .toolbar { padding: 12px 24px; border-bottom: 1px solid #27272a; display: flex; align-items: center; gap: 12px; background: #111114; }
+  .toolbar .breadcrumb { font-size: 13px; color: #71717a; }
+  .toolbar .breadcrumb span { color: #e4e4e7; }
+  .toolbar .view-toggle { margin-left: auto; display: flex; gap: 2px; background: #18181b; border-radius: 6px; padding: 2px; }
+  .toolbar .view-btn { padding: 4px 12px; font-size: 12px; font-weight: 500; border: none; background: none; color: #71717a; cursor: pointer; border-radius: 4px; }
+  .toolbar .view-btn.active { background: #27272a; color: #e4e4e7; }
+  .content { flex: 1; overflow-y: auto; padding: 24px; }
+
+  /* Welcome state */
+  .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: #52525b; }
+  .welcome h2 { font-size: 20px; color: #71717a; margin-bottom: 8px; }
+  .welcome p { font-size: 14px; max-width: 360px; }
+
+  /* Rendered views */
+  .card { background: #18181b; border: 1px solid #27272a; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .card h3 { font-size: 14px; font-weight: 600; color: #a1a1aa; margin-bottom: 12px; }
+
+  /* Score displays */
+  .score-hero { display: flex; align-items: baseline; gap: 8px; margin-bottom: 24px; }
+  .score-big { font-size: 56px; font-weight: 700; line-height: 1; }
+  .score-label { font-size: 14px; color: #71717a; }
+  .score-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .score-card { background: #1a1a1e; border: 1px solid #27272a; border-radius: 8px; padding: 14px; }
+  .score-card .label { font-size: 12px; color: #71717a; margin-bottom: 4px; }
+  .score-card .value { font-size: 24px; font-weight: 700; }
+
+  /* Bar chart */
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+  .bar-label { width: 180px; font-size: 13px; color: #a1a1aa; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 8px; background: #27272a; border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .bar-value { width: 40px; text-align: right; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; flex-shrink: 0; }
+
+  /* Finding pills */
+  .finding { padding: 12px 0; border-top: 1px solid #1e1e22; }
+  .finding:first-child { border-top: none; padding-top: 0; }
+  .finding-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.3px; }
+  .badge-critical { background: #450a0a; color: #f87171; }
+  .badge-warning { background: #422006; color: #fbbf24; }
+  .badge-info { background: #172554; color: #60a5fa; }
+  .badge-fixed { background: #052e16; color: #4ade80; }
+  .finding-msg { font-size: 13px; color: #d4d4d8; }
+  .finding-loc { font-size: 12px; color: #52525b; margin-top: 2px; }
+
+  /* Flow plan */
+  .screen-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  .screen-card { background: #1a1a1e; border: 1px solid #27272a; border-radius: 8px; padding: 14px; }
+  .screen-card .order { font-size: 11px; font-weight: 700; color: #818cf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  .screen-card .screen-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+  .screen-card .screen-action { font-size: 12px; color: #71717a; }
+  .screen-card .screen-jtbd { font-size: 11px; font-weight: 500; margin-top: 8px; padding: 2px 8px; background: #27272a; border-radius: 4px; display: inline-block; color: #a1a1aa; }
+
+  /* Transitions */
+  .transition { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 13px; color: #a1a1aa; }
+  .transition .arrow { color: #818cf8; font-weight: 600; }
+
+  /* Token swatches */
+  .token-group { margin-bottom: 24px; }
+  .token-group-title { font-size: 13px; font-weight: 600; color: #a1a1aa; text-transform: capitalize; margin-bottom: 12px; }
+  .token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .token-item { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: #1a1a1e; border: 1px solid #27272a; border-radius: 6px; }
+  .token-swatch { width: 28px; height: 28px; border-radius: 6px; border: 1px solid #3f3f46; flex-shrink: 0; }
+  .token-name { font-size: 12px; font-weight: 500; color: #d4d4d8; }
+  .token-value { font-size: 11px; color: #52525b; }
+
+  /* Component list */
+  .comp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+  .comp-item { padding: 10px 12px; background: #1a1a1e; border: 1px solid #27272a; border-radius: 6px; }
+  .comp-name { font-size: 13px; font-weight: 500; color: #d4d4d8; }
+  .comp-variants { font-size: 11px; color: #52525b; margin-top: 2px; }
+
+  /* JSON raw view */
+  .json-raw { background: #0d0d12; border: 1px solid #27272a; border-radius: 8px; padding: 16px; overflow-x: auto; font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 12px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  .json-key { color: #818cf8; }
+  .json-string { color: #4ade80; }
+  .json-number { color: #fbbf24; }
+  .json-bool { color: #f472b6; }
+  .json-null { color: #71717a; }
+  .json-bracket { color: #52525b; }
+
+  /* Gestalt / Cognitive tables */
+  .status-table { width: 100%; border-collapse: collapse; }
+  .status-table th { text-align: left; font-size: 12px; font-weight: 600; color: #52525b; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 0; border-bottom: 1px solid #27272a; }
+  .status-table td { font-size: 13px; padding: 8px 0; border-bottom: 1px solid #1e1e22; vertical-align: top; }
+  .status-pass { color: #4ade80; }
+  .status-warning { color: #fbbf24; }
+  .status-critical { color: #f87171; }
+
+  /* Color helpers */
+  .text-excellent { color: #4ade80; }
+  .text-good { color: #60a5fa; }
+  .text-adequate { color: #fbbf24; }
+  .text-poor { color: #f87171; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h1>Design Kit Viewer</h1>
+    <p>Plans, reports, and design system</p>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav"></nav>
+</aside>
+
+<div class="main">
+  <div class="toolbar" id="toolbar">
+    <div class="breadcrumb" id="breadcrumb">Select a file</div>
+    <div class="view-toggle">
+      <button class="view-btn active" data-view="rendered" onclick="setView('rendered')">Rendered</button>
+      <button class="view-btn" data-view="raw" onclick="setView('raw')">JSON</button>
+    </div>
+  </div>
+  <div class="content" id="content">
+    <div class="welcome">
+      <h2>Design Kit Artifacts</h2>
+      <p>Select a file from the sidebar to view plans, audit reports, design tokens, and component specs.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── File registry ──
+const files = [
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/job-search-apply.json', name: 'Job Search & Apply' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/plan.json', name: 'plan.json' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/dashboard.json', name: 'dashboard.json' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/parent-feeds-attendance-flow.json', name: 'Parent Feeds Attendance' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/student-feeds-attendance.json', name: 'Student Feeds Attendance' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/insights-v1.json', name: 'Insights v1' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/insights-v2.json', name: 'Insights v2' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/insights-v3.json', name: 'Insights v3' },
+  { group: 'Plans', icon: '\u{1F4CB}', path: 'plans/insights-v4.json', name: 'Insights v4' },
+  { group: 'Reports', icon: '\u{1F4CA}', path: 'reports/audit-report.json', name: 'Audit Report' },
+  { group: 'Reports', icon: '\u{1F4CA}', path: 'reports/stress-report.json', name: 'Stress Report' },
+  { group: 'Design System', icon: '\u{1F3A8}', path: 'design-system/tokens.json', name: 'Tokens' },
+  { group: 'Design System', icon: '\u{1F9E9}', path: 'design-system/components/index.json', name: 'Components Index' },
+  { group: 'Design System', icon: '\u{1F9E9}', path: 'design-system/components/button.json', name: 'Button Spec' },
+  { group: 'Design System', icon: '\u{1F9E9}', path: 'design-system/components/avatar.json', name: 'Avatar Spec' },
+  { group: 'Design System', icon: '\u{1F517}', path: 'design-system/relationships.json', name: 'Relationships' },
+];
+
+let currentView = 'rendered';
+let currentData = null;
+let currentFile = null;
+
+// ── Build sidebar ──
+function buildSidebar() {
+  const nav = document.getElementById('sidebar-nav');
+  const groups = {};
+  files.forEach(f => { (groups[f.group] = groups[f.group] || []).push(f); });
+
+  let html = '';
+  for (const [group, items] of Object.entries(groups)) {
+    html += `<div class="nav-group"><div class="nav-group-label">${group}</div>`;
+    items.forEach((item, i) => {
+      html += `<div class="nav-item" data-path="${item.path}" onclick="loadFile('${item.path}')">
+        <span class="icon">${item.icon}</span>
+        <span class="name">${item.name}</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  nav.innerHTML = html;
+}
+
+// ── View toggle ──
+function setView(view) {
+  currentView = view;
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  if (currentData) render(currentData, currentFile);
+}
+
+// ── Load file ──
+async function loadFile(path) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.path === path));
+  const file = files.find(f => f.path === path);
+  document.getElementById('breadcrumb').innerHTML = `${file.group} / <span>${file.name}</span>`;
+
+  try {
+    const resp = await fetch(path);
+    const data = await resp.json();
+    currentData = data;
+    currentFile = file;
+    render(data, file);
+  } catch (e) {
+    document.getElementById('content').innerHTML = `<div class="welcome"><h2>Error loading file</h2><p>${e.message}</p></div>`;
+  }
+}
+
+// ── Render dispatcher ──
+function render(data, file) {
+  const el = document.getElementById('content');
+  if (currentView === 'raw') {
+    el.innerHTML = `<div class="json-raw">${syntaxHighlight(JSON.stringify(data, null, 2))}</div>`;
+    return;
+  }
+
+  const schema = data.$schema || '';
+  if (schema.includes('audit')) return renderAudit(el, data);
+  if (schema.includes('flow-plan')) return renderFlowPlan(el, data);
+  if (schema.includes('plan/v') || (data.screens && data.$metadata)) return renderPlan(el, data);
+  if (schema.includes('tokens')) return renderTokens(el, data);
+  if (schema.includes('components-index')) return renderComponentIndex(el, data);
+  if (schema.includes('component/v')) return renderComponentSpec(el, data);
+  if (schema.includes('relationships')) return renderRelationships(el, data);
+  if (schema.includes('stress')) return renderStress(el, data);
+
+  // Fallback: try to detect by content
+  if (data.findings && data.heuristicScores) return renderAudit(el, data);
+  if (data.flow && data.screens) return renderFlowPlan(el, data);
+  if (data.spacing || data.color || data.radius) return renderTokens(el, data);
+  if (data.categories) return renderComponentIndex(el, data);
+  if (data.components && data.$metadata?.totalRelationships) return renderRelationships(el, data);
+
+  // Generic JSON
+  el.innerHTML = `<div class="json-raw">${syntaxHighlight(JSON.stringify(data, null, 2))}</div>`;
+}
+
+// ── Audit Report ──
+function renderAudit(el, d) {
+  const scoreColor = d.score >= 8 ? 'text-excellent' : d.score >= 6 ? 'text-good' : d.score >= 4 ? 'text-adequate' : 'text-poor';
+  const barColor = v => v >= 0.8 ? '#22c55e' : v >= 0.6 ? '#3b82f6' : v >= 0.4 ? '#f59e0b' : '#ef4444';
+
+  let html = `
+    <div class="score-hero">
+      <span class="score-big ${scoreColor}">${d.score.toFixed(1)}</span>
+      <span class="score-label">/ 10 overall score</span>
+    </div>
+    <div class="card"><h3>Category Scores</h3>`;
+
+  const categories = [
+    ['Token Compliance', d.summary?.tokenCompliance],
+    ['Component Compliance', d.summary?.componentCompliance],
+    ['Heuristic Evaluation', d.summary?.heuristicEvaluation],
+    ['Cognitive Load', d.summary?.cognitiveLoad],
+    ['Gestalt Compliance', d.summary?.gestaltCompliance],
+    ['Naming Quality', d.summary?.namingQuality],
+  ];
+  categories.forEach(([label, val]) => {
+    if (val === undefined) return;
+    const pct = Math.round(val * 100);
+    html += `<div class="bar-row">
+      <span class="bar-label">${label}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${barColor(val)}"></div></div>
+      <span class="bar-value" style="color:${barColor(val)}">${pct}%</span>
+    </div>`;
+  });
+  html += '</div>';
+
+  // Heuristic scores
+  if (d.heuristicScores) {
+    html += '<div class="card"><h3>Nielsen Heuristics</h3>';
+    const heuristics = [
+      ['Visibility of status', d.heuristicScores.visibility],
+      ['Match real world', d.heuristicScores.matchRealWorld],
+      ['User control', d.heuristicScores.userControl],
+      ['Consistency', d.heuristicScores.consistency],
+      ['Error prevention', d.heuristicScores.errorPrevention],
+      ['Recognition > recall', d.heuristicScores.recognition],
+      ['Flexibility', d.heuristicScores.flexibility],
+      ['Aesthetic / minimal', d.heuristicScores.aesthetic],
+      ['Error recovery', d.heuristicScores.errorRecovery],
+      ['Help & docs', d.heuristicScores.helpDocs],
+    ];
+    heuristics.forEach(([label, h]) => {
+      if (!h) return;
+      const score = h.score;
+      const color = score >= 8 ? '#22c55e' : score >= 6 ? '#3b82f6' : score >= 4 ? '#f59e0b' : '#ef4444';
+      html += `<div class="bar-row">
+        <span class="bar-label">${label}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${score*10}%;background:${color}"></div></div>
+        <span class="bar-value" style="color:${color}">${score}</span>
+      </div>`;
+    });
+    html += '</div>';
+
+    // Heuristic details
+    html += '<div class="card"><h3>Heuristic Details</h3><table class="status-table"><tr><th>Heuristic</th><th>Evidence</th><th>Suggestion</th></tr>';
+    heuristics.forEach(([label, h]) => {
+      if (!h) return;
+      html += `<tr><td style="width:160px;font-weight:500">${label}</td><td style="color:#a1a1aa">${h.evidence || ''}</td><td style="color:#71717a">${h.suggestion || '-'}</td></tr>`;
+    });
+    html += '</table></div>';
+  }
+
+  // Gestalt
+  if (d.gestaltCompliance) {
+    html += '<div class="card"><h3>Gestalt Compliance</h3><table class="status-table"><tr><th>Principle</th><th>Status</th><th>Evidence</th></tr>';
+    for (const [key, val] of Object.entries(d.gestaltCompliance)) {
+      const statusClass = val.status === 'pass' ? 'status-pass' : val.status === 'warning' ? 'status-warning' : 'status-critical';
+      html += `<tr><td style="text-transform:capitalize;font-weight:500">${key.replace(/([A-Z])/g, ' $1')}</td><td class="${statusClass}" style="text-transform:uppercase;font-weight:600;font-size:12px">${val.status}</td><td style="color:#a1a1aa">${val.evidence}</td></tr>`;
+    }
+    html += '</table></div>';
+  }
+
+  // Cognitive Load
+  if (d.cognitiveLoad) {
+    html += '<div class="card"><h3>Cognitive Load</h3><table class="status-table"><tr><th>Law</th><th>Severity</th><th>Evidence</th></tr>';
+    for (const [key, val] of Object.entries(d.cognitiveLoad)) {
+      const statusClass = val.severity === 'pass' ? 'status-pass' : val.severity === 'warning' ? 'status-warning' : 'status-critical';
+      const label = key.replace(/([A-Z])/g, ' $1').replace('Law', ' Law');
+      html += `<tr><td style="font-weight:500">${label}</td><td class="${statusClass}" style="text-transform:uppercase;font-weight:600;font-size:12px">${val.severity}</td><td style="color:#a1a1aa">${val.evidence}</td></tr>`;
+    }
+    html += '</table></div>';
+  }
+
+  // Findings
+  if (d.findings) {
+    html += '<div class="card"><h3>Findings</h3>';
+    d.findings.forEach(f => {
+      const badge = f.status === 'FIXED' ? 'badge-fixed' : f.severity === 'critical' ? 'badge-critical' : f.severity === 'warning' ? 'badge-warning' : 'badge-info';
+      const label = f.status === 'FIXED' ? 'FIXED' : f.severity;
+      html += `<div class="finding">
+        <div class="finding-header"><span class="badge ${badge}">${label}</span></div>
+        <div class="finding-msg">${f.message}</div>
+        <div class="finding-loc">${f.location || ''}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Stats
+  if (d.stats) {
+    html += '<div class="card"><h3>Stats</h3><div class="score-grid">';
+    const stats = [
+      ['Total Nodes', d.stats.totalNodes],
+      ['Token-Bound Fills', d.stats.tokenBoundFills],
+      ['Component Instances', d.stats.componentInstances],
+      ['Detached Instances', d.stats.detachedInstances],
+      ['Auto-Layout Frames', d.stats.autoLayoutFrames],
+      ['Meaningful Names', `${d.stats.meaningfulNames}/${d.stats.meaningfulNames + d.stats.genericNames}`],
+    ];
+    stats.forEach(([label, val]) => {
+      html += `<div class="score-card"><div class="label">${label}</div><div class="value">${val}</div></div>`;
+    });
+    html += '</div></div>';
+  }
+
+  el.innerHTML = html;
+}
+
+// ── Flow Plan ──
+function renderFlowPlan(el, d) {
+  const flow = d.flow || {};
+  let html = `
+    <div class="score-hero">
+      <span class="score-big text-good">${flow.totalScreens || d.screens?.length || 0}</span>
+      <span class="score-label">screens &mdash; ${flow.name || 'Flow'}</span>
+    </div>
+    <div class="card"><h3>Flow Info</h3>
+      <table class="status-table">
+        <tr><td style="font-weight:500;width:160px">Topology</td><td>${d.$metadata?.topology || flow.topology || '-'}</td></tr>
+        <tr><td style="font-weight:500">Happy Path</td><td>${flow.happyPathScreens || '-'} screens</td></tr>
+        <tr><td style="font-weight:500">Edge Screens</td><td>${flow.edgeScreens || '-'} screens</td></tr>
+        <tr><td style="font-weight:500">Auto-Save</td><td>${flow.persistence?.autoSave ? 'Yes' : 'No'}</td></tr>
+        <tr><td style="font-weight:500">Resumable</td><td>${flow.persistence?.resumable ? 'Yes' : 'No'}</td></tr>
+      </table>
+    </div>`;
+
+  // Screens
+  if (d.screens) {
+    html += '<div class="card"><h3>Screens</h3><div class="screen-list">';
+    d.screens.forEach(s => {
+      html += `<div class="screen-card">
+        <div class="order">${s.screenType || 'screen'}</div>
+        <div class="screen-name">${s.name}</div>
+        <div class="screen-action">${s.primaryAction || ''}</div>
+        ${s.jtbd ? `<span class="screen-jtbd">${s.jtbd.toUpperCase()}</span>` : ''}
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  // Transitions
+  if (d.transitions) {
+    html += '<div class="card"><h3>Transitions</h3>';
+    d.transitions.forEach(t => {
+      html += `<div class="transition">
+        <span>${t.from}</span>
+        <span class="arrow">&rarr;</span>
+        <span>${t.to}</span>
+        <span style="color:#52525b;margin-left:8px">${t.label || t.trigger || ''}</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Shared state
+  if (flow.sharedState?.fields) {
+    html += '<div class="card"><h3>Shared State</h3><table class="status-table"><tr><th>Field</th><th>Set On</th><th>Used On</th></tr>';
+    flow.sharedState.fields.forEach(f => {
+      html += `<tr><td style="font-weight:500">${f.name}</td><td>${f.setOn}</td><td>${(f.usedOn || []).join(', ')}</td></tr>`;
+    });
+    html += '</table></div>';
+  }
+
+  el.innerHTML = html;
+}
+
+// ── Generic Plan ──
+function renderPlan(el, d) {
+  renderFlowPlan(el, d);
+}
+
+// ── Tokens ──
+function renderTokens(el, d) {
+  let html = '';
+  if (d.$metadata) {
+    html += `<div class="card"><h3>Token Source</h3>
+      <table class="status-table">
+        <tr><td style="font-weight:500;width:140px">Library</td><td>${d.$metadata.library || d.$metadata.name || '-'}</td></tr>
+        <tr><td style="font-weight:500">File</td><td>${d.$metadata.figmaFile || '-'}</td></tr>
+        <tr><td style="font-weight:500">Collections</td><td>${(d.$metadata.collections || []).join(', ')}</td></tr>
+        <tr><td style="font-weight:500">Modes</td><td>${(d.$metadata.modes || []).join(', ')}</td></tr>
+      </table>
+    </div>`;
+  }
+
+  const tokenGroups = ['spacing', 'radius', 'width', 'container'];
+  tokenGroups.forEach(group => {
+    if (!d[group]) return;
+    html += `<div class="card"><h3>${group}</h3><div class="token-grid">`;
+    for (const [name, token] of Object.entries(d[group])) {
+      html += `<div class="token-item">
+        <div style="min-width:48px;text-align:center;font-size:14px;font-weight:600;color:#818cf8">${token.$value || ''}</div>
+        <div><div class="token-name">${name}</div><div class="token-value">${token.$type || ''}</div></div>
+      </div>`;
+    }
+    html += '</div></div>';
+  });
+
+  // Color tokens
+  if (d.color) {
+    for (const [section, tokens] of Object.entries(d.color)) {
+      html += `<div class="card"><h3>color / ${section}</h3><div class="token-grid">`;
+      for (const [name, token] of Object.entries(tokens)) {
+        const val = token.$value || '';
+        const isRef = val.startsWith('{');
+        html += `<div class="token-item">
+          <div class="token-swatch" style="background:${isRef ? '#27272a' : val}"></div>
+          <div><div class="token-name">${name}</div><div class="token-value">${val}</div></div>
+        </div>`;
+      }
+      html += '</div></div>';
+    }
+  }
+
+  el.innerHTML = html;
+}
+
+// ── Component Index ──
+function renderComponentIndex(el, d) {
+  let html = '';
+  if (d.$metadata) {
+    html += `<div class="score-hero">
+      <span class="score-big text-good">${d.$metadata.totalComponentSets || 0}</span>
+      <span class="score-label">component sets &mdash; ${d.$metadata.totalVariants || 0} variants</span>
+    </div>`;
+  }
+
+  if (d.categories) {
+    for (const [cat, components] of Object.entries(d.categories)) {
+      html += `<div class="card"><h3>${cat} (${components.length})</h3><div class="comp-grid">`;
+      components.forEach(name => {
+        html += `<div class="comp-item"><div class="comp-name">${name}</div></div>`;
+      });
+      html += '</div></div>';
+    }
+  }
+
+  el.innerHTML = html;
+}
+
+// ── Component Spec ──
+function renderComponentSpec(el, d) {
+  let html = `<h2 style="font-size:24px;font-weight:700;margin-bottom:16px">${d.name || 'Component'}</h2>`;
+  html += `<div class="json-raw">${syntaxHighlight(JSON.stringify(d, null, 2))}</div>`;
+  el.innerHTML = html;
+}
+
+// ── Relationships ──
+function renderRelationships(el, d) {
+  let html = '';
+  if (d.$metadata) {
+    html += `<div class="score-hero">
+      <span class="score-big text-good">${d.$metadata.totalComponents || 0}</span>
+      <span class="score-label">components &mdash; ${d.$metadata.totalRelationships || 0} relationships</span>
+    </div>`;
+  }
+
+  if (d.components) {
+    const entries = Object.entries(d.components).slice(0, 40);
+    html += '<div class="card"><h3>Component Dependencies</h3><table class="status-table"><tr><th>Component</th><th>Category</th><th>Contains</th><th>Deps</th></tr>';
+    entries.forEach(([key, comp]) => {
+      const contains = (comp.contains || []).map(c => c.name).join(', ') || '-';
+      html += `<tr><td style="font-weight:500">${comp.name}</td><td style="color:#71717a">${comp.category || ''}</td><td style="color:#a1a1aa;font-size:12px">${contains}</td><td>${comp.dependencyCount?.dependsOn || 0}</td></tr>`;
+    });
+    html += '</table></div>';
+  }
+
+  el.innerHTML = html;
+}
+
+// ── Stress Report ──
+function renderStress(el, d) {
+  el.innerHTML = `<div class="json-raw">${syntaxHighlight(JSON.stringify(d, null, 2))}</div>`;
+}
+
+// ── JSON syntax highlighter ──
+function syntaxHighlight(json) {
+  return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match => {
+      let cls = 'json-number';
+      if (/^"/.test(match)) {
+        cls = /:$/.test(match) ? 'json-key' : 'json-string';
+      } else if (/true|false/.test(match)) {
+        cls = 'json-bool';
+      } else if (/null/.test(match)) {
+        cls = 'json-null';
+      }
+      return `<span class="${cls}">${match}</span>`;
+    });
+}
+
+// ── Init ──
+buildSidebar();
+</script>
+</body>
+</html>

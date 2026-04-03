@@ -389,10 +389,22 @@ For each stress category, produce:
 > | Item list | 0 items | Fail | Blank space, no empty state designed |
 > | ... | ... | ... | ... |
 
-## Step 5: Write report
+## Step 5: Present results (no file output)
 
-Save the complete stress test report to `reports/stress-report.json`. Stress reports
-are QA artifacts, not design system source-of-truth data.
+**Do NOT write report JSON files to disk.** Stress reports go stale immediately —
+once the issues are fixed, the report is outdated. Instead:
+
+1. **Present the full report inline** in the conversation with before/after screenshots.
+2. **Post a summary comment** on the tested frame via `figma_post_comment` listing
+   the top issues found and their suggested fixes.
+3. **Post specific comments** on individual elements that failed, pinned to the
+   relevant node IDs.
+
+Skip the JSON schema below — it's retained only as a reference for the data
+structure. The actual output goes to the conversation + Figma comments.
+
+<details>
+<summary>Reference: stress report data structure (do not write to disk)</summary>
 
 ```json
 {
@@ -486,13 +498,9 @@ are QA artifacts, not design system source-of-truth data.
   ]
 }
 ```
+</details>
 
-Create the `reports/` directory if it doesn't exist:
-```bash
-mkdir -p reports
-```
-
-## Step 6: Present results
+## Step 6: Format the presentation
 
 Show the user a clear before/after comparison with actionable findings.
 
@@ -571,8 +579,8 @@ Use figma_delete_node to remove each cloned stress-test frame.
 ```
 
 Confirm cleanup:
-> "Cleaned up [N] stress-test frames. The report is saved at
-> `reports/stress-report.json` and the baseline screenshot is preserved."
+> "Cleaned up [N] stress-test frames. The findings are in the Figma
+> comments and the conversation above."
 
 ## Edge cases
 
@@ -590,8 +598,8 @@ Confirm cleanup:
 - **Multiple frames selected**: Test each frame independently. Present results
   per frame in the report.
 
-- **User wants to re-run after fixes**: Load the previous `reports/stress-report.json`,
-  re-run the same categories, and show improvement delta.
+- **User wants to re-run after fixes**: Re-run the same categories on the
+  original frame and compare results against the previous conversation findings.
 
 ## Next steps
 

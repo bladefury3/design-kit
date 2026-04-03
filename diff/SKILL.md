@@ -522,11 +522,18 @@ Present impact analysis:
 > This is a **cascading break** — all compositions containing Toast will have
 > detached instances."
 
-## Step 6: Write diff report
+## Step 6: Present diff results (no file output)
 
-Create the `reports/` directory if it doesn't exist, then save the complete diff report to `reports/diff-report.json`.
+**Do NOT write report JSON files to disk.** Diff reports are point-in-time snapshots
+that go stale as soon as the design system changes again. Instead:
 
-### Output format
+1. **Present the full diff inline** in the conversation.
+2. **Post a summary comment** on the Figma file via `figma_post_comment` listing
+   breaking changes and what needs attention.
+
+The JSON schema below is retained as a reference for the data structure only.
+
+### Reference format
 
 ```json
 {
@@ -647,7 +654,7 @@ After writing the file, present a designer-friendly summary that leads with impa
 > ### System health
 > - **Stability**: 87/100 | **Maturity**: Level 3 — Consistent
 >
-> Report saved to `reports/diff-report.json`.
+> Findings posted as Figma comments on the file.
 
 ## Step 7: Offer re-extraction
 
