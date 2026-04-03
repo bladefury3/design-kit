@@ -1,9 +1,23 @@
 {
   "name": "design-kit",
   "version": "0.1.0",
-  "description": "Design system documentation skills for Claude Code + Figma",
+  "description": "AI-powered design system skills for Claude Code + Figma. 19 slash commands for building, auditing, and shipping designs.",
   "author": "Sidharath Chhatani",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bladefury3/design-kit.git"
+  },
+  "homepage": "https://github.com/bladefury3/design-kit#readme",
+  "keywords": [
+    "design-system",
+    "figma",
+    "claude-code",
+    "design-tokens",
+    "mcp",
+    "ai-design",
+    "component-library"
+  ],
   "scripts": {
     "setup": "./setup"
   }

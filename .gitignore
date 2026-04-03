@@ -4,7 +4,14 @@ plans/
 reports/
 benchmarks/results/
 
+# Root-level generated files
+tokens.json
+audit-report.json
+
 # Editor / OS
 .claude/
 node_modules/
 .DS_Store
+*.swp
+*.swo
+*~

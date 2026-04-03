@@ -47,15 +47,17 @@ and hand off to engineering — all from your terminal.
 | `/handoff` | Generate developer-ready specs with exact tokens and states |
 | `/handoff-ai` | Optimize your Figma file for AI/MCP consumption |
 
-## Workshop deck (designers)
+## For designers
 
-A **browser slide deck** walks through setup, workflow, commands, and pitfalls: open [docs/presentations/designers-guide.html](docs/presentations/designers-guide.html). Use arrow keys or the on-screen controls to navigate. Presenter notes and **15 / 30 / 45 minute** trims are in [docs/presentations/README.md](docs/presentations/README.md); design-review notes are in [docs/presentations/designers-guide-notes.md](docs/presentations/designers-guide-notes.md).
+- **[Presentation deck](presentation.html)** — 12-slide onboarding deck. Open in a browser, navigate with arrow keys.
+- **[Data viewer](viewer.html)** — Browse extracted tokens, components, and plans. Serve with `python3 -m http.server` and open in browser.
+- **[Quick start guide](CLAUDE.md#quick-start-for-designers)** — Full skill table, common workflows, tips, and troubleshooting.
 
 ## Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Cursor](https://cursor.com)
 - [Figma Desktop](https://www.figma.com/downloads/) with a design system file open
-- [Figma Console MCP](https://github.com/nicholasgriffintn/figma-console-mcp) — connects Claude/Cursor to Figma
+- [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) — connects Claude/Cursor to Figma
 
 ---
 
@@ -66,14 +68,14 @@ A **browser slide deck** walks through setup, workflow, commands, and pitfalls: 
 **Global install** — available in every project:
 
 ```bash
-git clone https://github.com/nicholasgriffintn/design-kit.git ~/.design-kit
+git clone https://github.com/bladefury3/design-kit.git ~/.design-kit
 cd ~/.design-kit && ./setup
 ```
 
 **Project-local install** — scoped to one repo:
 
 ```bash
-git clone https://github.com/nicholasgriffintn/design-kit.git
+git clone https://github.com/bladefury3/design-kit.git
 cd design-kit && ./setup --local
 ```
 
@@ -82,7 +84,7 @@ Skills are installed as slash commands. Type `/setup-tokens` in Claude Code to s
 ### Option B: Cursor (with setup script)
 
 ```bash
-git clone https://github.com/nicholasgriffintn/design-kit.git ~/.design-kit
+git clone https://github.com/bladefury3/design-kit.git ~/.design-kit
 cd ~/.design-kit && ./setup --cursor=/path/to/your/project
 ```
 
@@ -110,7 +112,7 @@ Open Terminal (or press `` Ctrl+` `` in Cursor to use the built-in terminal),
 navigate to your project folder, and run:
 
 ```bash
-git clone https://github.com/nicholasgriffintn/design-kit.git .design-kit
+git clone https://github.com/bladefury3/design-kit.git .design-kit
 ```
 
 This creates a hidden `.design-kit` folder inside your project with all the skills.
@@ -178,7 +180,7 @@ cp .design-kit/audit/SKILL.md .cursor/skills/audit/SKILL.md
 
 ### Figma Console MCP setup
 
-Both Claude Code and Cursor need the [Figma Console MCP](https://github.com/nicholasgriffintn/figma-console-mcp) server to talk to Figma. See the [full setup guide](https://github.com/nicholasgriffintn/figma-console-mcp#readme) for details and troubleshooting.
+Both Claude Code and Cursor need the [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) server to talk to Figma. See the [full setup guide](https://github.com/nichochar/figma-console-mcp#readme) for details and troubleshooting.
 
 **Claude Code** — add to `~/.claude/settings.json`:
 ```json
@@ -293,7 +295,7 @@ Skills read from and write to three local directories:
 |---|---|---|
 | `design-system/` | Tokens, icons, component specs, relationships | `/setup-*` skills, `/build-component` |
 | `plans/` | Screen + component build plans | `/plan`, `/brainstorm`, `/plan-component` |
-| `reports/` | Audit, stress, diff, and review reports | `/audit`, `/stress-test`, `/diff`, `/review-component` |
+| `reports/` | (deprecated — findings go to Figma comments) | `/audit`, `/stress-test`, `/diff`, `/review-component` |
 
 You don't need to extract first — most skills can read directly from Figma as a
 fallback. But extraction is faster for repeated use and lets you track changes over time.
