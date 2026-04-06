@@ -26,6 +26,7 @@ allowed-tools:
   - mcp__figma-console__figma_capture_screenshot
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_get_annotations
+  - mcp__figma-console__figma_audit_component_accessibility
   - Read
   - Write
   - Edit

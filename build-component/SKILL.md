@@ -28,6 +28,11 @@ allowed-tools:
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_search_components
   - mcp__figma-console__figma_get_library_components
+  - mcp__figma-console__figma_audit_component_accessibility
+  - mcp__figma-console__figma_lint_design
+  - mcp__figma-console__figma_set_annotations
+  - mcp__figma-console__figma_get_annotation_categories
+  - mcp__figma-console__figma_get_component_image
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
   - Read

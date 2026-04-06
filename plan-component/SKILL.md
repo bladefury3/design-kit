@@ -21,6 +21,9 @@ allowed-tools:
   - mcp__figma-console__figma_browse_tokens
   - mcp__figma-console__figma_get_variables
   - mcp__figma-console__figma_get_styles
+  - mcp__figma-console__figma_audit_component_accessibility
+  - mcp__figma-console__figma_get_annotations
+  - mcp__figma-console__figma_get_comments
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
   - Read
