@@ -7,7 +7,7 @@ and hand off to engineering — all from your terminal.
 
 ## What you get
 
-**20 slash commands** organized into 5 phases:
+**21 slash commands** organized into 5 phases:
 
 ### Phase 1: Setup (one-time — catalog what you have)
 
@@ -18,11 +18,12 @@ and hand off to engineering — all from your terminal.
 | `/setup-relationships` | Map how components depend on each other |
 | `/setup-icons` | Catalog icons with keys, categories, and search tags |
 
-### Capture (bring existing pages into Figma)
+### Capture + Wireframe (bring existing pages into Figma)
 
 | Command | What it does |
 |---|---|
 | `/capture` | Take a live URL, rebuild it in Figma as raw replica + design-system-mapped version |
+| `/wireframe` | Lo-fi wireframe on FigJam from a URL, screenshot, Figma frame, or text description |
 
 ### Phase 2: Create (the design loop)
 
@@ -276,8 +277,10 @@ It's a one-time step — the data is cached locally for all future commands.
 Phase 1: SETUP (one-time)
   /setup-tokens → /setup-components → /setup-relationships → /setup-icons
 
-CAPTURE (bring existing pages into Figma)
-  /capture URL ──→ raw replica + mapped version side by side
+CAPTURE + WIREFRAME (bring existing pages into Figma)
+  /capture URL  ──→ raw replica + mapped version (Figma)
+  /wireframe    ──→ hand-drawn lo-fi wireframe (FigJam)
+    accepts: URL, screenshot, Figma frame, or text description
 
 Phase 2: CREATE
   /brainstorm ──→ pick a direction
@@ -424,6 +427,7 @@ design-kit/
 │   ├── tasks-template.md    #   Task checklist template for /build
 │   └── component-tasks-template.md  # Task template for /build-component
 ├── capture/                 # Capture live URLs → raw + mapped Figma builds
+├── wireframe/               # Lo-fi wireframes on FigJam from any input
 ├── reports/                 # (deprecated — findings go to Figma comments)
 ├── setup-tokens/            # Skills (each contains a SKILL.md)
 ├── setup-components/

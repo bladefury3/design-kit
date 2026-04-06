@@ -41,8 +41,9 @@ design-kit/
 ├── setup-relationships/          # Map how components depend on each other
 ├── setup-icons/                  # Catalog icons with search tags
 │
-│── ── Phase 1.5: Capture ──────────────────────────────────────────────
+│── ── Phase 1.5: Capture + Wireframe ──────────────────────────────────
 ├── capture/                      # Capture a live URL → raw + mapped Figma builds
+├── wireframe/                    # Lo-fi wireframes on FigJam from URL/screenshot/text
 │
 │── ── Phase 2: Create ────────────────────────────────────────────────
 ├── brainstorm/                   # Generate design variations (SCAMPER + JTBD)
@@ -109,11 +110,12 @@ Step 4:  You're ready. Try any skill below.
 | **Map component relationships** | `/setup-relationships` | Builds dependency graph → `design-system/relationships.json` |
 | **Catalog icons** | `/setup-icons` | Maps icon names to keys with search tags → `design-system/icons.json` |
 
-**Capture**
+**Capture + Wireframe**
 
 | I want to... | Run this | What happens |
 |---|---|---|
 | **Bring a live page into Figma** | `/capture` | Give a URL → raw replica + design-system-mapped version side by side |
+| **Sketch a lo-fi wireframe** | `/wireframe` | Give a URL, screenshot, or description → hand-drawn wireframe on FigJam |
 
 **Create**
 
@@ -242,8 +244,10 @@ Skills are organized into 4 phases. You don't need them all — start where you 
 Phase 1: SETUP (one-time — catalog what you have)
   /setup-tokens → /setup-components → /setup-relationships → /setup-icons
 
-CAPTURE (bring existing pages into Figma)
-  /capture URL ──→ raw replica + mapped version (side by side)
+CAPTURE + WIREFRAME (bring existing pages into Figma)
+  /capture URL ──→ raw replica + mapped version (side by side, in Figma)
+  /wireframe   ──→ hand-drawn lo-fi wireframe (on FigJam)
+    accepts: URL, screenshot, Figma frame, or text description
 
 Phase 2: CREATE (the design loop — spec-driven)
   /brainstorm ──→ pick a direction

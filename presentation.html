@@ -312,38 +312,32 @@
     </div>
   </div>
 
-  <!-- Slide 6: Capture -->
+  <!-- Slide 6: Capture + Wireframe -->
   <div class="slide">
-    <span class="phase-tag phase-setup">Capture</span>
+    <span class="phase-tag phase-setup">Capture + Wireframe</span>
     <h2>Bring existing pages into Figma</h2>
-    <p>Give it a URL. It reads the live page, extracts styles and structure, and rebuilds it in Figma. Two versions: raw (exact CSS) and mapped (your components + tokens).</p>
-    <div class="flow">
-      <div class="flow-step">URL</div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step">Extract DOM + CSS</div>
-      <div class="flow-arrow">&rarr;</div>
-      <div class="flow-step highlight">Raw replica</div>
-      <div class="flow-arrow">+</div>
-      <div class="flow-step highlight">Mapped version</div>
-    </div>
-    <div class="two-col" style="margin-top:32px">
-      <div class="col col-green">
-        <h3>Raw replica</h3>
-        <ul>
-          <li>Exact CSS colors, fonts, spacing</li>
-          <li>No tokens, no components</li>
-          <li>Pixel-accurate baseline</li>
-          <li>The ground truth of what exists</li>
-        </ul>
+    <p>Two skills for importing real pages. <strong>/capture</strong> rebuilds in Figma with your design system. <strong>/wireframe</strong> sketches on FigJam for quick ideation.</p>
+    <div class="card-grid cols-3" style="margin-top:24px">
+      <div class="card">
+        <div class="card-title">/capture &rarr; Raw</div>
+        <div class="card-desc">Exact CSS colors, fonts, spacing. No tokens. Pixel-accurate baseline in Figma.</div>
       </div>
-      <div class="col col-amber">
-        <h3>Mapped version</h3>
-        <ul>
-          <li>Your library components</li>
-          <li>Token-bound spacing and colors</li>
-          <li>Fully editable and consistent</li>
-          <li>Ready for modifications</li>
-        </ul>
+      <div class="card">
+        <div class="card-title">/capture &rarr; Mapped</div>
+        <div class="card-desc">Your library components, token-bound values. Fully editable in Figma.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">/wireframe &rarr; FigJam</div>
+        <div class="card-desc">Hand-drawn lo-fi wireframe. Figma Hand font, square shapes. Whiteboard feel.</div>
+      </div>
+    </div>
+    <div style="margin-top:24px">
+      <p style="font-size:16px;color:var(--text2)">/wireframe accepts four inputs:</p>
+      <div class="flow" style="margin-top:12px">
+        <div class="flow-step">URL</div>
+        <div class="flow-step">Screenshot</div>
+        <div class="flow-step">Figma frame</div>
+        <div class="flow-step">Text description</div>
       </div>
     </div>
   </div>
