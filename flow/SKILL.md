@@ -43,7 +43,7 @@ invested effort and expects momentum toward completion.
 
 **You plan and build multi-screen connected flows** — onboarding, checkout, settings,
 account creation, data import wizards, approval chains. You output a flow plan to
-`plans/<flow-name>.json` that `/build` can execute, and you build the full
+`plans/<flow-name>/` that `/build` can execute, and you build the full
 flow in Figma as a connected sequence.
 
 ## Design Philosophy
@@ -53,56 +53,29 @@ that run in your head at all times:
 
 ### Flow Design Principles (from PRINCIPLES.md)
 
-- **One primary action per screen.** If you cannot name the single thing the user
-  does on this screen, the screen has no job. Split it.
-- **One escape hatch always visible.** Back, cancel, close — the user must always
-  see a way out. Trapped users abandon flows.
-- **Progressive disclosure.** Do not front-load complexity. Step 1 should feel easy.
-  Reveal step 4's complexity only when the user arrives at step 4.
-- **Completion momentum.** Celebrate progress. "Step 2 of 4" with a checkmark on
-  step 1 tells the user they are winning. Front-load easy steps to build momentum
-  before asking for hard things.
-- **Error recovery at every step.** Every error state has a clear next action. Never
-  a dead end — always a path forward or a path out.
+One primary action per screen, one escape hatch always visible, progressive disclosure,
+completion momentum, and error recovery at every step. See PRINCIPLES.md (section
+"Flow Design Principles") for the full definitions and rationale for each principle.
 
 ### Jobs-to-be-Done Awareness (from PRINCIPLES.md)
 
-Every screen in a flow serves a user job. Identify whether each screen is about:
-- **Act** — "I need to do something" (forms, inputs, selections)
-- **Learn** — "How does this work?" (onboarding, explainers, tooltips)
-- **Decide** — "Which option should I pick?" (comparisons, choices, confirmations)
-- **Configure** — "I need to set this up" (settings, preferences, imports)
-- **Monitor** — "Is everything OK?" (status, progress, confirmation)
+Every screen in a flow serves a user job: Act, Learn, Decide, Configure, or Monitor.
+See PRINCIPLES.md (section "Jobs-to-be-Done") for the full table with user mindsets
+and design emphasis per job.
 
 A screen that tries to serve three jobs equally needs to be split into three screens.
 
 ### Cognitive Load Management (from PRINCIPLES.md)
 
-- Each step should be completable in under 30 seconds of focused attention
-- Complex steps should be breakable into sub-steps
-- Pre-fill what you can: defaults, carried-forward data, smart suggestions
-- Do not show step 4's complexity on step 1
-- Hick's Law: more than 7 options without grouping = flag for redesign
-- Miller's Law: more than 9 items in a flat list without structure = flag
+Each step under 30 seconds, pre-fill what you can, progressive complexity. Hick's
+Law (>7 ungrouped options = flag) and Miller's Law (>9 flat items = flag) apply.
+See PRINCIPLES.md (section "Cognitive Load Laws") for full thresholds and severity levels.
 
-## AskUserQuestion Format
+### AskUserQuestion Format
 
-**ALWAYS follow this structure for every AskUserQuestion call:**
-
-1. **Re-ground:** State what you are planning and where you are in the process. (1 sentence)
-2. **Simplify:** Explain the design decision in plain English. No Figma jargon, no variant key hashes. Say what the user will SEE, not what the system calls it.
-3. **Recommend:** `RECOMMENDATION: Choose [X] because [one-line reason]`
-4. **Options:** Lettered options: `A) ... B) ... C) ...`
-
-Assume the user has not looked at this window in 20 minutes. If you would need to
-open Figma to understand your own question, it is too complex.
-
-### CRITICAL RULES
-
-- **One decision = one AskUserQuestion.** Never combine multiple design choices into one question.
-- **STOP after each question.** Do NOT proceed until the user responds.
-- **Escape hatch:** If a decision has an obvious answer, state what you will do and move on. Only ask when there is a genuine design choice with meaningful tradeoffs.
-- **Connect to user outcomes.** "This matters because a user who hits 'back' on step 3 will lose their uploaded file if we don't persist state."
+Follow the AskUserQuestion format from PRINCIPLES.md (section "AskUserQuestion Format"):
+re-ground (1 sentence), simplify (plain English), recommend (with reason), lettered
+options. One decision per question. STOP after each. Escape hatch for obvious answers.
 
 ## Before you begin
 
@@ -415,182 +388,74 @@ Present the edge screen inventory:
 
 ## Step 4: Generate the flow plan
 
-Write a master plan to `plans/<flow-name>.json`. This extends the `/plan`
-JSON schema with flow-level metadata.
+Write the flow plan to `plans/<flow-name>/`. This directory contains a flow
+overview and individual screen plans in markdown format.
 
-Create the `plans/` directory if it does not exist.
+Create the `plans/<flow-name>/screens/` directory if it does not exist.
 
-### plans/\<flow-name\>.json format
+### plans/\<flow-name\>/ format
 
-```json
-{
-  "$schema": "design-kit/flow-plan/v1",
-  "$metadata": {
-    "createdAt": "<ISO timestamp>",
-    "description": "<one-line summary of the flow>",
-    "topology": "linear|branching|hub-and-spoke|wizard|loop",
-    "size": { "width": 1440, "height": "auto" },
-    "libraryFileKey": "<from design-system/components/index.json>"
-  },
-
-  "flow": {
-    "name": "<Flow Name>",
-    "totalScreens": 6,
-    "happyPathScreens": 4,
-    "edgeScreens": 2,
-
-    "progress": {
-      "type": "steps|bar|breadcrumb|none",
-      "labels": ["Step 1 label", "Step 2 label", "Step 3 label"],
-      "component": "<progress component slug if from library>",
-      "variantKey": "<variant hash if from library>"
-    },
-
-    "sharedState": {
-      "description": "Data that persists across screens in this flow",
-      "fields": [
-        { "name": "email", "setOn": "screen-1", "usedOn": ["screen-2", "screen-3"] },
-        { "name": "selectedPlan", "setOn": "screen-2", "usedOn": ["screen-3", "screen-4"] }
-      ]
-    },
-
-    "persistence": {
-      "autoSave": true,
-      "resumable": true,
-      "expiresAfter": "30m",
-      "warningBefore": "5m"
-    }
-  },
-
-  "screens": [
-    {
-      "id": "screen-1",
-      "name": "<Screen Name>",
-      "screenType": "happy-path|error|empty|completed|timeout",
-      "position": { "order": 1, "row": "main|edge" },
-
-      "navigation": {
-        "back": null,
-        "next": "screen-2",
-        "cancel": { "target": "exit", "confirmation": false },
-        "skip": null
-      },
-
-      "primaryAction": "<what the user does on this screen>",
-      "jtbd": "act|learn|decide|configure|monitor",
-
-      "componentCoverage": {
-        "total": 5,
-        "fromLibrary": 4,
-        "tokenBuilt": 1,
-        "percentage": 80
-      },
-
-      "layout": {
-        "name": "<Screen Name>",
-        "type": "frame",
-        "direction": "vertical",
-        "width": 1440,
-        "height": "auto",
-        "tokens": {
-          "fills": { "ref": "color.background.bg-primary", "figmaKey": "<hash>" }
-        },
-        "children": [
-          {
-            "name": "Progress Bar",
-            "type": "library-component",
-            "component": "<progress-component-slug>",
-            "figmaKey": "<component hash>",
-            "variantKey": "<variant hash>",
-            "variant": "<human-readable variant>",
-            "overrides": { "step": "1", "total": "4" }
-          },
-          {
-            "name": "Content Area",
-            "type": "frame",
-            "direction": "vertical",
-            "tokens": { "...": "..." },
-            "children": ["<... same structure as plan layout nodes ...>"]
-          },
-          {
-            "name": "Action Bar",
-            "type": "frame",
-            "direction": "horizontal",
-            "justify": "space-between",
-            "children": [
-              {
-                "name": "Back Button",
-                "type": "library-component",
-                "component": "button",
-                "variantKey": "<hash>",
-                "variant": "Tertiary, gray, md",
-                "overrides": { "text": "Back" }
-              },
-              {
-                "name": "Continue Button",
-                "type": "library-component",
-                "component": "button",
-                "variantKey": "<hash>",
-                "variant": "Primary, color, md",
-                "overrides": { "text": "Continue" }
-              }
-            ]
-          }
-        ]
-      }
-    }
-  ],
-
-  "transitions": [
-    {
-      "from": "screen-1",
-      "to": "screen-2",
-      "trigger": "continue-button-click",
-      "condition": "form-valid",
-      "animation": "slide-left"
-    },
-    {
-      "from": "screen-2",
-      "to": "screen-1",
-      "trigger": "back-button-click",
-      "condition": null,
-      "animation": "slide-right"
-    }
-  ]
-}
+```
+plans/<flow-name>/
+├── plan.md          # Flow overview with topology, transitions, shared state
+└── screens/
+    ├── 01-<screen>.md
+    ├── 02-<screen>.md
+    └── edge-<name>.md
 ```
 
-### Plan JSON node types
+### Flow plan.md format
 
-Same as `/plan`:
+```markdown
+# Flow: <Name>
 
-| type | Description | Required fields |
+**Topology**: <Linear / Branching / Hub-and-spoke / Wizard / Loop>
+**Screens**: <N> happy-path + <M> edge = <total>
+**Viewport**: Desktop (1440px)
+**Progress**: <steps / bar / breadcrumb / none> — <labels>
+
+## Flow map
+<ASCII diagram>
+
+## Shared state
+| Data | Set on | Used on |
 |---|---|---|
-| `frame` | Token-built frame | direction, tokens, children |
-| `library-component` | Instantiate from library | component, variantKey, overrides |
-| `text` | Token-bound text node | content, style, tokens |
-| `ellipse` | Shape (avatars, dots) | tokens for fills |
+| email | 01-signup | 02-verify, 03-welcome |
 
-### CRITICAL: Token key validation
+## Persistence
+- Auto-save: yes/no
+- Resumable: yes/no
+- Expires after: <duration>
 
-Before writing the plan JSON, verify ALL figmaKey values are **40-character hex hashes**
-(e.g., `"b6157f22907f5eae9c352ab74d3b634423186136"`). Path-style keys like
-`"Colors/Text/text-primary"` do NOT work with `importVariableByKeyAsync` and will
-fail silently during build.
+## Transitions
+| From | To | Trigger | Loading |
+|---|---|---|---|
+| 01-signup | 02-verify | "Continue" click | Button: "Processing...", spinner, fields disabled |
 
-If any key in `design-system/tokens.json` is a path instead of a hash, flag it:
-> "Token `color.text.text-primary` has a path-style key that will not work in Figma.
-> Run `/setup-tokens` to refresh keys, or check the audit report for corrected hashes."
+## Screens
+- [01-Signup](screens/01-signup.md) — Enter email and password
+- [02-Verify](screens/02-verify-email.md) — Check inbox, enter code
+- [Edge: Network error](screens/edge-network-error.md) — Retry overlay
+```
 
-### Typography: prefer text styles, fall back to individual tokens
+### Screen plan format
 
-Same rules as `/plan`:
+Each screen file follows the standard screen plan markdown format from
+PRINCIPLES.md, with added flow metadata:
 
-- If `design-system/tokens.json` has a `textStyles` section, use `textStyleKey` on
-  text nodes for composite text style binding.
-- If no textStyles section exists, fall back to individual `fontSize`, `lineHeight`,
-  and `fills` token bindings.
-- Never hardcode font sizes, line heights, or text colors in the plan.
+```markdown
+# Screen: 01-Signup
+
+**Flow position**: 1 of 4
+**Primary action**: Enter email and password
+**Job**: Act
+**Back**: none (entry point)
+**Next**: 02-verify-email
+**Cancel**: Exit flow (no confirmation — no data entered yet)
+
+## Layout
+<standard screen plan format>
+```
 
 ### Variant research phase (do this ONCE before building)
 
@@ -623,7 +488,10 @@ frequently a Mobile, Banner, or Open variant.
 ### Shared component registry
 
 Components that appear on multiple screens (sidebar, header) need identical
-customization on each instance. Track these centrally:
+customization on each instance. The flow `plan.md`'s "Shared state" section
+tracks data that flows between screens, and individual screen plans document
+component usage. But during build, you must also track shared component
+customizations centrally.
 
 After customizing a shared component on the first screen, record:
 - **Text changes**: Which text nodes were updated and to what values
@@ -632,26 +500,6 @@ After customizing a shared component on the first screen, record:
 
 Then replay these exact changes on subsequent screen instances. This prevents
 sidebar Screen 1 showing "Students" while sidebar Screen 3 still shows "Projects".
-
-Example tracking:
-```json
-{
-  "sidebar": {
-    "textUpdates": {
-      "1161:8600;...": "Students",
-      "1161:8601;...": "Attendance",
-      "1161:8602;...": "Messages",
-      "1161:8603;...": "Calendar",
-      "1161:8604;...": "Reports"
-    },
-    "hiddenNodes": ["1161:8609"],
-    "userProfile": {
-      "name": "Sarah Thompson",
-      "email": "sarah.thompson@email.com"
-    }
-  }
-}
-```
 
 ## Step 5: Build in Figma
 
@@ -931,6 +779,21 @@ If yes, fix it. Then state what you changed and why.
 - **Flow has optional steps.** Mark them clearly in the progress indicator. The user
   should see "Step 3 (optional)" and have a visible "Skip" action. Skipped steps
   should not count against completion percentage.
+
+## Definition of Done
+
+Before presenting the flow, verify ALL of these:
+
+1. [ ] Every screen has exactly one primary action
+2. [ ] Every non-terminal screen has back/cancel escape hatch
+3. [ ] No dead ends — every error state has a recovery path
+4. [ ] Progress indicator consistent across all screens
+5. [ ] Data flows forward (no screen depends on later screen's data)
+6. [ ] Shared components (header, sidebar) identical across screens
+7. [ ] Loading states defined for every screen transition
+8. [ ] Edge screens designed (error, empty, timeout, already-completed)
+9. [ ] Flow map ASCII diagram matches built screens
+10. [ ] All text is domain-specific across all screens
 
 ## Tone
 

@@ -55,17 +55,9 @@ Two frameworks drive every brainstorm session:
 
 ### SCAMPER (from PRINCIPLES.md)
 
-Each lens forces a specific type of creative thinking:
-
-| Lens | Question | Design Application |
-|---|---|---|
-| **Substitute** | What can be replaced? | Swap component types: table to cards, tabs to accordion, sidebar to top nav |
-| **Combine** | What can be merged? | Merge sections: stats + chart in one card, filter + search in one bar |
-| **Adapt** | What can be borrowed? | Borrow patterns: email inbox for notifications, Kanban for tasks |
-| **Modify** | What can be emphasized/de-emphasized? | Change hierarchy: data-first vs. action-first vs. navigation-first |
-| **Put to other use** | What else could this serve? | Reframe: dashboard as command center vs. status board vs. launch pad |
-| **Eliminate** | What can be removed? | Radical subtraction: cut 50% of elements. What still works? |
-| **Reverse** | What can be inverted? | Flip hierarchy: action-first vs. context-first, detail-first vs. summary-first |
+Each lens forces creative variation: Substitute, Combine, Adapt, Modify, Put to other
+use, Eliminate, Reverse. See PRINCIPLES.md (section "SCAMPER") for the full table with
+design applications and questions per lens.
 
 You don't apply all seven. You pick the 3-5 that create MEANINGFUL variation
 for THIS specific design. A table-heavy analytics screen benefits from Substitute
@@ -73,16 +65,9 @@ and Modify. A simple form benefits from Eliminate and Combine.
 
 ### Jobs-to-be-Done (from PRINCIPLES.md)
 
-Each variation optimizes for a different user job:
-
-| Job | User mindset | Design emphasis |
-|---|---|---|
-| **Monitor** | "Is everything OK?" | Status indicators, dashboards, alerts, at-a-glance metrics |
-| **Investigate** | "Why did this happen?" | Data tables, filters, drill-down, comparisons, timelines |
-| **Act** | "I need to do something" | Forms, CTAs, wizards, confirmation flows, bulk operations |
-| **Configure** | "I need to set this up" | Settings, preferences, toggles, defaults, import/export |
-| **Learn** | "How does this work?" | Onboarding, documentation, tooltips, empty state guidance |
-| **Decide** | "Which option should I pick?" | Comparisons, pricing tables, feature matrices, recommendations |
+Six user jobs drive design emphasis: Monitor, Investigate, Act, Configure, Learn,
+Decide. See PRINCIPLES.md (section "Jobs-to-be-Done") for the full table with user
+mindsets and design emphasis per job.
 
 The original frame likely serves one job well. Each variation shifts the emphasis
 to a different job — or serves the same job through a radically different lens.
@@ -109,24 +94,11 @@ These patterns are banned:
 - **Custom-built components** — elements that look like buttons, badges, or alerts
   but are built from raw frames instead of library components
 
-## AskUserQuestion Format
+### AskUserQuestion Format
 
-**ALWAYS follow this structure for every AskUserQuestion call:**
-
-1. **Re-ground:** State what you're brainstorming and where you are in the process. (1 sentence)
-2. **Simplify:** Explain the decision in plain English. No Figma jargon, no variant key hashes. Say what the user will SEE, not what the system calls it.
-3. **Recommend:** `RECOMMENDATION: Choose [X] because [one-line reason]`
-4. **Options:** Lettered options: `A) ... B) ... C) ...`
-
-Assume the user hasn't looked at this window in 20 minutes. If you'd need to open
-Figma to understand your own question, it's too complex.
-
-### Critical Rules
-
-- **One decision = one AskUserQuestion.** Never combine multiple choices into one question.
-- **STOP after each question.** Do NOT proceed until the user responds.
-- **Escape hatch:** If a decision has an obvious answer, state what you'll do and move on. Only ask when there is a genuine design choice with meaningful tradeoffs.
-- **Connect to user outcomes.** "This matters because your ops team will spend 30 seconds scanning for the one alert that needs attention."
+Follow the AskUserQuestion format from PRINCIPLES.md (section "AskUserQuestion Format"):
+re-ground (1 sentence), simplify (plain English), recommend (with reason), lettered
+options. One decision per question. STOP after each. Escape hatch for obvious answers.
 
 ## Before you begin
 
@@ -322,25 +294,31 @@ format as `/plan` output.
 
 ### Plan file naming
 
-Plans are written to the `plans/` directory:
-- `plans/<base-name>-v1.json` — first variation
-- `plans/<base-name>-v2.json` — second variation
-- `plans/<base-name>-v3.json` — third variation
+Variation plans are written to a `variations/` subdirectory under the feature plan folder:
+- `plans/<feature-name>/variations/v1-<name>.md` — first variation
+- `plans/<feature-name>/variations/v2-<name>.md` — second variation
+- `plans/<feature-name>/variations/v3-<name>.md` — third variation
 - etc.
 
-Where `<base-name>` is derived from the screen name or description (e.g.,
-`dashboard`, `settings`, `onboarding`).
+Where `<feature-name>` is derived from the screen name or description (e.g.,
+`dashboard`, `settings`, `onboarding`) and `<name>` is a kebab-case slug of
+the variation name (e.g., `command-center`, `investigation-hub`).
 
-Create the `plans/` directory if it does not exist.
+Create the `plans/<feature-name>/variations/` directory if it does not exist.
 
 ### Plan generation process (for each variation)
 
 **1. Reinterpret the IA through the lens.**
 
-Don't just swap components. Rethink the information architecture:
-- What does the user see FIRST in this variation? (may differ from original)
+Don't just swap components. Rethink the information architecture using the
+framework from PRINCIPLES.md "Information Architecture & Layout Decision Framework":
+- **Shift the user job**: If the original optimizes for Monitor, what happens when
+  you optimize for Investigate? The layout archetype changes entirely (dashboard → master-detail).
+- **Shift the hierarchy**: What does the user see FIRST? Use the hierarchy determination
+  criteria (user's first question, scanning pattern, visual weight assignment).
+- **Walk the content-to-structure tree again**: A section that's a table in the
+  original might become a card grid or a chart in a variation.
 - What sections merge, split, move, or disappear?
-- How does the hierarchy change?
 
 **2. Map to library components.** Search `design-system/components/index.json`
 exhaustively. Apply `/plan` anti-token-built bias (text links = Button Link
@@ -348,122 +326,55 @@ variant, nav items = Button Tertiary, etc.). Target >80% coverage. Check
 `design-system/relationships.json` for composition patterns.
 
 **3. Define layout tree with token bindings.** Every frame gets tokens from
-`design-system/tokens.json` — padding, gap, fills bound to figmaKey hashes. No hardcoded values.
+`design-system/tokens.json` — padding, gap, fills referenced by token name. No hardcoded values.
+Keys are resolved at build time.
 
 **4. Specify real text content.** No "Lorem ipsum" or "[Title]". Content reflects
 what this variation emphasizes (e.g., "3 systems healthy, 1 needs attention").
 
 **5. Define edge cases.** At minimum: empty state and error state per major section.
 
-### Plan JSON schema
+### Variation file format
 
-Each plan follows the exact schema from `/plan`:
+Each variation follows the same screen plan markdown format defined in PRINCIPLES.md,
+with a brainstorm metadata header prepended. `/build` can execute any variation plan
+without modification.
 
-```json
-{
-  "$schema": "design-kit/plan/v1",
-  "$metadata": {
-    "createdAt": "<ISO timestamp>",
-    "description": "<one-line summary>",
-    "size": { "width": 1440, "height": "auto" },
-    "libraryFileKey": "<from design-system/components/index.json>",
-    "brainstorm": {
-      "variationIndex": 1,
-      "variationName": "<descriptive name>",
-      "scamperLens": "<Substitute | Combine | Adapt | Modify | Put to other use | Eliminate | Reverse>",
-      "userJob": "<Monitor | Investigate | Act | Configure | Learn | Decide>",
-      "thesis": "<one sentence — what this variation claims about the design>"
-    }
-  },
+```markdown
+# Variation: <Name>
 
-  "componentCoverage": {
-    "total": 7,
-    "fromLibrary": 5,
-    "tokenBuilt": 2,
-    "percentage": 71
-  },
+**SCAMPER lens**: <lens>
+**User job**: <job>
+**Thesis**: "<what this variation claims>"
+**Variation index**: <N> of <total>
 
-  "layout": {
-    "name": "<Variation Name>",
-    "type": "frame",
-    "direction": "horizontal",
-    "width": 1440,
-    "height": "auto",
-    "tokens": {
-      "fills": { "ref": "color.background.bg-primary", "figmaKey": "<hash>" }
-    },
-    "children": [
-      {
-        "name": "<Section>",
-        "type": "library-component",
-        "component": "<component-slug>",
-        "figmaKey": "<component hash>",
-        "variantKey": "<variant hash>",
-        "variant": "<human-readable variant string>",
-        "sizing": { "width": "fixed", "height": "fill" }
-      },
-      {
-        "name": "<Section>",
-        "type": "frame",
-        "direction": "vertical",
-        "sizing": { "width": "fill", "height": "fill" },
-        "tokens": {
-          "paddingTop": { "ref": "<token path>", "figmaKey": "<hash>" },
-          "paddingBottom": { "ref": "<token path>", "figmaKey": "<hash>" },
-          "paddingLeft": { "ref": "<token path>", "figmaKey": "<hash>" },
-          "paddingRight": { "ref": "<token path>", "figmaKey": "<hash>" },
-          "itemSpacing": { "ref": "<token path>", "figmaKey": "<hash>" }
-        },
-        "children": []
-      }
-    ]
-  }
-}
+## Layout
+<same screen plan format as plans/<feature>/screens/<screen>.md>
 ```
 
-The `$metadata.brainstorm` object is the only addition to the standard plan schema.
-Everything else is identical — `/build` can execute any brainstorm plan
-without modification.
+The brainstorm metadata header is the only addition to the standard screen plan format.
+Everything below `## Layout` is identical to a regular screen plan.
 
 ### Quality gates per variation plan
 
-Before writing each plan JSON, validate:
+Before writing each plan file, validate:
 
 1. **Text sizing**: Every `type: "text"` node has a `sizing` property.
    Default to `{ "width": "fill", "height": "hug" }` for body text,
    `{ "width": "hug", "height": "hug" }` for labels under 15 characters
    that will never grow.
 
-2. **Component coverage ≥ 85%**: Every visible UI element MUST use a library
+2. **Component coverage ≥ 75%**: Every visible UI element MUST use a library
    component. Token-built frames are ONLY for structural containers (rows, columns,
    wrappers) — never for visible UI elements that have library equivalents.
 
-   **Real-world lesson:** `/plan` achieved 100% visible UI coverage (21 library
-   instances, 14 unique types) for the same design system where `/brainstorm` only
-   hit 54-69%. The difference: plan mapped every element to a library component.
-   Brainstorm built custom frames for things that had direct library matches.
+   Coverage thresholds (shared across all skills — see PRINCIPLES.md "Coverage Thresholds"):
+   - **≥75%**: Floor. Plans below this are rejected.
+   - **<60%**: Warning. You're rebuilding the design system instead of using it.
 
-   Mandatory library component mapping (from plan):
-   - Navigation → Sidebar navigation component
-   - Page titles → Page header or Section header component
-   - Tab bars → Horizontal tabs component
-   - Metric/stat displays → Metric item component
-   - Charts → Line and bar chart, Pie chart, Activity gauge components
-   - Data tables → Table component (with Table header, Table cell)
-   - Activity/event lists → Activity feed component
-   - Status alerts → Alert component
-   - Progress indicators → Progress bar component
-   - Section dividers → Content divider component
-   - Section titles → Section header component
-   - Section actions → Section footer component
-   - User profiles → Avatar label group component
-   - Status indicators → Badge or Tag component
-   - Nav items → Button (Tertiary gray variant)
-   - Action buttons → Button component (Primary/Secondary variant)
-
-   If you find yourself building a custom frame for any of these, STOP and use
-   the library component instead. The only legitimate token-built elements are
-   layout wrappers (metrics row container, charts row container, etc.).
+   Use the mandatory component mapping table from PRINCIPLES.md (section "Mandatory
+   Component Mapping") to map every UI pattern to a library component before marking
+   anything token-built. The only legitimate token-built elements are layout wrappers.
 
 3. **No empty containers**: Every frame that represents visual content (charts,
    illustrations) must have at minimum a title, labels, and a distinguishing
@@ -481,15 +392,16 @@ Before writing each plan JSON, validate:
 
 ### Checkpoint between variations
 
-After completing each variation's plan JSON, re-read gates 1-6 before starting
+After completing each variation's plan file, re-read gates 1-6 before starting
 the next variation. Quality compliance degrades across long generations — this
 checkpoint prevents variation 4 from being sloppier than variation 1.
 
 ### Token key validation
 
-Before writing each plan, verify ALL figmaKey values are **40-character hex hashes**.
-Path-style keys like `"Colors/Text/text-primary"` fail silently during build. Flag
-any path-style keys and suggest running `/setup-tokens` to refresh.
+Plans reference tokens by name (e.g., `color.background.bg-primary`, `spacing.4xl`).
+Figma keys are resolved at build time, not stored in the plan. Verify that all token
+references match entries in `design-system/tokens.json`. Flag any unrecognized
+token names and suggest running `/setup-tokens` to refresh.
 
 ### Typography handling
 
@@ -595,8 +507,10 @@ After building each variation:
 1. **Configure component properties** — disable irrelevant boolean props
    (Search, Actions, Tabs, Hint text, Dropdown icon, Icon leading/trailing)
 2. **Text content sweep** — update ALL placeholder text in library components.
-   Every "Team members", "Olivia Rhye", "Product Designer", "Marketing site
-   redesign" must be replaced with content that matches the variation's thesis.
+   See PRINCIPLES.md "Placeholder Content Detection" for the full detection list.
+   Every named person placeholder ("Olivia Rhye"), generic content ("Team members",
+   "Marketing site redesign"), and UI kit default (nav items, sidebar notifications)
+   must be replaced with content that matches the variation's thesis.
    Use `figma_set_text` for each node. For mixed-font nodes, use the
    `setRangeFontName()` fallback.
 3. **Structural cleanup** — hide irrelevant sub-components when repurposing
@@ -666,7 +580,7 @@ For each variation, present:
 > ---
 >
 > **Next steps:**
-> - Pick a variation and run `/build plans/<name>-vN.json` to refine it
+> - Pick a variation and run `/build plans/<feature-name>/variations/vN-<name>.md` to refine it
 > - Want to stress-test a variation with real content? Run `/stress-test` on it
 > - Want to iterate on a specific variation? I can adjust its plan
 > - Want to merge elements from multiple variations? I can create a hybrid plan
@@ -749,9 +663,23 @@ each variation should resolve the tension via a DIFFERENT approach.
 
 ## How to use design-system/tokens.json for Figma operations
 
-Same pattern as `/build`: read the plan for figmaKey values, build a flat
-key map, embed in `figma_execute`, use `importVariableByKeyAsync(key)` directly.
-Never scan collections — every key is pre-resolved in the plan.
+Plans reference tokens by name. At build time, look up each token name in
+`design-system/tokens.json` to get its figmaKey, build a flat key map,
+embed in `figma_execute`, and use `importVariableByKeyAsync(key)` directly.
+Never scan collections — keys are resolved from the token file at execution time.
+
+## Definition of Done
+
+Before presenting the brainstorm, verify ALL of these:
+
+1. [ ] Each variation has a clear thesis ("This version prioritizes X because Y")
+2. [ ] Each variation uses a DIFFERENT SCAMPER lens (not just rearranging)
+3. [ ] Each variation is buildable (mapped to library components with variantKeys)
+4. [ ] Each variation has different hierarchy (user sees different thing first)
+5. [ ] Component coverage >= 75% per variation
+6. [ ] All text is domain-specific (not library defaults)
+7. [ ] Recommendation grounded in user behavior, not aesthetics
+8. [ ] Side-by-side screenshot of all variations taken
 
 ## Tone
 

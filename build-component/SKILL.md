@@ -47,6 +47,30 @@ Every variant, token, and prop is already decided in the plan. You just build it
 **You do NOT make design decisions.** If something is ambiguous or missing in the
 plan, ask the user — don't guess. All decisions were made in `/plan-component`.
 
+## Spec-Driven Build Process
+
+Like `/build` for page layouts, component building follows an **enforced phase
+pipeline** inspired by github/spec-kit. Read `build-helpers/component-tasks-template.md`
+for the full task template.
+
+```
+Phase 1:  PRE-VALIDATE  → Parse plan manifest, verify keys, print checklist
+Phase 2:  SCAFFOLD       → Find canvas space, prepare token map
+Phase 3:  VARIANTS       → Create all variant components with anatomy
+Phase 4:  SUB-COMPONENTS → Instantiate library components + icons in slots
+Phase 5:  TEXT           → Set content, bind typography tokens, visibility
+Phase 6:  COMBINE        → figma.combineAsVariants() into component set
+Phase 7:  PROPS          → Add boolean/text/instanceSwap properties
+Phase 8:  ARRANGE        → Grid layout via figma_arrange_component_set
+Phase 9:  DESCRIBE       → Set component description
+Phase 10: VERIFY         → Screenshot, slop check, present
+```
+
+**CRITICAL**: The plan's `manifest` section is your checklist. Phase 1 reads it
+and prints every variant, sub-component, icon, and prop as a flat task list.
+You then execute each task in order. Do NOT skip Phase 1 — without the manifest
+checklist, you WILL miss components.
+
 ## CRITICAL: How this differs from build
 
 `/build` creates **frames** and instantiates **library components** into layouts.
@@ -76,10 +100,10 @@ Key Figma API differences:
    If Figma is not connected:
    > "Figma is not connected. Open Figma Desktop with the Console plugin running."
 
-2. **Read the component plan** from `plans/components/<name>.json`.
+2. **Read the component plan** from `plans/components/<name>.md`.
 
    This is your build spec. If no plan exists:
-   > "No component plan found at `plans/components/<name>.json`. Run `/plan-component` first to create a build plan."
+   > "No component plan found at `plans/components/<name>.md`. Run `/plan-component` first to create a build plan."
 
    The plan contains everything: variant matrix, anatomy, token bindings, props,
    sub-components, and the component description. You execute it exactly.
@@ -169,7 +193,7 @@ embedded into `figma_execute` calls for O(1) variable binding — same pattern a
 build.
 
 ```javascript
-// Build from plans/components/<name>.json:
+// Build from plans/components/<name>.md:
 // { "padding.md": "b6157f22...", "color.bg.primary": "284dbace..." }
 const tokenKeys = {
   // All unique figmaKeys from the plan, keyed by readable alias
@@ -432,6 +456,27 @@ Include usage guidelines, do/don't rules, and related components from the plan.
 
 **Goal:** Visual verification of the built component. 1-2 calls.
 
+### Component AI Slop Check (mandatory — before presenting)
+
+See PRINCIPLES.md "AI Slop Check" for the general list. Component-specific traps:
+
+- **Identical variants** — Multiple variants look the same because only a hidden
+  property differs. If the user can't visually distinguish variants in the grid,
+  the variant matrix may be wrong (props that should be booleans, not variant axes).
+- **Uniform styling across types** — All type variants (Primary, Secondary, Tertiary)
+  use the same visual weight. Real type variants have intentionally different
+  emphasis through color, fill, and border treatment.
+- **Missing visual state changes** — Hover/focused/disabled variants exist but
+  look identical to default. Each state must have a visible, intentional change
+  (shadow, color shift, opacity, ring).
+- **Oversized variant matrix** — 20+ variants that could be simplified. If the
+  grid is larger than the screen, check whether axes should be booleans or props.
+- **Generic placeholder anatomy** — Every variant has "Label" as text content
+  and a circle as the icon placeholder. Text content should reflect the variant
+  type (e.g., "Submit" for primary, "Cancel" for secondary, "Delete" for destructive).
+
+If any of these are true, flag them in the build output.
+
 ```
 Use figma_take_screenshot to capture the component set.
 ```
@@ -447,7 +492,7 @@ Present the result:
 >
 > [screenshot]
 >
-> Does this look correct? If anything needs adjustment, update `plans/components/<name>.json`
+> Does this look correct? If anything needs adjustment, update `plans/components/<name>.md`
 > and run `/build-component` again."
 
 ### User-facing language
@@ -595,7 +640,7 @@ Never silently skip a sub-component. Never create a placeholder without searchin
 ### Plan is incomplete
 - Don't improvise. Ask the user:
   > "The plan doesn't specify [missing detail]. What should I do?
-  > Update `plans/components/<name>.json` and run `/build-component` again,
+  > Update `plans/components/<name>.md` and run `/build-component` again,
   > or tell me what to use."
 
 ## Batch execution strategy

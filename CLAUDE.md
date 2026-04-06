@@ -21,8 +21,16 @@ design-kit/
 │   │   ├── index.json            #     Component catalog (figmaKey, defaultVariantKey)
 │   │   └── <name>.json           #     On-demand per-component specs
 │   └── relationships.json        #   Component dependency graph
-├── plans/                        # Build plans (output of /plan)
-│   └── <name>.json               #   Structured plan for /build to execute
+├── plans/                        # Build plans (output of /plan, /brainstorm, /flow)
+│   ├── <feature>/                #   One folder per feature/flow
+│   │   ├── plan.md               #     Human-readable: IA, hierarchy, components, edge cases
+│   │   ├── build.json            #     Machine-readable: pre-resolved keys for /build
+│   │   └── screens/              #     Per-screen build JSONs (for multi-screen flows)
+│   │       └── 01-<screen>.json  #       One build JSON per screen (avoids context overload)
+│   └── components/               #   Component plans (separate lifecycle)
+│       └── <component>.md        #     Variant matrix, props, anatomy
+├── build-helpers/                # Reusable Figma plugin API helpers
+│   └── figma-helpers.js          #   mkFrame, mkText, sweepText, canvasScan, etc.
 ├── reports/                      # (deprecated — QA findings go to Figma comments)
 │   └── ...                       #   Audit/stress/diff results are presented inline
 │                                 #   and posted as Figma comments, not saved as JSON
@@ -189,6 +197,9 @@ Step 4:  You're ready. Try any skill below.
   component index includes `typicalOverrides` — boolean properties that get
   automatically disabled when building (e.g., icon placeholders on buttons,
   hint text on inputs).
+- **Plans are human-readable markdown.** When you run `/plan`, it creates a
+  `plans/<feature>/plan.md` you can open, read, and share with your team.
+  Screen details are in `plans/<feature>/screens/`. No JSON or hash keys.
 - **You can skip `/plan-component` for simple components.** Describe what you
   want directly to `/build-component` if you know the structure. The plan step
   is most valuable for complex components where duplicate detection and variant
@@ -214,13 +225,26 @@ Skills are organized into 4 phases. You don't need them all — start where you 
 Phase 1: SETUP (one-time — catalog what you have)
   /setup-tokens → /setup-components → /setup-relationships → /setup-icons
 
-Phase 2: CREATE (the design loop)
+Phase 2: CREATE (the design loop — spec-driven)
   /brainstorm ──→ pick a direction
        │
   /plan ──→ /build ──→ see it in Figma
-       │         │
+       │     │    │
+       │     │    ├── Phase 1: MANIFEST (parse build.json → flat task checklist)
+       │     │    ├── Phase 2: SCAFFOLD (empty frame structure)
+       │     │    ├── Phase 3: COMPONENTS (instantiate ALL library components)
+       │     │    ├── Phase 4: TOKEN-BUILT (fill gaps with frames/text)
+       │     │    └── Phase 5: VALIDATE (coverage, text, tokens, visual)
+       │     │
   /flow       /responsive
   (multi-screen)  (tablet + mobile)
+
+  Build pipeline (inspired by github/spec-kit):
+    /plan creates build.json with a "manifest" — a flat list of every
+    component, icon, and token-built element with pre-resolved keys.
+    /build reads the manifest and executes it as ordered tasks:
+    components first, then token-built, then validate.
+    See build-helpers/build-phases.md and build-helpers/tasks-template.md.
 
 Phase 3: REVIEW (check and fix)
   /stress-test ──→ /audit ──→ /revise
@@ -249,7 +273,8 @@ Claude Code via the setup script and invoked as slash commands (e.g., `/setup-to
 - Use designer-friendly language — not engineering jargon
 - Skills interact with Figma via `figma-console` MCP tools
 - Always validate with screenshots after making changes
-- Output structured JSON following W3C Design Tokens format where applicable
+- Plans output as human-readable markdown (see PRINCIPLES.md "Plan Format & Folder Structure")
+- Design-system extraction outputs structured JSON following W3C Design Tokens format
 - Ask the user before making assumptions about their design system
 - Skills should degrade gracefully without pre-extracted data — use
   `figma_get_design_system_kit` as a fallback before telling the user to

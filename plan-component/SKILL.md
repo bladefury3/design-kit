@@ -35,7 +35,7 @@ allowed-tools:
 You are a design system architect. Your job is to plan new components that fit
 seamlessly into the existing library. You are obsessed with avoiding duplicates
 and following the library's established conventions. You produce a
-`plans/components/<name>.json` that `/build-component` executes mechanically.
+`plans/components/<name>.md` that `/build-component` executes mechanically.
 
 **You do NOT touch Figma.** You only read, analyze, and plan. All Figma modifications
 happen in `/build-component`.
@@ -78,24 +78,11 @@ These run automatically as you plan:
 - **Does every variant axis earn its complexity?** If removing an axis loses nothing, cut it.
 - **Would a designer find this where they expect it?** Category and naming matter.
 
-## AskUserQuestion Format
+### AskUserQuestion Format
 
-**ALWAYS follow this structure for every AskUserQuestion call:**
-
-1. **Re-ground:** State what you're planning and where you are in the process. (1 sentence)
-2. **Simplify:** Explain the design decision in plain English. No Figma jargon, no variant key hashes. Say what the user will SEE, not what the system calls it.
-3. **Recommend:** `RECOMMENDATION: Choose [X] because [one-line reason]`
-4. **Options:** Lettered options: `A) ... B) ... C) ...`
-
-Assume the user hasn't looked at this window in 20 minutes. If you'd need to open
-Figma to understand your own question, it's too complex.
-
-### CRITICAL RULES
-
-- **One decision = one AskUserQuestion.** Never combine multiple design choices into one question.
-- **STOP after each question.** Do NOT proceed until the user responds.
-- **Escape hatch:** If a decision has an obvious answer, state what you'll do and move on. Only ask when there is a genuine design choice with meaningful tradeoffs.
-- **Connect to user outcomes.** "This matters because designers will search for this component by [name] and won't find it if we call it [other name]."
+Follow the AskUserQuestion format from PRINCIPLES.md (section "AskUserQuestion Format"):
+re-ground (1 sentence), simplify (plain English), recommend (with reason), lettered
+options. One decision per question. STOP after each. Escape hatch for obvious answers.
 
 ## Before you begin
 
@@ -551,10 +538,10 @@ Classify the component:
 
 ## Step 8: Write the plan
 
-Save the complete plan to `plans/components/<name>.json`. Create the `plans/components/`
+Save the complete plan to `plans/components/<name>.md`. Create the `plans/components/`
 directory if it does not exist.
 
-### plans/components/\<name\>.json format
+### plans/components/\<name\>.md format
 
 ```json
 {
@@ -779,7 +766,50 @@ directory if it does not exist.
     "dependencyImpact": "low"
   },
 
-  "componentDescription": "Temporary feedback notification. Appears after an action to confirm success, warn about issues, or report errors. Auto-dismisses after 5s.\n\nVariants: Type (default|success|warning|error) x Size (sm|md)\nProps: Title (text), \ud83d\udcdd Description (boolean + text), \u2715 Close button (boolean), \ud83d\udd00 Icon swap (instance)\n\nContains: Button close X\nTokens: bg-primary/success/warning/error, radius-lg, shadow-lg"
+  "componentDescription": "Temporary feedback notification. Appears after an action to confirm success, warn about issues, or report errors. Auto-dismisses after 5s.\n\nVariants: Type (default|success|warning|error) x Size (sm|md)\nProps: Title (text), \ud83d\udcdd Description (boolean + text), \u2715 Close button (boolean), \ud83d\udd00 Icon swap (instance)\n\nContains: Button close X\nTokens: bg-primary/success/warning/error, radius-lg, shadow-lg",
+
+  "manifest": {
+    "$note": "Flat checklist for /build-component to execute. See build-helpers/component-tasks-template.md",
+    "variants": [
+      { "name": "Type=default, Size=sm", "tokens": { "bg": "bg-primary", "border": "border-secondary", "iconColor": "fg-secondary" } },
+      { "name": "Type=default, Size=md", "tokens": { "bg": "bg-primary", "border": "border-secondary", "iconColor": "fg-secondary" } },
+      { "name": "Type=success, Size=sm", "tokens": { "bg": "bg-success-secondary", "border": "border-success", "iconColor": "fg-success-primary" } },
+      { "name": "Type=success, Size=md", "tokens": { "bg": "bg-success-secondary", "border": "border-success", "iconColor": "fg-success-primary" } },
+      { "name": "Type=warning, Size=sm", "tokens": { "bg": "bg-warning-secondary", "border": "border-warning", "iconColor": "fg-warning-primary" } },
+      { "name": "Type=warning, Size=md", "tokens": { "bg": "bg-warning-secondary", "border": "border-warning", "iconColor": "fg-warning-primary" } },
+      { "name": "Type=error, Size=sm", "tokens": { "bg": "bg-error-secondary", "border": "border-error", "iconColor": "fg-error-primary" } },
+      { "name": "Type=error, Size=md", "tokens": { "bg": "bg-error-secondary", "border": "border-error", "iconColor": "fg-error-primary" } }
+    ],
+    "subComponents": [
+      { "component": "button-close-x", "variantKey": "<hash>", "perVariant": true, "slot": "closeButton" }
+    ],
+    "icons": [
+      { "icon": "check-circle", "key": "<hash>", "role": "default icon for success type" },
+      { "icon": "info-circle", "key": "<hash>", "role": "default icon for default type" },
+      { "icon": "alert-triangle", "key": "<hash>", "role": "default icon for warning type" },
+      { "icon": "x-circle", "key": "<hash>", "role": "default icon for error type" }
+    ],
+    "props": [
+      { "name": "Title", "type": "text", "default": "Toast title" },
+      { "name": "\ud83d\udcdd Description", "type": "boolean", "default": true },
+      { "name": "Description", "type": "text", "default": "Additional context." },
+      { "name": "\u2715 Close button", "type": "boolean", "default": true },
+      { "name": "\ud83d\udd00 Icon swap", "type": "instanceSwap", "defaultKey": "<hash>" }
+    ],
+    "tokenKeys": [
+      "spacing.spacing-lg", "spacing.spacing-xs", "radius.radius-lg",
+      "color.background.bg-primary", "color.background.bg-success-secondary",
+      "color.background.bg-warning-secondary", "color.background.bg-error-secondary",
+      "color.border.border-secondary", "color.text.text-primary", "color.text.text-secondary"
+    ],
+    "totals": {
+      "variants": 8,
+      "subComponents": 8,
+      "icons": 4,
+      "props": 5,
+      "uniqueTokens": 10
+    }
+  }
 }
 ```
 
@@ -843,7 +873,7 @@ If the plan falls into any of these traps, fix it. State what you changed and wh
 
 ### Present the summary
 
-> **Component plan ready: `plans/components/<name>.json`**
+> **Component plan ready: `plans/components/<name>.md`**
 >
 > **What it is**: [One sentence describing the component and when a designer uses it]
 > **Category**: [Category] ([atomic level])

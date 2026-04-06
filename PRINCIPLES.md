@@ -31,35 +31,90 @@ Rate each heuristic 0-10 with specific evidence:
 
 Always cite the specific element, location, and why it scored that way.
 
+### Per-Heuristic Evidence Rubrics
+
+**H1 — Visibility of system status**
+- **9-10**: Every state change has visible feedback (loading skeletons, save confirmations, sync indicators, progress bars). Real-time data shows "last updated".
+- **7-8**: Most state changes show feedback; minor gaps (e.g., no skeleton on initial load).
+- **5-6**: Some feedback exists but inconsistent across actions.
+- **3-4**: Minimal feedback. Actions produce no visible result until page refresh.
+- **0-2**: No feedback. User cannot tell if actions succeeded.
+
+**H2 — Match between system and real world**
+- **9-10**: All labels use target-user language. Units are contextual. Icons are universally recognizable or paired with text.
+- **7-8**: Mostly user-friendly with 1-2 instances of acceptable domain jargon.
+- **5-6**: Mixed technical and user-friendly language. Ambiguous icons without text.
+- **3-4**: Predominantly developer language ("null", "N/A", unexplained abbreviations).
+- **0-2**: Raw database field names or system identifiers shown to users.
+
+**H3 — User control and freedom**
+- **9-10**: Undo/redo for destructive actions. Back/cancel on every form. Destructive actions require confirmation. Multi-step flows have "save draft".
+- **7-8**: Most destructive actions confirmed; one minor gap (e.g., no undo on bulk delete).
+- **5-6**: Cancel/back buttons exist but no undo. Some modals trap the user.
+- **3-4**: No undo. Some flows have no exit. Destructive actions fire immediately.
+- **0-2**: Users trapped in flows. Irreversible actions with no warning.
+
+**H4 — Consistency and standards**
+- **9-10**: Same component for same function everywhere. Platform conventions followed. Visual weight matches action importance.
+- **7-8**: Consistent with 1-2 exceptions (e.g., one detached button).
+- **5-6**: Mostly consistent with noticeable breaks (different button styles for same action).
+- **3-4**: Inconsistent throughout. Same actions look different across sections.
+- **0-2**: No visible consistency. Every section appears independently designed.
+
+**H5 — Error prevention**
+- **9-10**: Inline validation on all fields. Constraints prevent invalid input. Destructive actions state consequences before confirming. Smart defaults.
+- **7-8**: Validation present on most fields. One gap (e.g., free-text where constrained input is better).
+- **5-6**: Some validation but inconsistent. No confirmation on at least one destructive action.
+- **3-4**: Minimal validation. Errors only discovered after submission.
+- **0-2**: No validation. Users can accidentally destroy data with a single click.
+
+**H6 — Recognition rather than recall**
+- **9-10**: All navigation visible. Key actions exposed as buttons. Breadcrumbs, recent items, and search reduce memory load. Active context always visible.
+- **7-8**: Navigation visible; one action only in "..." overflow menu, or active filters not indicated.
+- **5-6**: Main navigation visible but secondary actions require recall. Some missing context.
+- **3-4**: Important features behind non-obvious interactions. Users must memorize paths.
+- **0-2**: Core features hidden. No visual navigation cues.
+
+**H7 — Flexibility and efficiency of use**
+- **9-10**: Keyboard shortcuts, bulk actions, customizable views, search with filters, novice and expert paths.
+- **7-8**: Most efficiency features present; missing one (e.g., no keyboard shortcuts).
+- **5-6**: Basic functionality but no accelerators. Every action takes same clicks.
+- **3-4**: Inefficient for common tasks. No batch alternatives for repetitive actions.
+- **0-2**: Single-item operations only. No search, shortcuts, or customization.
+
+**H8 — Aesthetic and minimalist design**
+- **9-10**: Every element earns its space. Clear hierarchy with one focal point per section. Intentional whitespace. High signal-to-noise.
+- **7-8**: Clean with 1-2 elements that could be removed without losing function.
+- **5-6**: Functional but noisy. Some competing elements. Hierarchy unclear in one section.
+- **3-4**: Cluttered. Multiple elements compete. No clear hierarchy.
+- **0-2**: Overwhelming density. Every element has equal visual weight.
+
+**H9 — Help users recover from errors**
+- **9-10**: All error states designed: what went wrong (user language), clear next action, no dead ends. Inline errors clear when fixed. Network errors have retry.
+- **7-8**: Most errors designed; one gap (e.g., generic "Something went wrong" without next action).
+- **5-6**: Some error states designed but generic. Vague messages. One dead end.
+- **3-4**: Raw error messages or codes. No recovery path.
+- **0-2**: No error states designed. Errors produce blank screens or infinite spinners.
+
+**H10 — Help and documentation**
+- **9-10**: Contextual tooltips, first-time onboarding, empty states with guidance and action, inline help on complex fields.
+- **7-8**: Most help present; one complex feature lacks a tooltip, or empty state missing action button.
+- **5-6**: Some help (a few tooltips, basic empty states) but spotty. No onboarding.
+- **3-4**: No tooltips, no onboarding. Empty states show only "No data".
+- **0-2**: No help or documentation anywhere.
+
 ## Gestalt Principles
 
 Used by: `/audit`, `/plan`, `/brainstorm`
 
-- **Proximity** — Elements near each other are perceived as related. Group related
-  controls; separate unrelated sections with whitespace.
+- **Proximity** — Elements near each other are perceived as related. Group related controls; separate unrelated sections with whitespace.
+- **Similarity** — Elements that look similar are perceived as having similar function. Same visual treatment = same behavior.
+- **Continuity** — The eye follows lines and curves. Maintain alignment lines across sections. Break alignment only to create emphasis.
+- **Closure** — The mind completes incomplete shapes. Cards, containers, and borders create containment even with gaps.
+- **Figure-ground** — Clear distinction between foreground content and background. Modals, drawers, and overlays need obvious layering.
+- **Common region** — Elements within a boundary are perceived as grouped. Use cards and sections to create logical groupings.
 
-- **Similarity** — Elements that look similar are perceived as having similar function.
-  Same visual treatment = same behavior.
-
-- **Continuity** — The eye follows lines and curves. Maintain alignment lines across
-  sections. Break alignment only to create emphasis.
-
-- **Closure** — The mind completes incomplete shapes. Cards, containers, and borders
-  create containment even with gaps.
-
-- **Figure-ground** — Clear distinction between foreground content and background.
-  Modals, drawers, and overlays need obvious layering.
-
-- **Common region** — Elements within a boundary are perceived as grouped. Use cards
-  and sections to create logical groupings.
-
-### Application
-
-When auditing or planning, check each section of the design:
-1. Are related elements grouped by proximity?
-2. Do visually similar elements behave the same way?
-3. Are alignment lines consistent across sections?
-4. Is the visual layering clear (what's foreground vs. background)?
+When auditing or planning, check: Are related elements grouped by proximity? Do visually similar elements behave the same? Are alignment lines consistent? Is the visual layering clear?
 
 ## Cognitive Load Laws
 
@@ -81,9 +136,12 @@ Time to reach a target depends on distance and size.
 - **Fix**: Increase target size, reduce distance between related actions
 - **Corollary**: Primary actions should be large and close; destructive actions small and distant
 
-### Severity Thresholds
+### Von Restorff Effect (Isolation Effect)
+An item that stands out from its peers is more likely to be remembered.
+- Use for primary CTAs, important alerts, key metrics
+- **Danger**: If everything stands out, nothing does
 
-Use these thresholds when auditing:
+### Severity Thresholds
 
 | Law | Warning | Critical |
 |---|---|---|
@@ -92,32 +150,9 @@ Use these thresholds when auditing:
 | **Fitts's Law** | Interactive target <44px | Interactive target <36px |
 | **Von Restorff** | Primary CTA not visually distinct | Multiple competing CTAs |
 
-### Jakob's Law
-Users spend most of their time on OTHER sites. They prefer your site to work
-the same way as all the other sites they already know.
-- **Check**: Does navigation follow platform conventions? Are common patterns recognizable?
-
-### Aesthetic-Usability Effect
-Users perceive aesthetically pleasing designs as more usable.
-- Not an excuse for style over function — but a reminder that visual polish
-  increases user trust and tolerance for minor friction.
-
-### Von Restorff Effect (Isolation Effect)
-An item that stands out from its peers is more likely to be remembered.
-- Use for primary CTAs, important alerts, key metrics
-- **Danger**: If everything stands out, nothing does
-
-### Doherty Threshold
-Productivity soars when a computer and its users interact at a pace (<400ms)
-that ensures neither has to wait on the other.
-- Loading states should appear immediately, content within 400ms
-- Skeleton screens > spinners > blank loading
-
 ## SCAMPER Framework
 
 Used by: `/brainstorm`
-
-A structured technique for generating design variations:
 
 | Lens | Question | Design Application |
 |---|---|---|
@@ -129,22 +164,11 @@ A structured technique for generating design variations:
 | **Eliminate** | What can be removed? | Radical subtraction: cut 50% of elements. What still works? |
 | **Reverse** | What can be inverted? | Flip hierarchy: action-first vs. context-first, detail-first vs. summary-first |
 
-### Generating variations
-
-Apply 3-5 SCAMPER lenses per brainstorm session. Each lens produces ONE variation.
-The variation should be a complete, buildable design — not a half-thought.
-
-For each variation, state:
-1. Which SCAMPER lens was applied
-2. What specifically changed
-3. Who this variation serves best (which user job)
-4. What you gain and what you trade off
+Apply 3-5 SCAMPER lenses per brainstorm session. Each lens produces ONE complete, buildable variation. For each, state: which lens, what changed, who it serves best, and the gain/tradeoff.
 
 ## Jobs-to-be-Done Framework
 
-Used by: `/brainstorm`, `/flow`
-
-Every screen serves a user job. Common product design jobs:
+Used by: `/brainstorm`, `/flow`, `/plan`
 
 | Job | User mindset | Design emphasis |
 |---|---|---|
@@ -155,13 +179,84 @@ Every screen serves a user job. Common product design jobs:
 | **Learn** | "How does this work?" | Onboarding, documentation, tooltips, empty state guidance |
 | **Decide** | "Which option should I pick?" | Comparisons, pricing tables, feature matrices, recommendations |
 
-### Application
+When brainstorming or planning: identify the PRIMARY job (>60% of user time), then SECONDARY jobs. Design for primary first. If a screen serves 3+ jobs equally, split it.
 
-When brainstorming or planning flows:
-1. Identify the PRIMARY job for this screen
-2. Identify SECONDARY jobs (what else might the user need?)
-3. Design for the primary job first — secondary jobs support, not compete
-4. If a screen tries to serve 3+ jobs equally, it needs to be split
+## Information Architecture & Layout Decision Framework
+
+Used by: `/plan`, `/brainstorm`, `/flow`
+
+### Layout Archetypes by User Job
+
+| User Job | Layout Archetype | Structure | Why this shape |
+|---|---|---|---|
+| **Monitor** | Status dashboard | Status bar top → metric grid → alert/activity list | User scans for anomalies top-to-bottom |
+| **Investigate** | Master-detail | Filterable table/list + detail panel (right or drill-down) | User narrows then drills |
+| **Act** | Focused form | Progress indicator → form sections → sticky action bar | Minimize distraction |
+| **Configure** | Settings panel | Sidebar categories → settings content → save bar | Category navigation is primary |
+| **Learn** | Content reader | Sidebar TOC or breadcrumbs → rich content area → contextual help | Navigation aid prevents getting lost |
+| **Decide** | Comparison layout | Options side by side → feature/price matrix → CTA per option | Equal weight per option, differentiators highlighted |
+
+When the screen serves multiple jobs: design for the PRIMARY job (>60% of user time). Secondary jobs get smaller sections. 3+ equal jobs = split into separate screens.
+
+### Content-to-Structure Decision Tree
+
+**Collections of similar items:**
+- >10 items with sortable/filterable attributes → **Table** (with pagination)
+- 3-8 items with distinct visual identity → **Card grid**
+- Ordered sequence with timestamps → **Activity feed / Timeline**
+- 1-3 key numbers → **Metric row**; 4-6 key numbers → **Metric grid**
+
+**User input:**
+- <5 fields → **Inline form**; 5-15 fields → **Single-column form**; >15 fields → **Multi-step wizard**
+
+**Navigation:**
+- <7 items → **Top nav / tabs**; 7-15 items → **Sidebar**; >15 items → **Search-first + sidebar tree**
+
+**Data visualization:**
+- Single metric → **Stat card**; Trend → **Line chart**; Comparison → **Bar chart**; Part of whole → **Donut chart**; Multiple dimensions → **Table**
+
+**Status / Feedback:**
+- System-level → **Banner/Alert**; Item-level → **Badge/Tag**; Action confirmation → **Toast**
+
+### Hierarchy Determination
+
+**Step 1: Identify the user's first question.**
+
+| First question | What goes first | Example |
+|---|---|---|
+| "Is everything OK?" | Status indicators, health summary | Ops dashboard: status bar at top |
+| "Where am I?" | Breadcrumbs, page title, context | Deep settings: breadcrumb + heading |
+| "What do I do next?" | Primary CTA, current step | Onboarding: step 2/4 with form |
+| "What happened?" | Latest activity, newest data | Activity feed: reverse-chronological |
+| "What are my options?" | All options with equal weight | Pricing: plan cards side by side |
+
+**Step 2: Determine the scanning pattern.**
+
+| Pattern | When to use | Hierarchy implication |
+|---|---|---|
+| **F-pattern** | Content-heavy pages | Key info top-left. Left-edge scanning after first 2 lines. |
+| **Z-pattern** | Action-oriented pages | Top-left: context. Top-right: secondary nav. Bottom-right: primary CTA. |
+| **Single-column** | Forms, wizards, mobile | Top-to-bottom. Progress at top, action at bottom. |
+| **Dashboard** | Monitoring, analytics | Top status bar, then L-to-R metric cards, then detail tables. |
+
+**Step 3: Assign visual weight.**
+
+| Weight | Used for |
+|---|---|
+| **Primary** (1 per screen) | The answer to the user's first question — largest, highest contrast |
+| **Secondary** (2-3 per screen) | Supporting context and secondary actions |
+| **Tertiary** (everything else) | Details, metadata, supplementary info |
+
+### Layout Anti-Patterns
+
+| Anti-pattern | Fix |
+|---|---|
+| **Equal weight everything** | Pick ONE primary section. Make it larger/higher contrast/first. |
+| **Navigation as primary** | Sidebar ≤240px. Content area gets the majority. |
+| **Data dump** | Summary first. Details behind drill-down. <7 choices per group. |
+| **Action graveyard** | One primary CTA (filled). One secondary (outline). Rest in overflow. |
+| **Premature detail** | Collapse secondary info. Default = simplest useful view. |
+| **Copy-paste sections** | Vary structures: tables for data, metrics for stats, lists for activities. |
 
 ## Responsive Design Patterns
 
@@ -179,21 +274,27 @@ Used by: `/responsive`
 
 ### Touch-First Principles
 
-- Tap targets ≥ 44pt (iOS HIG) / 48dp (Material Design)
-- Thumb zone awareness: primary actions in bottom 1/3 of screen
+- Tap targets ≥ 44pt (iOS) / 48dp (Material)
+- Thumb zone: primary actions in bottom 1/3 of screen
 - Swipe for common actions (dismiss, delete, archive)
 - Bottom sheet instead of modal on mobile
-- No hover-only interactions — everything must work with tap
-- Long press is a power-user feature, never required
+- No hover-only interactions — everything works with tap
 
 ### Content Choreography
 
-Content should be prioritized differently per viewport:
-1. **Essential** — visible at every size (primary action, key data)
-2. **Useful** — collapse/accordion on mobile, visible on desktop (secondary data, filters)
-3. **Supplementary** — hide on mobile entirely, or "View on desktop" link
+For each section, apply this priority test:
 
-### Breakpoint Strategy
+1. **"Can the user complete their primary task without this?"** No → **Essential**
+2. **"Would removing it force the user to leave the screen?"** Yes → **Useful**
+3. **"Would a power user miss it within 3 sessions?"** Yes → **Useful**, No → **Supplementary**
+
+- **Essential** — visible at every size. Remove this and the screen loses its purpose.
+- **Useful** — collapse/accordion on mobile, visible on desktop.
+- **Supplementary** — hide on mobile entirely, or "View on desktop" link.
+
+Rule: on a 6-section screen, typically 2 Essential, 2-3 Useful, 1-2 Supplementary. If >60% is Essential, you haven't done choreography.
+
+### Breakpoints
 
 | Breakpoint | Viewport | Typical layout |
 |---|---|---|
@@ -201,46 +302,7 @@ Content should be prioritized differently per viewport:
 | Tablet | 640-1024px | 2-column, side nav or top nav, grid |
 | Desktop | > 1024px | Multi-column, sidebar, full tables, expanded panels |
 
-Don't design for breakpoints — design for content. Break when the content breaks.
-
-## Flow Design Principles
-
-Used by: `/flow`
-
-### Screen Architecture
-- **One primary action** per screen — if you can't name it, the screen has no job
-- **One escape hatch** (back, cancel, close) always visible and reachable
-- **Progress indication** for multi-step flows (steps, progress bar, breadcrumb)
-- **State persistence** — what survives if the user leaves mid-flow and returns?
-
-### Error Recovery
-- Every error state has a clear next action ("Try again", "Go back", "Contact support")
-- Never a dead end — always a path forward or a path out
-- Inline validation > submission validation > page-level error
-- Destructive errors are recoverable (undo, draft auto-save, confirmation)
-
-### Cognitive Load Management
-- Progressive disclosure: reveal complexity only when needed
-- Don't show step 4's complexity on step 1
-- Each step should be completable in under 30 seconds of focused attention
-- Complex steps should be breakable into sub-steps
-- Pre-fill what you can: defaults, carried-forward data, smart suggestions
-
-### Completion Momentum
-- Show progress: "Step 2 of 4" or percentage
-- Celebrate micro-wins: checkmarks, success animations, encouraging copy
-- Front-load easy steps: build momentum before asking for hard things
-- End with a clear "what's next" — never drop the user after completion
-
-### Flow Topology
-
-| Pattern | Structure | When to use |
-|---|---|---|
-| **Linear** | A → B → C → Done | Simple processes: checkout, onboarding |
-| **Branching** | A → B1 or B2 → C | Conditional paths: different user types |
-| **Hub-and-spoke** | Hub ↔ A, Hub ↔ B, Hub ↔ C | Settings, dashboards with sub-views |
-| **Wizard** | A → B → C with back/skip | Complex setup, guided configuration |
-| **Loop** | A → B → C → A | Iterative: review/edit cycles, feed browsing |
+Design for content, not breakpoints. Break when the content breaks.
 
 ## Edge Case Taxonomy
 
@@ -253,28 +315,95 @@ Used by: `/stress-test`, `/flow`, `/plan`
 | **Length** | 1 char, 20 chars, 50 chars, 100 chars, 500 chars |
 | **Volume** | 0 items, 1 item, 3 items, 10 items, 100 items, 10,000 items |
 | **Format** | Numbers with commas, currencies, dates, percentages, negative values |
-| **Identity** | Long names (Wolfeschlegelsteinhausenbergerdorff), non-Latin scripts (日本語, العربية), RTL, emoji in names |
+| **Identity** | Long names, non-Latin scripts (日本語, العربية), RTL, emoji in names |
 | **Time** | "Just now", "2h ago", "March 2019", timezone edges, expired/overdue |
-| **Permissions** | Admin, editor, viewer, guest — what's hidden vs. disabled vs. shown? |
-| **State** | New user (empty), power user (full), churned (stale data), error (broken data) |
+| **Permissions** | Admin, editor, viewer, guest — hidden vs. disabled vs. shown |
+| **State** | New user (empty), power user (full), churned (stale), error (broken) |
 
 ### Priority Order
 
-Not all edge cases matter equally. Test in this order:
-1. **Empty state** — Most common first-time experience. If this is bad, nothing else matters.
-2. **Overflow** — Long text, many items. This WILL happen in production.
-3. **Error state** — Users will encounter errors. Design for recovery.
-4. **Permissions** — Different users see different things. Test each role.
-5. **Extreme values** — Unusual but possible: very large numbers, unusual characters.
-6. **Temporal** — Time-based edge cases: expired, future-dated, cross-timezone.
+1. **Empty state** — Most common first-time experience
+2. **Overflow** — Long text, many items. Will happen in production.
+3. **Error state** — Design for recovery.
+4. **Permissions** — Different users see different things.
+5. **Extreme values** — Very large numbers, unusual characters.
+6. **Temporal** — Expired, future-dated, cross-timezone.
 
-### Inclusive Design Checks
-- Screen reader text flow makes logical sense
-- High contrast mode doesn't break layout
-- Reduced motion preferences are respected (no essential animation)
-- 200% browser zoom maintains usability
-- Color is never the only indicator (icons + text for status)
-- Touch targets meet minimum sizes across all breakpoints
+## Component Coverage Thresholds
+
+Used by: `/plan`, `/build`, `/brainstorm`, `/responsive`, `/audit`
+
+| Level | Threshold | Action |
+|---|---|---|
+| **Floor** | ≥75% | Plans below this are rejected. Search the component mapping harder. |
+| **Warning** | <60% | Rebuilding the design system. Re-examine every token-built element. |
+| **Target** | >80% | Healthy. Token-built frames are only structural wrappers. |
+
+**Counting rules:**
+- Count visible UI elements (buttons, inputs, cards, tables, headers, badges)
+- Do NOT count structural containers (layout frames, spacer frames)
+- Each library component instance counts once, even if it contains sub-components
+- Token-built elements with a library equivalent count as missed coverage
+
+## UX Writing & Microcopy
+
+Used by: `/plan`, `/build`, `/brainstorm`, `/flow`, `/stress-test`
+
+### Character limits by component type
+
+| Component | Element | Max chars | Why |
+|---|---|---|---|
+| **Button** | Label | 25 | 2-3 words. Verbs only: "Save changes", not "Click here to save" |
+| **Page header** | Title | 40 | Short, scannable |
+| **Page header** | Subtitle | 80 | One sentence of context |
+| **Metric item** | Label | 20 | Noun or short phrase |
+| **Metric item** | Value | 12 | Number + unit |
+| **Table header** | Label | 20 | One or two words |
+| **Badge / Tag** | Label | 15 | Single status word |
+| **Toast / Alert** | Message | 100 | What happened + what to do |
+| **Empty state** | Headline | 40 | Warm, not robotic |
+| **Empty state** | Body | 120 | What this section does + how to populate it |
+| **Error message** | Inline | 80 | What went wrong + how to fix it |
+| **Tooltip** | Text | 80 | One sentence of clarification |
+| **Input field** | Label | 25 | Noun: "Email address" |
+| **Input field** | Placeholder | 35 | Example value |
+| **Input field** | Help text | 60 | Constraint or format |
+
+### Button label patterns
+
+| Action type | Good | Bad |
+|---|---|---|
+| **Create** | "Add project", "Create team" | "Submit", "OK", "New" |
+| **Save** | "Save changes", "Update profile" | "Save", "Apply" |
+| **Delete** | "Delete project", "Remove member" | "Delete", "Yes" |
+| **Navigate** | "View details", "Go to settings" | "Click here", "More" |
+| **Cancel** | "Cancel" | "Go back", "Never mind" |
+| **Confirm destructive** | "Delete permanently", "Remove access" | "Confirm", "Yes, delete" |
+
+### Error message formula
+
+Every error message: **What happened** + **Why** (if not obvious) + **What to do**.
+
+| Type | Example |
+|---|---|
+| **Validation** | "Email address is invalid. Check for typos." |
+| **Permission** | "You don't have access to billing. Ask your admin." |
+| **Network** | "Couldn't save your changes. Check your connection and try again." |
+| **Server** | "Something went wrong loading your dashboard. We've been notified. Try refreshing." |
+| **Not found** | "This project was deleted or moved. Go back to your projects." |
+
+**Never say**: "Error", "Invalid", "Failed", "Oops", "Error 500", "null", "undefined"
+
+### Tone calibration
+
+| Context | Tone | Example |
+|---|---|---|
+| **Success** | Brief, confident | "Changes saved." |
+| **Error** | Calm, helpful | "Couldn't connect. Try again." |
+| **Empty state** | Warm, guiding | "No projects yet" |
+| **Destructive** | Clear, serious | "This will permanently delete 3 projects." |
+| **Loading** | Silent or minimal | Skeleton screens. No "Please wait..." |
+| **Onboarding** | Encouraging | "Great start! Next, invite your team." |
 
 ## Feedback Classification
 
@@ -289,49 +418,66 @@ Used by: `/revise`
 | **Scope change** | Flag as addition, plan separately | "Can we add a filter?" |
 | **Bug report** | Fix directly, verify with screenshot | "This overlaps on mobile" |
 
-### Processing feedback
+Priority: Usability > Principle > Content > Bug > Preference > Scope.
+Flag preference-based feedback — ask the user before acting on taste.
+Separate scope changes — these become new /plan tasks, not revisions.
 
-1. **Classify** each piece of feedback into a type
-2. **Prioritize**: Usability > Principle > Content > Bug > Preference > Scope
-3. **Apply** changes for types 1-4 directly
-4. **Flag** preference-based feedback — ask the user before acting on taste
-5. **Separate** scope changes — these become new /plan tasks, not revisions
+## Placeholder Content Detection
+
+Used by: `/plan`, `/build`, `/brainstorm`, `/stress-test`, `/revise`
+
+Flag and replace ANY text matching these patterns:
+
+**Named person placeholders** (from common UI kits):
+- "Olivia Rhye", "Phoenix Baker", "Lana Steiner", "Candice Wu", "Natali Craig"
+- "olivia@untitledui.com", "phoenix@untitledui.com", etc.
+- Any name + email + job title triplet from a UI kit
+
+**Generic content placeholders**:
+- "Lorem ipsum" or any Latin filler text
+- "[Title]", "[Description]", "[Subtitle]" — bracket placeholders
+- "Heading", "Subheading", "Body text" — style names used as content
+- "Text", "Label", "Value" — property names used as content
+
+**UI kit default data**:
+- "Home", "Dashboard", "Projects", "Tasks", "Reporting", "Users" (when all appear together as default sidebar nav)
+- "100", "$100.00", "1,234" — round placeholder numbers
+- "Used space" / "Upgrade plan" notifications in sidebars
+
+**When acceptable**: During `/setup-components` extraction and `typicalOverrides` documentation only. Never in final `/plan` or `/build` output.
 
 ## AskUserQuestion Format
 
-Used by: `/brainstorm`, `/responsive`, `/flow`, `/revise`, `/plan`, `/stress-test`, `/audit`
+Used by: all skills
 
-**ALWAYS follow this structure for every AskUserQuestion call:**
+**ALWAYS follow this structure:**
 
-1. **Re-ground:** State what you're planning and where you are in the process. (1 sentence)
-2. **Simplify:** Explain the design decision in plain English. No Figma jargon, no variant key hashes. Say what the user will SEE, not what the system calls it.
+1. **Re-ground:** State what you're planning and where you are. (1 sentence)
+2. **Simplify:** Explain the decision in plain English. No Figma jargon or variant key hashes. Say what the user will SEE.
 3. **Recommend:** `RECOMMENDATION: Choose [X] because [one-line reason]`
-4. **Options:** Lettered options: `A) ... B) ... C) ...`
+4. **Options:** Lettered: `A) ... B) ... C) ...`
 
-Assume the user hasn't looked at this window in 20 minutes. If you'd need to open
-Figma to understand your own question, it's too complex.
+### Rules
 
-### Critical Rules
-
-- **One decision = one AskUserQuestion.** Never combine multiple design choices into one question.
+- **One decision = one question.** Never combine multiple choices.
 - **STOP after each question.** Do NOT proceed until the user responds.
-- **Escape hatch:** If a decision has an obvious answer, state what you'll do and move on. Only ask when there is a genuine design choice with meaningful tradeoffs.
-- **Connect to user outcomes.** "This matters because your PM will see a blank screen with no guidance on what to do next."
+- **Escape hatch:** If obvious answer, state what you'll do and move on.
+- **Connect to outcomes.** "This matters because your PM will see a blank screen with no guidance."
 
 ## AI Slop Check
 
-Used by: `/brainstorm`, `/plan`, `/build`, `/revise`, `/flow`
+Used by: `/brainstorm`, `/plan`, `/build`, `/build-component`, `/revise`, `/flow`, `/responsive`
 
 Before finalizing any design output, check for these common AI design traps:
 
-- **Generic card grid** as the primary layout — every dashboard does not need a 3-column card grid
-- **Centered everything** with uniform spacing — real designs have intentional asymmetry and hierarchy
+- **Generic card grid** as primary layout — not every dashboard needs a 3-column card grid
+- **Centered everything** with uniform spacing — real designs have intentional asymmetry
 - **Dashboard-widget mosaic** with no hierarchy — if everything is a card, nothing stands out
-- **Cookie-cutter section rhythm** (hero → cards → table → CTA) — break the pattern when content demands it
-- **"Clean modern"** as a design direction — this is not a decision, it's a non-answer
-- **Equal visual weight** on all elements — hierarchy means some things are bigger, bolder, or more colorful
+- **Cookie-cutter section rhythm** (hero → cards → table → CTA) — break when content demands it
+- **"Clean modern"** as a design direction — this is not a decision
+- **Equal visual weight** on all elements — hierarchy means some things are bigger/bolder
 
-If the output falls into any of these traps, fix it before presenting. State what you changed and why.
+Fix before presenting. State what you changed and why.
 
 ## Component Design Principles
 
@@ -339,48 +485,40 @@ Used by: `/plan-component`, `/build-component`, `/review-component`
 
 ### The Duplicate Problem
 
-The #1 failure mode in design systems is duplicate components. Toast vs Notification
-vs Snackbar vs Banner — same job, four implementations. Before creating ANY new
-component, exhaustively search for existing solutions:
-
-1. Search by **function** (what it does), not name (what it's called)
+Before creating ANY new component:
+1. Search by **function** (what it does), not name
 2. Check if an existing component could be extended with a new variant
-3. Check if the need is actually a **composition** of existing components
+3. Check if the need is a **composition** of existing components
 4. Only create new when no existing component serves the job
 
 ### Variant Architecture
 
-Not every visual difference needs a variant axis. Choose the right mechanism:
-
 | Mechanism | When to use | Example |
 |---|---|---|
-| **Variant property** | Discrete visual modes the user switches between | Size: sm/md/lg |
+| **Variant property** | Discrete visual modes | Size: sm/md/lg |
 | **Boolean property** | Show/hide an optional element | Show icon: true/false |
 | **Text property** | Editable text content | Label: "Submit" |
 | **Instance swap** | Slot where different components plug in | Icon slot: any icon |
 
 **Rules:**
-- If a property has 2 values and one is "off", use a boolean, not a variant
-- If a property accepts any component, use an instance swap, not variants-per-icon
-- Interactive states (hover, focus, disabled) are variant axes, not boolean toggles
-- Keep variant axes under 5 — beyond that, the matrix becomes unmanageable
+- 2 values where one is "off" → boolean, not variant
+- Accepts any component → instance swap, not variants-per-icon
+- Interactive states (hover, focus, disabled) → variant axes, not booleans
+- Keep variant axes under 5
 
 ### Variant Completeness Checklist
 
-Every interactive component needs at minimum:
+Every interactive component needs:
 
 | State | Required? | What changes |
 |---|---|---|
 | **Default** | Always | Base appearance |
 | **Hover** | Always | Visual feedback on cursor |
-| **Focused** | Always | Keyboard navigation indicator (ring, outline) |
+| **Focused** | Always | Keyboard navigation indicator |
 | **Disabled** | Always | Reduced opacity, no interaction |
 | **Pressed/Active** | If clickable | Momentary pressed feedback |
-| **Error** | If validates | Error styling (destructive color) |
-| **Loading** | If async | Spinner or skeleton replacing content |
-
-Non-interactive components (Badge, Divider, Avatar) skip states but still need
-size variants if used in contexts with different density.
+| **Error** | If validates | Error styling |
+| **Loading** | If async | Spinner or skeleton |
 
 ### Token Binding Rules
 
@@ -397,21 +535,9 @@ Every visual property must be token-bound. No hardcoded values.
 | Font size | `typography.fontSize.*` | `text-sm`, `text-md` |
 | Shadow | `shadow.*` | `shadow-sm`, `shadow-lg` |
 
-**Variant-conditional tokens**: When a property changes per variant (e.g., Primary
-button has brand-solid background, Secondary has primary background), map each
-variant value to its specific token.
-
-### Anatomy Best Practices
-
-- Use auto-layout everywhere — no absolute positioning inside components
-- Name every layer by its **role**, not its type ("iconSlot" not "Frame 3")
-- Set sizing intentionally: text wraps = fill, icons = fixed, containers = hug or fill
-- Clip content where overflow is possible (text truncation)
-- Set min-width on components that need to maintain readability
-
 ### Naming Conventions
 
-Follow the existing library's patterns. Common conventions:
+Follow the existing library's patterns:
 
 - **Component name**: PascalCase with category prefix (`Buttons/Button`, `Input/TextField`)
 - **Variant properties**: PascalCase (`Size`, `State`, `Hierarchy`)
@@ -420,62 +546,48 @@ Follow the existing library's patterns. Common conventions:
 - **Instance swap props**: Swap emoji + descriptive name (`🔀 Icon leading swap`)
 - **Layer names**: camelCase by role (`iconSlot`, `labelText`, `helperText`)
 
-### Component Quality Dimensions
-
-Used by `/review-component` for scoring:
-
-| Dimension | Weight | What it measures |
-|---|---|---|
-| Variant Completeness | 20% | All required states, sizes, types present |
-| Token Compliance | 20% | Zero hardcoded values, consistent token usage |
-| Accessibility | 15% | Contrast, touch targets, focus states, color independence |
-| Naming Consistency | 10% | Matches library conventions exactly |
-| Prop Design | 10% | Right mechanism (variant vs boolean vs swap) |
-| Relationship Fit | 10% | No duplicates, correct atomic level, good composition |
-| State Coverage | 5% | Interactive state matrix complete |
-| Layout Resilience | 5% | Handles overflow, works at different widths |
-| Documentation | 5% | Description, annotations, MCP-readable |
-
 ## Canvas Positioning Protocol
 
 Used by: `/build`, `/build-component`, `/flow`, `/brainstorm`, `/responsive`
 
 Every skill that places frames on the Figma canvas **must scan existing content first**
-to avoid overlapping other work. Never assume the page is empty. Never hardcode (0, 0).
+to avoid overlapping. Never assume the page is empty. Never hardcode (0, 0).
 
 ### The Rule
 
-Before placing any new frame, run a canvas scan via `figma_execute` to find clear space:
+Before placing any new frame, scan via `figma_execute`:
 
 ```javascript
-// Canvas scan — returns the safe starting x for new content
 const children = figma.currentPage.children;
-let originX = 0;
-let originY = 0;
+const selection = figma.currentPage.selection;
+let originX = 0, originY = 0;
 
-if (children.length > 0) {
-  let maxRight = -Infinity;
+if (selection.length > 0) {
+  const sel = selection[0];
+  originX = sel.x + sel.width + 300;
+  originY = sel.y;
+} else if (children.length > 0) {
+  let maxRight = -Infinity, minY = Infinity;
   for (const child of children) {
     const right = child.x + child.width;
-    if (right > maxRight) {
-      maxRight = right;
-    }
+    if (right > maxRight) maxRight = right;
+    if (child.y < minY) minY = child.y;
   }
-  originX = maxRight + 200; // 200px clear gap from existing content
+  originX = maxRight + 300;
+  originY = minY >= 0 ? 0 : minY;
 }
-
-return { originX, originY };
+return { originX, originY, existingCount: children.length };
 ```
 
-All subsequent frame positions are **offsets from `originX, originY`** — not from (0, 0).
+Move the root frame to `(originX, originY)` IMMEDIATELY after creation. All subsequent positions are offsets from this origin.
 
 ### Gap Constants
 
-| Between | Gap | Purpose |
-|---|---|---|
-| Existing content → new content | 200px | Clear visual separation from prior work |
-| Sibling frames (within a skill) | 80-100px | Breathing room between related frames |
-| Row 1 → Row 2 (flow edge screens) | 200px vertical | Separate happy path from edge cases |
+| Between | Gap |
+|---|---|
+| Existing content → new content | 300px |
+| Sibling frames (within a skill) | 80-100px |
+| Row 1 → Row 2 (flow edge screens) | 200px vertical |
 
 ### Per-Skill Application
 
@@ -483,71 +595,8 @@ All subsequent frame positions are **offsets from `originX, originY`** — not f
 |---|---|
 | `/build` | The root frame's x position |
 | `/build-component` | The component set's x position after `combineAsVariants` |
-| `/flow` | Row 1 starting x; all screen x positions shift by `originX` |
-| `/brainstorm` | Variation 1 starts at `originX` instead of 0 |
-| `/responsive` | Desktop frame starts at `originX` instead of 0 |
+| `/flow` | Row 1 starting x; all screen positions shift by `originX` |
+| `/brainstorm` | Variation 1 starts at `originX` |
+| `/responsive` | Desktop frame starts at `originX` |
 
-### Selection-Aware Placement
-
-If the user has an active selection when running a skill, place new content relative
-to the selection instead of the page bounding box:
-
-```javascript
-const selection = figma.currentPage.selection;
-if (selection.length > 0) {
-  // Place to the right of the selected frame
-  const sel = selection[0];
-  originX = sel.x + sel.width + 200;
-  originY = sel.y;
-} else {
-  // Fall back to page-level scan (code above)
-}
-```
-
-This lets designers control where new content appears by selecting a nearby frame first.
-
-### What NOT To Do
-
-- **Don't place at (0, 0)** — other content is almost certainly already there
-- **Don't assume the page is empty** — skills may be run multiple times
-- **Don't scan only top-level children** — `figma.currentPage.children` is sufficient;
-  nested content is already bounded by its parent
-- **Don't create sections as wrappers** — place frames directly on the canvas at the
-  calculated offset; sections are for the designer to organize later
-
-## Design System Maturity Model
-
-Used by: `/diff`
-
-### Maturity Levels
-
-| Level | Name | Characteristics |
-|---|---|---|
-| 1 | **Inconsistent** | No shared tokens, components rebuilt per project |
-| 2 | **Emerging** | Some shared tokens and components, adoption spotty |
-| 3 | **Consistent** | Full token system, component library, 70%+ adoption |
-| 4 | **Integrated** | Design-to-code parity, automated auditing, version tracking |
-| 5 | **Optimized** | Usage analytics drive evolution, components serve measured needs |
-
-### Health Metrics
-
-- **Token adoption**: % of values bound to variables vs. hardcoded
-- **Component coverage**: % of UI elements from library vs. custom-built
-- **Consistency score**: Variance in usage patterns for same component
-- **Drift rate**: How quickly designs diverge from the system after initial build
-- **Staleness**: How many extracted specs are outdated vs. current Figma state
-
-### Diff Categories
-
-When comparing current state against extracted data:
-
-| Category | Severity | Action |
-|---|---|---|
-| **Token value changed** | Medium | Re-extract, check downstream impact |
-| **Token added** | Low | Re-extract, document new token |
-| **Token removed** | High | Flag — designs using it will break |
-| **Component variant added** | Low | Re-extract component JSON |
-| **Component variant removed** | High | Flag — instances will detach |
-| **Component props changed** | Medium | Re-extract, update handoff docs |
-| **New component** | Low | Add to index, extract on demand |
-| **Component removed** | Critical | Flag — all instances will break |
+**Do NOT**: place at (0, 0), assume the page is empty, or create sections as wrappers.

@@ -71,7 +71,7 @@ provides. You don't bloat the canvas with obvious specs.
 | Category | What to annotate | Example |
 |---|---|---|
 | **Token names** | Design system variable name for each value | "This 16px is `spacing-xl`, not a magic number" |
-| **Interaction states** | What happens on hover, focus, press, disabled | "Hover: background darkens 10%. Focus: 2px brand ring" |
+| **Interaction states** | What happens on hover, focus, press, disabled (see PRINCIPLES.md screen plan "Interaction states" table) | "Hover: background darkens 10%. Focus: 2px brand ring" |
 | **Conditional logic** | When elements show/hide, enable/disable | "Disable submit until all required fields valid" |
 | **Content rules** | Max length, truncation, overflow behavior | "Max 50 chars, truncate with ellipsis" |
 | **Focus order** | Tab sequence for keyboard navigation | "Tab: Name → Email → Password → Submit" |
@@ -427,6 +427,19 @@ For each sub-feature, document: trigger, visual change, state transitions, and e
 > - Inspect the design in Dev Mode for spacing, colors, typography
 > - Check the spec section for states, logic, content rules, focus order
 > - Run `/audit` if they want to verify design system compliance"
+
+## Definition of Done
+
+Before presenting the handoff, verify ALL of these:
+
+1. [ ] Spec section created NEXT TO the design (not overlapping)
+2. [ ] Token names annotated on non-obvious elements
+3. [ ] Interaction states documented (hover, focus, disabled) for interactive elements
+4. [ ] Focus order documented for keyboard navigation
+5. [ ] Conditional logic documented (show/hide, enable/disable rules)
+6. [ ] Content rules documented (max length, truncation, overflow)
+7. [ ] No duplication of what Dev Mode already shows (spacing, colors, typography)
+8. [ ] Annotation density 30-50% (not over-annotating)
 
 ## Tone
 

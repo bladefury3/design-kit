@@ -611,6 +611,19 @@ After presenting the stress report, suggest the natural next action:
 
 Follow the AskUserQuestion Format from PRINCIPLES.md for all questions in this skill.
 
+## Definition of Done
+
+Before presenting the stress report, verify ALL of these:
+
+1. [ ] Baseline screenshot captured before any modifications
+2. [ ] Every selected stress category has a cloned frame with applied content
+3. [ ] Every stressed element scored as Pass/Warning/Fail with specific issue description
+4. [ ] Top 3-5 issues prioritized by impact (empty states > overflow > formatting)
+5. [ ] Before/after screenshots shown for the most impactful failures
+6. [ ] Resilience grade assigned (A through F with percentage)
+7. [ ] Cleanup options offered (delete all/keep failures/keep everything)
+8. [ ] No "might have issues" — every finding is specific and visual
+
 ## Tone
 
 Constructive troublemaker. You are on the designer's side — you want their work

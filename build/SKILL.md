@@ -1,9 +1,8 @@
 ---
 name: build
 description: |
-  Execute a plan from plans/ in Figma. Reads the structured build plan and mechanically
-  creates frames, instantiates library components, binds tokens, and sets text.
-  No planning, no guessing — just execution. Use after plan.
+  Execute a plan from plans/ in Figma. Builds ONE SECTION AT A TIME with a
+  screenshot check after each. Use after plan.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_get_design_system_kit
@@ -34,516 +33,349 @@ allowed-tools:
 
 # Build Design
 
-You are a design builder. Your job is to execute a plan from `plans/` in Figma —
-mechanically, precisely, and without improvisation. Every component, token, and
-text value is already decided in the plan. You just build it.
+Build a plan from `plans/` in Figma using **5 enforced phases**.
 
-**You do NOT make design decisions.** If something is ambiguous or missing in the
-plan, ask the user — don't guess. All decisions were made in `/plan`.
+## The Rule
+
+**Components first. Frames fill gaps. Validate before presenting.**
+
+Read `build-helpers/build-phases.md` for the full phase specification.
+The 5 phases are:
+
+```
+Phase 1: MANIFEST     → Parse build.json into a component checklist
+Phase 2: SCAFFOLD     → Root frame + section frames (empty structure only)
+Phase 3: COMPONENTS   → Instantiate ALL library components from manifest
+Phase 4: TOKEN-BUILT  → Fill remaining gaps with frames/text
+Phase 5: VALIDATE     → Coverage, text, property, token binding checks
+```
+
+**CRITICAL: Do NOT start Phase 4 until Phase 3's exit gate passes.**
+Phase 3 (components) must complete before Phase 4 (token-built). This
+prevents the #1 build failure: building everything as frames and never
+swapping in library components.
+
+### Phase 1: MANIFEST (before touching Figma)
+
+Parse `build.json` and print a flat checklist of every element to build:
+- Library components (with variantKey, parent section, text overrides)
+- Icons (with componentKey, parent, size)
+- Token-built elements (with justification for why no component fits)
+- Expected coverage percentage
+
+**This checklist is mandatory.** Without it, you WILL skip components.
+
+### Phase 2: SCAFFOLD (1-3 figma_execute calls)
+
+Create ONLY the empty frame structure: root, sections, sub-sections.
+Set sizing, padding, gaps, fills. NO content, NO components, NO text.
+Screenshot to verify proportions.
+
+### Phase 3: COMPONENTS (the critical phase)
+
+Work through the manifest checklist item by item:
+1. **Structural**: Tabs, dividers, page headers, section headers
+2. **Interactive**: Buttons, inputs, toggles, dropdowns
+3. **Data display**: Avatars, avatar groups, badges, tags
+4. **Icons**: Every icon from the manifest
+
+For EACH component:
+- `figma_instantiate_component` with variantKey
+- Move into parent frame, set sizing
+- `figma_set_instance_properties` for overrides
+- Set text content
+- Check off the manifest entry
+
+**Exit gate**: Count INSTANCE nodes. Must match manifest total.
+If not, find and add missing components before proceeding.
+
+### Phase 4: TOKEN-BUILT (fill gaps)
+
+ONLY NOW add token-built frames and text for elements with no library match.
+Bind ALL values to tokens — zero hardcoded pixels.
+
+### Phase 5: VALIDATE
+
+Run 5 checks (coverage, text, overrides, tokens, visual). Present results.
+
+## Relationship to /plan
+
+The build process depends on `/plan` output. The pipeline is:
+
+```
+/plan → plans/<name>/plan.md + build.json (with manifest)
+                ↓
+/build Phase 1 → reads manifest from build.json → prints task checklist
+/build Phase 2 → creates scaffold (empty frames)
+/build Phase 3 → instantiates components from manifest checklist
+/build Phase 4 → fills gaps with token-built frames/text
+/build Phase 5 → validates and presents
+```
+
+This mirrors spec-kit's `/speckit.specify` → `/speckit.plan` → `/speckit.tasks`
+→ `/speckit.implement` pipeline. The key insight borrowed from spec-kit:
+
+1. **Specifications drive implementation** — the manifest is the source of truth
+2. **Tasks are flat and ordered** — not a nested tree that requires interpretation
+3. **Each task has one API call** — no creative re-interpretation
+4. **Gates block progression** — you can't skip Phase 3 and jump to Phase 4
+
+See `build-helpers/tasks-template.md` for the task list format and
+`build-helpers/build-phases.md` for the full phase specification.
+
+## Helper Functions
+
+Embed these in every `figma_execute` call that creates frames, text, or binds tokens.
+Do NOT read from an external file — copy the helpers you need directly into the call.
+
+```javascript
+// === EMBED THESE IN EVERY figma_execute CALL ===
+
+// Import tokens from a flat key map
+async function importTokens(keys) {
+  const vars = {};
+  for (const [alias, key] of Object.entries(keys))
+    vars[alias] = await figma.variables.importVariableByKeyAsync(key);
+  return vars;
+}
+
+// Bind fill/stroke
+function bf(node, variable) {
+  node.fills = [figma.variables.setBoundVariableForPaint(
+    {type:'SOLID', color:{r:0,g:0,b:0}}, 'color', variable)];
+}
+function bs(node, variable) {
+  node.strokes = [figma.variables.setBoundVariableForPaint(
+    {type:'SOLID', color:{r:0,g:0,b:0}}, 'color', variable)];
+  node.strokeWeight = 1;
+}
+
+// Create frame with correct sizing (prevents 100px bug)
+function mkF(parent, name, dir, wS, hS) {
+  const f = figma.createFrame();
+  f.name = name;
+  f.layoutMode = dir || 'VERTICAL';
+  f.fills = [];
+  f.clipsContent = false;
+  if (parent) {
+    parent.appendChild(f);
+    f.layoutSizingHorizontal = wS || 'HUG';
+    f.layoutSizingVertical = hS || 'HUG';
+  }
+  return f;
+}
+
+// Create text with token bindings (prevents text clipping)
+function mkT(parent, content, style, fillVar, fsVar, lhVar, hug) {
+  const t = figma.createText();
+  t.fontName = {family: 'Inter', style: style || 'Regular'};
+  t.characters = content;
+  parent.appendChild(t);
+  t.layoutSizingHorizontal = hug ? 'HUG' : 'FILL';
+  t.layoutSizingVertical = 'HUG';
+  t.setBoundVariable('fontSize', fsVar);
+  t.setBoundVariable('lineHeight', lhVar);
+  bf(t, fillVar);
+  return t;
+}
+
+// Find clear canvas space
+function canvasScan() {
+  const children = figma.currentPage.children;
+  const selection = figma.currentPage.selection;
+  let originX = 0, originY = 0;
+  if (selection.length > 0) {
+    const sel = selection[0];
+    originX = sel.x + sel.width + 300;
+    originY = sel.y;
+  } else if (children.length > 0) {
+    let maxRight = -Infinity;
+    for (const child of children) {
+      const right = child.x + child.width;
+      if (right > maxRight) maxRight = right;
+    }
+    originX = maxRight + 300;
+  }
+  return { originX, originY };
+}
+```
 
 ## Before you begin
 
-1. Confirm Figma is connected.
+1. Read the plan from `plans/<name>/build.json` (or `plans/<name>.json`).
+2. Read `design-system/tokens.json` for token keys.
+3. Find clear canvas space using `canvasScan()` in your first `figma_execute` call.
 
-2. Read the plan from `plans/` (e.g. `plans/<name>.json`). This is your build spec.
-   If no plan exists in `plans/`:
-   > "No plan found in `plans/`. Run `/plan` first to create a build plan."
+## How to build
 
-3. Read `design-system/tokens.json` and `design-system/components/index.json` — you'll need these for
-   on-demand component extraction if any components haven't been fully extracted yet.
-   Also read `design-system/icons.json` if it exists — needed for resolving icon swaps.
+### Step 1: Create the root frame
 
-4. **Pre-build validation (mandatory):**
-
-   a. **Verify token keys**: Scan all `figmaKey` values in the plan. Every key must
-      be a 40-character hex hash. If any key contains `/` (path-style), STOP and warn:
-      > "Plan contains path-style token keys that won't work. Run `/setup-tokens`
-      > to refresh, or manually fix the keys in design-system/tokens.json."
-
-   b. **Verify component coverage**: Check the plan's `componentCoverage.percentage`.
-      If below 60%, warn:
-      > "Only [X]% of elements use library components. Review the plan — some
-      > token-built elements may have library equivalents."
-
-   c. **Verify typography tokens**: Check that every `type: "text"` node in the plan
-      has `fontSize`, `lineHeight`, AND `fills` in its `tokens` object. If any text
-      node is missing typography tokens, STOP and warn:
-      > "Text node '[name]' is missing typography token bindings. The plan must
-      > specify fontSize, lineHeight, and fills for every text node."
-
-   d. **Check `design-system/relationships.json`**: If it exists, verify that composition patterns
-      are respected (e.g., if Avatar label group contains Avatar, don't instantiate
-      a standalone Avatar where the label group should be used).
-
-   e. **Verify text sizing**: Scan all `type: "text"` nodes in the plan. If ANY
-      text node is missing a `sizing` property, auto-add `{ "width": "fill",
-      "height": "hug" }` and log a warning. Do NOT reject the plan — fix it
-      automatically.
-
-      ```javascript
-      // In figma_execute: ensure text fills parent
-      if (node.type === 'text') {
-        text.layoutSizingHorizontal = node.sizing?.width === 'hug' ? 'HUG' : 'FILL';
-        text.layoutSizingVertical = 'HUG';
-      }
-      ```
-
-      This single fix prevents the #1 build quality issue: text truncation.
-
-5. Confirm with the user:
-   > "Ready to build: **[plan name]** ([width]px)
-   > - [N] library components to instantiate
-   > - [N] token-built frames
-   > - [N] text nodes
-   >
-   > Build it?"
-
-## Step 1: Canvas scan (mandatory)
-
-Before building anything, find clear space on the canvas. See PRINCIPLES.md
-"Canvas Positioning Protocol" for the full rationale.
-
-Run via `figma_execute`:
+One `figma_execute` call. Create the root frame with the page background,
+set its width, position it on the canvas. Nothing else.
 
 ```javascript
-const children = figma.currentPage.children;
-const selection = figma.currentPage.selection;
-let originX = 0;
-let originY = 0;
+const root = figma.createFrame();
+root.name = 'Page Name';
+root.layoutMode = 'HORIZONTAL';
+root.resize(1440, 1);  // height=1, NOT 100
+root.clipsContent = false;
+root.layoutSizingVertical = 'HUG';
+// bind bg fill, set padding/gap, position at originX/originY
+```
 
-if (selection.length > 0) {
-  // Place to the right of whatever the user selected
-  const sel = selection[0];
-  originX = sel.x + sel.width + 200;
-  originY = sel.y;
-} else if (children.length > 0) {
-  let maxRight = -Infinity;
-  for (const child of children) {
-    const right = child.x + child.width;
-    if (right > maxRight) maxRight = right;
+### Step 2: Build each section separately
+
+For each top-level section in the plan (left sidebar, center feed, right sidebar),
+do ONE `figma_execute` call that:
+
+1. Creates the section frame
+2. Appends it to root
+3. Sets sizing AFTER append (FILL or fixed width)
+4. Creates ONLY the token-built frames and text inside this section
+5. Leaves placeholder slots where library components go
+
+**Keep each call under 15 elements.** If a section has more, split it into
+sub-sections (e.g., build the feed composer separately from the feed posts).
+
+### Step 3: Instantiate library components into each section
+
+For each library component in the plan:
+
+1. `figma_instantiate_component` with the `variantKey` from the plan
+2. Move it into its parent frame
+3. Set sizing (FILL/HUG) AFTER it's in the parent
+4. `figma_set_instance_properties` to disable unwanted properties:
+   - Input field: `Label=false`, `Hint text=false`, `Help icon=false` (unless plan says otherwise)
+   - Page header: `Search=false`, `Actions=false`
+   - Button: `Icon leading=false`, `Icon trailing=false`
+   - Avatar label group: set subtitle text to empty if not needed
+5. Set text content on the instance (see "How to set text" below)
+
+**NEVER skip property overrides.** Library components show labels, hints, icons
+by default. If the plan has `propertyOverrides`, apply them. If not, disable
+Label, Hint text, Help icon, and Actions as defaults.
+
+### How to set text on library components
+
+**Preferred: Use figma_set_instance_properties for TEXT properties.**
+Many components expose text as component properties (e.g., "Label text",
+"Placeholder", "Supporting text"). These are reliable — they use the
+component's property API, not string matching.
+
+```
+figma_set_instance_properties with:
+  nodeId: the instance ID
+  properties: { "Label text": "New Label", "Placeholder": "Search..." }
+```
+
+Combine boolean and text overrides in a single call when possible:
+
+```
+figma_set_instance_properties with:
+  nodeId: the instance ID
+  properties: {
+    "Label": false,
+    "Hint text": false,
+    "Help icon": false,
+    "Placeholder": "Enter your email"
   }
-  originX = maxRight + 200;
-}
-
-return { originX, originY };
 ```
 
-Store `originX` and `originY`. In Phase 1 (build frame tree), after creating the
-root frame, move it to `(originX, originY)` using `figma_move_node`.
+**Fallback: Walk the instance tree (section-aware).**
+If the component doesn't expose text as properties, find text nodes by
+walking the instance's children. ALWAYS scope the walk to one specific
+instance — never walk the entire page tree.
 
-## Step 2: Prepare the token key map
+### Step 4: Screenshot after each section
 
-Extract all unique figmaKey values from the plan into a flat key map. This gets
-embedded into `figma_execute` calls for O(1) variable binding.
-
-```javascript
-// Read plans/<name>.json, build: { "shortAlias": "figmaHashKey" }
-// e.g., { "bg.primary": "b6157f22...", "s.4xl": "284dbace..." }
-```
-
-This is the same pattern used in the dashboard build — all token bindings are
-direct key lookups, zero collection scanning.
-
-## Step 3: Build the frame tree
-
-Walk the plan's `layout` tree depth-first. For each node:
-
-### type: "frame"
-
-Create a Figma frame with auto-layout:
-
-```javascript
-const frame = figma.createFrame();
-frame.name = node.name;
-frame.layoutMode = node.direction === 'horizontal' ? 'HORIZONTAL' : 'VERTICAL';
-
-// Apply token bindings from node.tokens
-for (const [prop, token] of Object.entries(node.tokens)) {
-  if (token.figmaKey) {
-    const v = await figma.variables.importVariableByKeyAsync(token.figmaKey);
-    if (prop === 'fills') {
-      frame.fills = [figma.variables.setBoundVariableForPaint(
-        {type:'SOLID', color:{r:0,g:0,b:0}}, 'color', v
-      )];
-    } else {
-      frame.setBoundVariable(prop, v);
-    }
-  }
-}
-
-// Apply sizing — ALWAYS set explicitly, never rely on Figma defaults
-if (typeof node.width === 'number') {
-  frame.resize(node.width, node.height || 100);
-} else if (node.sizing?.width === 'fill') {
-  frame.layoutSizingHorizontal = 'FILL';
-} else {
-  frame.layoutSizingHorizontal = 'HUG'; // Default: hug content
-}
-
-if (node.sizing?.height === 'fill') {
-  frame.layoutSizingVertical = 'FILL';
-} else {
-  frame.layoutSizingVertical = 'HUG'; // Default: hug content height
-}
-
-// CRITICAL: Frames with text children must have width constraints.
-// Without this, child text nodes with FILL sizing have nothing to fill against,
-// causing text to render as a single line that clips at the frame boundary.
-// If a frame has no explicit width and isn't set to FILL, child text WILL truncate.
-
-// Apply alignment
-if (node.justify) frame.primaryAxisAlignItems = node.justify.toUpperCase().replace('-', '_');
-if (node.align) frame.counterAxisAlignItems = node.align.toUpperCase();
-```
-
-### type: "library-component"
-
-Instantiate from the library using the variant key:
+After building each section + its components:
 
 ```
-Use figma_instantiate_component with:
-  - componentKey: node.variantKey (the hash from the plan)
-  - parentId: parent frame's ID
+figma_take_screenshot of the root frame
 ```
 
-**CRITICAL: Use `variantKey`, not `figmaKey`.** The variantKey is the specific
-variant's component key. The figmaKey is the component set key (which will fail).
+Check:
+- Does the section look right?
+- Are there 100px phantom heights? (frame with unexpected whitespace)
+- Are library components showing unwanted labels or icons?
+- Is the text correct (not "Olivia Rhye" or "Label")?
 
-**Post-instantiation sizing:** After instantiation, always set sizing on the instance:
+**If anything is wrong, fix it NOW.** Don't move to the next section.
 
-```javascript
-const instance = await figma.getNodeByIdAsync(instanceId);
-// Match the plan's sizing specification
-if (node.sizing?.width === 'fill') instance.layoutSizingHorizontal = 'FILL';
-if (node.sizing?.height === 'fill') instance.layoutSizingVertical = 'FILL';
-if (node.sizing?.width === 'hug') instance.layoutSizingHorizontal = 'HUG';
-if (node.sizing?.height === 'hug') instance.layoutSizingVertical = 'HUG';
-```
+### Step 5: Present the result
 
-Library components render with their default sizing. If the plan says `"sizing":
-{ "width": "fill" }`, the instance MUST be explicitly set to FILL — the plan's
-sizing won't apply automatically.
-
-After instantiation, apply overrides:
-
-```javascript
-// Set text overrides
-const instance = await figma.getNodeByIdAsync(instanceId);
-const texts = instance.findAll(n => n.type === 'TEXT');
-for (const t of texts) {
-  await figma.loadFontAsync(t.fontName);
-  // Match by node name or content pattern
-  if (node.overrides.text && t.name.toLowerCase().includes('text')) {
-    t.characters = node.overrides.text;
-  }
-}
-
-// Set sizing
-if (node.sizing?.width === 'fill') instance.layoutSizingHorizontal = 'FILL';
-if (node.sizing?.height === 'fill') instance.layoutSizingVertical = 'FILL';
-```
-
-### type: "text"
-
-Create a text node with **ALL properties token-bound**. Never hardcode font sizes,
-line heights, or text colors — always bind to variables from design-system/tokens.json.
-
-```javascript
-await figma.loadFontAsync({family: 'Inter', style: node.style || 'Regular'});
-const text = figma.createText();
-text.characters = node.content;
-text.fontName = {family: 'Inter', style: node.style || 'Regular'};
-
-// MANDATORY: Bind ALL token properties — fontSize, lineHeight, AND fills
-// Never use hardcoded values like text.fontSize = 14
-for (const [prop, token] of Object.entries(node.tokens)) {
-  const v = await figma.variables.importVariableByKeyAsync(token.figmaKey);
-  if (prop === 'fills') {
-    text.fills = [figma.variables.setBoundVariableForPaint(
-      {type:'SOLID', color:{r:0,g:0,b:0}}, 'color', v
-    )];
-  } else {
-    text.setBoundVariable(prop, v);
-  }
-}
-
-// CRITICAL: Set text sizing to prevent clipping
-// This is the #1 cause of "User Insi" truncation in builds
-text.layoutSizingHorizontal = 'FILL';  // Text fills parent width
-text.layoutSizingVertical = 'HUG';      // Text height wraps to content
-
-// Override only for short labels (nav items, button text)
-if (node.sizing?.width === 'hug') {
-  text.layoutSizingHorizontal = 'HUG';
-}
-```
-
-**CRITICAL**: If a figmaKey fails to import (returns undefined), it may be a
-path-style key instead of a hash. Check design-system/tokens.json — all keys must be 40-char
-hex hashes. Fall back to hardcoded `$value` ONLY as a last resort, and flag it
-in the build output so the user knows which tokens need key fixes.
-
-**PREFER TEXT STYLES over individual variable bindings.** If the plan specifies a
-`textStyleKey` on a text node, apply the composite text style instead of binding
-fontSize/lineHeight/fills individually:
-
-```javascript
-// Preferred: apply text style (one call, full typography compliance)
-if (node.textStyleKey) {
-  const style = await figma.importStyleByKeyAsync(node.textStyleKey);
-  text.textStyleId = style.id;
-  // Still bind fills separately — text styles don't include color
-  if (node.tokens?.fills) {
-    const v = await figma.variables.importVariableByKeyAsync(node.tokens.fills.figmaKey);
-    text.fills = [figma.variables.setBoundVariableForPaint(
-      {type:'SOLID', color:{r:0,g:0,b:0}}, 'color', v
-    )];
-  }
-}
-```
-
-Text styles give proper Figma compliance — the design panel shows the style name
-instead of raw values, and changes to the library style propagate everywhere.
-Only fall back to individual variable bindings when `design-system/tokens.json` has no `textStyles` section.
-
-### type: "ellipse"
-
-Create a circle/ellipse (for avatars, status dots):
-
-```javascript
-const ellipse = figma.createEllipse();
-ellipse.resize(node.width, node.height);
-// Bind fill from tokens
-```
-
-## Step 4: On-demand component extraction
-
-If the plan references a component that needs a specific variant but
-`design-system/components/<name>.json` doesn't exist yet:
-
-1. Use `figma_get_library_components` with the component's figmaKey to get variant keys
-2. Write `design-system/components/<name>.json` with the full variant map
-3. Then instantiate the requested variant
-
-This is the on-demand pattern — first use extracts, all future uses read from cache.
-
-## Step 5: Batch execution strategy
-
-Don't build one node at a time with individual MCP calls. Instead:
-
-### Phase 1: Build all frames (1-2 figma_execute calls)
-- Create the entire frame tree structure
-- Apply all token bindings
-- Set all text content
-- **Move the root frame to `(originX, originY)` from the canvas scan**
-- Return a map of frame IDs
-
-### Phase 2: Instantiate all library components (parallel figma_instantiate_component calls)
-- Place each library component into its parent frame
-- Can run multiple instantiations in parallel
-
-### Phase 3: Configure instances (1-2 figma_execute calls)
-- Set text overrides on all instances
-- Set sizing (fill/hug) on all instances
-- Apply icon swaps (see below)
-- Reorder children if needed
-
-### Icon swaps
-
-If a library-component node has `iconOverrides`, apply them after instantiation:
-
-```
-Use figma_set_instance_properties with:
-  - nodeId: the instantiated component's ID
-  - properties: { "<propKey>": "<iconKey>" }
-```
-
-The `propKey` is the full instance swap property identifier (e.g., `🔀 Icon leading swap#3466:91`).
-The `iconKey` is the icon's component key from `design-system/icons.json`.
-
-If `iconOverrides` references an icon by name but no `iconKey` is provided:
-1. Look up the name in `design-system/icons.json`
-2. If not found, use `figma_search_components` as fallback
-3. If still not found, leave the default placeholder and flag it
-
-### Phase 4: Screenshot and verify (1 call)
-- Take a screenshot of the result
-- Compare against the plan
-
-### Phase 5: Configure component properties (mandatory)
-
-After instantiating all library components, configure their properties:
-
-1. Read `propertyOverrides` from the plan for each component
-2. Call `figma_set_instance_properties` on each instance to disable irrelevant features
-3. If no overrides in the plan, apply defaults from component index's `typicalOverrides`
-
-Common overrides:
-- **Page header**: `Search=false`, `Actions=false` (unless actions are planned)
-- **Section header**: `Tabs=False`, `Actions=false`, `Dropdown icon=false`
-- **Input dropdown**: `State=Placeholder`, `Type=Default`, `Hint text=false`, `Supporting text=false`
-- **Textarea**: `Destructive=False`, `Hint text=false`
-- **Metric item**: `Type=Simple`, `Actions=False` (unless charts are specified)
-- **Button**: `Icon leading=false`, `Icon trailing=false` (unless icons are specified)
-- **Content divider**: Check Type — `Button icon` shows a "+" button, use a simpler type or hide the button
-
-This step is critical because component defaults rarely match what the screen needs.
-Skipping it results in search bars on every page, action buttons everywhere, and
-expanded dropdowns showing option lists.
-
-### Phase 6: Text content sweep (mandatory)
-
-Library components ship with placeholder content ("Team members", "Olivia Rhye",
-"Product Designer", "Marketing site redesign"). EVERY text node needs updating.
-
-1. For each screen, find all text nodes within the frame:
-   ```javascript
-   function findTexts(node, depth) {
-     if (depth > 8) return;
-     if (node.type === 'TEXT') {
-       texts.push({ id: node.id, chars: node.characters });
-     }
-     if ('children' in node) {
-       for (const c of node.children) findTexts(c, depth + 1);
-     }
-   }
-   ```
-2. Match against `textOverrides` from the plan
-3. Update using `figma_set_text` for each node
-4. **Mixed-font fallback**: If `figma_set_text` fails with "Cannot unwrap symbol",
-   the text has mixed fonts (e.g., bold links within regular text). Use this fallback:
-   ```javascript
-   const node = await figma.getNodeByIdAsync(id);
-   if (node?.type === 'TEXT') {
-     const len = node.characters.length;
-     node.setRangeFontName(0, len, { family: "Inter", style: "Regular" });
-     node.characters = newText;
-   }
-   ```
-5. After the sweep, screenshot and verify no placeholder content remains visible
-
-### Phase 7: Structural cleanup (when repurposing components)
-
-When a component is used for a different purpose than its default design
-(e.g., team member table → attendance records), hide irrelevant sub-components:
-
-1. Read `structuralCleanup` from the plan
-2. Find and hide the specified elements:
-   - **Avatars in date-based tables**: Each table row has an avatar — hide them
-     when rows represent dates, not people
-   - **Checkboxes**: Hide when bulk selection isn't needed
-   - **File attachments**: Hide PDF/file upload previews in activity feeds
-   - **Notification banners**: Hide "Used space" or upgrade prompts in sidebars
-3. Use `node.visible = false` to hide without removing
-
-```javascript
-// Example: hide all avatars in a table
-function hideByName(node, targetName, depth) {
-  if (depth > 8) return;
-  if (node.type === 'INSTANCE' && node.name === targetName) {
-    node.visible = false;
-  }
-  if ('children' in node) {
-    for (const c of node.children) hideByName(c, targetName, depth + 1);
-  }
-}
-hideByName(table, 'Avatar', 0);
-hideByName(table, 'Checkbox', 0);
-```
-
-This batching reduces total MCP calls from ~50+ (one per node) to ~5-8.
-
-## Step 5: Screenshot and verify
-
-### AI Slop Check (post-build)
-
-Before presenting the result, visually verify the built design doesn't fall into
-AI slop traps. See PRINCIPLES.md for the full checklist. Key checks:
-- Is hierarchy clear? (What does the user see first, second, third?)
-- Are spacing and sizing varied intentionally, or uniform everywhere?
-- Does the layout feel designed, or assembled from a template?
-
-If the build looks sloppy, flag specific issues rather than rebuilding — the plan
-is the source of truth. Suggest plan revisions if the issues are structural.
-
-```
-Use figma_take_screenshot to capture the result.
-```
-
-Present the result:
+After all sections are built and verified:
 
 > "Built **[plan name]** in Figma:
->
+> - [N] sections built and verified
 > - [N] library components instantiated
-> - [N] frames created with token bindings
-> - [N] text nodes set
-> - [total] MCP calls used
+> - [N] property overrides applied
 >
-> [screenshot]
->
-> Does this match your plan? If anything needs adjustment, update `plans/<name>.json`
-> and run `/build` again — or tell me what to change."
+> [screenshot]"
 
-## Step 6: Handle issues
+## Figma API rules (prevents the bugs we keep hitting)
 
-### Component instantiation fails
-- Check if the variantKey is correct (variant key, not set key)
-- Check if the library is accessible (Desktop Bridge running)
-- If the component is unpublished, create a placeholder frame with a note
+1. **Height 1, not 100**: `frame.resize(width, 1)` — auto-layout HUG expands it.
+   Never `resize(width, 100)`.
 
-### Token binding fails
-- Check if the figmaKey is a valid hash (not a variable name)
-- Verify the library is enabled in the file
-- Fall back to hardcoded values from design-system/tokens.json `$value` field
+2. **Append before sizing**: `parent.appendChild(frame)` FIRST, then
+   `frame.layoutSizingHorizontal = 'FILL'`. The other order throws an error.
 
-### Text override doesn't apply
-- Library components may nest text nodes deeply
-- Walk the full instance tree to find text nodes
-- Load the correct font before setting characters
-- Some components use component properties instead of direct text editing
+3. **clipsContent = false**: Set on every frame. Prevents content from being
+   silently hidden.
 
-### Plan is incomplete
-- Don't improvise. Ask the user:
-  > "The plan doesn't specify [missing detail]. What should I do?"
+4. **Property overrides on every component**: `figma_set_instance_properties`
+   after every `figma_instantiate_component`. Never skip this.
 
-### Mixed-font text nodes
+5. **Section-aware text sweeps**: When replacing "Olivia Rhye" with a real name,
+   find the specific component instance in the specific section — don't walk the
+   entire tree. The same component type in different sections needs different names.
 
-**Symptom:** `figma_set_text` fails with "in loadFontAsync: Cannot unwrap symbol"
-**Cause:** The text node has mixed font styles (e.g., bold for linked text, regular
-for the rest). `fontName` returns a Symbol (mixed) which can't be passed to `loadFontAsync`.
-**Fix:** Normalize the font before setting text:
-```javascript
-await figma.loadFontAsync({ family: "Inter", style: "Regular" });
-const node = await figma.getNodeByIdAsync(nodeId);
-if (node?.type === 'TEXT') {
-  node.setRangeFontName(0, node.characters.length, { family: "Inter", style: "Regular" });
-  node.characters = newText;
-}
-```
-This loses the mixed formatting but ensures the text is readable and contextually correct.
+6. **One section at a time**: Build sidebar → screenshot → fix. Then feed →
+   screenshot → fix. Then right sidebar → screenshot → fix. Not all at once.
 
-### Wrong component variant instantiated
+7. **NEVER hardcode spacing values.** If you write `paddingTop = 24` or
+   `itemSpacing = 16`, you're bypassing the design system. Every padding,
+   gap, and spacing MUST use `setBoundVariable` with a token from the plan:
+   ```javascript
+   frame.setBoundVariable('paddingTop', V['s.3xl']);
+   frame.setBoundVariable('itemSpacing', V['s.xl']);
+   ```
+   If `setBoundVariable` fails, diagnose the error — don't fall back to
+   hardcoded values. Common fix: ensure the value is a variable object
+   (from `importVariableByKeyAsync`), not a string or ID.
 
-**Symptom:** Mobile sidebar, gradient banner page header, expanded dropdown with avatar list
-**Cause:** Used `defaultVariantKey` from the index which is often a Mobile or complex variant
-**Fix:** Always use the specific variant key from the plan's `variantKey` field.
-If the plan doesn't specify one, search for the right variant:
-- Filter for `Breakpoint=Desktop`
-- Prefer `Style=Simple` or `Type=Default`
-- Prefer `State=Default` or `State=Placeholder`
+8. **NEVER use emoji as icons.** Emoji (🟥, 📘, 🎮, 🤖, 🟢) are text
+   characters, not design components. Every icon in the design must be a
+   library icon component instantiated via `figma_instantiate_component`.
+   The plan's build.json should have resolved every icon to a component key
+   in its resolution pass. If an icon key is missing from the plan, search
+   the library at build time — don't substitute with emoji.
 
-## How to use design-system/tokens.json for Figma operations
+9. **Icons are library components, not ellipses.** Never use
+   `figma.createEllipse()` for an icon. Icons exist in the library as
+   standalone components (24x24). Instantiate them like any other component.
 
-When you need to bind a design token to a Figma node via `figma_execute`:
+## Definition of Done
 
-1. Read the plan from `plans/` — it already contains figmaKey for every token
-2. Build a flat key map from all token references in the plan
-3. Embed the key map in your `figma_execute` code
-4. Use `figma.variables.importVariableByKeyAsync(key)` directly
-5. NEVER scan collections — every key is pre-resolved in the plan
+Before presenting the build to the user, verify ALL of these:
+
+1. [ ] Every section has been screenshotted and checked
+2. [ ] Every library component from the plan was instantiated (count INSTANCE nodes)
+3. [ ] Every library component has property overrides applied (no unwanted labels/hints/icons)
+4. [ ] All text shows domain-specific content (no "Olivia Rhye", "Label", "UX review presentations")
+5. [ ] No frames are stuck at 100px height (check for phantom whitespace)
+8. [ ] All spacing/padding uses setBoundVariable with tokens (no hardcoded pixel values)
+9. [ ] Zero emoji used as icons (no 🟥, 📘, 🎮 — all icons are library components)
+10. [ ] Every icon from the plan was instantiated as a library component (not an ellipse)
+6. [ ] Root frame is positioned at originX (not overlapping existing content at 0,0)
+7. [ ] clipsContent is false on all frames (no silently hidden content)
+
+If ANY check fails, fix it before presenting. The designer should never
+have to ask "why does this input have a label?" or "why does it say Olivia Rhye?"
 
 ## Tone
 
-You're a precise builder executing a blueprint. Report what you built, flag
-what didn't work, show the result. No commentary on design choices — those
-were made in `/plan`.
+Report what you built, section by section. Show a screenshot after each major
+section. Flag what doesn't look right. Don't present a "complete" build that
+has obvious problems.

@@ -24,7 +24,7 @@ and hand off to engineering — all from your terminal.
 |---|---|
 | `/brainstorm` | Generate 3-5 design variations using SCAMPER + Jobs-to-be-Done |
 | `/plan` | Create a build plan from a brief, wireframe, or screenshot |
-| `/build` | Execute a plan in Figma — components, tokens, layout |
+| `/build` | Execute a plan in Figma via a 5-phase pipeline (scaffold, components, tokens, validate) |
 | `/plan-component` | Plan a new component — variants, props, tokens, anatomy |
 | `/build-component` | Build a component set in Figma from a plan |
 | `/flow` | Design multi-screen flows (onboarding, checkout, settings) |
@@ -49,7 +49,7 @@ and hand off to engineering — all from your terminal.
 
 ## For designers
 
-- **[Presentation deck](presentation.html)** — 12-slide onboarding deck. Open in a browser, navigate with arrow keys.
+- **[Presentation deck](presentation.html)** — 13-slide onboarding deck. Open in a browser, navigate with arrow keys.
 - **[Data viewer](viewer.html)** — Browse extracted tokens, components, and plans. Serve with `python3 -m http.server` and open in browser.
 - **[Quick start guide](CLAUDE.md#quick-start-for-designers)** — Full skill table, common workflows, tips, and troubleshooting.
 
@@ -274,7 +274,13 @@ Phase 2: CREATE
   /brainstorm ──→ pick a direction
        │
   /plan ──→ /build ──→ see it in Figma
-       │         │
+       │     │    │
+       │     │    ├── Phase 1: MANIFEST (parse build.json → task checklist)
+       │     │    ├── Phase 2: SCAFFOLD (empty frame structure)
+       │     │    ├── Phase 3: COMPONENTS (instantiate library components)
+       │     │    ├── Phase 4: TOKEN-BUILT (fill gaps with frames/text)
+       │     │    └── Phase 5: VALIDATE (coverage, text, tokens, visual)
+       │     │
   /flow       /responsive
   (multi-screen)  (tablet + mobile)
 
@@ -403,6 +409,11 @@ design-kit/
 │   └── relationships.json   #   Component dependency graph
 ├── plans/                   # Build plans (generated)
 │   └── components/          #   Component plans (from plan-component)
+├── build-helpers/           # Reusable Figma plugin API helpers
+│   ├── figma-helpers.js     #   mkFrame, mkText, sweepText, canvasScan, etc.
+│   ├── build-phases.md      #   5-phase build pipeline reference
+│   ├── tasks-template.md    #   Task checklist template for /build
+│   └── component-tasks-template.md  # Task template for /build-component
 ├── reports/                 # (deprecated — findings go to Figma comments)
 ├── setup-tokens/            # Skills (each contains a SKILL.md)
 ├── setup-components/

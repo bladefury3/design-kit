@@ -56,61 +56,100 @@ Reference PRINCIPLES.md for the full toolkit. The key responsive principles:
 
 ### Content Choreography
 
-Every section gets classified before any adaptation starts:
+Every section gets classified as Essential, Useful, or Supplementary before any
+adaptation starts. See PRINCIPLES.md (section "Content Choreography") for the base
+category definitions and decision test. The expanded guidance below adds per-screen-type
+examples and common mistakes -- use both together.
 
-1. **Essential** — Visible at every size. Primary action, key data, main headline.
-   Remove this and the screen loses its purpose.
-2. **Useful** — Collapse or accordion on mobile, visible on desktop. Secondary
-   data, filters, supporting context. The user CAN work without seeing this immediately.
-3. **Supplementary** — Hide on mobile entirely, or "View on desktop" link.
-   Decorative elements, tertiary data, nice-to-haves that add cognitive load.
+#### Classification decision test
+
+For each section, ask these three questions in order:
+
+1. **"Can the user complete their primary task without this section?"**
+   - **No** → Essential. It stays visible at every breakpoint.
+   - **Yes** → Continue to question 2.
+
+2. **"Would removing this section force the user to leave the screen or use a different tool?"**
+   - **Yes** → Useful. Collapse or accordion it on mobile, but keep it accessible.
+   - **No** → Continue to question 3.
+
+3. **"Would a power user miss this within their first 3 sessions without it?"**
+   - **Yes** → Useful. Collapse it.
+   - **No** → Supplementary. Hide it on mobile entirely, or provide a "View on desktop" link.
+
+#### Category definitions with concrete examples
+
+**Essential** — Visible at every size. Remove this and the screen loses its purpose.
+
+| Screen type | Essential sections | Why |
+|---|---|---|
+| Dashboard | Key metrics (2-3 numbers), primary alert banner, main CTA | User came to check status and act |
+| Settings | Current values of each setting, save/cancel buttons | User came to change something |
+| Data table | Table with primary columns, search/filter trigger, pagination | User came to find a record |
+| Profile | User name, avatar, primary info, edit button | User came to view/edit identity |
+| Checkout | Order summary, payment form, submit button | User came to complete purchase |
+
+**Useful** — Collapse or accordion on mobile. User CAN work without seeing this immediately.
+
+| Screen type | Useful sections | Adaptation pattern |
+|---|---|---|
+| Dashboard | Secondary charts, comparison data, trend graphs | Accordion: "View trends" expander |
+| Settings | Advanced/optional settings, import/export | Accordion: "Advanced" section collapsed by default |
+| Data table | Column filters sidebar, secondary columns (4-6) | Off-canvas: filter drawer with trigger button |
+| Profile | Activity history, connected accounts | Tabs: "Activity" tab loads on demand |
+| Checkout | Promo code field, billing address (if same as shipping) | Accordion: "Add promo code" expander |
+
+**Supplementary** — Hide on mobile entirely, or "View on desktop" link.
+
+| Screen type | Supplementary sections | Why it's safe to hide |
+|---|---|---|
+| Dashboard | Decorative illustrations, "what's new" sidebar, tertiary stats | Nice-to-have context, not actionable |
+| Settings | Preview pane showing live effect of settings | Useful but expensive on mobile viewport |
+| Data table | Inline row charts, columns 7+ | Data density too high for narrow viewport |
+| Profile | Testimonials, badge gallery, decorative cover photo | Identity-adjacent but not functional |
+| Checkout | "Frequently bought together", trust badges | Marketing, not task completion |
+
+#### Common classification mistakes
+
+- **Marking everything Essential** — If >60% of sections are Essential, you haven't
+  done choreography. Re-apply the decision test. On a 6-section screen, typically
+  2 are Essential, 2-3 are Useful, and 1-2 are Supplementary.
+- **Hiding navigation** — Navigation is usually Essential (user can't work without it),
+  but it can CHANGE FORM (sidebar → hamburger). Classification is about content
+  presence, not component form.
+- **Confusing "I like it" with Essential** — A decorative hero illustration is not
+  Essential just because the design team worked hard on it. Apply the decision test.
+- **Forgetting state-dependent classification** — An empty state CTA ("Add your first
+  project") is Essential for new users but Supplementary for power users. When in
+  doubt, classify for the new user — they need the most guidance.
 
 If you skip classification, you will build a responsive design that either
 hides too much or shows too much.
 
 ### Responsive Patterns (Luke Wroblewski)
 
-| Pattern | Description | When to use |
-|---|---|---|
-| **Reflow** | Multi-column becomes single column | Default for most content |
-| **Reveal/Hide** | Summary on mobile, detail on desktop | Complex data, secondary panels |
-| **Off-canvas** | Sidebar becomes drawer or bottom sheet | Navigation, filters, settings |
-| **Priority+** | Show top N items, "more" for rest | Navigation with many items |
-| **Morph** | Component changes form entirely | Table to card list, tabs to accordion |
+Five patterns: Reflow, Reveal/Hide, Off-canvas, Priority+, Morph. See PRINCIPLES.md
+(section "Layout Patterns") for descriptions and when to use each.
 
 Every section gets ONE pattern. If you can't decide, it is probably Reflow.
 
 ### Touch-First Principles
 
-These are physics, not suggestions.
-
-- **Tap targets**: minimum 44pt (iOS HIG) / 48dp (Material). Fitts's Law for fingers.
-- **Thumb zone**: Primary actions in bottom third of screen.
-- **Bottom sheet over modal**: Bottom sheets slide from the natural interaction zone.
-- **No hover states**: Everything must work with tap. Tooltips need tap-to-reveal.
-- **Swipe**: Natural for dismiss/delete/archive, but never the only path.
-- **Long press**: Power-user feature, never required for core tasks.
+These are physics, not suggestions. Tap targets >= 44pt, thumb zone awareness,
+bottom sheets over modals, no hover-only interactions. See PRINCIPLES.md (section
+"Touch-First Principles") for the full list.
 
 ### Cognitive Load on Small Screens
 
-Miller's Law says 5-9 chunks. On mobile, budget for 5:
-- Fewer nav items (Priority+), progressive disclosure (Reveal/Hide)
-- One primary action per screen, large and obvious
-- No competing CTAs — one thing to do, clearly
+Miller's Law says 5-9 chunks. On mobile, budget for 5: fewer nav items (Priority+),
+one primary action per screen, no competing CTAs. See PRINCIPLES.md (section
+"Cognitive Load Laws") for Hick's, Miller's, and Fitts's Law thresholds.
 
-## AskUserQuestion Format
+### AskUserQuestion Format
 
-1. **Re-ground:** What you are adapting and where in the process. (1 sentence)
-2. **Simplify:** The responsive decision in plain terms. What the user SEES on each device.
-3. **Recommend:** `RECOMMENDATION: Choose [X] because [one-line reason]`
-4. **Options:** Lettered: `A) ... B) ... C) ...`
-
-### CRITICAL RULES
-
-- **One decision = one AskUserQuestion.** Never bundle multiple responsive choices.
-- **STOP after each question.** Do NOT proceed until the user responds.
-- **Escape hatch:** Obvious answers (sidebar becomes off-canvas) — state and move on.
-- **Show the tradeoff.** "The filter panel costs 240px of content width on tablet."
+Follow the AskUserQuestion format from PRINCIPLES.md (section "AskUserQuestion Format"):
+re-ground (1 sentence), simplify (plain English), recommend (with reason), lettered
+options. One decision per question. STOP after each. Escape hatch for obvious answers.
 
 ## Before you begin
 
@@ -181,14 +220,17 @@ Use figma_get_file_data for structural data (layers, components, auto-layout).
 
 ### Classify content priority (content choreography)
 
-| Section | Priority | Reasoning |
+Apply the 3-question decision test from the Design Philosophy section above
+to each section. Record the question number that determined the classification.
+
+| Section | Priority | Decision test result |
 |---|---|---|
-| Header / Nav | Essential | Users cannot navigate without this |
-| Primary content | Essential | Why the user came to this screen |
-| Search / filters | Useful | Can collapse to trigger + drawer |
-| Sidebar nav | Useful | Becomes off-canvas on mobile |
-| Footer | Supplementary | Minimal on mobile |
-| Decorative elements | Supplementary | Remove on mobile entirely |
+| Header / Nav | Essential | Q1: No — user can't navigate without it |
+| Primary content | Essential | Q1: No — this is why the user came |
+| Search / filters | Useful | Q1: Yes. Q2: Yes — user would need a different tool to find data |
+| Sidebar nav | Useful | Q1: Yes. Q2: Yes — but changes form (off-canvas on mobile) |
+| Footer | Supplementary | Q1: Yes. Q2: No. Q3: No — legal links, rarely accessed |
+| Decorative elements | Supplementary | Q1: Yes. Q2: No. Q3: No — remove on mobile entirely |
 
 ### Present the analysis
 
@@ -253,112 +295,67 @@ vs. simplified table). Obvious adaptations — just state them.
 
 ### File structure
 
-- `plans/<name>-tablet.json` — tablet variant (768px)
-- `plans/<name>-mobile.json` — mobile variant (375px)
-
-Create `plans/` if it does not exist.
-
-### Plan JSON format
-
-```json
-{
-  "$schema": "design-kit/plan/v1",
-  "$metadata": {
-    "createdAt": "<ISO timestamp>",
-    "description": "Tablet (768px) responsive variant of [name]",
-    "size": { "width": 768, "height": "auto" },
-    "libraryFileKey": "<from design-system/components/index.json>",
-    "sourceFrame": "<desktop frame name>",
-    "breakpoint": "tablet",
-    "responsivePatterns": ["Off-canvas", "Reveal/Hide", "Reflow"]
-  },
-  "componentCoverage": {
-    "total": 7, "fromLibrary": 4, "tokenBuilt": 3, "percentage": 57
-  },
-  "contentChoreography": {
-    "essential": ["Header", "Primary content", "CTA"],
-    "useful": ["Sidebar (collapsed)", "Stats (condensed)"],
-    "supplementary": ["Decorative illustrations"]
-  },
-  "adaptations": [
-    {
-      "section": "Sidebar",
-      "pattern": "Off-canvas",
-      "desktop": "Fixed 240px left panel",
-      "adapted": "Collapsible drawer, toggle button in header",
-      "components": { "desktop": "SidebarNav", "adapted": "Drawer + SidebarNav" }
-    },
-    {
-      "section": "Data Table",
-      "pattern": "Morph",
-      "desktop": "6-column table with pagination",
-      "adapted": "Card list, one card per row",
-      "components": { "desktop": "DataTable", "adapted": "Card (token-built)" },
-      "$note": "Library lacks a mobile card-list component for tabular data"
-    }
-  ],
-  "touchAdaptations": {
-    "minTapTarget": "44pt",
-    "primaryActionPlacement": "bottom-sticky",
-    "modalsConverted": ["Filter modal -> bottom sheet"],
-    "hoverRemoved": ["Column sort tooltip -> tap header to sort"]
-  },
-  "layout": {
-    "name": "Dashboard — Tablet",
-    "type": "frame",
-    "direction": "vertical",
-    "width": 768,
-    "height": "auto",
-    "tokens": {
-      "fills": { "ref": "color.background.bg-primary", "figmaKey": "<hash>" }
-    },
-    "children": [
-      {
-        "name": "Header",
-        "type": "library-component",
-        "component": "navbar",
-        "figmaKey": "<hash>",
-        "variantKey": "<tablet variant hash>",
-        "variant": "Breakpoint=Tablet",
-        "sizing": { "width": "fill", "height": "hug" }
-      }
-    ]
-  }
-}
+```
+plans/<feature-name>/screens/<name>-tablet.md
+plans/<feature-name>/screens/<name>-mobile.md
 ```
 
-### Responsive-specific metadata (beyond standard plan)
+Create `plans/<feature-name>/screens/` if it does not exist.
 
-- `sourceFrame`, `breakpoint`, `responsivePatterns` — traceability
-- `contentChoreography` — Essential/Useful/Supplementary classification
-- `adaptations` — section-by-section record of changes and patterns
-- `touchAdaptations` — touch-specific modifications
+### Responsive plan format
 
-`/build` uses the `layout` tree; the metadata documents WHY.
+Responsive plans follow the screen plan markdown format from PRINCIPLES.md, with
+added responsive metadata:
+
+```markdown
+# Screen: <Name> — Tablet (768px)
+
+**Size**: 768 × auto
+**Source frame**: <desktop frame name>
+**Breakpoint**: tablet
+**Responsive patterns**: Off-canvas, Reveal/Hide, Reflow
+
+## Content choreography
+- **Essential**: <sections>
+- **Useful**: <sections (collapsed)>
+- **Supplementary**: <sections (hidden)>
+
+## Adaptations
+| Section | Desktop | Adapted | Pattern |
+|---|---|---|---|
+| Sidebar | Fixed 240px | Collapsible drawer | Off-canvas |
+
+## Touch adaptations
+- Min tap target: 44pt
+- Primary action: bottom-sticky
+- Modals converted: Filter modal → bottom sheet
+
+## Layout
+<same screen plan format>
+```
 
 ### Token scaling for breakpoints
 
-| Token category | Desktop | Tablet | Mobile |
-|---|---|---|---|
-| Container padding | spacing.4xl | spacing.2xl | spacing.lg |
-| Section gap | spacing.3xl | spacing.2xl | spacing.xl |
-| Card padding | spacing.xl | spacing.lg | spacing.md |
-| Heading size | fontSize.3xl | fontSize.2xl | fontSize.xl |
-| Body text | fontSize.md | fontSize.md | fontSize.sm |
-| Button size | md (default) | md | md (44pt min height) |
+Smaller screens need tighter spacing to fit content, and larger text to maintain
+readability at arm's length (mobile) vs desk distance (desktop). These are starting
+guidelines — adjust based on your actual token system.
+
+| Token category | Desktop | Tablet | Mobile | Why it changes |
+|---|---|---|---|---|
+| Container padding | spacing-4xl (32px) | spacing-2xl (20px) | spacing-lg (12px) | Less viewport = less padding budget |
+| Section gap | spacing-3xl (24px) | spacing-2xl (20px) | spacing-xl (16px) | Tighter sections to reduce scroll depth |
+| Card padding | spacing-xl (16px) | spacing-lg (12px) | spacing-md (8px) | Cards need to fit in narrower columns |
+| Heading size | fontSize display-xs (24px) | fontSize text-xl (20px) | fontSize text-lg (18px) | Proportional to viewport width |
+| Body text | fontSize text-md (16px) | fontSize text-md (16px) | fontSize text-sm (14px) | 14px minimum for mobile readability |
+| Button height | md (default) | md | md (44pt min) | Touch targets must be ≥44pt on all breakpoints |
 
 Use actual token names from `design-system/tokens.json`.
-
-### CRITICAL: Token key validation
-
-All figmaKey values must be **40-character hex hashes**. Path-style keys fail
-during build. Flag any path-style keys: "Run `/setup-tokens` to refresh."
 
 ### Write and confirm
 
 > **Plans generated:**
-> - `plans/<name>-tablet.json` — 768px, [N] sections adapted
-> - `plans/<name>-mobile.json` — 375px, [N] sections adapted
+> - `plans/<feature-name>/screens/<name>-tablet.md` — 768px, [N] sections adapted
+> - `plans/<feature-name>/screens/<name>-mobile.md` — 375px, [N] sections adapted
 >
 > Ready to build in Figma, or review the plans first?
 
@@ -415,6 +412,30 @@ Label each frame: "[Name] — Desktop (1440px)", "[Name] — Tablet (768px)",
 Use figma_take_screenshot for all three frames together.
 Use figma_capture_screenshot for individual frame detail if needed.
 ```
+
+### Responsive AI Slop Check (mandatory — check before presenting)
+
+Before verifying specifics, check for these responsive-specific AI slop traps.
+See PRINCIPLES.md "AI Slop Check" for the general list.
+
+- **"Shrink and stack" without choreography** — Every section from desktop just
+  stacks vertically on mobile with no content removed, collapsed, or reorganized.
+  If mobile has the same number of sections as desktop, you skipped choreography.
+- **Uniform spacing reduction** — Desktop spacing tokens replaced with the next
+  smaller token uniformly. Real responsive design varies spacing by content type
+  (navigation gets tighter, hero sections keep breathing room).
+- **Identical hierarchy across breakpoints** — If the user sees the same thing
+  first on mobile as on desktop, the mobile version isn't designed for mobile.
+  Mobile users typically need status/action first, not context/navigation.
+- **Missing touch adaptations** — Desktop components used without any sizing
+  adjustments. Buttons still 32px, inputs still 36px, links still inline text.
+- **"Just hide it" instead of adapting** — Sections marked Supplementary and
+  hidden, but no mobile alternative provided (no "View on desktop" link, no
+  summary version, no progressive disclosure).
+- **Off-canvas with no trigger** — Sidebar collapses to off-canvas but there's
+  no hamburger, toggle, or visible affordance to open it.
+
+If any of these are true, fix before presenting.
 
 ### Verification checklist
 
@@ -522,6 +543,21 @@ Submit buttons: sticky bottom bar on mobile, not inline after a long form.
 
 Hero images scale to viewport width. Thumbnail grids: 4/3/2 columns.
 Decorative images: remove on mobile. Icons: never below 20px.
+
+## Definition of Done
+
+Before presenting responsive variants, verify ALL of these:
+
+1. [ ] Every section classified as Essential/Useful/Supplementary
+2. [ ] Every section assigned one responsive pattern (Reflow/Reveal-Hide/Off-canvas/Priority+/Morph)
+3. [ ] All tap targets >= 44pt on tablet and mobile
+4. [ ] Primary action in bottom third on mobile (thumb zone)
+5. [ ] Body text >= 14px on mobile
+6. [ ] No "shrink and stack" without content choreography
+7. [ ] Off-canvas elements have visible trigger buttons
+8. [ ] Supplementary content has "View on desktop" or progressive disclosure
+9. [ ] Desktop, tablet, and mobile frames placed side-by-side with labels
+10. [ ] Screenshot of all three breakpoints taken
 
 ## Tone
 

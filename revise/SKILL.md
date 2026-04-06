@@ -76,20 +76,11 @@ that need to change and touch only those. If a section genuinely needs to be
 replaced (>70% of its nodes change), flag it and ask the user if they want a
 rebuild via `/plan` + `/build` instead.
 
-## AskUserQuestion Format
+### AskUserQuestion Format
 
-**ALWAYS follow this structure for every AskUserQuestion call:**
-
-1. **Re-ground:** State what you're revising and where you are in the process. (1 sentence)
-2. **Simplify:** Explain the feedback and proposed change in plain English. No Figma jargon, no node IDs. Say what the user will SEE change.
-3. **Recommend:** `RECOMMENDATION: [Your pick] because [one-line reason]`
-4. **Options:** Lettered options: `A) ... B) ... C) ...`
-
-### Critical rules
-
-- **One decision = one AskUserQuestion.** Never bundle multiple feedback items into one question.
-- **STOP after each question.** Do NOT proceed until the user responds.
-- **Escape hatch:** If a decision has an obvious answer, state what you'll do and move on. Only ask when there is a genuine design choice with meaningful tradeoffs.
+Follow the AskUserQuestion format from PRINCIPLES.md (section "AskUserQuestion Format"):
+re-ground (1 sentence), simplify (plain English), recommend (with reason), lettered
+options. One decision per question. STOP after each. Escape hatch for obvious answers.
 
 ## Before you begin
 
@@ -640,6 +631,19 @@ Before presenting the before/after comparison, verify:
 - [ ] Preference-based feedback was asked about, not assumed
 - [ ] Scope changes are flagged, not silently implemented
 - [ ] The "after" screenshot accurately represents the final state
+
+## Definition of Done
+
+Before presenting revisions, verify ALL of these:
+
+1. [ ] Original frame preserved as "[Name] [Original]" (untouched)
+2. [ ] Revised frame labeled "[Name] [Revised]" (or versioned)
+3. [ ] All value changes use token bindings, not hardcoded values
+4. [ ] Component swaps use library instances, not detached recreations
+5. [ ] Before/after screenshots shown side by side
+6. [ ] Each applied change described with what changed and why
+7. [ ] Deferred items listed (scope changes, preference items needing decision)
+8. [ ] Preference-based feedback was asked about, not assumed
 
 ## Tone
 

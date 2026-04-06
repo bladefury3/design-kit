@@ -176,10 +176,6 @@ much faster than manual inspection for component compliance.
 - Are component overrides within expected bounds? (e.g., changing text is fine,
   changing colors may indicate a missing variant)
 
-Also use `figma_check_design_parity` to automatically compare design specs vs
-expected component specifications. This returns scored discrepancy reports
-with actionable fixes — much faster than manual inspection.
-
 ### Check 3: Layout & spacing consistency
 
 - Are similar elements spaced consistently? (e.g., all cards in a grid using
@@ -190,33 +186,18 @@ with actionable fixes — much faster than manual inspection.
 ### Check 4: Heuristic Evaluation (Nielsen's 10)
 
 Score each of Nielsen's 10 usability heuristics 0-10 with specific evidence from
-the audited frame(s). Use the scoring rubric from PRINCIPLES.md:
-
-- **9-10**: Exemplary. Could be used as a reference for this pattern.
-- **7-8**: Solid. Minor improvements possible but no usability risk.
-- **5-6**: Adequate. Users can complete tasks but with friction.
-- **3-4**: Problematic. Users will struggle or make errors.
-- **0-2**: Broken. Users cannot complete the intended task.
-
-For each heuristic, record:
-
-| # | Heuristic | What to look for |
-|---|---|---|
-| 1 | **Visibility of system status** | Progress indicators, loading states, save confirmations, sync status |
-| 2 | **Match between system and real world** | Labels use user language? Units make sense? Icons recognizable? |
-| 3 | **User control and freedom** | Undo available? Back/cancel present? Destructive actions have confirmation? |
-| 4 | **Consistency and standards** | Same component for same function? Platform conventions followed? |
-| 5 | **Error prevention** | Validation present? Confirmation before destructive actions? Constraints prevent invalid input? |
-| 6 | **Recognition rather than recall** | Navigation visible? Key actions exposed? No hidden-only features? |
-| 7 | **Flexibility and efficiency of use** | Keyboard shortcuts? Bulk actions? Customizable views? |
-| 8 | **Aesthetic and minimalist design** | Every element earns its pixels? Signal-to-noise ratio high? |
-| 9 | **Help users recover from errors** | Error states designed? Clear next action? No dead ends? |
-| 10 | **Help and documentation** | Tooltips? Onboarding for first-time users? Empty state guidance? |
+the audited frame(s). Use the per-heuristic rubrics below — these define what
+each score level looks like so assessments are consistent and reproducible.
 
 For each heuristic, provide:
 - The **score** (0-10)
 - The specific **element/location** that earned or lost points
 - A **concrete suggestion** for improvement (even for high scores — what would make it a 10?)
+
+Score each heuristic using the per-heuristic evidence rubrics from PRINCIPLES.md
+(section "Per-Heuristic Evidence Rubrics"). Each heuristic has a 5-level rubric
+(0-2, 3-4, 5-6, 7-8, 9-10) with specific observable evidence per score band.
+Read PRINCIPLES.md before scoring.
 
 ### Check 5: Gestalt Compliance
 
@@ -440,6 +421,21 @@ When you need to bind a design token to a Figma node via `figma_execute`:
 5. NEVER scan collections with `getAvailableLibraryVariableCollectionsAsync()` + `getVariablesInLibraryCollectionAsync()` — this is slow and redundant when design-system/tokens.json exists
 
 This turns O(n) collection scanning into O(1) direct key lookup per token.
+
+## Definition of Done
+
+Before presenting the audit to the user, verify ALL of these:
+
+1. [ ] All 10 Nielsen heuristics scored with specific evidence
+2. [ ] Every score cites the exact element/location that earned or lost points
+3. [ ] Gestalt compliance checked for all 5 principles
+4. [ ] Cognitive load assessed (Hick's, Miller's, Fitts's, Von Restorff)
+5. [ ] Token compliance percentage calculated (bound vs hardcoded values)
+6. [ ] Component compliance percentage calculated (library vs custom-built)
+7. [ ] Critical floor rule applied (any Critical finding caps score at 5.0)
+8. [ ] Findings categorized by severity (Critical, Warning, Info)
+9. [ ] Findings posted as Figma comments on the audited frame
+10. [ ] Next steps suggested (/revise for fixes, /handoff if clean)
 
 ## Tone
 
