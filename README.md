@@ -1,6 +1,6 @@
 # Design Kit
 
-AI-powered design system skills for product designers. Works with Figma through Claude Code and Cursor.
+Design system skills for product designers. Works with Figma through any AI coding tool that supports MCP (Claude Code, Cursor, Windsurf, and others).
 
 Catalog your tokens, explore variations, audit designs, stress-test with real content,
 and hand off to engineering — all from your terminal.
@@ -62,15 +62,15 @@ and hand off to engineering — all from your terminal.
 
 ## Prerequisites
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) or [Cursor](https://cursor.com)
+- An AI coding tool with MCP support ([Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Cursor](https://cursor.com), [Windsurf](https://windsurf.com), or similar)
 - [Figma Desktop](https://www.figma.com/downloads/) with a design system file open
-- [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) — connects Claude/Cursor to Figma
+- [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) — connects your AI tool to Figma
 
 ---
 
 ## Installation
 
-### Option A: Claude Code (recommended)
+### Option A: Claude Code / CLI tools
 
 **Global install** — available in every project:
 
@@ -86,7 +86,7 @@ git clone https://github.com/bladefury3/design-kit.git
 cd design-kit && ./setup --local
 ```
 
-Skills are installed as slash commands. Type `/setup-tokens` in Claude Code to start.
+Skills are installed as slash commands. Type `/setup-tokens` in your AI tool to start.
 
 ### Option B: Cursor (with setup script)
 
@@ -96,7 +96,7 @@ cd ~/.design-kit && ./setup --cursor=/path/to/your/project
 ```
 
 This installs skills to `.cursor/skills/` — Cursor auto-discovers them and you
-can invoke them with `/skill-name`, same as Claude Code.
+can invoke them with `/skill-name`, same as any other MCP-compatible tool.
 
 To install into the current directory instead:
 
@@ -111,7 +111,7 @@ Then type `/brainstorm`, `/plan`, `/audit`, etc. directly in Cursor's chat.
 
 Each skill is just a text file in a folder. Drop them into `.cursor/skills/`
 and Cursor discovers them automatically — you get `/slash-commands` just like
-Claude Code. No install script needed.
+any MCP-compatible AI tool. No install script needed.
 
 **Step 1: Download design-kit into your project**
 
@@ -159,7 +159,7 @@ them directly:
 - `/build` — execute a plan in Figma
 - `/audit` — check your design against heuristics
 
-Same slash commands, same behavior as Claude Code.
+Same slash commands, same behavior across all MCP-compatible AI tools.
 
 **Updating to the latest version**
 
@@ -187,7 +187,7 @@ cp .design-kit/audit/SKILL.md .cursor/skills/audit/SKILL.md
 
 ### Figma Console MCP setup
 
-Both Claude Code and Cursor need the [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) server to talk to Figma. See the [full setup guide](https://github.com/nichochar/figma-console-mcp#readme) for details and troubleshooting.
+All AI tools need the [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) server to talk to Figma. See the [full setup guide](https://github.com/nichochar/figma-console-mcp#readme) for details and troubleshooting.
 
 **Claude Code** — add to `~/.claude/settings.json`:
 ```json

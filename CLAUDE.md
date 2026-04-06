@@ -1,6 +1,6 @@
 # Design Kit
 
-Design system documentation skills for Claude Code. Works with Figma Console MCP to
+Design system skills for any MCP-compatible AI tool. Works with Figma Console MCP to
 extract, audit, and optimize design systems.
 
 ## Commands
@@ -78,13 +78,13 @@ design-kit/
 
 ### What is this?
 
-Design Kit gives you slash commands in Claude Code that talk directly to your
+Design Kit gives you slash commands in your AI tool that talk directly to your
 Figma file. You describe what you want in plain English, and it builds, audits,
 and documents your designs — all without leaving the conversation.
 
 ### Prerequisites
 
-1. **Claude Code** — installed and running ([claude.ai/code](https://claude.ai/code))
+1. **An AI coding tool with MCP support** — Claude Code, Cursor, Windsurf, or similar
 2. **Figma Desktop** — with the [Figma Console MCP](https://github.com/nichochar/figma-console-mcp) plugin running
 3. **This repo** — cloned and skills installed via `./setup`
 
@@ -92,7 +92,7 @@ and documents your designs — all without leaving the conversation.
 
 ```
 Step 1:  Open your Figma file. Run the Desktop Bridge plugin.
-Step 2:  In Claude Code, run /setup-tokens
+Step 2:  In your AI tool, run /setup-tokens
          → This reads your colors, spacing, radii from Figma and caches them.
 Step 3:  Run /setup-components
          → This catalogs every component in your library with variant keys.
@@ -229,7 +229,7 @@ Step 4:  You're ready. Try any skill below.
 | Problem | Fix |
 |---|---|
 | "Figma is not connected" | Open Figma Desktop → Plugins → Development → Figma Desktop Bridge → Run |
-| Skills not found as `/commands` | Run `./setup` from the design-kit directory. Restart Claude Code. |
+| Skills not found as `/commands` | Run `./setup` from the design-kit directory. Restart your AI tool. |
 | Token binding fails silently | Run `/setup-tokens` to refresh — keys may be stale from a library update |
 | Component search returns nothing | Run `/setup-components` — the component index may not exist yet |
 | Build uses wrong variant (Mobile, Banner) | The component index needs `recommendedDesktopKey`. Re-run `/setup-components`. |
@@ -290,7 +290,7 @@ Everything below is for people writing or modifying skills, not for designers us
 ## Skill format
 
 Each skill is a directory containing a `SKILL.md` file. Skills are registered with
-Claude Code via the setup script and invoked as slash commands (e.g., `/setup-tokens`).
+your AI tool via the setup script and invoked as slash commands (e.g., `/setup-tokens`).
 
 ### Writing skills
 
