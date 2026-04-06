@@ -14,6 +14,15 @@ allowed-tools:
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
+  - mcp__figma-console__figjam_create_sticky
+  - mcp__figma-console__figjam_create_stickies
+  - mcp__figma-console__figjam_create_shape_with_text
+  - mcp__figma-console__figjam_create_section
+  - mcp__figma-console__figjam_create_connector
+  - mcp__figma-console__figjam_create_code_block
+  - mcp__figma-console__figjam_get_board_contents
+  - mcp__figma-console__figjam_auto_arrange
+  - mcp__figma-console__figjam_get_connections
   - Read
   - Write
   - Edit

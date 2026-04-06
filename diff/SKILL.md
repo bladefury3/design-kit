@@ -18,6 +18,8 @@ allowed-tools:
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
+  - mcp__figma-console__figma_get_design_changes
+  - mcp__figma-console__figma_capture_screenshot
   - Read
   - Write
   - Edit

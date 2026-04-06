@@ -22,6 +22,8 @@ allowed-tools:
   - mcp__figma-console__figma_rename_node
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_list_open_files
+  - mcp__figma-console__figma_get_comments
+  - mcp__figma-console__figma_post_comment
   - Read
   - Write
   - Edit

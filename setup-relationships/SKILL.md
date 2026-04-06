@@ -18,6 +18,7 @@ allowed-tools:
   - mcp__figma-console__figma_get_file_data
   - mcp__figma-console__figma_get_selection
   - mcp__figma-console__figma_take_screenshot
+  - mcp__figma-console__figma_capture_screenshot
   - mcp__figma-console__figma_list_open_files
   - Read
   - Write

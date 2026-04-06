@@ -27,6 +27,7 @@ allowed-tools:
   - mcp__figma-console__figma_get_design_system_summary
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
+  - mcp__figma-console__figma_scan_code_accessibility
   - Read
   - Write
   - Edit
