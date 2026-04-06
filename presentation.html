@@ -208,7 +208,7 @@
 
 <div class="nav">
   <button onclick="go(-1)">&larr; Prev</button>
-  <span class="counter" id="counter">1 / 13</span>
+  <span class="counter" id="counter">1 / 14</span>
   <button onclick="go(1)">Next &rarr;</button>
 </div>
 
@@ -312,7 +312,43 @@
     </div>
   </div>
 
-  <!-- Slide 6: Phase 2 — Create -->
+  <!-- Slide 6: Capture -->
+  <div class="slide">
+    <span class="phase-tag phase-setup">Capture</span>
+    <h2>Bring existing pages into Figma</h2>
+    <p>Give it a URL. It reads the live page, extracts styles and structure, and rebuilds it in Figma. Two versions: raw (exact CSS) and mapped (your components + tokens).</p>
+    <div class="flow">
+      <div class="flow-step">URL</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step">Extract DOM + CSS</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step highlight">Raw replica</div>
+      <div class="flow-arrow">+</div>
+      <div class="flow-step highlight">Mapped version</div>
+    </div>
+    <div class="two-col" style="margin-top:32px">
+      <div class="col col-green">
+        <h3>Raw replica</h3>
+        <ul>
+          <li>Exact CSS colors, fonts, spacing</li>
+          <li>No tokens, no components</li>
+          <li>Pixel-accurate baseline</li>
+          <li>The ground truth of what exists</li>
+        </ul>
+      </div>
+      <div class="col col-amber">
+        <h3>Mapped version</h3>
+        <ul>
+          <li>Your library components</li>
+          <li>Token-bound spacing and colors</li>
+          <li>Fully editable and consistent</li>
+          <li>Ready for modifications</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Phase 2 — Create -->
   <div class="slide">
     <span class="phase-tag phase-create">Phase 2: Create</span>
     <h2>The design loop</h2>
@@ -341,7 +377,7 @@
     </div>
   </div>
 
-  <!-- Slide 7: Build Pipeline -->
+  <!-- Slide 8: Build Pipeline -->
   <div class="slide">
     <span class="phase-tag phase-create">Build Pipeline</span>
     <h2>5 phases, zero guesswork</h2>
@@ -379,7 +415,7 @@
     </div>
   </div>
 
-  <!-- Slide 8: Phase 3 — Review -->
+  <!-- Slide 9: Phase 3 — Review -->
   <div class="slide">
     <span class="phase-tag phase-review">Phase 3: Review</span>
     <h2>Check and fix</h2>
@@ -408,7 +444,7 @@
     </div>
   </div>
 
-  <!-- Slide 9: Phase 4 — Handoff -->
+  <!-- Slide 10: Phase 4 — Handoff -->
   <div class="slide">
     <span class="phase-tag phase-handoff">Phase 4: Handoff</span>
     <h2>Ship to engineering</h2>
@@ -425,7 +461,7 @@
     </div>
   </div>
 
-  <!-- Slide 10: What makes it different -->
+  <!-- Slide 11: What makes it different -->
   <div class="slide">
     <div class="subtitle">Why this works</div>
     <h2>Not just AI generation</h2>
@@ -457,7 +493,7 @@
     </div>
   </div>
 
-  <!-- Slide 11: Audit example -->
+  <!-- Slide 12: Audit example -->
   <div class="slide">
     <div class="subtitle">Example output</div>
     <h2>What an audit looks like</h2>
@@ -472,7 +508,7 @@
     </div>
   </div>
 
-  <!-- Slide 12: Troubleshooting -->
+  <!-- Slide 13: Troubleshooting -->
   <div class="slide">
     <div class="subtitle">Common questions</div>
     <h2>Troubleshooting</h2>
@@ -487,7 +523,7 @@
     </table>
   </div>
 
-  <!-- Slide 13: Get started -->
+  <!-- Slide 14: Get started -->
   <div class="slide">
     <div class="subtitle">Ready?</div>
     <h1>Start with <span class="grad">/setup-tokens</span></h1>

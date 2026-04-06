@@ -41,6 +41,9 @@ design-kit/
 ├── setup-relationships/          # Map how components depend on each other
 ├── setup-icons/                  # Catalog icons with search tags
 │
+│── ── Phase 1.5: Capture ──────────────────────────────────────────────
+├── capture/                      # Capture a live URL → raw + mapped Figma builds
+│
 │── ── Phase 2: Create ────────────────────────────────────────────────
 ├── brainstorm/                   # Generate design variations (SCAMPER + JTBD)
 ├── plan/                         # Plan a screen — map brief to components + tokens
@@ -106,6 +109,12 @@ Step 4:  You're ready. Try any skill below.
 | **Map component relationships** | `/setup-relationships` | Builds dependency graph → `design-system/relationships.json` |
 | **Catalog icons** | `/setup-icons` | Maps icon names to keys with search tags → `design-system/icons.json` |
 
+**Capture**
+
+| I want to... | Run this | What happens |
+|---|---|---|
+| **Bring a live page into Figma** | `/capture` | Give a URL → raw replica + design-system-mapped version side by side |
+
 **Create**
 
 | I want to... | Run this | What happens |
@@ -134,6 +143,14 @@ Step 4:  You're ready. Try any skill below.
 | **Optimize for AI tools** | `/handoff-ai` | Enrich descriptions, standardize naming for MCP/AI consumption |
 
 ### Common workflows
+
+**"I need to bring our production app into Figma"**
+```
+/capture https://app.company.com/settings
+→ raw replica built (exact CSS values, no tokens)
+→ mapped version built (your components + tokens)
+→ both side by side on canvas for comparison
+```
 
 **"I need to design a settings page"**
 ```
@@ -224,6 +241,9 @@ Skills are organized into 4 phases. You don't need them all — start where you 
 ```
 Phase 1: SETUP (one-time — catalog what you have)
   /setup-tokens → /setup-components → /setup-relationships → /setup-icons
+
+CAPTURE (bring existing pages into Figma)
+  /capture URL ──→ raw replica + mapped version (side by side)
 
 Phase 2: CREATE (the design loop — spec-driven)
   /brainstorm ──→ pick a direction

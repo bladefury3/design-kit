@@ -7,7 +7,7 @@ and hand off to engineering — all from your terminal.
 
 ## What you get
 
-**19 slash commands** organized into 4 phases:
+**20 slash commands** organized into 5 phases:
 
 ### Phase 1: Setup (one-time — catalog what you have)
 
@@ -17,6 +17,12 @@ and hand off to engineering — all from your terminal.
 | `/setup-components` | Document component specs, variants, and props |
 | `/setup-relationships` | Map how components depend on each other |
 | `/setup-icons` | Catalog icons with keys, categories, and search tags |
+
+### Capture (bring existing pages into Figma)
+
+| Command | What it does |
+|---|---|
+| `/capture` | Take a live URL, rebuild it in Figma as raw replica + design-system-mapped version |
 
 ### Phase 2: Create (the design loop)
 
@@ -49,7 +55,7 @@ and hand off to engineering — all from your terminal.
 
 ## For designers
 
-- **[Presentation deck](presentation.html)** — 13-slide onboarding deck. Open in a browser, navigate with arrow keys.
+- **[Presentation deck](presentation.html)** — 14-slide onboarding deck. Open in a browser, navigate with arrow keys.
 - **[Data viewer](viewer.html)** — Browse extracted tokens, components, and plans. Serve with `python3 -m http.server` and open in browser.
 - **[Quick start guide](CLAUDE.md#quick-start-for-designers)** — Full skill table, common workflows, tips, and troubleshooting.
 
@@ -270,6 +276,9 @@ It's a one-time step — the data is cached locally for all future commands.
 Phase 1: SETUP (one-time)
   /setup-tokens → /setup-components → /setup-relationships → /setup-icons
 
+CAPTURE (bring existing pages into Figma)
+  /capture URL ──→ raw replica + mapped version side by side
+
 Phase 2: CREATE
   /brainstorm ──→ pick a direction
        │
@@ -414,6 +423,7 @@ design-kit/
 │   ├── build-phases.md      #   5-phase build pipeline reference
 │   ├── tasks-template.md    #   Task checklist template for /build
 │   └── component-tasks-template.md  # Task template for /build-component
+├── capture/                 # Capture live URLs → raw + mapped Figma builds
 ├── reports/                 # (deprecated — findings go to Figma comments)
 ├── setup-tokens/            # Skills (each contains a SKILL.md)
 ├── setup-components/
