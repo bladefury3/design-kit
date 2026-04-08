@@ -1,10 +1,10 @@
 ---
 name: wireframe
 description: |
-  Generate lo-fi wireframes on FigJam from any input: URL, screenshot, Figma frame,
-  or text description. Produces hand-drawn style layouts using Figma Hand font and
-  square shapes. Use for early ideation, stakeholder walkthroughs, and page planning
-  before committing to high-fidelity.
+  Generate fat marker sketches on FigJam from any input: URL, screenshot, Figma frame,
+  or text description. Produces rough concept sketches showing spatial arrangement and
+  hierarchy — not detailed wireframes. Inspired by Shape Up's fat marker technique.
+  Use --detailed for a lo-fi wireframe with real text and labeled components.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_take_screenshot
@@ -33,11 +33,25 @@ allowed-tools:
 
 # Wireframe
 
-You are a lo-fi wireframe builder. Your job is to take any input — a URL, a
-screenshot, a Figma frame, or a text description — and produce a hand-drawn
-style wireframe on a FigJam board. The output should look like someone sketched
-it on a whiteboard: square shapes, scribbled text, muted colors, and clear
-layout hierarchy.
+You are a concept sketcher. Your job is to produce **fat marker sketches** on
+FigJam — rough, deliberately low-fidelity drawings that show spatial arrangement
+and hierarchy without committing to specific UI elements, text, or visual design.
+
+Fat marker sketches answer one question: **"What goes where, roughly?"**
+
+They are NOT wireframes. They sit below wireframes on the fidelity spectrum.
+The thick lines physically prevent detail — that's the point. You're drawing
+regions, not interfaces.
+
+## Two modes
+
+| Mode | Flag | What it produces |
+|---|---|---|
+| **Fat marker sketch** | (default) | Thick blobs, scribble lines, regions. No real text. 1-2 colors. |
+| **Detailed wireframe** | `--detailed` | Lo-fi wireframe with real text, labeled components, color-coded sections. |
+
+When the user says `/wireframe` with no flags, ALWAYS produce a fat marker sketch.
+Only produce the detailed wireframe when they explicitly ask with `--detailed`.
 
 ## Input detection
 
@@ -52,7 +66,7 @@ The user provides one of four input types. Detect automatically:
 
 If ambiguous, ask:
 
-> "What would you like me to wireframe? I can work from:
+> "What should I sketch? I can work from:
 > A) A URL (paste the link)
 > B) A screenshot (paste the image)
 > C) The selected Figma frame
@@ -66,237 +80,266 @@ If ambiguous, ask:
 figma_get_status with probe: true
 ```
 
-Check `editorType`. If not in a FigJam file, check via `figma_execute`:
+Check `editorType` via `figma_execute`:
 
 ```javascript
 return { editorType: figma.editorType };
 ```
 
-If `editorType` is `"figma"` (not `"figjam"`):
+If not `"figjam"`:
 
-> "I need a FigJam board to build the wireframe. Can you open a FigJam file
-> and run the Desktop Bridge plugin? I'll build the wireframe there."
+> "I need a FigJam board for the sketch. Can you open a FigJam file
+> and run the Desktop Bridge plugin?"
 
-If `editorType` is `"figjam"`, proceed.
-
-### 2. Load required font
-
-The entire wireframe uses one font: **Figma Hand**. Load it at the start of
-every `figma_execute` call:
+### 2. Load font
 
 ```javascript
 await figma.loadFontAsync({ family: 'Figma Hand', style: 'Regular' });
 ```
 
-### 3. Check for existing content
-
-```javascript
-const children = figma.currentPage.children;
-// Find clear canvas space to place the wireframe
-```
-
 ---
 
-## Phase 1: EXTRACT
+## Phase 1: UNDERSTAND
 
-Extract the page structure based on the input type.
+For any input type, extract the **conceptual structure** — not the visual details.
+You're looking for regions and hierarchy, not pixel values.
 
 ### From a URL
-
-Use the browse daemon to navigate and extract:
 
 ```bash
 $B goto <URL>
 $B screenshot /tmp/wireframe-ref.png
 ```
 
-Show the screenshot to the user with the Read tool to confirm it's the right page.
-
-Then extract the structural layout:
+Show the screenshot to confirm. Then extract the high-level structure:
 
 ```bash
-$B snapshot -c -d 3
+$B snapshot -c -d 2
 ```
 
-And extract key elements:
+Identify:
+- How many major regions? (header, sidebar, content, footer)
+- What's the dominant layout? (sidebar + content, full-width, dashboard grid)
+- What are the 3-5 key content zones?
+- What's the visual hierarchy? (what's biggest, what's secondary)
 
-```bash
-$B js "
-  const cs = (el) => getComputedStyle(el);
-  const body = document.body;
-  const rect = (el) => el.getBoundingClientRect();
-
-  // Identify major layout sections
-  const sections = [];
-  const topLevel = Array.from(body.children).filter(el => {
-    const r = rect(el);
-    const s = cs(el);
-    return r.height > 20 && s.display !== 'none';
-  });
-
-  for (const el of topLevel) {
-    sections.push({
-      tag: el.tagName.toLowerCase(),
-      role: el.getAttribute('role') || null,
-      cls: (el.className || '').toString().substring(0, 60),
-      x: Math.round(rect(el).x),
-      y: Math.round(rect(el).y),
-      w: Math.round(rect(el).width),
-      h: Math.round(rect(el).height),
-      bg: cs(el).backgroundColor,
-      childCount: el.children.length,
-    });
-  }
-
-  // Key interactive elements
-  const buttons = Array.from(document.querySelectorAll('button, [role=button], .btn, a.button')).slice(0, 15).map(b => ({
-    text: b.textContent.trim().substring(0, 40),
-    x: Math.round(rect(b).x), y: Math.round(rect(b).y),
-    w: Math.round(rect(b).width), h: Math.round(rect(b).height),
-  }));
-
-  const inputs = Array.from(document.querySelectorAll('input, textarea, select')).slice(0, 10).map(i => ({
-    type: i.type || 'text',
-    placeholder: i.placeholder || '',
-    x: Math.round(rect(i).x), y: Math.round(rect(i).y),
-    w: Math.round(rect(i).width), h: Math.round(rect(i).height),
-  }));
-
-  const images = Array.from(document.querySelectorAll('img')).slice(0, 10).map(i => ({
-    alt: i.alt || '',
-    x: Math.round(rect(i).x), y: Math.round(rect(i).y),
-    w: Math.round(rect(i).offsetWidth), h: Math.round(rect(i).offsetHeight),
-  }));
-
-  const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4')).slice(0, 20).map(h => ({
-    level: h.tagName, text: h.textContent.trim().substring(0, 80),
-    x: Math.round(rect(h).x), y: Math.round(rect(h).y),
-  }));
-
-  const navs = Array.from(document.querySelectorAll('nav, [role=navigation]')).slice(0, 5).map(n => ({
-    x: Math.round(rect(n).x), y: Math.round(rect(n).y),
-    w: Math.round(rect(n).width), h: Math.round(rect(n).height),
-    links: Array.from(n.querySelectorAll('a')).slice(0, 10).map(a => a.textContent.trim().substring(0, 30)),
-  }));
-
-  JSON.stringify({ viewport: { w: window.innerWidth, h: window.innerHeight }, sections, buttons, inputs, images, headings, navs }, null, 2);
-"
-```
+You do NOT need exact CSS values, font sizes, or colors.
 
 ### From a screenshot
 
-When the user provides a screenshot (image), analyze it visually:
-
-1. **Identify the page layout**: header, sidebar, content area, footer
-2. **Read all visible text**: headings, labels, button text, navigation items
-3. **Identify interactive elements**: buttons (by shape/color), inputs (by borders/placeholders), links (by color)
-4. **Identify images**: photo areas, icons, illustrations (by visual content)
-5. **Estimate dimensions**: relative widths and heights of each section
-
-Produce a mental structural map like:
-
-```
-PAGE STRUCTURE (from screenshot):
-  Header bar: full width, ~60px, dark background
-    - Logo (left): "WIKIPEDIA"
-    - Search bar (center): ~400px
-    - User links (right): "Donate", "Log in"
-  Content: two columns
-    - Sidebar (left): ~180px, table of contents
-    - Article (right): fill
-      - Title: "Duffield Memorial" (large serif)
-      - Intro paragraphs (2)
-      - Infobox (right-floated): ~330px
-      - Sections: Background, Description, History...
-```
+Analyze the image visually. Identify:
+- Major screen regions and their relative sizes
+- Layout structure (columns, rows, grid)
+- Visual hierarchy (what's prominent, what's secondary, what's tertiary)
+- Key zones (navigation, primary content, secondary content, actions)
 
 ### From a Figma frame
 
-Read the selected frame's structure:
-
 ```javascript
 const sel = figma.currentPage.selection;
-if (sel.length === 0) return { error: 'Nothing selected' };
-
 const frame = sel[0];
-function walkNode(node, depth) {
-  if (depth > 8) return null;
-  const info = {
-    name: node.name,
-    type: node.type,
-    x: Math.round(node.x),
-    y: Math.round(node.y),
-    w: Math.round(node.width),
-    h: Math.round(node.height),
-  };
-  if (node.type === 'TEXT') info.text = node.characters.substring(0, 100);
-  if (node.type === 'INSTANCE') info.component = node.mainComponent?.name;
-  if ('children' in node && node.children.length > 0) {
-    info.children = node.children.map(c => walkNode(c, depth + 1)).filter(Boolean);
-  }
-  return info;
-}
-
-return walkNode(frame, 0);
+// Get top-level children names and sizes only
+const zones = frame.children.map(c => ({
+  name: c.name, w: Math.round(c.width), h: Math.round(c.height)
+}));
+return zones;
 ```
 
 ### From a text description
 
-When the user gives a text brief like "settings page with sidebar navigation,
-account section, notification preferences":
-
-1. Identify the layout archetype (sidebar + content, full-width, dashboard grid, etc.)
-2. List the sections and their likely content
-3. Identify standard UI patterns (form groups, toggle sections, card grids, etc.)
-4. Skip extraction — go straight to Phase 2 with the inferred structure
+Parse the brief for layout concepts:
+- "settings page with sidebar" → sidebar + content layout
+- "dashboard with stats" → header + grid of cards
+- "landing page" → hero + sections stacked vertically
+- "checkout flow" → multi-step form
 
 ---
 
-## Phase 2: BUILD
+## Phase 2: SKETCH (Fat Marker Mode — Default)
 
-Build the wireframe on the FigJam canvas using square shapes and Figma Hand font.
+### The fat marker visual language
 
-### Core helper function
+**CRITICAL RULES:**
+1. **No real text.** Ever. Use scribble lines for body text, a thick bar for headings.
+2. **No colors.** Black strokes on white background. Period. Only exception: red/blue annotation stickies.
+3. **No UI components.** No buttons, inputs, dropdowns, icons. Just shapes representing regions.
+4. **Thick strokes.** 6-8px minimum. If it looks precise, it's too thin.
+5. **Rough and fast.** If it takes more than 3 minutes to build, you're overdoing it.
+6. **Deliberate imprecision.** Sizes don't need to match. Gaps don't need to be even. This is a sketch.
 
-Every `figma_execute` call should include this helper:
+### Element vocabulary
+
+| Concept | How to draw it |
+|---|---|
+| Screen frame | Large rectangle, thick black border (8px), no fill |
+| Header/nav region | Thick horizontal bar at top, dark fill |
+| Sidebar | Thick vertical rectangle on left, light gray fill |
+| Content zone | Rectangle with light border, mostly empty inside |
+| Heading text | One thick horizontal line (~40% of zone width) |
+| Body text | 3-4 thin wavy horizontal lines stacked |
+| Image/media | Gray filled rectangle with X diagonal lines |
+| Card/grouped content | Small rectangle with 2-3 scribble lines inside |
+| Button/CTA | Small filled dark rectangle (no text) |
+| List items | 4-5 short horizontal lines stacked with consistent spacing |
+| Divider | Thin horizontal line spanning full width |
+| Form field | Empty rectangle with one scribble line inside |
+| Navigation items | 3-4 small rectangles in a row (horizontal) or stacked (vertical) |
+
+### Color palette (maximum 2 colors)
+
+```javascript
+const SKETCH = {
+  stroke:    { r: 0.15, g: 0.15, b: 0.17 },  // near-black for all shapes
+  lightFill: { r: 0.92, g: 0.92, b: 0.93 },  // light gray for secondary regions
+  darkFill:  { r: 0.35, g: 0.35, b: 0.38 },  // dark gray for headers, CTAs
+  imgFill:   { r: 0.78, g: 0.78, b: 0.80 },  // medium gray for image placeholders
+  white:     { r: 1, g: 1, b: 1 },            // background
+};
+```
+
+### Building the sketch
+
+Use `figma_execute` with SQUARE shapes. Every shape gets a thick stroke.
 
 ```javascript
 await figma.loadFontAsync({ family: 'Figma Hand', style: 'Regular' });
 
-function sq(x, y, w, h, text, opts) {
+function fat(x, y, w, h, opts) {
   opts = opts || {};
   const s = figma.createShapeWithText();
   s.shapeType = 'SQUARE';
   s.x = x; s.y = y;
   s.resize(w, h);
   s.text.fontName = { family: 'Figma Hand', style: 'Regular' };
-  if (text) {
-    s.text.characters = text;
-    s.text.fontSize = opts.sz || 13;
-    if (opts.tc) s.text.fills = [{ type: 'SOLID', color: opts.tc }];
-    if (opts.ta) s.text.textAlignHorizontal = opts.ta;
+  // Only set text for annotations, never for content
+  if (opts.label) {
+    s.text.characters = opts.label;
+    s.text.fontSize = opts.labelSize || 14;
   }
+  // Thick black stroke on everything
+  s.strokes = [{ type: 'SOLID', color: SKETCH.stroke }];
+  s.strokeWeight = opts.sw || 6;
+  // Fill
   if (opts.fill) s.fills = [{ type: 'SOLID', color: opts.fill }];
-  if (opts.stroke) {
-    s.strokes = [{ type: 'SOLID', color: opts.stroke }];
-    s.strokeWeight = opts.sw || 1;
-  }
+  else s.fills = [{ type: 'SOLID', color: SKETCH.white }];
   return s;
 }
 ```
 
-### Style guide
+### Scribble lines for text
 
-**All shapes are SQUARE** (sharp corners). Never use ROUNDED_RECTANGLE.
-
-**All text is Figma Hand**. Never use Inter, Roboto, or any other font.
-Set the font BEFORE setting characters — SQUARE shapes default to Figma Hand
-but you must explicitly set it to avoid font loading errors.
-
-**Color palette for wireframes:**
+Represent text content with horizontal bars — NOT real text:
 
 ```javascript
-// Light theme page
+// Heading: one thick bar
+fat(x, y, width * 0.4, 8, { fill: SKETCH.stroke, sw: 0 });
+
+// Body text: 3-4 thinner bars
+fat(x, y,      width * 0.9, 4, { fill: SKETCH.stroke, sw: 0 });
+fat(x, y + 12, width * 0.85, 4, { fill: SKETCH.stroke, sw: 0 });
+fat(x, y + 24, width * 0.7, 4, { fill: SKETCH.stroke, sw: 0 });
+
+// Short label: one small bar
+fat(x, y, 60, 4, { fill: SKETCH.stroke, sw: 0 });
+```
+
+### Image placeholders
+
+Gray rectangle with an X:
+
+```javascript
+// Image: filled gray rectangle
+fat(x, y, w, h, { fill: SKETCH.imgFill, sw: 4 });
+// X lines drawn as two thin diagonal rectangles (or just leave it as a gray box)
+```
+
+### Annotations
+
+Use red/blue stickies OUTSIDE the sketch frame. Never inside.
+
+```javascript
+const sticky = figma.createSticky();
+sticky.text.characters = 'Main navigation';
+sticky.fills = [{ type: 'SOLID', color: { r: 1, g: 0.85, b: 0.85 } }]; // light red
+sticky.x = sketchRight + 40;
+sticky.y = regionY;
+```
+
+Or use `figjam_create_stickies` for batch annotation:
+
+```
+figjam_create_stickies with stickies: [
+  { text: "Navigation region", color: "RED", x: ..., y: ... },
+  { text: "Primary content — article text", color: "RED", x: ..., y: ... },
+  { text: "Sidebar — metadata card", color: "RED", x: ..., y: ... }
+]
+```
+
+### Example: Wikipedia article page as fat marker sketch
+
+```
+┌──────────────────────────────────────────┐  8px black stroke
+│ ████████████  ▬▬▬▬▬▬▬▬▬▬▬▬▬  ▬▬ ▬▬ ▬▬ │  ← header bar (dark fill)
+├──────────────────────────────────────────┤
+│        │                      │          │
+│  ▬▬▬   │  ████████████        │ ┌──────┐ │
+│  ▬▬▬   │                      │ │ ░░░░ │ │  ← image placeholder
+│  ▬▬▬   │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬  │ │ ░░░░ │ │
+│  ▬▬▬   │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬    │ └──────┘ │
+│  ▬▬▬   │  ▬▬▬▬▬▬▬▬▬▬▬       │ ▬▬  ▬▬▬  │  ← key-value rows
+│  ▬▬▬   │                      │ ▬▬  ▬▬▬  │
+│  ▬▬▬   │  ──────────────────  │ ▬▬  ▬▬▬  │
+│        │                      │          │
+│ sidebar│  ████████             │ infobox  │
+│ (TOC)  │                      │          │
+│        │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬  │          │
+│        │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬    │          │
+│        │  ▬▬▬▬▬▬▬▬▬▬▬       │          │
+│        │                      │          │
+│        │  ──────────────────  │          │
+│        │  ████████             │          │
+│        │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬   │          │
+└──────────────────────────────────────────┘
+
+Annotations (red stickies beside sketch):
+→ "Table of contents sidebar"
+→ "Article title + intro text"
+→ "Infobox with image + metadata"
+→ "Section headings with body text"
+```
+
+### Multiple options
+
+When the input is a text description, generate 2-3 fat marker sketch options
+showing different approaches:
+
+```
+/wireframe "settings page"
+
+Option A: Sidebar nav + content
+Option B: Top tabs + full-width sections  
+Option C: Accordion sections, no sidebar
+```
+
+Place them side by side in a FigJam section with stickies noting pros/cons.
+
+---
+
+## Phase 2b: SKETCH (Detailed Mode — `--detailed`)
+
+When the user passes `--detailed`, produce a lo-fi wireframe with:
+- Figma Hand font for ALL text (hand-drawn feel)
+- SQUARE shapes (sharp corners)
+- Real text content (headings, body text, labels)
+- Color-coded sections (light fills to distinguish regions)
+- Labeled components (buttons, inputs, cards with text inside)
+- Full page reconstruction with all content
+
+Use the style guide from the previous version of this skill:
+
+**Color palette for detailed wireframes:**
+
+```javascript
 const LIGHT = {
   pageBg:   { r: 0.96, g: 0.96, b: 0.97 },
   white:    { r: 1, g: 1, b: 1 },
@@ -310,34 +353,17 @@ const LIGHT = {
   light:    { r: 0.58, g: 0.6, b: 0.62 },
   link:     { r: 0.25, g: 0.45, b: 0.82 },
   accent:   { r: 0.2, g: 0.72, b: 0.53 },
-  linkBg:   { r: 0.91, g: 0.94, b: 1 },
-  refBg:    { r: 0.96, g: 0.96, b: 0.97 },
 };
 
-// Dark theme page
 const DARK = {
   pageBg:   { r: 0.18, g: 0.19, b: 0.21 },
   white:    { r: 0.95, g: 0.95, b: 0.96 },
   headerBg: { r: 0.2, g: 0.22, b: 0.24 },
-  cardBg:   { r: 0.25, g: 0.27, b: 0.29 },
-  imgGray:  { r: 0.35, g: 0.37, b: 0.4 },
-  border:   { r: 0.3, g: 0.32, b: 0.34 },
-  headBg:   { r: 0.22, g: 0.24, b: 0.26 },
-  dark:     { r: 0.95, g: 0.95, b: 0.96 },
-  mid:      { r: 0.6, g: 0.62, b: 0.65 },
-  light:    { r: 0.5, g: 0.52, b: 0.55 },
-  link:     { r: 0.4, g: 0.65, b: 0.95 },
-  accent:   { r: 0.2, g: 0.72, b: 0.53 },
-  linkBg:   { r: 0.2, g: 0.25, b: 0.35 },
-  refBg:    { r: 0.22, g: 0.23, b: 0.25 },
+  // ... (same structure as LIGHT but inverted)
 };
 ```
 
-Choose LIGHT or DARK based on the source page's background color. If the page
-has a dark header but light body, use LIGHT for the body and DARK colors only
-for the header area.
-
-### Font size scale
+**Font sizes for detailed wireframes:**
 
 | Element | Font size |
 |---|---|
@@ -347,91 +373,79 @@ for the header area.
 | Body text | 13 |
 | Small text / metadata | 10-12 |
 | Button labels | 13-15 |
-| Navigation items | 12-13 |
 
-### Element patterns
+---
 
-**Header bar:**
-```javascript
-sq(x, y, fullWidth, 50-60, '', { fill: C.headerBg, stroke: C.border, sw: 0.5 });
-// Logo
-sq(x + 20, y + 10, 140, 36, 'LOGO', { fill: C.white, sz: 18, tc: C.dark });
-// Search
-sq(x + 200, y + 12, 400, 32, 'Search...', { fill: C.white, stroke: C.border, sz: 12, tc: C.light, ta: 'LEFT' });
-// Nav links
-sq(x + rightSide, y + 14, 80, 28, 'Link', { fill: C.headerBg, sz: 12, tc: C.link });
+## Phase 3: ANNOTATE
+
+After building the sketch, add annotations:
+
+### Fat marker mode annotations
+
+Place red stickies to the RIGHT of the sketch, one per major region:
+
+```
+figjam_create_stickies with stickies: [
+  { text: "Header — brand + search + user tools", color: "RED", x: sketchRight + 40, y: headerY },
+  { text: "TOC sidebar — section navigation", color: "RED", x: sketchRight + 40, y: sidebarY },
+  { text: "Main content — article with sections", color: "RED", x: sketchRight + 40, y: contentY },
+  { text: "Infobox — image + key metadata", color: "RED", x: sketchRight + 40, y: infoboxY },
+]
 ```
 
-**Sidebar:**
-```javascript
-sq(x, y, 180, height, 'Nav item 1\nNav item 2\nNav item 3\n...', {
-  fill: C.headerBg, sz: 13, tc: C.mid, ta: 'LEFT'
-});
+If the user provided a text description, add a YELLOW sticky with the original brief:
+
+```
+figjam_create_sticky with text: "Brief: settings page with sidebar navigation,
+account section, notification preferences", color: "YELLOW", x: ..., y: sketchTop - 280
 ```
 
-**Section heading with divider:**
-```javascript
-sq(x, y, width, 42, 'Section Title', { fill: C.headBg, sz: 24, tc: C.dark, stroke: C.border, sw: 0.5 });
+### Detailed mode annotations
+
+Skip annotations — the wireframe itself is self-documenting with real text.
+
+---
+
+## Phase 4: PRESENT
+
+### Screenshot and show
+
+```
+figma_take_screenshot
 ```
 
-**Body paragraph:**
-```javascript
-sq(x, y, width, 65-80, 'Paragraph text content...', { fill: C.white, sz: 13, tc: C.dark, ta: 'LEFT' });
+Show it to the user.
+
+### Fat marker mode summary
+
+```
+FAT MARKER SKETCH: [Page/concept name]
+Source: [URL / screenshot / frame / description]
+
+Regions identified:
+  • Header (navigation + search)
+  • Sidebar (table of contents)
+  • Primary content (article sections)
+  • Infobox (metadata card)
+
+This sketch shows spatial arrangement only — no UI decisions.
+Ready to refine, or want me to sketch alternative layouts?
 ```
 
-**Image placeholder:**
-```javascript
-sq(x, y, imgWidth, imgHeight, '[ Image description ]', { fill: C.imgGray, sz: 14, tc: C.white });
+### Offer next steps
+
+```
+Want me to:
+A) Sketch 2 more alternative layouts
+B) Go detailed — /wireframe --detailed
+C) Build this in Figma — /capture or /plan
 ```
 
-**Button:**
-```javascript
-// Primary
-sq(x, y, 150, 40, 'Button Label', { fill: C.accent, sz: 14, tc: C.white });
-// Secondary
-sq(x, y, 100, 36, 'Cancel', { fill: C.pageBg, sz: 13, tc: C.dark, stroke: C.border });
-```
+---
 
-**Input field:**
-```javascript
-sq(x, y, 300, 32, 'Placeholder text...', { fill: C.white, stroke: C.border, sz: 12, tc: C.light, ta: 'LEFT' });
-```
+## Canvas positioning
 
-**Card:**
-```javascript
-sq(x, y, cardWidth, cardHeight, '', { fill: C.cardBg, stroke: C.border, sw: 0.5 });
-// Card contents inside
-```
-
-**Table / data rows:**
-```javascript
-// Alternating row backgrounds
-const rowBg = i % 2 === 0 ? C.refBg : C.white;
-sq(x, y, labelW, 24, 'Label', { fill: rowBg, sz: 10, tc: C.mid });
-sq(x + labelW + 4, y, valueW, 24, 'Value', { fill: rowBg, sz: 10, tc: C.dark });
-```
-
-**Link:**
-```javascript
-sq(x, y, width, 26, 'Link text', { fill: C.linkBg, sz: 13, tc: C.link });
-```
-
-### Build order
-
-1. **Page background** — full-width rectangle with page background color
-2. **Header** — logo, search, navigation
-3. **Layout structure** — sidebar, content columns, footer
-4. **Section headings** — from top to bottom
-5. **Content within sections** — paragraphs, images, cards, tables
-6. **Interactive elements** — buttons, inputs, links
-7. **Metadata** — timestamps, tags, breadcrumbs
-
-Build section by section. Take a screenshot after each major section to verify
-alignment. Fix issues before continuing.
-
-### Canvas positioning
-
-Find clear space on the FigJam canvas before building:
+Find clear space on the FigJam canvas:
 
 ```javascript
 let maxRight = 0;
@@ -440,155 +454,63 @@ for (const n of figma.currentPage.children) {
   if (right > maxRight) maxRight = right;
 }
 const startX = maxRight + 300;
-const startY = 0;
-```
-
-Place new wireframes to the RIGHT of existing content, with 300px gap.
-
-### Execution limits
-
-FigJam `figma_execute` calls have a timeout. Split large wireframes into
-2-3 calls:
-
-- **Call 1**: Header + navigation + layout structure
-- **Call 2**: Main content sections
-- **Call 3**: Footer + remaining sections
-
-Each call should create at most ~40 shapes to stay within timeout.
-
----
-
-## Phase 3: VALIDATE
-
-### Screenshot and present
-
-Take a screenshot of the completed wireframe:
-
-```
-figma_take_screenshot
-```
-
-Show it to the user with the Read tool.
-
-### Present the wireframe summary
-
-```
-WIREFRAME: [Page Name]
-Source: [URL / screenshot / frame / description]
-
-Layout: [Header → Sidebar + Content / Full-width / Dashboard grid]
-Sections: [list of sections built]
-Elements: [count of shapes created]
-
-Want me to:
-A) Adjust the layout or content
-B) Build another page from the same site
-C) Create the high-fidelity version in Figma (/capture)
 ```
 
 ---
 
-## Multiple pages
+## Multiple pages / flows
 
-If the user asks to wireframe multiple pages (a flow, a site map):
-
-1. Build each page as a separate wireframe on the canvas
-2. Space them 400px apart horizontally
-3. Add connectors between pages to show the flow
-4. Label each wireframe with the page name
+For multi-page flows, sketch each screen as a separate fat marker sketch
+with connectors between them:
 
 ```javascript
-// Connect two wireframe frames
 const c = figma.createConnector();
-c.connectorStart = { endpointNodeId: page1Id, magnet: 'RIGHT' };
-c.connectorEnd = { endpointNodeId: page2Id, magnet: 'LEFT' };
+c.connectorStart = { endpointNodeId: screen1Id, magnet: 'RIGHT' };
+c.connectorEnd = { endpointNodeId: screen2Id, magnet: 'LEFT' };
 c.text.fontName = { family: 'Figma Hand', style: 'Regular' };
 c.text.characters = 'navigates to';
 ```
 
 ---
 
-## Responsive wireframes
-
-If the user asks for responsive versions:
-
-Build three wireframes side by side:
-
-```
-[Desktop 1280px]  [Tablet 768px]  [Mobile 375px]
-```
-
-For the URL path, capture at each viewport:
-```bash
-$B viewport 1280x720
-# extract + build desktop
-$B viewport 768x1024
-# extract + build tablet
-$B viewport 375x812
-# extract + build mobile
-```
-
-For screenshot/text input, adapt the layout intelligently:
-- Desktop: full layout as described
-- Tablet: collapse sidebar into top nav, reduce column count
-- Mobile: single column, stacked sections, hamburger menu
-
----
-
-## Annotations
-
-After building the wireframe, offer to add annotations:
-
-> "Want me to add annotations? I can label the key sections, note interaction
-> patterns, or add questions for the team."
-
-Annotations use stickies placed next to the wireframe:
-
-```javascript
-const sticky = figma.createSticky();
-sticky.text.characters = 'Q: Should this be a dropdown or radio buttons?';
-sticky.stickyBackgroundColor = 'YELLOW';  // only works if API supports it
-sticky.x = wireframeRight + 40;
-sticky.y = elementY;
-```
-
-If `stickyBackgroundColor` doesn't work, use fills:
-```javascript
-sticky.fills = [{ type: 'SOLID', color: { r: 1, g: 0.89, b: 0.6 } }]; // yellow
-```
-
----
-
 ## Edge cases
 
-### Very long pages (scrolling content)
-Only wireframe the above-the-fold content plus one scroll. Don't try to capture
-infinite feeds or very long pages entirely — wireframe the repeating pattern once
-and add a note: "[ repeats N times ]"
+### Very complex pages
+Simplify. A fat marker sketch of a complex dashboard should show 5-7 regions
+maximum. Group related elements into single zones. If you're drawing more than
+10 shapes inside the screen frame, you're too detailed.
 
-### Complex dashboards
-For pages with many cards/widgets, wireframe the grid structure and 2-3 example
-cards. Add a note: "[ 12 more cards following same pattern ]"
+### Pages with many similar items (feeds, lists, grids)
+Draw 2-3 representative items and indicate repetition:
 
-### Pages behind auth
-For URL input, use the browse daemon's cookie import:
-```bash
-$B cookie-import-browser
 ```
-Or hand off to the user for login:
-```bash
-$B handoff "Need to log in first"
+┌────┐ ┌────┐ ┌────┐
+│ ▬▬ │ │ ▬▬ │ │ ▬▬ │  ... (annotation: "12 cards in grid")
+└────┘ └────┘ └────┘
 ```
 
-### Blank canvas
-If the FigJam board is empty, start at (0, 0). If it has existing content,
-place the wireframe to the right with 300px gap.
+### User asks for details in fat marker mode
+Resist. If they want text and labels, suggest `--detailed`. The fat marker
+sketch's value is in its imprecision — adding detail defeats the purpose.
+
+### Blank FigJam canvas
+Start at (0, 0). If content exists, place to the right with 300px gap.
 
 ---
+
+## Philosophy
+
+From Ryan Singer (Shape Up): "If we start with wireframes or specific visual
+layouts, we'll get stuck on unnecessary details and we won't be able to
+explore as broadly as we need to."
+
+The fat marker sketch is a constraint. The thick lines prevent detail. That's
+the feature, not the limitation. You're communicating intent, not specifications.
+
+**If a fat marker sketch takes more than 3 minutes to build, you're overdoing it.**
 
 ## Tone
 
-You're sketching on a whiteboard. Quick, loose, clear. Don't obsess over pixel
-precision — the point is structure and hierarchy, not polish. If a heading is
-28px vs 30px, nobody cares. If the sidebar is 180px vs 200px, that's fine.
-What matters is: can someone look at this wireframe and understand the page?
+You're sketching on a whiteboard in a meeting. Quick, rough, disposable.
+Don't apologize for imprecision — celebrate it. The messier it looks, the
+more it invites feedback on the concept rather than the cosmetics.
