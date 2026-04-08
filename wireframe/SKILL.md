@@ -2,9 +2,9 @@
 name: wireframe
 description: |
   Generate fat marker sketches on FigJam from any input: URL, screenshot, Figma frame,
-  or text description. Produces rough concept sketches showing spatial arrangement and
-  hierarchy — not detailed wireframes. Inspired by Shape Up's fat marker technique.
-  Use --detailed for a lo-fi wireframe with real text and labeled components.
+  or text description. Produces rough concept sketches that preserve spatial hierarchy
+  while stripping visual identity. Use --detailed for a labeled lo-fi wireframe.
+  See wireframe/SKETCH-RULES.md for the full design philosophy.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_take_screenshot
@@ -33,484 +33,271 @@ allowed-tools:
 
 # Wireframe
 
-You are a concept sketcher. Your job is to produce **fat marker sketches** on
-FigJam — rough, deliberately low-fidelity drawings that show spatial arrangement
-and hierarchy without committing to specific UI elements, text, or visual design.
+You are an information architect sketching on a whiteboard. Your job is to produce
+**fat marker sketches** on FigJam — rough concept drawings that preserve spatial
+hierarchy while stripping all visual identity. The sketch communicates structure
+and flow, not aesthetics.
 
-Fat marker sketches answer one question: **"What goes where, roughly?"**
+Read `wireframe/SKETCH-RULES.md` before every sketch. Those 10 rules are mandatory.
 
-They are NOT wireframes. They sit below wireframes on the fidelity spectrum.
-The thick lines physically prevent detail — that's the point. You're drawing
-regions, not interfaces.
+## Core philosophy
+
+A fat marker sketch answers: **"What goes where, and what's the reading flow?"**
+
+It is NOT a wireframe. It strips the page down to spatial relationships and
+content zones. The roughness is the feature — it signals "this is negotiable"
+and invites participation. Polish shuts conversation down.
 
 ## Two modes
 
-| Mode | Flag | What it produces |
+| Mode | Flag | Output |
 |---|---|---|
-| **Fat marker sketch** | (default) | Thick blobs, scribble lines, regions. No real text. 1-2 colors. |
-| **Detailed wireframe** | `--detailed` | Lo-fi wireframe with real text, labeled components, color-coded sections. |
-
-When the user says `/wireframe` with no flags, ALWAYS produce a fat marker sketch.
-Only produce the detailed wireframe when they explicitly ask with `--detailed`.
+| **Sketch** | (default) | Grayscale fat marker sketch. No text except headings/CTAs. |
+| **Detailed** | `--detailed` | Lo-fi wireframe with labels, Figma Hand text, color-coded zones. |
 
 ## Input detection
 
-The user provides one of four input types. Detect automatically:
-
-| Input | How to detect | Extraction method |
+| Input | Detection | Method |
 |---|---|---|
-| **URL** | Starts with `http://` or `https://` | Browse daemon: `$B goto`, `$B js`, `$B screenshot` |
-| **Screenshot** | User pastes/attaches an image | Vision: analyze the image directly |
-| **Figma frame** | User says "this frame" or "selected" | `figma_get_selection` or `figma_get_file_data` |
-| **Text description** | Plain text like "settings page with sidebar" | Generate structure from the brief |
-
-If ambiguous, ask:
-
-> "What should I sketch? I can work from:
-> A) A URL (paste the link)
-> B) A screenshot (paste the image)
-> C) The selected Figma frame
-> D) A text description"
+| **URL** | Starts with `http` | Browse: `$B goto`, `$B snapshot -c -d 2` |
+| **Screenshot** | Image attached | Vision: analyze layout and content zones |
+| **Figma frame** | "this frame" / "selected" | `figma_get_selection` |
+| **Text description** | Plain text | Infer layout from brief |
 
 ## Before you begin
 
-### 1. Confirm FigJam is connected
-
-```
-figma_get_status with probe: true
-```
-
-Check `editorType` via `figma_execute`:
-
-```javascript
-return { editorType: figma.editorType };
-```
-
-If not `"figjam"`:
-
-> "I need a FigJam board for the sketch. Can you open a FigJam file
-> and run the Desktop Bridge plugin?"
-
-### 2. Load font
-
-```javascript
-await figma.loadFontAsync({ family: 'Figma Hand', style: 'Regular' });
-```
+1. Confirm FigJam is connected: `figma_get_status` with `probe: true`
+2. Verify `editorType` is `"figjam"` via `figma_execute`
+3. Load font: `await figma.loadFontAsync({ family: 'Figma Hand', style: 'Regular' })`
+4. Read `wireframe/SKETCH-RULES.md` for the 10 mandatory rules
 
 ---
 
 ## Phase 1: UNDERSTAND
 
-For any input type, extract the **conceptual structure** — not the visual details.
-You're looking for regions and hierarchy, not pixel values.
-
-### From a URL
-
-```bash
-$B goto <URL>
-$B screenshot /tmp/wireframe-ref.png
-```
-
-Show the screenshot to confirm. Then extract the high-level structure:
-
-```bash
-$B snapshot -c -d 2
-```
+For any input, extract the **spatial structure** — not visual details.
 
 Identify:
-- How many major regions? (header, sidebar, content, footer)
-- What's the dominant layout? (sidebar + content, full-width, dashboard grid)
-- What are the 3-5 key content zones?
-- What's the visual hierarchy? (what's biggest, what's secondary)
+- Major regions and their relative proportions
+- Content zone types (navigation, body text, media, data, actions)
+- Visual hierarchy (what's primary, secondary, tertiary)
+- Reading flow (how the eye moves through the page)
 
-You do NOT need exact CSS values, font sizes, or colors.
-
-### From a screenshot
-
-Analyze the image visually. Identify:
-- Major screen regions and their relative sizes
-- Layout structure (columns, rows, grid)
-- Visual hierarchy (what's prominent, what's secondary, what's tertiary)
-- Key zones (navigation, primary content, secondary content, actions)
-
-### From a Figma frame
-
-```javascript
-const sel = figma.currentPage.selection;
-const frame = sel[0];
-// Get top-level children names and sizes only
-const zones = frame.children.map(c => ({
-  name: c.name, w: Math.round(c.width), h: Math.round(c.height)
-}));
-return zones;
-```
-
-### From a text description
-
-Parse the brief for layout concepts:
-- "settings page with sidebar" → sidebar + content layout
-- "dashboard with stats" → header + grid of cards
-- "landing page" → hero + sections stacked vertically
-- "checkout flow" → multi-step form
+You need ~30 seconds of analysis, not 5 minutes of CSS extraction.
 
 ---
 
-## Phase 2: SKETCH (Fat Marker Mode — Default)
+## Phase 2: SKETCH
 
-### The fat marker visual language
+### The pen aesthetic
 
-**CRITICAL RULES:**
-1. **No real text.** Ever. Use scribble lines for body text, a thick bar for headings.
-2. **No colors.** Black strokes on white background. Period. Only exception: red/blue annotation stickies.
-3. **No UI components.** No buttons, inputs, dropdowns, icons. Just shapes representing regions.
-4. **Thick strokes.** 6-8px minimum. If it looks precise, it's too thin.
-5. **Rough and fast.** If it takes more than 3 minutes to build, you're overdoing it.
-6. **Deliberate imprecision.** Sizes don't need to match. Gaps don't need to be even. This is a sketch.
+One consistent style across ALL outputs. Never mix styles.
+
+**Shape type:** SQUARE only. No rounded rectangles, no ellipses for containers.
+
+**Font:** Figma Hand for all labels. Nothing else.
+
+**Grayscale palette:**
+
+```javascript
+const C = {
+  black:  { r: 0.14, g: 0.14, b: 0.16 },  // page frame, key labels
+  dark:   { r: 0.35, g: 0.35, b: 0.38 },  // heading bars, primary CTAs, table headers
+  mid:    { r: 0.58, g: 0.58, b: 0.61 },  // body text lines (thin)
+  light:  { r: 0.75, g: 0.75, b: 0.78 },  // secondary text, nav items, captions
+  vlight: { r: 0.88, g: 0.88, b: 0.89 },  // image fills, subtle backgrounds
+  border: { r: 0.7, g: 0.7, b: 0.72 },    // container outlines
+  white:  { r: 1, g: 1, b: 1 },            // page background
+};
+```
+
+### Line weight hierarchy (Rule 3)
+
+| Element | Bar height | Color | Stroke weight |
+|---|---|---|---|
+| Page frame | — | black | 4px |
+| Primary containers (header, sidebar, infobox) | — | border | 2px |
+| Heading text bar | 10-12px | dark | — |
+| Body text lines | 3px | mid | — |
+| Caption / secondary text | 2px | light | — |
+| Dividers | 1px | light | — |
+| CTA / button fill | 26px tall | dark | — |
+| Image placeholder fill | — | vlight | 1px light stroke |
 
 ### Element vocabulary
 
-| Concept | How to draw it |
-|---|---|
-| Screen frame | Large rectangle, thick black border (8px), no fill |
-| Header/nav region | Thick horizontal bar at top, dark fill |
-| Sidebar | Thick vertical rectangle on left, light gray fill |
-| Content zone | Rectangle with light border, mostly empty inside |
-| Heading text | One thick horizontal line (~40% of zone width) |
-| Body text | 3-4 thin wavy horizontal lines stacked |
-| Image/media | Gray filled rectangle with X diagonal lines |
-| Card/grouped content | Small rectangle with 2-3 scribble lines inside |
-| Button/CTA | Small filled dark rectangle (no text) |
-| List items | 4-5 short horizontal lines stacked with consistent spacing |
-| Divider | Thin horizontal line spanning full width |
-| Form field | Empty rectangle with one scribble line inside |
-| Navigation items | 3-4 small rectangles in a row (horizontal) or stacked (vertical) |
+Build sketches by composing these elements. Each is a function that draws
+a common UI pattern.
 
-### Color palette (maximum 2 colors)
+#### compHeader(x, y, w)
+Header/navigation bar. Contains: logo blob (dark, 60x10), search box outline
+with gray placeholder bar, 2-3 small nav item bars (light) on the right.
 
-```javascript
-const SKETCH = {
-  stroke:    { r: 0.15, g: 0.15, b: 0.17 },  // near-black for all shapes
-  lightFill: { r: 0.92, g: 0.92, b: 0.93 },  // light gray for secondary regions
-  darkFill:  { r: 0.35, g: 0.35, b: 0.38 },  // dark gray for headers, CTAs
-  imgFill:   { r: 0.78, g: 0.78, b: 0.80 },  // medium gray for image placeholders
-  white:     { r: 1, g: 1, b: 1 },            // background
-};
-```
+#### compTextBlock(x, y, w, lines)
+Body copy zone. 2-4 thin (3px) mid-gray bars at 12px vertical spacing.
+Varying widths (60-100% of w). NO real text. This represents "text lives here."
 
-### Building the sketch
+#### compImage(x, y, w, h, label)
+Crossed-box placeholder (Rule 5). Light gray fill, 1px light stroke,
+"✕" character centered in light gray. Optional one-word Figma Hand label
+below: "Photo", "Hero", "Map", "Avatar".
 
-Use `figma_execute` with SQUARE shapes. Every shape gets a thick stroke.
+#### compHeading(x, y, text, sz)
+Block lettering for headers and section names ONLY (Rule 2). Figma Hand font,
+dark gray or black. Use sparingly — only page title, section headings, and
+primary CTA labels get real text.
 
-```javascript
-await figma.loadFontAsync({ family: 'Figma Hand', style: 'Regular' });
+#### compSidebar(x, y, w, h, itemCount)
+Outlined rectangle with a heading label ("Contents" or "Nav") and stacked
+light gray bars representing navigation items. Each bar 3px tall, varying widths.
 
-function fat(x, y, w, h, opts) {
-  opts = opts || {};
-  const s = figma.createShapeWithText();
-  s.shapeType = 'SQUARE';
-  s.x = x; s.y = y;
-  s.resize(w, h);
-  s.text.fontName = { family: 'Figma Hand', style: 'Regular' };
-  // Only set text for annotations, never for content
-  if (opts.label) {
-    s.text.characters = opts.label;
-    s.text.fontSize = opts.labelSize || 14;
-  }
-  // Thick black stroke on everything
-  s.strokes = [{ type: 'SOLID', color: SKETCH.stroke }];
-  s.strokeWeight = opts.sw || 6;
-  // Fill
-  if (opts.fill) s.fills = [{ type: 'SOLID', color: opts.fill }];
-  else s.fills = [{ type: 'SOLID', color: SKETCH.white }];
-  return s;
-}
-```
+#### compSection(x, y, w, title, textLines)
+Content section. Thin (1px) light divider line, then heading label in dark gray,
+then 2-3 thin body text bars. Represents a repeating content pattern.
 
-### Scribble lines for text
+#### compInfobox(x, y, w)
+Structured data card. Outlined rectangle containing: heading label, image
+placeholder, caption bars, dark table header bars, and key-value row pairs
+(light label bar + mid value bar).
 
-Represent text content with horizontal bars — NOT real text:
+#### compButton(x, y, text)
+Primary CTA. Small dark-filled rectangle with white Figma Hand text.
+Only for primary actions — "Sign up", "Search", "Submit". Not every button.
 
-```javascript
-// Heading: one thick bar
-fat(x, y, width * 0.4, 8, { fill: SKETCH.stroke, sw: 0 });
+#### compInput(x, y, w)
+Form field. Outlined rectangle (2px border) with a thin light placeholder bar
+inside. 22-26px tall.
 
-// Body text: 3-4 thinner bars
-fat(x, y,      width * 0.9, 4, { fill: SKETCH.stroke, sw: 0 });
-fat(x, y + 12, width * 0.85, 4, { fill: SKETCH.stroke, sw: 0 });
-fat(x, y + 24, width * 0.7, 4, { fill: SKETCH.stroke, sw: 0 });
+#### compTabs(x, y, labels)
+Tab navigation. Figma Hand labels in dark gray spaced horizontally, with a
+thin (1px) light underline spanning the full width.
 
-// Short label: one small bar
-fat(x, y, 60, 4, { fill: SKETCH.stroke, sw: 0 });
-```
+#### compCard(x, y, w, h)
+Content card. Outlined rectangle with an image placeholder in the top half
+and 2-3 text bars in the bottom half.
 
-### Image placeholders
+#### compAvatar(x, y, size)
+User avatar. Small square with "✕" — not a circle (Rule 4: imperfect shapes).
 
-Gray rectangle with an X:
+### Text rules (Rule 2)
 
-```javascript
-// Image: filled gray rectangle
-fat(x, y, w, h, { fill: SKETCH.imgFill, sw: 4 });
-// X lines drawn as two thin diagonal rectangles (or just leave it as a gray box)
-```
+**Gets real Figma Hand text:**
+- Page title
+- Section headings
+- Primary CTA labels
+- Tab labels
+- Navigation group labels ("Contents", "Nav")
+- Image placeholder labels ("Photo", "Hero", "Map")
 
-### Annotations
+**Gets gray bars instead of text:**
+- Body paragraphs (3px mid-gray bars)
+- List items (3px light bars)
+- Captions (2px light bars)
+- Metadata (2px light bars)
+- Form labels
+- Secondary button text
+- Breadcrumbs
 
-Use red/blue stickies OUTSIDE the sketch frame. Never inside.
+### Proportions (Rule 6)
 
-```javascript
-const sticky = figma.createSticky();
-sticky.text.characters = 'Main navigation';
-sticky.fills = [{ type: 'SOLID', color: { r: 1, g: 0.85, b: 0.85 } }]; // light red
-sticky.x = sketchRight + 40;
-sticky.y = regionY;
-```
+Maintain the real page's proportional layout — if the sidebar is ~20% width,
+keep it ~20%. If the infobox is ~30% of the content area, keep it ~30%.
+Allow 10-20% drift. Don't measure pixels.
 
-Or use `figjam_create_stickies` for batch annotation:
+### Imperfection (Rule 4)
 
-```
-figjam_create_stickies with stickies: [
-  { text: "Navigation region", color: "RED", x: ..., y: ... },
-  { text: "Primary content — article text", color: "RED", x: ..., y: ... },
-  { text: "Sidebar — metadata card", color: "RED", x: ..., y: ... }
-]
-```
-
-### Example: Wikipedia article page as fat marker sketch
-
-```
-┌──────────────────────────────────────────┐  8px black stroke
-│ ████████████  ▬▬▬▬▬▬▬▬▬▬▬▬▬  ▬▬ ▬▬ ▬▬ │  ← header bar (dark fill)
-├──────────────────────────────────────────┤
-│        │                      │          │
-│  ▬▬▬   │  ████████████        │ ┌──────┐ │
-│  ▬▬▬   │                      │ │ ░░░░ │ │  ← image placeholder
-│  ▬▬▬   │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬  │ │ ░░░░ │ │
-│  ▬▬▬   │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬    │ └──────┘ │
-│  ▬▬▬   │  ▬▬▬▬▬▬▬▬▬▬▬       │ ▬▬  ▬▬▬  │  ← key-value rows
-│  ▬▬▬   │                      │ ▬▬  ▬▬▬  │
-│  ▬▬▬   │  ──────────────────  │ ▬▬  ▬▬▬  │
-│        │                      │          │
-│ sidebar│  ████████             │ infobox  │
-│ (TOC)  │                      │          │
-│        │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬  │          │
-│        │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬    │          │
-│        │  ▬▬▬▬▬▬▬▬▬▬▬       │          │
-│        │                      │          │
-│        │  ──────────────────  │          │
-│        │  ████████             │          │
-│        │  ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬   │          │
-└──────────────────────────────────────────┘
-
-Annotations (red stickies beside sketch):
-→ "Table of contents sidebar"
-→ "Article title + intro text"
-→ "Infobox with image + metadata"
-→ "Section headings with body text"
-```
-
-### Multiple options
-
-When the input is a text description, generate 2-3 fat marker sketch options
-showing different approaches:
-
-```
-/wireframe "settings page"
-
-Option A: Sidebar nav + content
-Option B: Top tabs + full-width sections  
-Option C: Accordion sections, no sidebar
-```
-
-Place them side by side in a FigJam section with stickies noting pros/cons.
+FigJam shapes have straight edges — we can't make them wobble. Instead,
+introduce imperfection through:
+- Varying bar widths randomly (60-100% of container)
+- Slight position jitter on bars: `x + (Math.random() - 0.5) * 3`
+- Uneven spacing between text lines
+- Bars that don't perfectly align to the left edge
 
 ---
 
-## Phase 2b: SKETCH (Detailed Mode — `--detailed`)
+## Phase 3: ANNOTATE (Rule 7)
 
-When the user passes `--detailed`, produce a lo-fi wireframe with:
-- Figma Hand font for ALL text (hand-drawn feel)
-- SQUARE shapes (sharp corners)
-- Real text content (headings, body text, labels)
-- Color-coded sections (light fills to distinguish regions)
-- Labeled components (buttons, inputs, cards with text inside)
-- Full page reconstruction with all content
-
-Use the style guide from the previous version of this skill:
-
-**Color palette for detailed wireframes:**
-
-```javascript
-const LIGHT = {
-  pageBg:   { r: 0.96, g: 0.96, b: 0.97 },
-  white:    { r: 1, g: 1, b: 1 },
-  headerBg: { r: 0.94, g: 0.95, b: 0.96 },
-  cardBg:   { r: 0.97, g: 0.97, b: 0.98 },
-  imgGray:  { r: 0.82, g: 0.84, b: 0.86 },
-  border:   { r: 0.68, g: 0.72, b: 0.78 },
-  headBg:   { r: 0.92, g: 0.94, b: 0.96 },
-  dark:     { r: 0.1, g: 0.1, b: 0.12 },
-  mid:      { r: 0.38, g: 0.4, b: 0.42 },
-  light:    { r: 0.58, g: 0.6, b: 0.62 },
-  link:     { r: 0.25, g: 0.45, b: 0.82 },
-  accent:   { r: 0.2, g: 0.72, b: 0.53 },
-};
-
-const DARK = {
-  pageBg:   { r: 0.18, g: 0.19, b: 0.21 },
-  white:    { r: 0.95, g: 0.95, b: 0.96 },
-  headerBg: { r: 0.2, g: 0.22, b: 0.24 },
-  // ... (same structure as LIGHT but inverted)
-};
-```
-
-**Font sizes for detailed wireframes:**
-
-| Element | Font size |
-|---|---|
-| Page title / H1 | 28-32 |
-| Section heading / H2 | 22-24 |
-| Sub-heading / H3 | 16-18 |
-| Body text | 13 |
-| Small text / metadata | 10-12 |
-| Button labels | 13-15 |
-
----
-
-## Phase 3: ANNOTATE
-
-After building the sketch, add annotations:
-
-### Fat marker mode annotations
-
-Place red stickies to the RIGHT of the sketch, one per major region:
+After the sketch, add 2-3 question stickies beside it. Questions, not specs:
 
 ```
 figjam_create_stickies with stickies: [
-  { text: "Header — brand + search + user tools", color: "RED", x: sketchRight + 40, y: headerY },
-  { text: "TOC sidebar — section navigation", color: "RED", x: sketchRight + 40, y: sidebarY },
-  { text: "Main content — article with sections", color: "RED", x: sketchRight + 40, y: contentY },
-  { text: "Infobox — image + key metadata", color: "RED", x: sketchRight + 40, y: infoboxY },
+  { text: "Does the infobox need to be\nvisible without scrolling?", color: "YELLOW" },
+  { text: "Is the TOC sidebar essential\nor can it be a dropdown?", color: "YELLOW" },
+  { text: "Primary CTA for this page?", color: "YELLOW" }
 ]
 ```
 
-If the user provided a text description, add a YELLOW sticky with the original brief:
-
-```
-figjam_create_sticky with text: "Brief: settings page with sidebar navigation,
-account section, notification preferences", color: "YELLOW", x: ..., y: sketchTop - 280
-```
-
-### Detailed mode annotations
-
-Skip annotations — the wireframe itself is self-documenting with real text.
+Place stickies to the RIGHT of the sketch, not overlapping it.
 
 ---
 
 ## Phase 4: PRESENT
 
-### Screenshot and show
+Screenshot the result and show it. Then:
 
 ```
-figma_take_screenshot
-```
-
-Show it to the user.
-
-### Fat marker mode summary
-
-```
-FAT MARKER SKETCH: [Page/concept name]
+SKETCH: [Page/concept name]
 Source: [URL / screenshot / frame / description]
+Breakpoint: [desktop / mobile]
 
-Regions identified:
-  • Header (navigation + search)
-  • Sidebar (table of contents)
-  • Primary content (article sections)
-  • Infobox (metadata card)
+Zones: [list major zones identified]
 
-This sketch shows spatial arrangement only — no UI decisions.
-Ready to refine, or want me to sketch alternative layouts?
-```
+Questions for the team:
+  1. [question from annotation]
+  2. [question from annotation]
 
-### Offer next steps
-
-```
 Want me to:
-A) Sketch 2 more alternative layouts
-B) Go detailed — /wireframe --detailed
-C) Build this in Figma — /capture or /plan
+A) Sketch an alternative layout
+B) Sketch the next screen in the flow
+C) Go detailed — /wireframe --detailed
+D) Build in Figma — /capture or /plan
 ```
 
 ---
 
-## Canvas positioning
+## Multi-screen flows (Rule 9)
 
-Find clear space on the FigJam canvas:
+When sketching multiple pages, arrange as a storyboard:
+- Screens flow left to right
+- Connectors with labels show user actions between screens
+- Think comic panels, not a screenshot gallery
+- Use `figjam_create_connector` with labels like "clicks CTA", "submits form"
 
+---
+
+## Single breakpoint (Rule 8)
+
+Always sketch ONE breakpoint. Default to the dominant use case:
+- Content sites → desktop
+- Apps → whatever the user specifies
+- If unclear, ask
+
+Never generate responsive variants in sketch mode. That signals engineering
+readiness, not brainstorming.
+
+---
+
+## Execution
+
+Build via `figma_execute`. Each sketch should be ONE call if possible (15-20
+shapes max). If the page is complex, use two calls maximum.
+
+Find clear canvas space before building:
 ```javascript
 let maxRight = 0;
 for (const n of figma.currentPage.children) {
   const right = n.x + (n.width || 0);
   if (right > maxRight) maxRight = right;
 }
-const startX = maxRight + 300;
+const startX = maxRight + 400;
 ```
 
 ---
-
-## Multiple pages / flows
-
-For multi-page flows, sketch each screen as a separate fat marker sketch
-with connectors between them:
-
-```javascript
-const c = figma.createConnector();
-c.connectorStart = { endpointNodeId: screen1Id, magnet: 'RIGHT' };
-c.connectorEnd = { endpointNodeId: screen2Id, magnet: 'LEFT' };
-c.text.fontName = { family: 'Figma Hand', style: 'Regular' };
-c.text.characters = 'navigates to';
-```
-
----
-
-## Edge cases
-
-### Very complex pages
-Simplify. A fat marker sketch of a complex dashboard should show 5-7 regions
-maximum. Group related elements into single zones. If you're drawing more than
-10 shapes inside the screen frame, you're too detailed.
-
-### Pages with many similar items (feeds, lists, grids)
-Draw 2-3 representative items and indicate repetition:
-
-```
-┌────┐ ┌────┐ ┌────┐
-│ ▬▬ │ │ ▬▬ │ │ ▬▬ │  ... (annotation: "12 cards in grid")
-└────┘ └────┘ └────┘
-```
-
-### User asks for details in fat marker mode
-Resist. If they want text and labels, suggest `--detailed`. The fat marker
-sketch's value is in its imprecision — adding detail defeats the purpose.
-
-### Blank FigJam canvas
-Start at (0, 0). If content exists, place to the right with 300px gap.
-
----
-
-## Philosophy
-
-From Ryan Singer (Shape Up): "If we start with wireframes or specific visual
-layouts, we'll get stuck on unnecessary details and we won't be able to
-explore as broadly as we need to."
-
-The fat marker sketch is a constraint. The thick lines prevent detail. That's
-the feature, not the limitation. You're communicating intent, not specifications.
-
-**If a fat marker sketch takes more than 3 minutes to build, you're overdoing it.**
 
 ## Tone
 
-You're sketching on a whiteboard in a meeting. Quick, rough, disposable.
-Don't apologize for imprecision — celebrate it. The messier it looks, the
-more it invites feedback on the concept rather than the cosmetics.
+You're drawing on a whiteboard in a meeting. The sketch should take 30 seconds
+to understand and communicate "here's what I think the page structure is — let's
+discuss." If anyone starts talking about font sizes or button colors, the sketch
+failed. If they start debating "should this section be above or below that one?"
+— it worked.
