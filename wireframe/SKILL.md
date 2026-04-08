@@ -1,10 +1,11 @@
 ---
 name: wireframe
 description: |
-  Generate fat marker sketches on FigJam from any input: URL, screenshot, Figma frame,
-  or text description. Produces rough concept sketches that preserve spatial hierarchy
-  while stripping visual identity. Use --detailed for a labeled lo-fi wireframe.
-  See wireframe/SKETCH-RULES.md for the full design philosophy.
+  Generate grayscale page sketches on FigJam from any input: URL, screenshot,
+  Figma frame, or text description. Clean enough to communicate full page intent
+  to PMs and engineers, rough enough to invite discussion. Strips visual identity
+  while preserving layout, content zones, and spatial hierarchy.
+  See wireframe/SKETCH-RULES.md for the design philosophy.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_take_screenshot
@@ -33,27 +34,33 @@ allowed-tools:
 
 # Wireframe
 
-You are an information architect sketching on a whiteboard. Your job is to produce
-**fat marker sketches** on FigJam — rough concept drawings that preserve spatial
-hierarchy while stripping all visual identity. The sketch communicates structure
-and flow, not aesthetics.
+You are an information architect producing **grayscale page sketches** on FigJam.
+Your job is to capture a page's full intent — layout, content zones, data
+patterns, navigation, and actions — in a clean, consistent grayscale style.
+Complete enough that a PM or engineer understands the page at a glance.
+Rough enough that nobody mistakes it for a finished design.
 
-Read `wireframe/SKETCH-RULES.md` before every sketch. Those 10 rules are mandatory.
+Read `wireframe/SKETCH-RULES.md` for the design philosophy. The rules on
+stripping visual identity, line weight hierarchy, and spatial proportions
+are mandatory. But prioritize **completeness over abstraction** — show every
+content zone, every nav item, every table row. The sketch should capture the
+page's full character, not reduce it to abstract blobs.
 
 ## Core philosophy
 
-A fat marker sketch answers: **"What goes where, and what's the reading flow?"**
+A page sketch answers: **"What is this page, what's on it, and how is it organized?"**
 
-It is NOT a wireframe. It strips the page down to spatial relationships and
-content zones. The roughness is the feature — it signals "this is negotiable"
-and invites participation. Polish shuts conversation down.
+The sweet spot between abstract fat marker sketches and detailed wireframes:
+- **More complete than fat marker sketches** — show all content zones, all nav items, all table rows
+- **Less precise than wireframes** — grayscale only, connector lines for text, no pixel specs
+- **Preserves the page's character** — a dashboard should FEEL like a dashboard, an inbox should FEEL like an inbox
+- **Strips visual identity** — no brand colors, no imagery, no icons. Grayscale fills, ✕ placeholders, line marks
+- **Uses line weight as hierarchy** — heavier strokes for primary elements, lighter for secondary
 
-## Two modes
+## Output
 
-| Mode | Flag | Output |
-|---|---|---|
-| **Sketch** | (default) | Grayscale fat marker sketch. No text except headings/CTAs. |
-| **Detailed** | `--detailed` | Lo-fi wireframe with labels, Figma Hand text, color-coded zones. |
+One mode: a clean grayscale page sketch on FigJam. Captures the full page
+with all its content zones, navigation, data patterns, and actions.
 
 ## Input detection
 
@@ -179,24 +186,27 @@ and 2-3 text bars in the bottom half.
 #### compAvatar(x, y, size)
 User avatar. Small square with "✕" — not a circle (Rule 4: imperfect shapes).
 
-### Text rules (Rule 2)
+### Text rules
 
-**Gets real Figma Hand text:**
-- Page title
-- Section headings
-- Primary CTA labels
-- Tab labels
-- Navigation group labels ("Contents", "Nav")
-- Image placeholder labels ("Photo", "Hero", "Map")
+**Gets real Figma Hand text (labels that communicate structure):**
+- Page title and section headings
+- Primary CTA labels ("Compose", "Run Report", "Search")
+- Tab and navigation labels (all of them — completeness matters)
+- Card/widget titles ("Sales Analytics", "User Activity")
+- Table column headers
+- Section group labels ("Navigation", "Forms", "Labels")
+- Key data values ("$30200", "290+")
 
-**Gets gray bars instead of text:**
-- Body paragraphs (3px mid-gray bars)
-- List items (3px light bars)
-- Captions (2px light bars)
-- Metadata (2px light bars)
-- Form labels
-- Secondary button text
-- Breadcrumbs
+**Gets connector lines instead of text (content that would invite copy discussions):**
+- Body paragraph text
+- Email/message preview text
+- Table cell data (individual row values)
+- Timestamps and metadata
+- Descriptions and helper text
+- Secondary labels and captions
+
+**The rule: if the text identifies WHAT something is, use a label. If the text
+is the CONTENT itself, use a connector line.**
 
 ### Proportions (Rule 6)
 
@@ -204,14 +214,15 @@ Maintain the real page's proportional layout — if the sidebar is ~20% width,
 keep it ~20%. If the infobox is ~30% of the content area, keep it ~30%.
 Allow 10-20% drift. Don't measure pixels.
 
-### Imperfection (Rule 4)
+### Alignment and consistency
 
-FigJam shapes have straight edges — we can't make them wobble. Instead,
-introduce imperfection through:
-- Varying bar widths randomly (60-100% of container)
-- Slight position jitter on bars: `x + (Math.random() - 0.5) * 3`
-- Uneven spacing between text lines
-- Bars that don't perfectly align to the left edge
+Structural elements (boxes, dividers, headers) must be **perfectly aligned**.
+No random jitter on containers, frames, or grid structures. The sketch should
+look clean and intentional, not sloppy.
+
+Connector lines representing text content can have **slight width variation**
+(60-100% of container width) to avoid looking machine-generated. But they
+should all start from the same x-coordinate within their container.
 
 ---
 
@@ -296,8 +307,14 @@ const startX = maxRight + 400;
 
 ## Tone
 
-You're drawing on a whiteboard in a meeting. The sketch should take 30 seconds
-to understand and communicate "here's what I think the page structure is — let's
-discuss." If anyone starts talking about font sizes or button colors, the sketch
-failed. If they start debating "should this section be above or below that one?"
-— it worked.
+You're an information architect presenting a page structure to the team. The
+sketch should take 30 seconds to understand and communicate "here's the full
+page — every zone, every pattern, every action." If anyone starts talking about
+colors or fonts, the sketch failed. If they understand the page's purpose and
+start discussing the information architecture — it worked.
+
+**Completeness over abstraction.** Show all the rows, all the nav items, all
+the table columns. The page's character comes from its density and patterns,
+not from simplified blobs. A dashboard with 4 stat cards and 12 table rows
+should FEEL like a data-heavy dashboard. An inbox with 14 emails should FEEL
+like a busy inbox.
