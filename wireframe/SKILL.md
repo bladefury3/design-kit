@@ -120,16 +120,22 @@ const C = {
 
 ### Line weight hierarchy (Rule 3)
 
-| Element | Bar height | Color | Stroke weight |
+| Element | Node type | Color | Stroke weight |
 |---|---|---|---|
-| Page frame | — | black | 4px |
-| Primary containers (header, sidebar, infobox) | — | border | 2px |
-| Heading text bar | 10-12px | dark | — |
-| Body text lines | 3px | mid | — |
-| Caption / secondary text | 2px | light | — |
-| Dividers | 1px | light | — |
-| CTA / button fill | 26px tall | dark | — |
-| Image placeholder fill | — | vlight | 1px light stroke |
+| Page frame | SQUARE shape | black | 3px |
+| Primary containers (header, sidebar, cards) | SQUARE shape | border | 1-2px |
+| Body text lines | LINE node | mid | 1.5px |
+| Secondary text / captions | LINE node | light | 1px |
+| Dividers | LINE node | vlight | 0.5px |
+| Heading labels | SQUARE shape (no stroke) | dark | — |
+| CTA / button | SQUARE shape (filled dark) | dark fill | — |
+| Image placeholder | SQUARE shape | vlight fill | 1px light stroke |
+| Avatars | ELLIPSE shape | vlight fill | 1px border |
+| Icons | SQUARE shape (small) | vlight fill | — |
+
+**Use `figma.createLine()` for all text content marks.** Lines give natural
+stroke weights (0.5px to 2px) that look like pen marks, not rectangles.
+Use SQUARE shapes only for containers, labels, buttons, and placeholders.
 
 ### Element vocabulary
 
@@ -141,8 +147,9 @@ Header/navigation bar. Contains: logo blob (dark, 60x10), search box outline
 with gray placeholder bar, 2-3 small nav item bars (light) on the right.
 
 #### compTextBlock(x, y, w, lines)
-Body copy zone. 2-4 thin (3px) mid-gray bars at 12px vertical spacing.
-Varying widths (60-100% of w). NO real text. This represents "text lives here."
+Body copy zone. 2-4 LINE nodes (1.5px stroke, mid-gray) at 10-12px vertical
+spacing. Varying widths (50-100% of w). NO real text. This represents
+"text lives here."
 
 #### compImage(x, y, w, h, label)
 Crossed-box placeholder (Rule 5). Light gray fill, 1px light stroke,
@@ -197,16 +204,17 @@ User avatar. Small square with "✕" — not a circle (Rule 4: imperfect shapes)
 - Section group labels ("Navigation", "Forms", "Labels")
 - Key data values ("$30200", "290+")
 
-**Gets connector lines instead of text (content that would invite copy discussions):**
-- Body paragraph text
-- Email/message preview text
-- Table cell data (individual row values)
-- Timestamps and metadata
-- Descriptions and helper text
-- Secondary labels and captions
+**Gets LINE nodes instead of text (content that would invite copy discussions):**
+- Body paragraph text (1.5px, mid gray)
+- Email/message preview text (1.5px, mid gray)
+- Table cell data / individual row values (1.5px, mid gray)
+- Timestamps and metadata (1px, light gray)
+- Descriptions and helper text (1px, light gray)
+- Secondary labels and captions (1px, light gray)
+- Handles, URLs, breadcrumbs (1px, light gray)
 
-**The rule: if the text identifies WHAT something is, use a label. If the text
-is the CONTENT itself, use a connector line.**
+**The rule: if the text identifies WHAT something is, use a Figma Hand label.
+If the text is the CONTENT itself, use a LINE node.**
 
 ### Proportions (Rule 6)
 
@@ -260,8 +268,7 @@ Questions for the team:
 Want me to:
 A) Sketch an alternative layout
 B) Sketch the next screen in the flow
-C) Go detailed — /wireframe --detailed
-D) Build in Figma — /capture or /plan
+C) Build this in Figma — /capture or /plan
 ```
 
 ---
@@ -290,10 +297,69 @@ readiness, not brainstorming.
 
 ## Execution
 
-Build via `figma_execute`. Each sketch should be ONE call if possible (15-20
-shapes max). If the page is complex, use two calls maximum.
+### Page management
 
-Find clear canvas space before building:
+Create a **new FigJam page** for each wireframe session to avoid node buildup.
+FigJam boards crash when they accumulate too many nodes (1000+). Check the
+current page's node count and create a fresh page if needed:
+
+```javascript
+if (figma.currentPage.children.length > 500) {
+  const newPage = figma.createPage();
+  newPage.name = 'Wireframes - ' + new Date().toLocaleDateString();
+  figma.currentPage = newPage;
+}
+```
+
+### Section-based architecture
+
+**Every sketch goes inside a section.** This enables isolated screenshots
+and keeps the canvas organized.
+
+```javascript
+const sec = figma.createSection();
+sec.name = 'Page Name Sketch';
+sec.x = startX;
+sec.y = 0;
+sec.resizeWithoutConstraints(width, height);
+```
+
+**Parent ALL elements to the section** using `sec.appendChild(node)`.
+Set position AFTER appending:
+
+```javascript
+const shape = figma.createShapeWithText();
+// ... configure shape ...
+sec.appendChild(shape);
+shape.x = 20;  // position relative to section
+shape.y = 30;
+```
+
+**LINE nodes** (for text marks) can be parented to sections:
+```javascript
+const line = figma.createLine();
+line.strokes = solid(C.mid);
+line.strokeWeight = 1.5;
+sec.appendChild(line);
+line.x = 20;
+line.y = 50;
+line.resize(200, 0);
+```
+
+**Connectors CANNOT be parented to sections** — they're canvas-level nodes.
+Use connectors only for flow arrows between screens (multi-page flows).
+For text marks inside sketches, always use LINE nodes.
+
+### Screenshots
+
+Screenshot the section node directly for isolated captures:
+```
+figma_take_screenshot with nodeId: section.id, scale: 2
+```
+
+### Canvas positioning
+
+Place each new sketch section to the right of existing content:
 ```javascript
 let maxRight = 0;
 for (const n of figma.currentPage.children) {
