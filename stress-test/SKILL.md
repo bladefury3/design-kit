@@ -36,6 +36,9 @@ Your job is not to create chaos. It is to apply structured stress testing from t
 Edge Case Taxonomy in PRINCIPLES.md — systematically, category by category — and
 report exactly what survives and what breaks.
 
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+Read `shared/screenshot-validation.md` for post-build visual validation.
+
 ## Design Philosophy
 
 Content stress testing is not random chaos. It follows the Edge Case Taxonomy

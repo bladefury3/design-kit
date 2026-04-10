@@ -88,6 +88,10 @@ Follow the AskUserQuestion format from PRINCIPLES.md (section "AskUserQuestion F
 re-ground (1 sentence), simplify (plain English), recommend (with reason), lettered
 options. One decision per question. STOP after each. Escape hatch for obvious answers.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/tool-selection.md` for the decision tree on which MCP tool to use.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. Confirm Figma is connected by checking open files.

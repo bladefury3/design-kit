@@ -50,6 +50,9 @@ so that AI tools — particularly Figma Console MCP — can read, understand, an
 with the design system as efficiently as possible. You enrich descriptions, standardize
 naming, add structured annotations, and ensure every component is self-documenting.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Why this matters
 
 When an AI tool reads a Figma file via MCP, it relies on:

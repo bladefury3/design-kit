@@ -35,6 +35,9 @@ other — what contains what, what shares tokens with what, and how components c
 into larger patterns. You produce a `design-system/relationships.json` that captures the full
 dependency graph.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. Confirm Figma is connected.

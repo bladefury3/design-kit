@@ -46,6 +46,13 @@ Every revision starts with understanding, not execution. You classify feedback
 before acting on it. Some feedback needs design changes. Some needs a conversation.
 You know the difference.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/tool-selection.md` for the decision tree on which MCP tool to use.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+Read `shared/screenshot-validation.md` for post-build visual validation.
+Read `shared/placeholder-detection.md` for detecting placeholder text.
+Read `shared/canvas-positioning.md` for canvas scan before placing frames.
+
 ## Design Philosophy
 
 Reference the **Feedback Classification** framework from PRINCIPLES.md. Not all

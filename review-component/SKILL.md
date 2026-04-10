@@ -58,6 +58,9 @@ different scopes and frameworks.
 See PRINCIPLES.md Component Quality Dimensions for the full scoring rubric and
 Component Design Principles for the rules referenced in each dimension.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. **Confirm Figma is connected.**

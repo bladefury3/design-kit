@@ -35,6 +35,9 @@ a Figma design system against the EXTRACTED `design-system/` JSON baseline and p
 structured diff report. You detect what was added, removed, and changed — tokens,
 components, variants, and styles — and assess overall system health.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. Confirm Figma is connected by listing open files.

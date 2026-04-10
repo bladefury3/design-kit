@@ -47,6 +47,9 @@ spacing, typography, and naming conventions.
 
 See PRINCIPLES.md for the full frameworks referenced in this audit.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. Confirm Figma is connected.

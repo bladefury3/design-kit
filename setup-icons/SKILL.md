@@ -45,6 +45,9 @@ skills waste MCP calls searching for "arrow" and hoping the first result is the
 right one. With this catalog, every icon resolves in O(1) — a dictionary lookup
 by name or tag.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. **Confirm Figma is connected** by calling `figma_list_open_files`. If no files
