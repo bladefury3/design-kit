@@ -29,6 +29,13 @@ design-kit/
 │   │       └── 01-<screen>.json  #       One build JSON per screen (avoids context overload)
 │   └── components/               #   Component plans (separate lifecycle)
 │       └── <component>.md        #     Variant matrix, props, anatomy
+├── shared/                       # Shared prompt patterns referenced by all skills
+│   ├── design-system-loading.md  #   3-tier fallback for loading tokens/components
+│   ├── tool-selection.md         #   Decision tree: which MCP tool for which operation
+│   ├── error-recovery.md         #   Standard error handling and retry patterns
+│   ├── screenshot-validation.md  #   Post-build visual validation workflow
+│   ├── canvas-positioning.md     #   Canvas space scanning before placing frames
+│   └── placeholder-detection.md  #   Detecting and replacing placeholder text
 ├── build-helpers/                # Reusable Figma plugin API helpers
 │   └── figma-helpers.js          #   mkFrame, mkText, sweepText, canvasScan, etc.
 ├── reports/                      # (deprecated — QA findings go to Figma comments)
@@ -43,7 +50,7 @@ design-kit/
 │
 │── ── Phase 1.5: Capture + Wireframe ──────────────────────────────────
 ├── capture/                      # Capture a live URL → raw + mapped Figma builds
-├── wireframe/                    # Lo-fi wireframes on FigJam from URL/screenshot/text
+├── wireframe/                    # Lo-fi wireframes on FigJam (4 fidelity levels: zones/sketch/wireframe/detailed)
 │
 │── ── Phase 2: Create ────────────────────────────────────────────────
 ├── brainstorm/                   # Generate design variations (SCAMPER + JTBD)
@@ -115,7 +122,7 @@ Step 4:  You're ready. Try any skill below.
 | I want to... | Run this | What happens |
 |---|---|---|
 | **Bring a live page into Figma** | `/capture` | Give a URL → raw replica + design-system-mapped version side by side |
-| **Sketch a lo-fi wireframe** | `/wireframe` | Give a URL, screenshot, or description → hand-drawn wireframe on FigJam |
+| **Sketch a lo-fi wireframe** | `/wireframe` | Give a URL, screenshot, or description → hand-drawn wireframe on FigJam. Flags: `--zones`, `--sketch` (default), `--wireframe`, `--detailed` |
 
 **Create**
 
@@ -248,6 +255,7 @@ CAPTURE + WIREFRAME (bring existing pages into Figma)
   /capture URL ──→ raw replica + mapped version (side by side, in Figma)
   /wireframe   ──→ hand-drawn lo-fi wireframe (on FigJam)
     accepts: URL, screenshot, Figma frame, or text description
+    flags: --zones (IA boxes), --sketch (default), --wireframe (real text), --detailed (states + annotations)
 
 Phase 2: CREATE (the design loop — spec-driven)
   /brainstorm ──→ pick a direction

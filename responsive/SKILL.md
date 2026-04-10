@@ -45,6 +45,8 @@ thinking.
 mechanically. You also build the frames directly in Figma when the user wants
 immediate results.
 
+Read shared/tool-selection.md for which MCP tool to use for each operation.
+
 ## Design Philosophy
 
 Responsive design is not a viewport tax. Every breakpoint is a design opportunity.
@@ -160,27 +162,7 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    - `design-system/components/index.json` — component catalog
    - `design-system/relationships.json` — composition graph
 
-   **If any are missing, try `figma_get_design_system_kit` first:**
-
-   > "Design system data not found locally. Let me try reading it directly from Figma..."
-
-   ```
-   Use figma_get_design_system_kit with:
-     - include: ["tokens", "components", "styles"]
-     - format: "full"
-   ```
-
-   If this returns data, use it for the session — no need to run extraction skills.
-
-   Only if `figma_get_design_system_kit` also fails, say:
-   > "Couldn't read the design system from Figma either. I can still adapt
-   > using basic frames and tokens, but component matching will be limited.
-   > Want to proceed, or run /setup-tokens first?"
-   >
-   > A) Proceed without design system data
-   > B) I'll run the extraction skills first
-
-   **STOP.** Wait for response.
+   Follow shared/design-system-loading.md for the 3-tier fallback pattern.
 
 3. Read the source frame. If no selection or name given, AskUserQuestion:
 
@@ -363,30 +345,7 @@ Use actual token names from `design-system/tokens.json`.
 
 ### Canvas scan (mandatory — do this first)
 
-Before placing any breakpoint frames, find clear space. See PRINCIPLES.md "Canvas
-Positioning Protocol". Run via `figma_execute`:
-
-```javascript
-const children = figma.currentPage.children;
-const selection = figma.currentPage.selection;
-let originX = 0;
-let originY = 0;
-
-if (selection.length > 0) {
-  const sel = selection[0];
-  originX = sel.x + sel.width + 200;
-  originY = sel.y;
-} else if (children.length > 0) {
-  let maxRight = -Infinity;
-  for (const child of children) {
-    const right = child.x + child.width;
-    if (right > maxRight) maxRight = right;
-  }
-  originX = maxRight + 200;
-}
-
-return { originX, originY };
-```
+Follow shared/canvas-positioning.md for canvas space scanning.
 
 ### Frame placement (horizontal row, 100px gap from originX)
 
@@ -408,10 +367,8 @@ Label each frame: "[Name] — Desktop (1440px)", "[Name] — Tablet (768px)",
 
 ## Step 5: Screenshot and verify
 
-```
-Use figma_take_screenshot for all three frames together.
-Use figma_capture_screenshot for individual frame detail if needed.
-```
+Follow shared/screenshot-validation.md for the validation workflow.
+Follow shared/placeholder-detection.md for text content checks.
 
 ### Responsive AI Slop Check (mandatory — check before presenting)
 

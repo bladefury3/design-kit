@@ -35,6 +35,25 @@ allowed-tools:
 
 Build a plan from `plans/` in Figma using **5 enforced phases**.
 
+## Tool Selection
+
+Read `shared/tool-selection.md` for the full decision tree. The critical rules:
+
+- **Library component** → `figma_instantiate_component` (NEVER `figma_execute`)
+- **Token-built frame** → `figma_execute` with `mkF()` helper
+- **Setting text on instance** → `figma_set_instance_properties` (NEVER tree walk via `figma_execute`)
+- **Toggling boolean props** → `figma_set_instance_properties`
+- **Setting fills/strokes** → `figma_set_fills` / `figma_set_strokes` (or `bf()`/`bs()` inside `figma_execute`)
+
+**CRITICAL: variantKey vs figmaKey**
+
+`figma_instantiate_component` requires a **variantKey** (individual variant),
+NOT a **figmaKey** (component set). The plan's `build.json` should have
+`variantKey` on every library-component node. If it has `figmaKey` instead,
+the instantiation will fail or produce the wrong variant.
+
+Check `design-system/components/index.json`: use `defaultVariantKey`, not `figmaKey`.
+
 ## The Rule
 
 **Components first. Frames fill gaps. Validate before presenting.**
@@ -203,8 +222,8 @@ function canvasScan() {
 ## Before you begin
 
 1. Read the plan from `plans/<name>/build.json` (or `plans/<name>.json`).
-2. Read `design-system/tokens.json` for token keys.
-3. Find clear canvas space using `canvasScan()` in your first `figma_execute` call.
+2. Load design system data following `shared/design-system-loading.md`.
+3. Find clear canvas space following `shared/canvas-positioning.md`.
 
 ## How to build
 
@@ -373,6 +392,37 @@ Before presenting the build to the user, verify ALL of these:
 
 If ANY check fails, fix it before presenting. The designer should never
 have to ask "why does this input have a label?" or "why does it say Olivia Rhye?"
+
+## Error Recovery
+
+Follow `shared/error-recovery.md` for all error handling. The most common
+build failures and their fixes:
+
+### "Instance not found" or wrong variant appears
+The key is a `figmaKey` (component set), not a `variantKey` (individual variant).
+Check `design-system/components/index.json` — use `defaultVariantKey`.
+If keys are stale, re-search: `figma_search_components` with the component name.
+
+### Property overrides have no effect
+Property names are case-sensitive. Use `figma_get_component_details` to see
+actual property names. `figma_set_instance_properties` handles `#nodeId`
+suffixes automatically, but the base name must match exactly.
+
+### Token binding fails
+Fall back to hardcoded value AND flag it:
+> "Token `spacing.xl` binding failed — used hardcoded `24px` instead.
+> Re-run `/setup-tokens` to refresh token keys."
+
+Never silently use hardcoded values.
+
+### figma_execute timeout
+Split the operation. Max 10-15 elements per call. Increase timeout to 15-20s
+for complex sections. Never exceed 25s.
+
+## Screenshot Validation
+
+Follow `shared/screenshot-validation.md` after every section build.
+Follow `shared/placeholder-detection.md` for text content checks.
 
 ## Tone
 

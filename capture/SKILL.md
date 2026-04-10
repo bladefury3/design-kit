@@ -60,18 +60,19 @@ figma_get_status with probe: true
 
 ### 2. Check for design system data
 
+Follow `shared/design-system-loading.md` for the 3-tier fallback pattern.
+
 Read these files if they exist (needed for Phase 4: MAP):
 - `design-system/tokens.json` — token values with `$extensions.figma.key`
 - `design-system/components/index.json` — component catalog with variant keys
 - `design-system/icons.json` — icon catalog (optional)
 - `design-system/relationships.json` — component graph (optional)
 
-If none exist and the user wants a mapped version, try `figma_get_design_system_kit`
-as a fallback. If that also returns nothing, warn the user:
+If none exist and the user wants a mapped version, follow the Tier 2/3
+fallbacks in `shared/design-system-loading.md`. If all fail, build raw-only.
 
-> "No design system data found. I can build the raw replica, but the mapped
-> version needs tokens and components. Run `/setup-tokens` and `/setup-components`
-> first, or I'll build raw-only."
+Read `shared/tool-selection.md` for which MCP tool to use for each operation.
+Follow `shared/canvas-positioning.md` for placing frames on canvas.
 
 ### 3. Set up browse daemon
 

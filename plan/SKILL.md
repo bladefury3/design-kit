@@ -39,17 +39,15 @@ the plan, it's decided. See PRINCIPLES.md for design principles and frameworks.
 
 ## Step 1: Load design system data
 
+Follow `shared/design-system-loading.md` for the 3-tier fallback pattern.
+
 Read ALL of these (preferred):
 - `design-system/tokens.json` — token values and figma keys
 - `design-system/components/index.json` — component catalog with figmaKey, defaultVariantKey, typicalOverrides
 - `design-system/relationships.json` — how components compose
 - `design-system/icons.json` — icon names, keys, tags (optional)
 
-If any are missing, fall back to `figma_get_design_system_kit` with
-`include: ["tokens", "components", "styles"]` and `format: "full"`.
-
-If both fail, ask: proceed with limited matching, or run `/setup-tokens` +
-`/setup-components` first?
+If any are missing, follow the Tier 2/3 fallbacks in `shared/design-system-loading.md`.
 
 Also check for `plans/<feature>/context.md` — shared decisions from prior screens
 (header config, nav items, spacing rhythm) that this screen must follow.
@@ -193,6 +191,23 @@ Include `propertyOverrides` on every `library-component` node:
 
 If no `propertyOverrides` specified, build falls back to `typicalOverrides`
 from `design-system/components/index.json`.
+
+### CRITICAL: Property name matching
+
+Property names in `propertyOverrides` MUST match the component's actual
+property names exactly (case-sensitive). Common names:
+
+- Input field: `Label`, `Hint text`, `Help icon`, `Supporting text`
+- Page header: `Search`, `Actions`, `Tabs`, `Breadcrumbs`
+- Button: `Icon leading`, `Icon trailing`
+
+Figma properties internally have `#nodeId` suffixes (e.g., `"Label text#3463:567"`).
+`figma_set_instance_properties` handles this automatically — you only need to
+match the base name. But if the base name is wrong (e.g., `"Label"` vs
+`"Label text"`), the override silently fails and the build shows unwanted elements.
+
+If unsure of a component's property names, call `figma_search_components` with
+`includeVariants: true` to see the variant axes and boolean properties.
 
 ### Icon resolution
 
@@ -455,14 +470,22 @@ After resolving icons and converting token-built placeholders to library
 components, re-count coverage. The resolution pass typically adds 5-10
 library components (icons) that weren't in the initial plan.
 
-### Resolution checklist
+### Resolution gate (BLOCKING — do not proceed to Step 6 until all pass)
 
-After this pass, the build.json should have:
-- [ ] Every icon resolved to a component key (or justified as token-built)
-- [ ] Every spacing value references a token key (no hardcoded pixels)
-- [ ] Every library-component has verified property names
-- [ ] Component coverage re-counted
+This is a hard gate, not a suggestion. If ANY check fails, fix it before
+presenting the plan. `/build` will fail if unresolved items reach it.
+
+- [ ] Every icon resolved to a component key (or justified as token-built with `$note`)
+- [ ] Every spacing value references a token key with `figmaKey` (no hardcoded pixels)
+- [ ] Every library-component has verified property names (case-sensitive match)
+- [ ] Every library-component uses `variantKey` (not `figmaKey`)
+- [ ] Component coverage re-counted after resolution
 - [ ] Zero emoji used as icon substitutes
+
+**If an icon cannot be resolved:** search the library at plan time with
+`figma_search_components`. If still not found, mark it as token-built with
+`"$note": "No library icon found for [name]. Build will create a placeholder frame."`
+Do NOT leave it unresolved — `/build` has no icon search fallback.
 
 ## Step 6: Review (3 checks)
 

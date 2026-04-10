@@ -46,6 +46,8 @@ account creation, data import wizards, approval chains. You output a flow plan t
 `plans/<flow-name>/` that `/build` can execute, and you build the full
 flow in Figma as a connected sequence.
 
+Read shared/tool-selection.md for which MCP tool to use for each operation.
+
 ## Design Philosophy
 
 Reference `PRINCIPLES.md` for the full set. These are the flow-specific principles
@@ -87,27 +89,7 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    - `design-system/components/index.json` — the component catalog with figmaKey and defaultVariantKey
    - `design-system/relationships.json` — how components compose together
 
-   **If any are missing, try `figma_get_design_system_kit` first:**
-
-   > "Design system data not found locally. Let me try reading it directly from Figma..."
-
-   ```
-   Use figma_get_design_system_kit with:
-     - include: ["tokens", "components", "styles"]
-     - format: "full"
-   ```
-
-   If this returns data, use it for the session — no need to run extraction skills.
-
-   Only if `figma_get_design_system_kit` also fails, say:
-   > "Couldn't read the design system from Figma either. I can still plan the
-   > flow using basic frames and tokens, but component matching will be limited.
-   > Want to proceed, or run /setup-tokens first?"
-   >
-   > A) Proceed without design system data
-   > B) I'll run the extraction skills first
-
-   **STOP.** Wait for response.
+   Follow shared/design-system-loading.md for the 3-tier fallback pattern.
 
 3. **Get the flow description.** If the user already described what they want (in
    the slash command args or conversation), skip straight to Step 1. Do not ask
@@ -508,30 +490,7 @@ like a storyboard.
 
 ### Canvas scan (mandatory — do this first)
 
-Before placing any screens, find clear space. See PRINCIPLES.md "Canvas Positioning
-Protocol". Run via `figma_execute`:
-
-```javascript
-const children = figma.currentPage.children;
-const selection = figma.currentPage.selection;
-let originX = 0;
-let originY = 0;
-
-if (selection.length > 0) {
-  const sel = selection[0];
-  originX = sel.x + sel.width + 200;
-  originY = sel.y;
-} else if (children.length > 0) {
-  let maxRight = -Infinity;
-  for (const child of children) {
-    const right = child.x + child.width;
-    if (right > maxRight) maxRight = right;
-  }
-  originX = maxRight + 200;
-}
-
-return { originX, originY };
-```
+Follow shared/canvas-positioning.md for canvas space scanning.
 
 All screen positions below are **offsets from `(originX, originY)`**, not from (0, 0).
 
@@ -638,6 +597,9 @@ Below each happy-path screen, add a label indicating which edge screens relate t
 
 Do NOT batch-build all screens at once. Build one screen at a time with
 validation between each:
+
+Follow shared/screenshot-validation.md for the validation workflow.
+Follow shared/placeholder-detection.md for text content checks.
 
 ```
 For each screen in flow order:

@@ -52,6 +52,10 @@ Every variant, token, and prop is already decided in the plan. You just build it
 **You do NOT make design decisions.** If something is ambiguous or missing in the
 plan, ask the user — don't guess. All decisions were made in `/plan-component`.
 
+Read `shared/tool-selection.md` for which MCP tool to use for each operation.
+Follow `shared/canvas-positioning.md` for placing the component set on canvas.
+Follow `shared/error-recovery.md` for handling failures during build.
+
 ## Spec-Driven Build Process
 
 Like `/build` for page layouts, component building follows an **enforced phase
@@ -113,20 +117,12 @@ Key Figma API differences:
    The plan contains everything: variant matrix, anatomy, token bindings, props,
    sub-components, and the component description. You execute it exactly.
 
-3. **Load design system data** for token lookups and sub-component instantiation:
+3. **Load design system data** following `shared/design-system-loading.md`:
    - `design-system/tokens.json` — token values and figmaKey hashes
    - `design-system/components/index.json` — component catalog for sub-component instantiation
    - `design-system/icons.json` — icon names, keys, and tags for instance swap defaults (optional)
 
-   If any are missing, try reading directly from Figma first:
-   ```
-   Use figma_get_design_system_kit with:
-     - include: ["tokens", "components"]
-     - format: "full"
-   ```
-   If that also fails, warn but proceed:
-   > "Design system data not available. I can still build the component, but
-   > token bindings may be incomplete. Run `/setup-tokens` for full coverage."
+   If any are missing, follow the Tier 2/3 fallbacks in `shared/design-system-loading.md`.
 
 4. **Pre-build validation (mandatory):**
 
