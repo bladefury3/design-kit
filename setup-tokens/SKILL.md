@@ -11,6 +11,7 @@ allowed-tools:
   - mcp__figma-console__figma_get_token_values
   - mcp__figma-console__figma_browse_tokens
   - mcp__figma-console__figma_get_styles
+  - mcp__figma-console__figma_get_text_styles
   - mcp__figma-console__figma_get_design_system_summary
   - mcp__figma-console__figma_get_design_system_kit
   - mcp__figma-console__figma_get_file_data
@@ -277,6 +278,77 @@ Use figma_get_styles to find color styles, text styles, and effect styles.
 Use figma_browse_tokens for any token browser data.
 ```
 
+### Extract text styles via `figma_get_text_styles`
+
+In addition to the general `figma_get_styles` call above, use `figma_get_text_styles` for
+richer typography data. This dedicated tool returns all local text styles with full font
+details that `figma_get_styles` may only summarize.
+
+```
+Use figma_get_text_styles to get all local text styles with:
+  - fontFamily, fontSize, fontWeight
+  - lineHeight, letterSpacing
+  - textAlignHorizontal
+  - style ID for binding
+```
+
+Note: `figma_get_design_system_kit` with `include: ["styles"]` also returns text styles,
+but `figma_get_text_styles` provides supplemental detail (e.g., `textAlignHorizontal`,
+granular `letterSpacing` units) that the kit summary may omit.
+
+Map each text style to W3C Design Tokens format under the `typography.textStyles` key:
+
+```json
+{
+  "typography": {
+    "textStyles": {
+      "display-xl-bold": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontSize": "36px",
+          "fontWeight": 700,
+          "lineHeight": "44px",
+          "letterSpacing": "-0.02em"
+        },
+        "$description": "Display XL Bold",
+        "$extensions": {
+          "figma": {
+            "styleId": "S:abc123..."
+          }
+        }
+      },
+      "body-md-regular": {
+        "$type": "typography",
+        "$value": {
+          "fontFamily": "Inter",
+          "fontSize": "16px",
+          "fontWeight": 400,
+          "lineHeight": "24px",
+          "letterSpacing": "0em"
+        },
+        "$description": "Body MD Regular",
+        "$extensions": {
+          "figma": {
+            "styleId": "S:def456..."
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+The `$extensions.figma.styleId` is critical for downstream binding. Skills like `/build`
+use it to apply text styles in one call via `figma.importStyleByKeyAsync(styleId)` then
+`textNode.textStyleId = style.id`, rather than setting fontFamily, fontSize, fontWeight,
+lineHeight, and letterSpacing individually.
+
+When merging text styles into `design-system/tokens.json`, place `textStyles` inside the
+existing `typography` key alongside `fontFamily`, `fontSize`, `fontWeight`, and
+`lineHeight` entries extracted from variables. The variable-based tokens capture the
+primitive scale; the text styles capture the composite presets that reference them.
+
 ### Token categories to look for
 
 **Colors**
@@ -506,7 +578,8 @@ Before writing the file:
 Present a summary:
 > "Here's what I extracted:
 > - 48 color tokens (32 primitive, 16 semantic)
-> - 12 typography tokens
+> - 12 typography variable tokens (font families, sizes, weights, line heights)
+> - 18 text styles (composite typography presets with style IDs for binding)
 > - 8 spacing tokens
 > - 5 border radius tokens
 > - 3 shadow tokens
