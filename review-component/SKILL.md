@@ -30,6 +30,7 @@ allowed-tools:
   - mcp__figma-console__figma_get_component_image
   - mcp__figma-console__figma_post_comment
   - mcp__figma-console__figma_get_comments
+  - mcp__figma-console__figma_delete_comment
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
   - Read
@@ -839,7 +840,10 @@ Generate a summary of what needs to change:
 > the variant structure from scratch."
 
 **If C (just the report):**
-Post findings as Figma comments on the component node:
+Before posting, clean up previous review comments: call `figma_get_comments` on
+the component node, delete any comments starting with `[Review]` via
+`figma_delete_comment`. Then post findings as Figma comments prefixed with
+`[Review]`:
 > "Review posted as Figma comments on the component. You can see them
 > in Figma's comment panel."
 

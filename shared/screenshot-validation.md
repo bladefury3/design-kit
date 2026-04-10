@@ -2,6 +2,18 @@
 
 Standard workflow for visual validation after creating or modifying Figma content.
 
+## Which screenshot tool to use
+
+The MCP has two screenshot tools. Using the right one avoids wasted tokens and latency.
+
+| Tool | How it works | Best for |
+|---|---|---|
+| `figma_take_screenshot` | REST API. Supports up to 4x scale, PNG/JPG/SVG/PDF. Requires `nodeId` or captures viewport. | **Validation after building.** Pass the root frame or section `nodeId` to capture exactly what you built. |
+| `figma_capture_screenshot` | Desktop Bridge (Plugin API). AI-optimized: 1x PNG, auto-caps at 1568px width. | **Analysis during planning.** Lighter weight, faster, good for capturing existing designs to analyze. |
+
+**Default**: Use `figma_take_screenshot` for build validation (you have the nodeId).
+Use `figma_capture_screenshot` for exploratory captures (analyzing existing designs).
+
 ## The loop
 
 After creating or modifying ANY visual element:

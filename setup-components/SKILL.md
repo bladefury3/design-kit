@@ -428,6 +428,19 @@ Use figma_get_annotations for designer annotations attached to the component.
 Use figma_get_component_image for a rendered screenshot of each variant.
 ```
 
+**State machine enrichment (mandatory for component sets with state variants):**
+When writing a per-component JSON, call `figma_analyze_component_set` on the
+component set's nodeId. Include the returned data in the component JSON under
+a `stateMachine` key:
+- `axes` — variant axes with all possible values (from `variantAxes`)
+- `cssMapping` — CSS pseudo-class mappings (from `cssMapping`)
+- `diffFromDefault` — only the changed properties per state vs default (from `diffFromDefault`)
+
+This gives downstream skills (`/plan`, `/build`, `/handoff`) interaction state
+data without re-querying Figma. For example, `/handoff` can emit hover/focus/disabled
+specs directly from the cached state machine, and `/build` can set the correct
+variant for each interaction state.
+
 **Prefer `figma_get_component_for_development_deep` over the regular `_for_development`**
 — it gives unlimited depth via Desktop Bridge and resolved token names.
 
@@ -622,7 +635,24 @@ MCP search calls entirely.
   "annotations": [
     "Use primary variant for single main action per page",
     "Destructive variant requires confirmation dialog"
-  ]
+  ],
+
+  "stateMachine": {
+    "axes": {
+      "State": ["default", "hover", "focus", "disabled"],
+      "Size": ["sm", "md", "lg"]
+    },
+    "cssMapping": {
+      "hover": ":hover",
+      "focus": ":focus-visible",
+      "disabled": ":disabled"
+    },
+    "diffFromDefault": {
+      "hover": { "fills": "color.background.bg-brand-solid-hover" },
+      "focus": { "strokes": "color.border.border-brand", "strokeWeight": 2 },
+      "disabled": { "opacity": 0.5 }
+    }
+  }
 }
 ```
 
@@ -633,6 +663,7 @@ MCP search calls entirely.
 | `$extensions.figma.variantKeys` | `figma_instantiate_component(key)` — one call | `figma_search_components` + parse results + guess variant |
 | `tokens[*].figmaKey` | `importVariableByKeyAsync(key)` in `figma_execute` | Scan 6 collections + 359 variables per token |
 | `props[*].$extensions.figma.compatibleKeys` | Direct instance swap by key | Search for compatible components each time |
+| `stateMachine` | `/handoff` emits hover/focus/disabled specs; `/build` picks correct state variant | Re-query `figma_analyze_component_set` every time |
 ```
 
 ## Step 4: Report

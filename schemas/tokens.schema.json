@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design-kit/tokens/v1",
+  "title": "Design Kit Tokens",
+  "description": "Design tokens extracted from Figma, following W3C Design Tokens format with Figma extensions.",
+  "type": "object",
+  "required": ["$schema", "$metadata"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "design-kit/tokens/v1"
+    },
+    "$metadata": {
+      "type": "object",
+      "required": ["source", "extractedAt"],
+      "properties": {
+        "name": { "type": "string" },
+        "source": { "type": "string", "enum": ["figma"] },
+        "extractedAt": { "type": "string", "format": "date-time" },
+        "figmaFile": { "type": "string" },
+        "collections": { "type": "array", "items": { "type": "string" } },
+        "modes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "color": { "$ref": "#/$defs/tokenGroup" },
+    "spacing": { "$ref": "#/$defs/tokenGroup" },
+    "borderRadius": { "$ref": "#/$defs/tokenGroup" },
+    "typography": { "$ref": "#/$defs/tokenGroup" },
+    "shadow": { "$ref": "#/$defs/tokenGroup" },
+    "opacity": { "$ref": "#/$defs/tokenGroup" }
+  },
+  "additionalProperties": { "$ref": "#/$defs/tokenGroup" },
+  "$defs": {
+    "tokenGroup": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          { "$ref": "#/$defs/tokenValue" },
+          { "$ref": "#/$defs/tokenGroup" }
+        ]
+      }
+    },
+    "tokenValue": {
+      "type": "object",
+      "required": ["$value", "$type"],
+      "properties": {
+        "$value": {},
+        "$type": { "type": "string" },
+        "$description": { "type": "string" },
+        "$extensions": {
+          "type": "object",
+          "properties": {
+            "figma": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^[a-f0-9]{40}$",
+                  "description": "40-char hex hash for figma.variables.importVariableByKeyAsync()"
+                },
+                "styleId": { "type": "string" },
+                "collectionId": { "type": "string" },
+                "modeId": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design-kit/icons/v1",
+  "title": "Design Kit Icons",
+  "description": "Icon catalog with Figma component keys and search tags.",
+  "type": "object",
+  "required": ["$schema", "$metadata", "icons"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "design-kit/icons/v1"
+    },
+    "$metadata": {
+      "type": "object",
+      "required": ["extractedAt", "totalIcons"],
+      "properties": {
+        "extractedAt": { "type": "string" },
+        "libraryFile": { "type": "string" },
+        "totalIcons": { "type": "integer", "minimum": 0 },
+        "categories": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "icons": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["key"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "Component key for figma_instantiate_component"
+          },
+          "nodeId": { "type": "string" },
+          "category": { "type": "string" },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "primaryUse": { "type": "string" },
+          "size": {
+            "type": "object",
+            "properties": {
+              "width": { "type": "number" },
+              "height": { "type": "number" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

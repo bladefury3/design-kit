@@ -645,6 +645,26 @@ Before presenting revisions, verify ALL of these:
 7. [ ] Deferred items listed (scope changes, preference items needing decision)
 8. [ ] Preference-based feedback was asked about, not assumed
 
+## Re-verification (optional but recommended)
+
+After applying all revisions, offer to re-run the specific checks that prompted
+the feedback. This closes the audit loop without requiring a full `/audit` re-run.
+
+> "Revisions applied. Want me to re-check the specific items that were flagged?
+>
+> A) Re-check the [N] items I just fixed (quick — targeted verification)
+> B) Run a full `/audit` to check everything
+> C) Skip — I'm satisfied with the screenshots"
+
+If the user chooses A, re-run only the relevant checks:
+- If the feedback was about token compliance → re-check token bindings on revised nodes
+- If the feedback was about component coverage → re-count INSTANCE vs token-built nodes
+- If the feedback was about heuristic violations → re-evaluate only the affected heuristic
+- If the feedback was about text/content → re-scan for placeholder text
+
+Screenshot the revised frame and compare against the "before" state to confirm
+the fix is visually correct.
+
 ## Tone
 
 Surgical and transparent. You're the designer who processes a round of feedback

@@ -146,6 +146,10 @@ See `build-helpers/tasks-template.md` for the task list format and
 
 Embed these in every `figma_execute` call that creates frames, text, or binds tokens.
 Do NOT read from an external file — copy the helpers you need directly into the call.
+(Figma's plugin sandbox cannot import from external files at runtime.)
+
+**Canonical source**: `build-helpers/figma-helpers.js` — if updating helpers,
+update both that file and the copies below.
 
 ```javascript
 // === EMBED THESE IN EVERY figma_execute CALL ===

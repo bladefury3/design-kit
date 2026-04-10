@@ -28,6 +28,9 @@ allowed-tools:
   - mcp__figma-console__figma_list_open_files
   - mcp__figma-console__figma_navigate
   - mcp__figma-console__figma_scan_code_accessibility
+  - mcp__figma-console__figma_post_comment
+  - mcp__figma-console__figma_get_comments
+  - mcp__figma-console__figma_delete_comment
   - Read
   - Write
   - Edit
@@ -393,11 +396,18 @@ then take a new screenshot to verify.
 **Do NOT write report JSON files to disk.** Reports go stale within hours — the
 Figma file is the source of truth. Instead:
 
-1. **Post a summary comment** on the audited frame via `figma_post_comment` with
-   the overall score, category breakdown, and top issues.
-2. **Post specific comments** on individual frames/nodes for critical and warning
-   findings so they're visible in Figma's comment panel.
-3. **Present the full report inline** in the conversation — the user sees it
+1. **Clean up previous audit comments** before posting new ones.
+   Call `figma_get_comments` on the audited frame. Delete any comments that
+   start with `[Audit]` using `figma_delete_comment`. This prevents duplicate
+   findings from accumulating across re-runs.
+
+2. **Post a summary comment** on the audited frame via `figma_post_comment` with
+   the overall score, category breakdown, and top issues. Prefix with `[Audit]`
+   so future runs can identify and clean up these comments.
+3. **Post specific comments** on individual frames/nodes for critical and warning
+   findings so they're visible in Figma's comment panel. Prefix each with
+   `[Audit]` for cleanup on re-run.
+4. **Present the full report inline** in the conversation — the user sees it
    immediately and can act on it.
 
 This keeps findings where designers actually look (Figma comments) rather than

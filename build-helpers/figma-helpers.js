@@ -1,6 +1,13 @@
 // ============================================================================
-// Design Kit — Figma Plugin API Helpers
+// Design Kit — Figma Plugin API Helpers (CANONICAL SOURCE)
 // ============================================================================
+// This file is the single source of truth for Figma helper functions.
+// Skills embed copies of these helpers in figma_execute calls — they cannot
+// import from external files at runtime (Figma plugin sandbox limitation).
+//
+// If you update a helper here, also update the inline copy in build/SKILL.md.
+// Skills that reference "build-helpers/figma-helpers.js" should copy from here.
+//
 // Embed these in figma_execute calls. Each function is self-contained.
 // Copy the ones you need into your figma_execute code block.
 //

@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "design-kit/components/v1",
+  "title": "Design Kit Component Index",
+  "description": "Component catalog with Figma keys for instantiation.",
+  "type": "object",
+  "required": ["$schema", "$metadata"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "const": "design-kit/components/v1"
+    },
+    "$metadata": {
+      "type": "object",
+      "required": ["extractedAt", "source"],
+      "properties": {
+        "extractedAt": { "type": "string" },
+        "source": { "type": "string" },
+        "figmaFile": { "type": "string" },
+        "totalComponentSets": { "type": "integer", "minimum": 0 },
+        "totalVariants": { "type": "integer", "minimum": 0 }
+      }
+    }
+  },
+  "additionalProperties": {
+    "type": "object",
+    "required": ["name", "figmaKey"],
+    "properties": {
+      "name": { "type": "string" },
+      "figmaKey": { "type": "string", "description": "Component SET key (do NOT use for instantiation)" },
+      "defaultVariantKey": {
+        "type": "string",
+        "description": "Default VARIANT key (use this for figma_instantiate_component)"
+      },
+      "recommendedDesktopKey": {
+        "type": "string",
+        "description": "Preferred desktop variant key"
+      },
+      "variantCount": { "type": "integer", "minimum": 1 },
+      "category": { "type": "string" },
+      "typicalOverrides": {
+        "type": "object",
+        "description": "Boolean properties to disable by default",
+        "additionalProperties": { "type": "boolean" }
+      },
+      "stateMachine": {
+        "type": "object",
+        "description": "Variant state machine from figma_analyze_component_set",
+        "properties": {
+          "axes": { "type": "object" },
+          "cssMapping": { "type": "object" },
+          "diffFromDefault": { "type": "object" }
+        }
+      }
+    }
+  }
+}

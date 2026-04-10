@@ -16,6 +16,7 @@ allowed-tools:
   - mcp__figma-console__figma_get_design_system_kit
   - mcp__figma-console__figma_get_status
   - mcp__figma-console__figma_set_fills
+  - mcp__figma-console__figma_set_image_fill
   - mcp__figma-console__figma_set_text
   - mcp__figma-console__figma_resize_node
   - mcp__figma-console__figma_move_node
@@ -533,7 +534,10 @@ For elements that don't match a library component:
 
 1. Create frames with `mkFrame()`, bind spacing tokens
 2. Create text with `mkText()`, bind typography tokens
-3. Create image placeholders with fill-bound bg tokens
+3. Create image placeholders — for the raw replica, use `figma_set_image_fill`
+   to fill frames with actual images from the source page (pass base64 data or
+   image URL). For the mapped version, use token-bound background fills as
+   placeholders (since the goal is design system fidelity, not pixel replication).
 4. All values MUST be token-bound — zero hardcoded pixels
 
 ### 4f. Validate
