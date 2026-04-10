@@ -72,13 +72,16 @@ Standard error handling patterns for all skills that interact with Figma.
 **Diagnosis**:
 Property names are case-sensitive and must match exactly. Common mismatches:
 - `"Label"` vs `"Label text"` — check the component's actual property names
+- `"Icon leading"` vs `"⬅️ Icon leading"` — some libraries use emoji prefixes
+  on property names (e.g., `⬅️`, `➡️`, `🔀`, `↳`). Missing the emoji = silent failure.
 - Properties have `#nodeId` suffixes (e.g., `"Label text#3463:567"`) —
   `figma_set_instance_properties` handles this automatically, but the base
   name must match
 
 **Recovery**:
-1. Use `figma_get_component_details` to see actual property names
-2. Retry with corrected names
+1. Check the error response from `figma_set_instance_properties` — it lists
+   all available property names including emoji prefixes
+2. Retry with the exact property names from the error response
 3. If property doesn't exist, it may be a variant axis (not a boolean prop)
 
 ## General retry strategy

@@ -184,7 +184,7 @@ Include `propertyOverrides` on every `library-component` node:
 |---|---|
 | Input field | `Label`, `Hint text`, `Supporting text` (unless form needs them) |
 | Page header | `Search`, `Actions`, `Tabs` (unless screen needs them) |
-| Button | `Icon leading`, `Icon trailing` (unless icon is specified) |
+| Button | `⬅️ Icon leading`, `➡️ Icon trailing` (unless icon is specified) |
 | Avatar label group | subtitle text → empty string if not needed |
 | Section header | `Tabs`, `Actions`, `Dropdown icon` |
 | Metric item | `Actions` (unless action buttons shown) |
@@ -195,11 +195,21 @@ from `design-system/components/index.json`.
 ### CRITICAL: Property name matching
 
 Property names in `propertyOverrides` MUST match the component's actual
-property names exactly (case-sensitive). Common names:
+property names exactly (case-sensitive, including emoji prefixes).
+
+**Some libraries use emoji prefixes in property names.** For example, Untitled UI
+uses `⬅️ Icon leading` and `➡️ Icon trailing` on Button, and `🔀 Icon swap` on
+Input field. Using `"Icon leading": false` (without the emoji) will fail silently.
+
+Common names (Untitled UI — other libraries may differ):
 
 - Input field: `Label`, `Hint text`, `Help icon`, `Supporting text`
 - Page header: `Search`, `Actions`, `Tabs`, `Breadcrumbs`
-- Button: `Icon leading`, `Icon trailing`
+- Button: `⬅️ Icon leading`, `➡️ Icon trailing`
+
+**When unsure of exact property names**: instantiate the component first, then
+check the error response from `figma_set_instance_properties` — it lists all
+available properties. Or call `figma_get_component_details` on the component.
 
 Figma properties internally have `#nodeId` suffixes (e.g., `"Label text#3463:567"`).
 `figma_set_instance_properties` handles this automatically — you only need to

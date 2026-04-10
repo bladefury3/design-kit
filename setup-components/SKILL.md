@@ -253,8 +253,24 @@ Build the index from the discovery data in Step 1. For each component set, captu
 - `file` — path to individual JSON (e.g., `design-system/components/button.json`) — may not exist yet
 - `category` — category/group
 - `description` — short description
-- `figmaKey` — component set key (hash)
-- `defaultVariantKey` — key of the default variant (hash) for `figma_instantiate_component`
+- `figmaKey` — component set key (40-char hex hash, e.g., `aa53b4bdab230880d4c65891a3ef1a8f02320d35`)
+- `defaultVariantKey` — key of the default variant (40-char hex hash) for `figma_instantiate_component`
+
+**CRITICAL: Key format must be 40-char hex hashes, NOT nodeId format.**
+
+NodeId-format keys (e.g., `3287:427074`) are session-specific and only work within
+the file where they were extracted. They go stale when Figma restarts and fail
+when used from a different file (e.g., a product file instantiating from a library).
+
+40-char hex keys (e.g., `aa53b4bdab230880d4c65891a3ef1a8f02320d35`) are permanent
+and work cross-file via `figma_instantiate_component`.
+
+**How to get hex keys:**
+- `figma_get_library_components` with `includeVariants: true` → returns hex keys
+- `figma_search_components` with `libraryFileKey` → returns hex keys
+- `figma_execute` with `component.key` → returns hex keys (Plugin API)
+- `figma_get_design_system_kit` → may return nodeId format — if so, re-query with
+  `figma_search_components` using the component name + `libraryFileKey` to get hex keys
 - `recommendedDesktopKey` — key of simplest Desktop variant (prefer Simple/Default over Banner/Chart)
 - `variantClassification` — variants grouped by breakpoint (Desktop vs Mobile)
 - `typicalOverrides` — boolean properties usually turned OFF in practice

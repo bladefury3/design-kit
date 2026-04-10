@@ -270,8 +270,10 @@ For each library component in the plan:
 4. `figma_set_instance_properties` to disable unwanted properties:
    - Input field: `Label=false`, `Hint text=false`, `Help icon=false` (unless plan says otherwise)
    - Page header: `Search=false`, `Actions=false`
-   - Button: `Icon leading=false`, `Icon trailing=false`
+   - Button: `⬅️ Icon leading=false`, `➡️ Icon trailing=false` (note emoji prefixes)
    - Avatar label group: set subtitle text to empty if not needed
+   **If overrides fail silently**: check the error response — it lists available
+   property names. Some libraries use emoji prefixes (e.g., `⬅️`, `➡️`, `🔀`).
 5. Set text content on the instance (see "How to set text" below)
 
 **NEVER skip property overrides.** Library components show labels, hints, icons
