@@ -271,6 +271,52 @@ mkdir -p "$INSTALL_DIR"
 NEW_COUNT=0
 UPDATED_COUNT=0
 
+# ─── Copy supporting files (shared/, PRINCIPLES.md, build-helpers/) ─────
+# These are referenced by skills and must be available at the install location.
+# Claude Code: skills run from the repo root, so these are already available.
+# Cursor/other: skills are copied to .cursor/skills/, so we copy support files there too.
+
+SUPPORT_DIRS=(shared build-helpers)
+SUPPORT_FILES=(PRINCIPLES.md ETHOS.md)
+
+# Copy support directories
+for sdir in "${SUPPORT_DIRS[@]}"; do
+  if [ -d "$SCRIPT_DIR/$sdir" ]; then
+    # For Claude Code global install, copy to install dir alongside skills
+    # For Cursor, copy into the skills directory
+    target_dir="$INSTALL_DIR/$sdir"
+    if [ -d "$target_dir" ]; then
+      rm -rf "$target_dir"
+    fi
+    cp -r "$SCRIPT_DIR/$sdir" "$target_dir"
+    dim "Copied $sdir/"
+  fi
+done
+
+# Copy support files
+for sfile in "${SUPPORT_FILES[@]}"; do
+  if [ -f "$SCRIPT_DIR/$sfile" ]; then
+    cp "$SCRIPT_DIR/$sfile" "$INSTALL_DIR/$sfile"
+    dim "Copied $sfile"
+  fi
+done
+
+# Also copy per-skill companion files (e.g., wireframe/SKETCH-RULES.md)
+for skill in "${SKILLS[@]}"; do
+  for companion in "$SCRIPT_DIR/$skill"/*.md; do
+    [ -f "$companion" ] || continue
+    cname="$(basename "$companion")"
+    [ "$cname" = "SKILL.md" ] && continue
+    if [ "$INSTALL_MODE" = "cursor" ]; then
+      mkdir -p "$INSTALL_DIR/$skill"
+      cp "$companion" "$INSTALL_DIR/$skill/$cname"
+      dim "Copied $skill/$cname"
+    fi
+  done
+done
+
+echo ""
+
 for skill in "${SKILLS[@]}"; do
   skill_src="$SCRIPT_DIR/$skill/SKILL.md"
 

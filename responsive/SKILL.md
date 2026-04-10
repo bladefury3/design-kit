@@ -45,7 +45,7 @@ thinking.
 mechanically. You also build the frames directly in Figma when the user wants
 immediate results.
 
-Read shared/tool-selection.md for which MCP tool to use for each operation.
+Read `shared/tool-selection.md` for which MCP tool to use for each operation.
 
 ## Design Philosophy
 
@@ -162,7 +162,7 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    - `design-system/components/index.json` — component catalog
    - `design-system/relationships.json` — composition graph
 
-   Follow shared/design-system-loading.md for the 3-tier fallback pattern.
+   Read `shared/design-system-loading.md` and follow the 3-tier fallback pattern.
 
 3. Read the source frame. If no selection or name given, AskUserQuestion:
 
@@ -345,7 +345,7 @@ Use actual token names from `design-system/tokens.json`.
 
 ### Canvas scan (mandatory — do this first)
 
-Follow shared/canvas-positioning.md for canvas space scanning.
+Read `shared/canvas-positioning.md` and follow the canvas space scanning protocol.
 
 ### Frame placement (horizontal row, 100px gap from originX)
 
@@ -367,8 +367,8 @@ Label each frame: "[Name] — Desktop (1440px)", "[Name] — Tablet (768px)",
 
 ## Step 5: Screenshot and verify
 
-Follow shared/screenshot-validation.md for the validation workflow.
-Follow shared/placeholder-detection.md for text content checks.
+Read `shared/screenshot-validation.md` and follow the validation workflow.
+Read `shared/placeholder-detection.md` for text content checks.
 
 ### Responsive AI Slop Check (mandatory — check before presenting)
 

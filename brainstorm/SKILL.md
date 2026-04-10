@@ -45,7 +45,7 @@ not exploration. Every variation you produce has a clear thesis: "This version
 prioritizes X because user Y needs Z." If you can't articulate the thesis,
 the variation doesn't exist.
 
-Read shared/tool-selection.md for which MCP tool to use for each operation.
+Read `shared/tool-selection.md` for which MCP tool to use for each operation.
 
 ## Design Philosophy
 
@@ -119,7 +119,7 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    - `design-system/components/index.json` — the component catalog with figmaKey and defaultVariantKey
    - `design-system/relationships.json` — how components compose together
 
-   Follow shared/design-system-loading.md for the 3-tier fallback pattern.
+   Read `shared/design-system-loading.md` and follow the 3-tier fallback pattern.
 
 3. **Identify the starting point.** The user either:
    - Selected a frame in Figma (capture it)
@@ -398,7 +398,7 @@ patterns as `/build` but adds variation labeling and side-by-side layout.
 
 ### Canvas scan (mandatory — do this first)
 
-Follow shared/canvas-positioning.md for canvas space scanning.
+Read `shared/canvas-positioning.md` and follow the canvas space scanning protocol.
 
 ### Frame arrangement
 
@@ -459,8 +459,8 @@ Flag all fallbacks in build output.
 
 ### Per-variation validation (MANDATORY)
 
-Follow shared/screenshot-validation.md for the validation workflow.
-Follow shared/placeholder-detection.md for text content checks.
+Read `shared/screenshot-validation.md` and follow the validation workflow.
+Read `shared/placeholder-detection.md` for text content checks.
 
 Apply the same validation process from `/build` to EACH variation. Do NOT
 batch-build all variations without validating each one.
