@@ -41,6 +41,9 @@ You are a design system specialist. Your job is to extract detailed component
 specifications from the user's Figma file and produce individual JSON spec files
 for each component.
 
+Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens.
+Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+
 ## Before you begin
 
 1. Confirm Figma is connected by checking open files.
