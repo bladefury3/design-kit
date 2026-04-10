@@ -345,7 +345,7 @@ for skill in "${SKILLS[@]}"; do
   fi
 
   # Show description from first non-frontmatter, non-empty line
-  desc=$(sed -n '/^---$/,/^---$/d; /^#/d; /^$/d; p' "$skill_dst" | head -1)
+  desc=$(sed -n '/^---$/,/^---$/d; /^#/d; /^$/d; p' "$skill_dst" | head -1 || true)
   if [ -n "$desc" ]; then
     dim "$desc"
   fi
