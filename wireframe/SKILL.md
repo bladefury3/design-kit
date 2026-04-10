@@ -1,11 +1,15 @@
 ---
 name: wireframe
 description: |
-  Generate grayscale page sketches on FigJam from any input: URL, screenshot,
-  Figma frame, or text description. Clean enough to communicate full page intent
-  to PMs and engineers, rough enough to invite discussion. Strips visual identity
-  while preserving layout, content zones, and spatial hierarchy.
-  See wireframe/SKETCH-RULES.md for the design philosophy.
+  Generate grayscale page sketches on FigJam at 4 fidelity levels:
+  --zones (IA boxes), --sketch (squiggle content, default), --wireframe
+  (real placeholder text), --detailed (text + states + annotations).
+  Like Balsamiq — hand-drawn, content-focused, intentionally rough. Each
+  level enables a different design conversation, from "is this the right page?"
+  to "how does this behave?"
+  See wireframe/SKETCH-RULES.md for design philosophy,
+  wireframe/VOCABULARY.md for the 40-component catalog,
+  wireframe/FRAMES.md for device chrome specifications.
 allowed-tools:
   - mcp__figma-console__figma_execute
   - mcp__figma-console__figma_take_screenshot
@@ -34,35 +38,112 @@ allowed-tools:
 
 # Wireframe
 
-You are an information architect producing **grayscale page sketches** on FigJam.
-Your job is to capture a page's full intent — layout, content zones, data
-patterns, navigation, and actions — in a clean, consistent grayscale style.
-Complete enough that a PM or engineer understands the page at a glance.
-Rough enough that nobody mistakes it for a finished design.
+You are an information architect producing **grayscale page sketches** on FigJam
+at varying levels of content fidelity. Your job is to capture a page's full
+intent — layout, content zones, data patterns, navigation, and actions — in a
+clean, consistent, hand-drawn style.
+
+The fidelity level controls how much content detail appears. The hand-drawn
+aesthetic stays constant across all levels. Even `--detailed` uses Figma Hand
+font, grayscale base, and ✕-box image placeholders.
 
 Read `wireframe/SKETCH-RULES.md` for the design philosophy. The rules on
 stripping visual identity, line weight hierarchy, and spatial proportions
-are mandatory. But prioritize **completeness over abstraction** — show every
-content zone, every nav item, every table row. The sketch should capture the
-page's full character, not reduce it to abstract blobs.
+are mandatory at every level.
 
-## Core philosophy
+Read `wireframe/VOCABULARY.md` for the full 40-component catalog with
+per-level rendering specs.
+
+Read `wireframe/FRAMES.md` for device chrome frame specifications.
+
+---
+
+## Fidelity Levels
+
+Four levels, each enabling a different design conversation:
+
+| Level | Flag | Decision it enables | Audience |
+|---|---|---|---|
+| **Zones** | `--zones` | "Is this the right page structure?" | PMs, stakeholders, early ideation |
+| **Sketch** | `--sketch` | "Does the content flow make sense?" | Design team, product review |
+| **Wireframe** | `--wireframe` | "Is every element accounted for?" | Design review, eng estimation |
+| **Detailed** | `--detailed` | "How does this behave?" | Eng handoff prep, QA planning |
+
+**Default: `--sketch`** when no flag is specified.
+
+Each level is **additive** — level N includes everything from level N-1 plus
+more content. You refine, you don't restart.
+
+### What changes per level
+
+| Aspect | Zones | Sketch | Wireframe | Detailed |
+|---|---|---|---|---|
+| **Components** | compZone only | Core vocabulary | Full vocabulary | Full vocabulary + states |
+| **Text** | Zone labels | Squiggle LINEs | Real placeholder text | Real text + edge case notes |
+| **Images** | — | ✕-box | ✕-box + label | ✕-box + label + dimensions |
+| **Interactive** | — | Shape outlines | Shapes + labels | Shapes + labels + state annotations |
+| **Data** | — | Dark/light bars | Realistic values | Values + empty/overflow |
+| **Color** | Grayscale (4) | Grayscale (7) | Grayscale + blue | Grayscale + 4 accents |
+| **Stickies** | 1-2 yellow | 2-3 yellow | Yellow + blue | Yellow + blue + inline red |
+| **Device frame** | Minimal chrome | Chrome, no URL text | Chrome + URL path | Chrome + full URL + viewport |
+
+---
+
+## Argument Parsing
+
+Parse the fidelity flag from the user's input. The flag can appear anywhere
+in the arguments.
+
+| Flag | Level |
+|---|---|
+| `--zones` | Zones |
+| `--sketch` | Sketch |
+| `--wireframe` | Wireframe |
+| `--detailed` | Detailed |
+| *(none)* | Sketch (default) |
+
+After extracting the flag, detect the input type from the remaining arguments
+(URL, screenshot, frame reference, or text description).
+
+Examples:
+- `/wireframe https://app.com/settings` → Sketch level, URL input
+- `/wireframe --zones describe a dashboard with sidebar and metrics` → Zones, text input
+- `/wireframe --wireframe this frame` → Wireframe, Figma frame input
+- `/wireframe --detailed` → Detailed, prompt for input
+
+---
+
+## Core Philosophy
 
 A page sketch answers: **"What is this page, what's on it, and how is it organized?"**
 
-The sweet spot between abstract fat marker sketches and detailed wireframes:
-- **More complete than fat marker sketches** — show all content zones, all nav items, all table rows
-- **Less precise than wireframes** — grayscale only, connector lines for text, no pixel specs
-- **Preserves the page's character** — a dashboard should FEEL like a dashboard, an inbox should FEEL like an inbox
-- **Strips visual identity** — no brand colors, no imagery, no icons. Grayscale fills, ✕ placeholders, line marks
-- **Uses line weight as hierarchy** — heavier strokes for primary elements, lighter for secondary
+Each level answers that question with increasing specificity:
 
-## Output
+- **Zones**: "Here are the regions." — Labeled boxes showing page structure.
+  Nothing inside the boxes. The conversation is about information architecture.
+- **Sketch**: "Here's how content flows." — Squiggle lines for text, shapes
+  for interactive elements, ✕-boxes for images. The conversation is about
+  hierarchy and content zones.
+- **Wireframe**: "Here's what everything is." — Real placeholder text, labeled
+  images, form fields with labels, realistic data. The conversation is about
+  completeness and element relationships.
+- **Detailed**: "Here's how it behaves." — Everything from wireframe plus state
+  annotations, edge cases, interaction notes. The conversation is about
+  implementation readiness.
 
-One mode: a clean grayscale page sketch on FigJam. Captures the full page
-with all its content zones, navigation, data patterns, and actions.
+Across ALL levels:
+- **Hand-drawn aesthetic** — Figma Hand font, sketchy shapes, intentional
+  imperfection. This signals "negotiable."
+- **Grayscale base** — No brand colors, no imagery. Color accents only at
+  wireframe/detailed for semantic meaning (links, errors).
+- **Completeness over abstraction** — Show all content zones, all nav items,
+  all table rows. The page's character comes from its density and patterns.
+- **Proportional accuracy** — Maintain the real page's spatial relationships.
+  Allow 10-20% drift. Don't measure pixels.
 
-## Input detection
+---
+
+## Input Detection
 
 | Input | Detection | Method |
 |---|---|---|
@@ -71,12 +152,17 @@ with all its content zones, navigation, data patterns, and actions.
 | **Figma frame** | "this frame" / "selected" | `figma_get_selection` |
 | **Text description** | Plain text | Infer layout from brief |
 
-## Before you begin
+---
+
+## Before You Begin
 
 1. Confirm FigJam is connected: `figma_get_status` with `probe: true`
 2. Verify `editorType` is `"figjam"` via `figma_execute`
 3. Load font: `await figma.loadFontAsync({ family: 'Figma Hand', style: 'Regular' })`
-4. Read `wireframe/SKETCH-RULES.md` for the 10 mandatory rules
+4. Determine fidelity level from user's flags (default: `--sketch`)
+5. Read `wireframe/SKETCH-RULES.md` for the 10 mandatory rules
+6. Read `wireframe/VOCABULARY.md` for per-level component rendering
+7. Read `wireframe/FRAMES.md` for device chrome specs
 
 ---
 
@@ -90,27 +176,50 @@ Identify:
 - Visual hierarchy (what's primary, secondary, tertiary)
 - Reading flow (how the eye moves through the page)
 
-You need ~30 seconds of analysis, not 5 minutes of CSS extraction.
+**Level-specific analysis depth:**
+- **Zones**: Identify 4-8 major regions. That's sufficient.
+- **Sketch**: Identify all content zones and their types. Count elements
+  (how many nav items, how many cards, how many table rows).
+- **Wireframe**: Everything from Sketch plus: read actual text content,
+  identify form fields and their labels, note data types and volumes.
+- **Detailed**: Everything from Wireframe plus: identify interactive states,
+  edge cases (empty, error, loading), note interaction patterns.
+
+You need ~30 seconds of analysis for Zones/Sketch, ~60 seconds for
+Wireframe/Detailed. Don't over-analyze — the wireframe is a conversation
+starter, not a specification.
 
 ---
 
 ## Phase 2: SKETCH
 
-### The pen aesthetic
+### Step 1: Select and draw the device frame
 
-One consistent style across ALL outputs. Never mix styles.
+Choose the appropriate frame from `wireframe/FRAMES.md`:
+- Web content → `compBrowserFrame` (1440px default)
+- Mobile app → `compMobileFrame` (390px)
+- Tablet → `compTabletFrame` (820px portrait)
+- Abstract / no device context → `compPlainFrame`
 
-**Shape type:** SQUARE only. No rounded rectangles, no ellipses for containers.
+Draw the frame first. All page content goes inside it.
 
-**Font:** Figma Hand for all labels. Nothing else.
+### Step 2: Render page content
 
-**Grayscale palette:**
+At **Zones** level: use only `compZone` from `wireframe/VOCABULARY.md`. Place
+labeled boxes inside the device frame proportionally matching the page structure.
+No inner detail — just named regions.
+
+At **Sketch** level and above: compose components from `wireframe/VOCABULARY.md`
+inside the device frame. Each component renders according to its level-specific
+spec in the vocabulary.
+
+### Grayscale palette
 
 ```javascript
 const C = {
   black:  { r: 0.14, g: 0.14, b: 0.16 },  // page frame, key labels
   dark:   { r: 0.35, g: 0.35, b: 0.38 },  // heading bars, primary CTAs, table headers
-  mid:    { r: 0.58, g: 0.58, b: 0.61 },  // body text lines (thin)
+  mid:    { r: 0.58, g: 0.58, b: 0.61 },  // body text lines
   light:  { r: 0.75, g: 0.75, b: 0.78 },  // secondary text, nav items, captions
   vlight: { r: 0.88, g: 0.88, b: 0.89 },  // image fills, subtle backgrounds
   border: { r: 0.7, g: 0.7, b: 0.72 },    // container outlines
@@ -118,11 +227,27 @@ const C = {
 };
 ```
 
+At **Zones** level, use only: black, mid, vlight, white.
+
+### Accent palette (wireframe + detailed only)
+
+```javascript
+const CA = {
+  blue:   { r: 0.24, g: 0.47, b: 0.85 },  // links, focused inputs, interactive
+  red:    { r: 0.85, g: 0.24, b: 0.24 },  // errors, required, destructive
+  green:  { r: 0.24, g: 0.72, b: 0.44 },  // success, active toggles, positive
+  amber:  { r: 0.90, g: 0.68, b: 0.15 },  // warnings, attention
+};
+```
+
+Use accents sparingly — they mark semantic meaning, not decoration. A wireframe
+with more than 5-6 colored elements has too many.
+
 ### Line weight hierarchy (Rule 3)
 
 | Element | Node type | Color | Stroke weight |
 |---|---|---|---|
-| Page frame | SQUARE shape | black | 3px |
+| Page frame / device chrome | SQUARE shape | black | 3px |
 | Primary containers (header, sidebar, cards) | SQUARE shape | border | 1-2px |
 | Body text lines | LINE node | mid | 1.5px |
 | Secondary text / captions | LINE node | light | 1px |
@@ -137,84 +262,44 @@ const C = {
 stroke weights (0.5px to 2px) that look like pen marks, not rectangles.
 Use SQUARE shapes only for containers, labels, buttons, and placeholders.
 
-### Element vocabulary
+### Text rules by level
 
-Build sketches by composing these elements. Each is a function that draws
-a common UI pattern.
+What gets real Figma Hand text vs. LINE nodes at each level:
 
-#### compHeader(x, y, w)
-Header/navigation bar. Contains: logo blob (dark, 60x10), search box outline
-with gray placeholder bar, 2-3 small nav item bars (light) on the right.
+**Zones**:
+- Real text: zone labels only ("Navigation", "Hero", "Sidebar")
+- Everything else: not rendered
 
-#### compTextBlock(x, y, w, lines)
-Body copy zone. 2-4 LINE nodes (1.5px stroke, mid-gray) at 10-12px vertical
-spacing. Varying widths (50-100% of w). NO real text. This represents
-"text lives here."
+**Sketch**:
+- Real text: page titles, section headings, primary CTAs, tab labels, nav
+  labels, card/widget titles, table column headers, section group labels,
+  key data values ("$30,200", "290+")
+- LINE nodes: body text, message previews, table cell data, timestamps,
+  metadata, descriptions, secondary labels, handles/URLs/breadcrumbs
 
-#### compImage(x, y, w, h, label)
-Crossed-box placeholder (Rule 5). Light gray fill, 1px light stroke,
-"✕" character centered in light gray. Optional one-word Figma Hand label
-below: "Photo", "Hero", "Map", "Avatar".
+**The rule at Sketch level: if the text identifies WHAT something is, use
+Figma Hand. If the text is the CONTENT itself, use a LINE node.**
 
-#### compHeading(x, y, text, sz)
-Block lettering for headers and section names ONLY (Rule 2). Figma Hand font,
-dark gray or black. Use sparingly — only page title, section headings, and
-primary CTA labels get real text.
+**Wireframe**:
+- Real text: everything from Sketch PLUS input labels and placeholders, body
+  text (as realistic placeholders), table cell data (realistic values),
+  breadcrumb labels, badge/tag labels, all button labels, pagination counts,
+  form helper text, link text
+- LINE nodes: only long body paragraphs (3+ sentences). Use LINE nodes for
+  the bulk, with a Figma Hand first sentence to communicate the tone.
 
-#### compSidebar(x, y, w, h, itemCount)
-Outlined rectangle with a heading label ("Contents" or "Nav") and stacked
-light gray bars representing navigation items. Each bar 3px tall, varying widths.
+**The rule at Wireframe level: use real text for anything a developer needs
+to see to estimate work. Use LINE nodes only for bulk copy.**
 
-#### compSection(x, y, w, title, textLines)
-Content section. Thin (1px) light divider line, then heading label in dark gray,
-then 2-3 thin body text bars. Represents a repeating content pattern.
+**Detailed**:
+- Real text: EVERYTHING. No LINE nodes. All text is rendered as Figma Hand
+  with realistic content. Additionally:
+  - State annotations: "(hover: darken)", "(disabled: 50% opacity)"
+  - Edge case notes: "(empty: 'No results')", "(max: 50 chars, truncate)"
+  - Interaction hints: "(dropdown opens on click)", "(Esc to close)"
+  - Character/data counts: "(0/500)", "(showing 1-10 of 248)"
 
-#### compInfobox(x, y, w)
-Structured data card. Outlined rectangle containing: heading label, image
-placeholder, caption bars, dark table header bars, and key-value row pairs
-(light label bar + mid value bar).
-
-#### compButton(x, y, text)
-Primary CTA. Small dark-filled rectangle with white Figma Hand text.
-Only for primary actions — "Sign up", "Search", "Submit". Not every button.
-
-#### compInput(x, y, w)
-Form field. Outlined rectangle (2px border) with a thin light placeholder bar
-inside. 22-26px tall.
-
-#### compTabs(x, y, labels)
-Tab navigation. Figma Hand labels in dark gray spaced horizontally, with a
-thin (1px) light underline spanning the full width.
-
-#### compCard(x, y, w, h)
-Content card. Outlined rectangle with an image placeholder in the top half
-and 2-3 text bars in the bottom half.
-
-#### compAvatar(x, y, size)
-User avatar. Small square with "✕" — not a circle (Rule 4: imperfect shapes).
-
-### Text rules
-
-**Gets real Figma Hand text (labels that communicate structure):**
-- Page title and section headings
-- Primary CTA labels ("Compose", "Run Report", "Search")
-- Tab and navigation labels (all of them — completeness matters)
-- Card/widget titles ("Sales Analytics", "User Activity")
-- Table column headers
-- Section group labels ("Navigation", "Forms", "Labels")
-- Key data values ("$30200", "290+")
-
-**Gets LINE nodes instead of text (content that would invite copy discussions):**
-- Body paragraph text (1.5px, mid gray)
-- Email/message preview text (1.5px, mid gray)
-- Table cell data / individual row values (1.5px, mid gray)
-- Timestamps and metadata (1px, light gray)
-- Descriptions and helper text (1px, light gray)
-- Secondary labels and captions (1px, light gray)
-- Handles, URLs, breadcrumbs (1px, light gray)
-
-**The rule: if the text identifies WHAT something is, use a Figma Hand label.
-If the text is the CONTENT itself, use a LINE node.**
+**The rule at Detailed level: show what someone building this needs to know.**
 
 ### Proportions (Rule 6)
 
@@ -232,66 +317,128 @@ Connector lines representing text content can have **slight width variation**
 (60-100% of container width) to avoid looking machine-generated. But they
 should all start from the same x-coordinate within their container.
 
+### Component index
+
+Full specs in `wireframe/VOCABULARY.md`. Quick reference:
+
+**Core** (12): compHeader, compHeading, compTextBlock, compButton, compInput,
+compCard, compImage, compSidebar, compSection, compTabs, compInfobox, compAvatar
+
+**Navigation** (3): compBreadcrumbs, compPagination, compMenu
+
+**Input** (6): compDropdown, compCheckbox, compRadio, compToggle, compTextarea,
+compSearch
+
+**Display** (10): compTable, compList, compBadge, compTag, compAccordion,
+compProgressBar, compChart, compRating, compMapPlaceholder, compVideoPlaceholder
+
+**Feedback** (5): compAlert, compModal, compToast, compSpinner, compSkeleton
+
+**Structure** (4): compZone *(zones level only)*, compStepper, compDivider,
+compEmptyState
+
 ---
 
-## Phase 3: ANNOTATE (Rule 7)
+## Phase 3: ANNOTATE
 
-After the sketch, add 2-3 question stickies beside it. Questions, not specs:
+After the sketch, add stickies beside it. The number and type of stickies
+varies by level:
+
+### Zones (1-2 yellow stickies)
+Focus on information architecture questions:
+- "Is this the right set of sections for this page?"
+- "Which zone is the primary focus?"
+- "Does [zone] belong on this page or a separate one?"
+
+### Sketch (2-3 yellow stickies)
+Focus on content and hierarchy questions (current behavior):
+- "Does the infobox need to be visible without scrolling?"
+- "Is the TOC sidebar essential or can it be a dropdown?"
+- "Primary CTA for this page?"
+
+### Wireframe (2-3 yellow + 1-2 blue stickies)
+Yellow: open design questions (same as Sketch).
+Blue: content and data decisions:
+- "Real data shows 3-200 items here — pagination or infinite scroll?"
+- "User names can be 50+ chars — truncate or wrap?"
+- "This table needs sorting on at least Name and Date"
+
+### Detailed (2-3 yellow + 2-4 blue + inline red annotations)
+Yellow: open design questions.
+Blue: content and data decisions.
+Red: edge case callouts placed INLINE on the sketch (not as stickies, but as
+small Figma Hand text in CA.red placed directly next to the relevant element):
+- "Empty: 'No projects yet'" next to a table
+- "Error: red border + message" next to an input
+- "Loading: skeleton" next to a card grid
+- "Max 3 toasts stacked" next to a toast
+
+Place stickies to the RIGHT of the sketch inside the section, not overlapping.
+Inline red annotations go ON the sketch, anchored to the element they describe.
 
 ```
 figjam_create_stickies with stickies: [
-  { text: "Does the infobox need to be\nvisible without scrolling?", color: "YELLOW" },
-  { text: "Is the TOC sidebar essential\nor can it be a dropdown?", color: "YELLOW" },
-  { text: "Primary CTA for this page?", color: "YELLOW" }
+  { text: "Question text here", color: "YELLOW" },
+  { text: "Content decision here", color: "LIGHT_BLUE" }
 ]
 ```
-
-Place stickies to the RIGHT of the sketch, not overlapping it.
 
 ---
 
 ## Phase 4: PRESENT
 
-Screenshot the result and show it. Then:
+Screenshot the result and show it. Then present with this format:
 
 ```
-SKETCH: [Page/concept name]
+WIREFRAME: [Page/concept name]
+Level: [Zones / Sketch / Wireframe / Detailed]
 Source: [URL / screenshot / frame / description]
+Frame: [Browser / Mobile / Tablet / Plain] ([width]px)
 Breakpoint: [desktop / mobile]
 
 Zones: [list major zones identified]
+Components: [count] elements ([count] from vocabulary, [count] custom)
 
 Questions for the team:
-  1. [question from annotation]
-  2. [question from annotation]
+  1. [question from stickies]
+  2. [question from stickies]
 
 Want me to:
-A) Sketch an alternative layout
-B) Sketch the next screen in the flow
-C) Build this in Figma — /capture or /plan
+A) Re-sketch at a different fidelity (current: [level])
+B) Sketch an alternative layout
+C) Sketch the next screen in the flow
+D) Build this in Figma — /capture or /plan
 ```
+
+Option A is new — it lets users quickly see the same page at a different
+fidelity level without re-describing it.
 
 ---
 
-## Multi-screen flows (Rule 9)
+## Multi-screen Flows (Rule 9)
 
 When sketching multiple pages, arrange as a storyboard:
-- Screens flow left to right
+- Screens flow left to right, each in its own device frame
 - Connectors with labels show user actions between screens
 - Think comic panels, not a screenshot gallery
 - Use `figjam_create_connector` with labels like "clicks CTA", "submits form"
+- All screens in the same flow use the SAME fidelity level
+
+Each screen gets its own FigJam section:
+- "Signup Flow: Step 1 — Wireframe"
+- "Signup Flow: Step 2 — Wireframe"
 
 ---
 
-## Single breakpoint (Rule 8)
+## Single Breakpoint (Rule 8)
 
 Always sketch ONE breakpoint. Default to the dominant use case:
 - Content sites → desktop
 - Apps → whatever the user specifies
 - If unclear, ask
 
-Never generate responsive variants in sketch mode. That signals engineering
-readiness, not brainstorming.
+Never generate responsive variants in wireframe mode. That signals engineering
+readiness, not brainstorming. Use `/responsive` for breakpoint variants.
 
 ---
 
@@ -318,7 +465,7 @@ and keeps the canvas organized.
 
 ```javascript
 const sec = figma.createSection();
-sec.name = 'Page Name Sketch';
+sec.name = 'Page Name — Sketch';  // includes fidelity level
 sec.x = startX;
 sec.y = 0;
 sec.resizeWithoutConstraints(width, height);
@@ -373,14 +520,19 @@ const startX = maxRight + 400;
 
 ## Tone
 
-You're an information architect presenting a page structure to the team. The
-sketch should take 30 seconds to understand and communicate "here's the full
-page — every zone, every pattern, every action." If anyone starts talking about
-colors or fonts, the sketch failed. If they understand the page's purpose and
-start discussing the information architecture — it worked.
+You're an information architect presenting a page structure at the appropriate
+depth for the audience.
+
+- **Zones**: "Here's the page at a glance — let's agree on the sections."
+- **Sketch**: "Here's how the content flows — does this feel right?"
+- **Wireframe**: "Every element is here with real content — anything missing?"
+- **Detailed**: "This is implementation-ready — states, edge cases, interactions."
+
+At every level: if anyone starts talking about colors or fonts, the sketch
+failed. If they understand the page's purpose and start discussing the
+information architecture — it worked.
 
 **Completeness over abstraction.** Show all the rows, all the nav items, all
 the table columns. The page's character comes from its density and patterns,
 not from simplified blobs. A dashboard with 4 stat cards and 12 table rows
-should FEEL like a data-heavy dashboard. An inbox with 14 emails should FEEL
-like a busy inbox.
+should FEEL like a data-heavy dashboard — at every fidelity level.
