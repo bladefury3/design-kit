@@ -369,25 +369,22 @@ Text styles are composite tokens that bundle font family + size + weight + line 
 into one reusable style (e.g., "Text sm/Medium", "Display xs/Semibold"). They are
 different from individual typography variables and must be extracted separately.
 
-Use `figma_get_styles` or `figma_get_design_system_kit` to discover text styles.
-For library text styles, use:
+**For local text styles**: `figma_get_text_styles` returns them directly.
 
-```javascript
-// Discover library text styles via figma_execute
-const styles = await figma.teamLibrary.getAvailableLibraryTextStylesAsync();
-for (const s of styles) {
-  const imported = await figma.importStyleByKeyAsync(s.key);
-  results.push({
-    name: s.name,
-    key: s.key,
-    fontFamily: imported.fontName.family,
-    fontStyle: imported.fontName.style,
-    fontSize: imported.fontSize,
-    lineHeight: imported.lineHeight,
-    letterSpacing: imported.letterSpacing
-  });
-}
+**For library text styles**: The Plugin API does NOT have a
+`getAvailableLibraryTextStylesAsync` method. Instead, use the REST API:
+
 ```
+Use figma_get_styles with:
+  - fileUrl: "<library file URL>"
+  - verbosity: "standard"
+```
+
+This returns all published styles including text styles. Filter for
+`style_type: "TEXT"` entries. Each has a 40-char hex `key` for binding.
+
+If the library file URL is unknown, check `design-system/tokens.json` metadata
+for the library file key, or ask the user.
 
 Write text styles to a `textStyles` section in `design-system/tokens.json`:
 ```json
@@ -396,7 +393,7 @@ Write text styles to a `textStyles` section in `design-system/tokens.json`:
     "text-sm-regular": {
       "$type": "textStyle",
       "$value": { "fontFamily": "Inter", "fontStyle": "Regular", "fontSize": 14, "lineHeight": 20 },
-      "$extensions": { "figma": { "key": "<style hash key>" } }
+      "$extensions": { "figma": { "key": "<40-char hex style key>" } }
     }
   }
 }
@@ -404,6 +401,9 @@ Write text styles to a `textStyles` section in `design-system/tokens.json`:
 
 This key is used by `build` via `figma.importStyleByKeyAsync(key)` then
 `textNode.textStyleId = style.id` — one call instead of binding 3+ individual variables.
+
+**NOTE**: Do NOT use `figma_execute` with `figma.teamLibrary.getAvailableLibraryTextStylesAsync()`
+— this method does not exist in the current Plugin API and will throw TypeError.
 
 **Spacing**
 - Spacing scale (4px, 8px, 12px, 16px, 24px, 32px, etc.)

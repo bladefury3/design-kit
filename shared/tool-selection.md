@@ -60,6 +60,25 @@ RIGHT: figma_instantiate_component with componentKey: "8017:532994" (variant key
 
 Check `design-system/components/index.json` — use `defaultVariantKey`, not `figmaKey`.
 
+## Property names may have emoji prefixes
+
+Some design system libraries (e.g., Untitled UI) use emoji prefixes on component
+property names:
+
+| Property | Actual name in Figma |
+|---|---|
+| Icon leading (Button) | `⬅️ Icon leading` |
+| Icon trailing (Button) | `➡️ Icon trailing` |
+| Icon swap (Input field) | `🔀 Icon swap` |
+| Required (Input field) | `↳ Required *` |
+
+Using `"Icon leading": false` (without the emoji) fails silently — the property
+is not found and no override is applied.
+
+**When overrides fail**: check the error response from `figma_set_instance_properties`
+— it lists all available property names including emoji prefixes. Standard boolean
+properties like `Label`, `Hint text`, `Help icon` typically do NOT have emoji.
+
 ## When to use figma_execute
 
 Reserve `figma_execute` for operations that CANNOT be decomposed:
