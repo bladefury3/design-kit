@@ -1,8 +1,30 @@
 # Test Checklist — Review Changes
 
-Testing guide for changes from commits `887c067`, `df0dbc3`, and `a332f0d`.
-Requires: Figma Desktop with Console MCP plugin running, a design file with
-a published component library (e.g., Untitled UI).
+## Test file
+
+**Figma**: https://www.figma.com/design/PPvZgY6JlxWE48iABJZQyc/Design-Kit-Test?node-id=166-17219
+**File key**: `PPvZgY6JlxWE48iABJZQyc`
+**Eval Page node**: `166:17219`
+**Library**: Untitled UI PRO (file key `JhsFSqLI1lWfDZq5I4crsQ` — 145 component sets, 5868 variants, 531 icons)
+
+**Existing content on Eval Page** (8 frames — tests must not overlap these):
+- `169:37312` School Feed (x=0, 1440x1848)
+- `175:39833` Social Feed (x=1717, 1440x1804)
+- `183:40765` Facebook Feed (x=3230, 1440x1335)
+- `185:40998` Tech News (x=4796, 1440x980)
+- `187:41132` GitHub Repo (x=6536, 1440x790)
+- `196:41414` X Feed Page (x=8078, 1440x864)
+- `206:26487` Wikipedia — Duffield Memorial (x=9818, 1280x2183)
+- `206:26859` Wikipedia — Duffield Memorial (Raw) (x=11298, 1280x3145)
+
+**Extracted design-system data** (already cached in repo):
+- `design-system/tokens.json` — 6 collections (Color modes, Radius, Spacing, Widths, Containers, Typography), Light/Dark modes
+- `design-system/components/index.json` — 145 component sets, 5868 variants
+- `design-system/icons.json` — 531 icons across 21 categories
+
+**Requires**: Figma Desktop with Console MCP plugin running, the test file open.
+
+---
 
 ## 1. Lint Script (no Figma needed)
 
@@ -14,115 +36,189 @@ a published component library (e.g., Untitled UI).
 
 ## 2. Shared References Load Correctly
 
-Test that skills can find and read the shared/ files.
+Test that skills can find and read the shared/ files. Use the Design-Kit-Test file.
 
-- [ ] Run `/build` in a conversation — verify it mentions "shared/tool-selection.md" or follows its guidance (uses `figma_instantiate_component` for library components, not `figma_execute`)
-- [ ] Run `/plan` in a conversation — verify it follows the 3-tier design system loading from `shared/design-system-loading.md` (reads local JSONs first, falls back to MCP kit)
-- [ ] Run `/flow` — verify canvas positioning doesn't overlap existing content
-- [ ] Run `/brainstorm` — verify it doesn't inline the old 20-line fallback chain
+**Test**: Run `/plan` with prompt:
+> plan a user profile settings page with sidebar navigation, account details section, and notification preferences
+
+- [ ] Verify: the AI reads `design-system/tokens.json` first (Tier 1 from `shared/design-system-loading.md`)
+- [ ] Verify: the AI reads `design-system/components/index.json`
+- [ ] Verify: it does NOT call `figma_get_design_system_kit` since local data exists
+- [ ] Verify: it reads `shared/tool-selection.md` (mentioned near top of skill)
 
 ## 3. Tool Selection Decision Tree (build)
 
-- [ ] Run `/plan` then `/build` for a simple screen (e.g., "settings page with sidebar")
-- [ ] Verify: library components use `figma_instantiate_component` (not `figma_execute`)
-- [ ] Verify: text on instances uses `figma_set_instance_properties` (not tree walk)
-- [ ] Verify: the plan's `build.json` has `variantKey` on library-component nodes
-- [ ] Verify: property overrides are applied (no "Label", "Hint text" showing)
+After the plan from test 2 is created, run `/build`.
+
+- [ ] Verify: library components (e.g., Page header, Input field, Button, Avatar label group) use `figma_instantiate_component`
+- [ ] Verify: `figma_execute` is used ONLY for multi-step frame creation with token bindings (not for individual component placement)
+- [ ] Verify: text on instances uses `figma_set_instance_properties` (not a tree walk via `figma_execute`)
+- [ ] Verify: the plan's `build.json` has `variantKey` (40-char hex) on library-component nodes, NOT `figmaKey`
 
 ## 4. variantKey vs figmaKey (build)
 
-- [ ] In build, check that `figma_instantiate_component` receives a variant-level key
-- [ ] Verify: the key matches `defaultVariantKey` from `design-system/components/index.json`, NOT `figmaKey`
-- [ ] If using a stale components/index.json — verify the error recovery section triggers (re-search via `figma_search_components`)
+During the build from test 3:
+
+- [ ] Check a specific component — e.g., Button. Its `defaultVariantKey` in components/index.json should be different from its `figmaKey`
+- [ ] Verify: `figma_instantiate_component` receives the variant-level key
+- [ ] Verify: the built component is the correct variant (e.g., Desktop/Primary/Default, not a random mobile variant)
 
 ## 5. Property Name Matching (plan)
 
-- [ ] Run `/plan` for a screen with input fields
-- [ ] Verify: `propertyOverrides` in build.json use correct property names ("Label", "Hint text", etc.)
-- [ ] Verify: the plan mentions the property name matching warning (case-sensitive)
+In the plan from test 2:
+
+- [ ] Verify: `propertyOverrides` on Input field nodes use `"Label": false, "Hint text": false` (exact names)
+- [ ] Verify: `propertyOverrides` on Button nodes use `"Icon leading": false, "Icon trailing": false`
+- [ ] Verify: `propertyOverrides` on Page header nodes use `"Search": false, "Actions": false` (if applicable)
+- [ ] After build: screenshot and verify no unwanted "Label", "Hint text", or trailing icons are visible
 
 ## 6. Icon Resolution Gate (plan)
 
-- [ ] Run `/plan` for a screen that needs icons (e.g., "sidebar nav with home, settings, users icons")
-- [ ] Verify: Step 5.5 resolution pass runs and resolves every icon to a component key
-- [ ] Verify: the plan does NOT present until the resolution gate passes
-- [ ] Verify: no emoji are used as icon substitutes in the plan
+**Test**: Run `/plan` with prompt:
+> plan a dashboard sidebar with navigation items: Home, Analytics, Users, Settings, Help, and Log out — each with an icon
+
+- [ ] Verify: Step 5.5 resolution pass runs
+- [ ] Verify: each icon (home-line, bar-chart-01, users-01, settings-01, help-circle, log-out-01) is resolved to a component key from `design-system/icons.json`
+- [ ] Verify: the resolution gate blocks presentation until all icons have keys
+- [ ] Verify: zero emoji substitutes in the plan output
+- [ ] Verify: build.json has `"type": "library-component"` entries for each icon (not `"type": "token-built"`)
 
 ## 7. Error Recovery (build)
 
-- [ ] If a component instantiation fails during `/build` — verify the error recovery section triggers
-- [ ] Verify: it suggests re-searching via `figma_search_components`, not silently skipping
-- [ ] If a token binding fails — verify it falls back to hardcoded value AND flags it
+**Test**: Temporarily corrupt a `variantKey` in a build.json to test error handling.
+
+- [ ] Change one component's `variantKey` to `"0000000000000000000000000000000000000000"` (invalid)
+- [ ] Run `/build` — verify it detects the failure
+- [ ] Verify: it searches by component name via `figma_search_components` (not silently skipping)
+- [ ] Verify: it presents candidates to the user or creates a labeled placeholder `[Missing: Component Name]`
+- [ ] Restore the original build.json after testing
 
 ## 8. Screenshot Validation (shared)
 
-- [ ] Run `/build` — verify it screenshots after each section (not all at once)
-- [ ] Verify: uses `figma_take_screenshot` (not `figma_capture_screenshot`) for validation
-- [ ] Verify: checks for phantom 100px heights, placeholder text, unwanted labels
+During the build from test 3:
+
+- [ ] Verify: screenshots happen after EACH section (sidebar built → screenshot → main content built → screenshot)
+- [ ] Verify: the tool used is `figma_take_screenshot` with the section or root frame nodeId
+- [ ] Verify: the AI checks each screenshot for: phantom 100px heights, placeholder text ("Olivia Rhye", "Label"), unwanted icons, clipped content
+- [ ] Verify: if placeholder text is found, it's fixed before proceeding to the next section
 
 ## 9. Typography Extraction (setup-tokens)
 
-- [ ] Run `/setup-tokens` on a file with text styles
-- [ ] Verify: it calls `figma_get_text_styles` in addition to `figma_get_styles`
-- [ ] Verify: `design-system/tokens.json` has a `typography.textStyles` section
-- [ ] Verify: each text style has `$extensions.figma.styleId`
+**Test**: Run `/setup-tokens` on the Design-Kit-Test file.
+
+- [ ] Verify: it calls `figma_get_text_styles`
+- [ ] Verify: output mentions text styles separately from variable-based typography tokens
+- [ ] Verify: `design-system/tokens.json` gains a `typography.textStyles` section (or similar)
+- [ ] Verify: each text style entry has `$extensions.figma.styleId` for downstream binding
+- [ ] Verify: the extraction report distinguishes "N typography variable tokens" from "M text styles"
+
+**Note**: This file uses Untitled UI's published text styles. If `figma_get_text_styles` returns empty (no local text styles), the test still passes if the skill attempts the call.
 
 ## 10. State Machine Enrichment (setup-components)
 
-- [ ] Run `/setup-components` on a file with component sets that have state variants (hover, focus, disabled)
-- [ ] Verify: it calls `figma_analyze_component_set` on component sets
-- [ ] Verify: per-component JSONs in `design-system/components/<name>.json` have a `stateMachine` key
-- [ ] Verify: `stateMachine` contains `axes`, `cssMapping`, `diffFromDefault`
+**Test**: Run `/setup-components` on the Design-Kit-Test file. The file has 3 local component sets:
+- **Combo box** (56 variants — Type × State × Size, has hover/focus/disabled states)
+- **Table filter bar** (6 variants — State × Size)
+- **Column manager** (3 variants — State)
+
+- [ ] Verify: it calls `figma_analyze_component_set` on each component set
+- [ ] Verify: the Combo box per-component JSON includes a `stateMachine` key
+- [ ] Verify: `stateMachine.axes` contains `State: [Placeholder, Hover, Focused, Filled, Open, ...]`
+- [ ] Verify: `stateMachine.cssMapping` maps hover→`:hover`, focus→`:focus-visible`, disabled→`:disabled`
+- [ ] Verify: `stateMachine.diffFromDefault` shows what changes per state (fills, strokes, opacity, etc.)
 
 ## 11. Audit Comment Cleanup (audit)
 
-- [ ] Run `/audit` on a frame — verify findings are posted as Figma comments with `[Audit]` prefix
-- [ ] Run `/audit` again on the same frame — verify old `[Audit]` comments are deleted before new ones are posted
-- [ ] Verify: no duplicate audit comments accumulate
+**Test**: Run `/audit` on the School Feed frame (`169:37312`).
+
+- [ ] Verify: findings are posted as Figma comments with `[Audit]` prefix
+- [ ] Verify: the audit produces a score and category breakdown
+- [ ] Run `/audit` again on the same frame
+- [ ] Verify: old `[Audit]` comments are deleted via `figma_delete_comment` before new ones are posted
+- [ ] Verify: only ONE set of audit comments exists (no duplicates)
 
 ## 12. Review Component Comment Cleanup (review-component)
 
-- [ ] Run `/review-component` on a component — choose option C (post as comments)
+**Test**: Run `/review-component` on the Combo box component set (`125:32638`).
+
+- [ ] Verify: the review scores 9 quality dimensions
+- [ ] Choose option C (post as comments)
 - [ ] Verify: comments are prefixed with `[Review]`
-- [ ] Run again — verify old `[Review]` comments are cleaned up
+- [ ] Run `/review-component` again on the same component
+- [ ] Verify: old `[Review]` comments are cleaned up via `figma_delete_comment`
 
 ## 13. Re-verification in Revise (revise)
 
-- [ ] Run `/audit` to find issues, then `/revise` to fix them
-- [ ] After revisions, verify it offers re-verification options (A/B/C)
-- [ ] Choose A — verify it re-checks only the specific items that were fixed
+**Test**: After audit from test 11 finds issues, run `/revise` on the School Feed frame.
+
+- [ ] Verify: it classifies feedback by type (principle-based, usability, content, etc.)
+- [ ] Verify: it clones the frame as "[School Feed] [Original]" and works on "[School Feed] [Revised]"
+- [ ] Verify: after applying fixes, it offers re-verification:
+  > A) Re-check the specific items I just fixed
+  > B) Run a full /audit
+  > C) Skip
+- [ ] Choose A — verify it re-checks only the fixed items (not a full audit)
 
 ## 14. Image Fill in Capture (capture)
 
-- [ ] Run `/capture` on a URL with images (e.g., a blog post with hero image)
-- [ ] Verify: raw replica uses `figma_set_image_fill` for image elements
+**Test**: Run `/capture https://news.ycombinator.com` (simple page with no auth).
+
+- [ ] Verify: `figma_set_image_fill` is available in the skill's allowed-tools
+- [ ] Verify: raw replica attempts to use image fills for any image elements on the page
 - [ ] Verify: mapped version uses token-bound placeholder fills (not image fills)
+- [ ] Verify: new frames are placed to the RIGHT of existing content (canvas positioning)
 
 ## 15. Canvas Positioning (all build skills)
 
-- [ ] Have existing content on the Figma page
-- [ ] Run `/build` — verify new content is placed 300px to the right, not overlapping
-- [ ] Run `/build-component` — verify same positioning behavior
-- [ ] Run `/brainstorm` — verify variations don't overlap
+The Eval Page has 8 frames. The rightmost is Wikipedia Raw at x=11298, width=1280 (right edge at x=12578).
 
-## 16. JSON Schemas (manual validation)
+- [ ] Run `/build` — verify the new root frame's x position is ≥12578+300 = ≥12878
+- [ ] Verify: `canvasScan()` or equivalent runs in the first `figma_execute` call
+- [ ] Verify: nothing overlaps the existing 8 frames
+- [ ] Run `/brainstorm` — verify each variation is also positioned right of existing content
 
-- [ ] After running `/setup-tokens`, validate `design-system/tokens.json` against `schemas/tokens.schema.json`
-- [ ] After running `/setup-components`, validate `design-system/components/index.json` against `schemas/components-index.schema.json`
-- [ ] After running `/setup-icons`, validate `design-system/icons.json` against `schemas/icons.schema.json`
-- [ ] Validation can be done with any JSON Schema validator (e.g., `npx ajv validate -s schemas/tokens.schema.json -d design-system/tokens.json`)
+## 16. JSON Schemas (no Figma needed)
 
-## 17. Build-Helpers Canonical Source
+```bash
+# Install a validator if needed: npm install -g ajv-cli
+npx ajv validate -s schemas/tokens.schema.json -d design-system/tokens.json
+npx ajv validate -s schemas/components-index.schema.json -d design-system/components/index.json
+npx ajv validate -s schemas/icons.schema.json -d design-system/icons.json
+```
 
-- [ ] Read `build-helpers/figma-helpers.js` — verify header says "CANONICAL SOURCE"
-- [ ] Compare `mkF`, `mkT`, `bf`, `bs` functions between `build-helpers/figma-helpers.js` and `build/SKILL.md` — verify they match
-- [ ] Verify `build/SKILL.md` references "Canonical source: `build-helpers/figma-helpers.js`"
+- [ ] `tokens.json` validates against `schemas/tokens.schema.json`
+- [ ] `components/index.json` validates against `schemas/components-index.schema.json`
+- [ ] `icons.json` validates against `schemas/icons.schema.json`
+- [ ] All three schemas are valid JSON (parseable without errors)
 
-## Quick Smoke Test (covers most changes in ~10 minutes)
+## 17. Build-Helpers Canonical Source (no Figma needed)
 
-1. [ ] `./lint-skills.sh` — all pass
-2. [ ] `/setup-tokens` on a real file — check for typography.textStyles in output
-3. [ ] `/plan` a simple screen — check variantKey, propertyOverrides, icon resolution
-4. [ ] `/build` the plan — check tool selection (instantiate vs execute), canvas positioning, screenshots
-5. [ ] `/audit` the result — check [Audit] prefix on comments
-6. [ ] `/audit` again — check old comments cleaned up
+- [ ] Verify `build-helpers/figma-helpers.js` header says "CANONICAL SOURCE"
+- [ ] Verify `build/SKILL.md` says "Canonical source: `build-helpers/figma-helpers.js`"
+- [ ] Verify helper function logic matches between both files (names differ: `mkFrame` vs `mkF` etc., but behavior is equivalent)
+
+## 18. Cross-Tool Compatibility (Cursor install)
+
+**Test**: Run `./setup --cursor` to install skills for Cursor.
+
+- [ ] Verify: `.cursor/skills/shared/` directory is created with all 6 shared files
+- [ ] Verify: `.cursor/skills/PRINCIPLES.md` is copied
+- [ ] Verify: `.cursor/skills/ETHOS.md` is copied
+- [ ] Verify: `.cursor/skills/build-helpers/` is copied with all helper files
+- [ ] Verify: `.cursor/skills/wireframe/SKETCH-RULES.md` is copied (companion file)
+- [ ] Verify: skill SKILL.md files are also installed (e.g., `.cursor/skills/build/SKILL.md`)
+- [ ] Test in Cursor: invoke `/build` — verify it can read `shared/tool-selection.md`
+
+---
+
+## Quick Smoke Test (~10 minutes, covers critical path)
+
+All against the Design-Kit-Test file (`PPvZgY6JlxWE48iABJZQyc`).
+
+1. [ ] `./lint-skills.sh` — 21 skills, 0 failures
+2. [ ] `/setup-tokens` — check it calls `figma_get_text_styles`
+3. [ ] `/plan` a settings page — check: variantKey used (not figmaKey), propertyOverrides with correct names, icon resolution gate passes, no emoji icons
+4. [ ] `/build` the plan — check: `figma_instantiate_component` for library components, `figma_set_instance_properties` for text/overrides, canvas positioned right of existing 8 frames, screenshots per section
+5. [ ] `/audit` the School Feed frame (`169:37312`) — check: `[Audit]` prefix on comments
+6. [ ] `/audit` again — check: old comments deleted before new ones posted
+7. [ ] `./setup --cursor` — check: shared/, PRINCIPLES.md, build-helpers/ all copied
