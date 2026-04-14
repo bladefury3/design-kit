@@ -1,0 +1,37 @@
+{
+  "id": "sp-04",
+  "skill": "setup-product",
+  "name": "Design lead strategic multi-user input — tests complexity and scale handling",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "TeamPulse serves 3 user types: (1) ICs in feed/wiki daily — need fast creation and discovery. (2) Team leads need at-a-glance health — who's active, blocked, what decisions made. (3) Org admins manage infrastructure — SSO, billing, compliance. Each has different home screen. WCAG AA, 15+ languages (RTL), teams from 5 to 5000. Series B — consistent patterns > pixel-perfect.",
+    "urlProvided": true,
+    "urlValue": "linear.app and notion.so",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Captures all 3 user types with distinct goals and frustrations",
+    "Researches both linear.app and notion.so for density and clarity patterns",
+    "accessibilityContext includes WCAG AA level",
+    "accessibilityContext includes RTL and localization requirements",
+    "product.json reflects scale range (5 to 5000 members)",
+    "designDecisions includes 'consistent patterns over pixel-perfect' philosophy",
+    "layoutConventions differentiates home screen by user type",
+    "Figma analysis still runs to find existing patterns"
+  ],
+  "antiPatterns": [
+    "Flattens 3 user types into a single generic 'user' persona",
+    "Ignores the scale requirement (5-5000 members)",
+    "Does not research both URLs when both were provided",
+    "Misses WCAG AA or RTL requirements in output",
+    "Does not differentiate home screen experiences by user type",
+    "Ignores the 'consistent patterns > pixel-perfect' design philosophy"
+  ],
+  "evaluationCriteria": {
+    "userTypeCapture": "Are all 3 user types preserved with distinct goals, not flattened?",
+    "accessibilityCapture": "Are WCAG AA and RTL/localization in the output?",
+    "scaleAwareness": "Does the output reflect the 5-to-5000 team size range?",
+    "dualUrlResearch": "Were both linear.app and notion.so researched?"
+  }
+}

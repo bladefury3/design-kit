@@ -1,0 +1,87 @@
+{
+  "$schema": "design-kit/eval-rubric/v1",
+  "name": "setup-product specific criteria",
+  "weight": 0.65,
+  "criteria": {
+    "interviewEconomy": {
+      "weight": 0.12,
+      "description": "Does it ask ONE open question and ONE URL request, not a questionnaire?",
+      "scoring": {
+        "10": "Exactly one open question + one URL request, then proceeds to research",
+        "7": "Two questions total but both are necessary",
+        "4": "3-4 questions before proceeding",
+        "1": "A long questionnaire that feels like a form"
+      }
+    },
+    "sourceUtilization": {
+      "weight": 0.15,
+      "description": "Does it use all 5 sources (interview, URL, research, Figma, design system) that are available?",
+      "scoring": {
+        "10": "All available sources used, each contributes unique data to the final output",
+        "7": "4 of 5 sources used, minor gap in context",
+        "4": "Only 2-3 sources used, significant context missed",
+        "1": "Only the interview used, no research or analysis"
+      }
+    },
+    "figmaAnalysisDepth": {
+      "weight": 0.12,
+      "description": "Does it screenshot and analyze existing Figma frames, identifying layout patterns and conventions?",
+      "scoring": {
+        "10": "Screenshots 2-3 frames, identifies layout patterns, spacing rhythm, component usage, naming conventions",
+        "7": "Scans file structure and screenshots 1 frame but minimal pattern analysis",
+        "4": "Notes pages exist but no visual analysis",
+        "1": "Ignores the Figma file entirely"
+      }
+    },
+    "synthesisQuality": {
+      "weight": 0.15,
+      "description": "Does the PRESENT summary reconcile multiple sources with appropriate confidence levels?",
+      "scoring": {
+        "10": "Summary cites which source each fact came from, confidence levels on inferred items, gaps marked as null",
+        "7": "Good summary with most facts sourced, some gaps noted",
+        "4": "Summary exists but sources not distinguished, overconfident on inferred items",
+        "1": "Summary is a rephrasing of the user's input with nothing added from other sources"
+      }
+    },
+    "terminologyPrecision": {
+      "weight": 0.12,
+      "description": "Does the terminology table contain product-specific mappings, not generic SaaS terms?",
+      "scoring": {
+        "10": "Every mapping is specific to this product, derived from user input or URL extraction",
+        "7": "Most mappings are specific, 1-2 are reasonable generic guesses",
+        "4": "Mix of specific and obvious/generic mappings that apply to any SaaS",
+        "1": "Generic mappings like user→user, project→project"
+      }
+    },
+    "contentGuideSpecificity": {
+      "weight": 0.12,
+      "description": "Is content-guide.md product-specific with real examples, or a generic template?",
+      "scoring": {
+        "10": "Every section has product-specific examples, tone-by-context table reflects the product's personality",
+        "7": "Most examples are product-specific, 1-2 generic formulas remain",
+        "4": "Template structure with generic examples swapped in",
+        "1": "Clearly a template with no customization"
+      }
+    },
+    "productJsonCompleteness": {
+      "weight": 0.12,
+      "description": "How many product.json fields are populated with meaningful data vs null?",
+      "scoring": {
+        "10": ">90% of fields populated with meaningful data, remaining gaps honestly marked null",
+        "7": "70-90% populated, gaps are in expected areas (secondary users, competitors)",
+        "4": "50-70% populated, major sections empty",
+        "1": "<50% populated, skeleton-level output"
+      }
+    },
+    "gracefulSourceFailure": {
+      "weight": 0.10,
+      "description": "When a source fails (URL unreachable, no design system data), does it continue smoothly?",
+      "scoring": {
+        "10": "Fails silently on unavailable sources, notes the gap, proceeds with remaining sources",
+        "7": "Notes the failure and proceeds, but warns the user unnecessarily",
+        "4": "Stops to ask the user about the failure before continuing",
+        "1": "Pipeline stops entirely on first source failure"
+      }
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "id": "sp-02",
+  "skill": "setup-product",
+  "name": "Mid-level designer with URL — tests multi-source synthesis",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "TeamPulse is a team collaboration platform for distributed teams. Think Notion meets Slack. Main features: activity feeds, team profiles, internal wiki. Primary users are ICs who use it daily, team leads who stay informed. Planning notification center and team settings next.",
+    "urlProvided": true,
+    "urlValue": "notion.so",
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Fetches notion.so and extracts navigation, layout patterns, terminology",
+    "Identifies all 8 existing Figma frames by name and type",
+    "Reconciles user input with Figma analysis (both describe feeds, profiles, wiki)",
+    "Populates screenInventory.designed with the 8 existing frames",
+    "Populates screenInventory.planned with notification center and team settings",
+    "Captures both user types: ICs (primary) and team leads (secondary)",
+    "Lists Notion and Slack as competitors",
+    "PRESENT summary mentions the existing frames and planned screens"
+  ],
+  "antiPatterns": [
+    "Does not fetch notion.so when explicitly provided",
+    "Ignores Figma file analysis and relies only on user input",
+    "PRESENT summary does not mention the existing 8 frames",
+    "Contradicts user's input about features or user types",
+    "Overwrites user-stated terminology with inferred alternatives"
+  ],
+  "evaluationCriteria": {
+    "urlExtraction": "Did it actually fetch and extract patterns from notion.so?",
+    "sourceSynthesis": "Does the output reconcile user input + URL data + Figma analysis?",
+    "screenInventory": "Are designed, planned, and notStarted screens accurately categorized?",
+    "competitorAwareness": "Does it identify relevant competitors from context?"
+  }
+}

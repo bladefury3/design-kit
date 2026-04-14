@@ -1,0 +1,38 @@
+{
+  "id": "sp-01",
+  "skill": "setup-product",
+  "name": "Junior designer minimal input — tests gap filling and graceful degradation",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "It's like a team chat thing but also has a wiki. People use it at work. We're designing the main feed page I think.",
+    "urlProvided": false,
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Asks ONE open question and ONE URL request, then proceeds",
+    "Infers product type as SaaS or internal-tool from minimal input",
+    "Runs web research on team collaboration UX patterns",
+    "Scans Figma file and identifies existing frames (feeds, profiles, wiki)",
+    "Uses INFER step to analyze available tokens and components",
+    "Produces product.json with reasonable defaults for missing fields",
+    "Marks uncertain fields with null or low confidence, not confident guesses",
+    "Generates content-guide.md with empty state and error formulas",
+    "PRESENT summary is reviewable even from sparse input"
+  ],
+  "antiPatterns": [
+    "Asks 3+ follow-up questions before doing any research",
+    "Produces a generic 'SaaS product' context that applies to any product",
+    "Fills terminology with confident-sounding guesses that contradict Figma file",
+    "Skips Figma file analysis entirely",
+    "Skips web research entirely",
+    "content-guide.md looks like an unmodified template",
+    "Pipeline crashes when encountering missing design system data"
+  ],
+  "evaluationCriteria": {
+    "gapFilling": "Does the skill produce useful context from almost no input?",
+    "honestUncertainty": "Are inferred fields marked as low confidence, not stated as facts?",
+    "figmaUtilization": "Does it analyze the existing 8 frames to infer product characteristics?",
+    "researchQuality": "Does web research add meaningful context beyond what the user provided?"
+  }
+}

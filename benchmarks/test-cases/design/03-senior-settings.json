@@ -1,0 +1,44 @@
+{
+  "id": "d-03",
+  "skill": "design",
+  "name": "Senior precise spec — workspace settings, tests pixel-level adherence",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "Design Workspace Settings. Left sidebar (240px): General, Members, Roles & Permissions, Integrations, Billing, Security, Danger Zone. Content shows General: Workspace name input (pre-filled 'Acme Engineering'), URL slug ('teampulse.io/' prefix, 'acme-eng'), Logo upload (96x96 + 'Change logo'), Description textarea (160 char counter), Timezone dropdown. Sticky bottom bar: 'Discard changes' (secondary) + 'Save changes' (primary, disabled until changed). 24px padding, 16px field gaps, 32px section gaps. Sentence case.",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "productContextAvailable": true,
+    "productContextQuality": "excellent"
+  },
+  "expectedBehaviors": [
+    "Matches settings-sidebar archetype from layout-patterns.json",
+    "Sidebar contains EXACTLY 7 categories in specified order",
+    "Sidebar is 240px wide",
+    "Content area shows General section with all 5 form fields",
+    "Workspace name input pre-filled with 'Acme Engineering'",
+    "URL slug shows 'teampulse.io/' prefix with 'acme-eng' value",
+    "Logo upload area is 96x96 with 'Change logo' button",
+    "Description textarea has '0/160' character counter",
+    "Timezone dropdown present",
+    "Sticky bottom bar with 'Discard changes' (secondary) and 'Save changes' (primary, disabled)",
+    "Spacing: 24px padding, 16px field gaps, 32px section gaps",
+    "All labels in sentence case",
+    "Component coverage >= 80%",
+    "Audit score >= 7.5"
+  ],
+  "antiPatterns": [
+    "Adding sidebar sections Elena did not specify (e.g., 'Notifications')",
+    "Wrong spacing values (16 where 24 specified, or vice versa)",
+    "Missing the character counter on description textarea",
+    "Missing 'teampulse.io/' URL prefix",
+    "Save button enabled by default (spec says disabled until changed)",
+    "Sidebar categories in wrong order",
+    "Title case instead of sentence case"
+  ],
+  "evaluationCriteria": {
+    "spacingExact": "Do padding and gaps match 24/16/32 exactly?",
+    "sidebarExact": "Are all 7 categories present in the specified order?",
+    "formFieldExact": "Does every form field match the spec (prefills, prefixes, counters)?",
+    "buttonStateExact": "Is Save disabled by default as specified?"
+  }
+}

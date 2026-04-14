@@ -1,0 +1,39 @@
+{
+  "id": "d-01",
+  "skill": "design",
+  "name": "Junior vague brief — feed page, tests gap filling and autonomous completion",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Design the main feed page where people see what their team is up to",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "productContextAvailable": true,
+    "productContextQuality": "thin"
+  },
+  "expectedBehaviors": [
+    "Loads product.json (even if thin) and layout-patterns.json",
+    "Matches brief to a feed/activity layout archetype",
+    "Fills content gaps with reasonable assumptions (team updates, activity items)",
+    "Component coverage >= 60% (lower bar given thin context)",
+    "Generates all 4 states: empty (warm/encouraging), loading (skeletons), error, success",
+    "Empty state copy is encouraging ('Your team's activity will appear here')",
+    "Audit produces reasonable score >= 6.0",
+    "Stress-test checks long post content overflow",
+    "PRESENT summary uses jargon-free language Priya would understand",
+    "Asks at most 1-2 clarifying questions before proceeding"
+  ],
+  "antiPatterns": [
+    "Asks Priya 3+ clarifying questions (she doesn't have answers)",
+    "Builds a generic card grid that doesn't feel like a feed",
+    "Placeholder text survives into final build ('Olivia Rhye', 'Lorem ipsum')",
+    "States missing entirely, especially empty state",
+    "Audit and stress-test use technical jargon",
+    "Pipeline stops because product context is thin"
+  ],
+  "evaluationCriteria": {
+    "autonomy": "Does it proceed from vague input without excessive questions?",
+    "feedArchetype": "Does the output look and feel like a social/activity feed?",
+    "emptyStateQuality": "Is the empty state warm and encouraging, not generic?",
+    "languageClarity": "Would a junior designer understand all the output language?"
+  }
+}

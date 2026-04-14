@@ -1,0 +1,39 @@
+{
+  "id": "sp-03",
+  "skill": "setup-product",
+  "name": "Senior designer precise input with failing URL — tests fidelity and error handling",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "TeamPulse is an enterprise team collaboration platform. SaaS, web-first, mobile companion. Primary: knowledge workers in tech (50-500 employees). Secondary: org admins (workspaces, billing, permissions). Left sidebar nav: Home, Feed, Wiki, Team, Notifications, Settings. 64px top bar for breadcrumbs. 8px spacing grid, 4px for compact. Voice: professional but warm, second person, sentence case. 'workspace' not 'organization', 'pulse' not 'post', 'knowledge base' not 'wiki' in copy.",
+    "urlProvided": true,
+    "urlValue": "teampulse.io",
+    "urlWillFail": true,
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Captures EVERY specific detail Elena provided exactly as stated",
+    "Handles failing URL gracefully — notes the gap, does not crash or stop",
+    "Terminology table maps exactly: organization→workspace, post→pulse, wiki→knowledge base",
+    "navigationItems lists exactly: Home, Feed, Wiki, Team, Notifications, Settings",
+    "Records 64px top bar and 8px/4px spacing grid in layoutConventions or designDecisions",
+    "contentVoice reflects professional but warm, second person, sentence case",
+    "Does NOT add features, sections, or users Elena did not mention",
+    "Still runs Figma analysis and web research despite having rich input"
+  ],
+  "antiPatterns": [
+    "Overrides Elena's specific terminology with inferred alternatives",
+    "Adds sidebar items or user types she did not specify",
+    "Pipeline crashes or stops when the URL fetch fails",
+    "Missing the 8px/4px spacing grid detail in the output",
+    "Missing the 64px top bar specification",
+    "Presents a generic summary that does not reflect her precise input",
+    "Skips research and Figma analysis because user input was so detailed"
+  ],
+  "evaluationCriteria": {
+    "specFidelity": "Does every user-specified detail appear exactly in the output?",
+    "urlFailureGrace": "Does the pipeline continue smoothly when teampulse.io fails?",
+    "terminologyExact": "Are the 3 terminology mappings exactly as specified?",
+    "noInvention": "Did the skill refrain from adding anything Elena did not ask for?"
+  }
+}

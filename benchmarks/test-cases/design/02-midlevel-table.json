@@ -1,0 +1,40 @@
+{
+  "id": "d-02",
+  "skill": "design",
+  "name": "Mid-level standard brief — team members data table, tests component accuracy",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "Design a Team Members page. Searchable table with columns: Name (avatar + name), Email, Role (Admin/Editor/Viewer), Status (Active/Invited/Deactivated), Last Active. Invite button in header. Each row has 3-dot menu: Change Role, Deactivate, Remove. Search bar + role filter dropdown at top.",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "productContextAvailable": true,
+    "productContextQuality": "good"
+  },
+  "expectedBehaviors": [
+    "Matches data-table layout pattern from layout-patterns.json",
+    "Uses Table component from Untitled UI PRO library (not card grid)",
+    "Plans page header with 'Invite member' button",
+    "Plans search bar + role filter dropdown at top",
+    "Plans 3-dot menu per row with Change Role, Deactivate, Remove actions",
+    "Role badges are color-coded (Admin/Editor/Viewer)",
+    "Status badges differentiate Active (green), Invited (yellow), Deactivated (gray)",
+    "Component coverage >= 75% (Table, Button, Input, Badge, Avatar, Dropdown)",
+    "Generates states: empty (no members), loading, error, success (member invited toast)",
+    "Stress-test: long emails, 1000+ members, all same role",
+    "Text uses product terminology from product.json"
+  ],
+  "antiPatterns": [
+    "Missing the 3-dot row menu (explicit in the brief)",
+    "Using a card grid instead of a table (brief says 'table')",
+    "Generic status text ('Status 1', 'Status 2')",
+    "Not testing empty state (0 members)",
+    "Ignoring the invite flow success state",
+    "Using generic text instead of product terminology"
+  ],
+  "evaluationCriteria": {
+    "briefFidelity": "Does every element from the brief appear in the output?",
+    "tableNotCards": "Is the primary data display a table, not a card grid?",
+    "rowActions": "Does each row have the 3-dot menu with the specified actions?",
+    "edgeCaseCoverage": "Are empty table, invite success, and deactivation states planned?"
+  }
+}

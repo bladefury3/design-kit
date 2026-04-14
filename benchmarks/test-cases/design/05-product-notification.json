@@ -1,0 +1,40 @@
+{
+  "id": "d-05",
+  "skill": "design",
+  "name": "Product designer research-driven — notification center, tests research integration",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Design Notification Center. Research: 58% overwhelmed by notifications, avg 47/day but only 12% acted on. @mentions 34% action rate, likes 2% action rate. Design: (1) default to Actionable tab not All, (2) batch low-signal ('3 people liked your pulse'), (3) 'Mark all as read' prominent. Tabs: Actionable, All, @Mentions. Empty Actionable = celebratory ('You're all caught up!'). Error = calming, not alarming.",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "productContextAvailable": true,
+    "productContextQuality": "excellent"
+  },
+  "expectedBehaviors": [
+    "References notification-center pattern from layout-patterns.json",
+    "Default tab is Actionable (research-driven decision), NOT All",
+    "Low-signal notifications are batched ('3 people liked your pulse')",
+    "Mark all as read is prominent in the header area",
+    "3 tabs present: Actionable, All, @Mentions",
+    "Empty state for Actionable tab is celebratory ('You're all caught up!')",
+    "Error state uses calming language, not alarming",
+    "Content-guide.md tone differentiation reflected (humor in empty, calm in error)",
+    "Stress-test: 500+ notifications, all-read state, network error state",
+    "Research data influences design decisions visibly (not just noted, but acted on)"
+  ],
+  "antiPatterns": [
+    "Default tab showing All notifications (ignoring research directive)",
+    "Individual low-signal notifications instead of batched",
+    "Mark all as read buried in a menu or de-emphasized",
+    "Generic empty state ('No notifications') instead of celebratory",
+    "Error state with alarming language ('Failed!', 'Error!')",
+    "Research data acknowledged but not reflected in design decisions",
+    "Using wrong tab names or different tab structure"
+  ],
+  "evaluationCriteria": {
+    "researchHonored": "Is the default Actionable tab, per research directive?",
+    "batchingImplemented": "Are low-signal notifications actually batched in the design?",
+    "markAllReadProminent": "Is Mark all as read a primary action, not hidden?",
+    "toneConsistency": "Does empty state = celebratory and error state = calming?"
+  }
+}
