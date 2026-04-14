@@ -20,11 +20,16 @@ design-kit/
 │   ├── components/               #   Component specs
 │   │   ├── index.json            #     Component catalog (figmaKey, defaultVariantKey)
 │   │   └── <name>.json           #     On-demand per-component specs
-│   └── relationships.json        #   Component dependency graph
-├── plans/                        # Build plans (output of /plan, /brainstorm, /flow)
+│   ├── relationships.json        #   Component dependency graph
+│   ├── product.json              #   Product context: identity, users, IA, terminology (output of /setup-product)
+│   ├── content-guide.md          #   Voice, tone, content patterns (output of /setup-product)
+│   └── layout-patterns.json      #   Common page archetypes (shipped defaults + product-specific)
+├── plans/                        # Build plans (output of /plan, /brainstorm, /design)
 │   ├── <feature>/                #   One folder per feature/flow
 │   │   ├── plan.md               #     Human-readable: IA, hierarchy, components, edge cases
 │   │   ├── build.json            #     Machine-readable: pre-resolved keys for /build
+│   │   ├── context.md            #     Shared decisions across screens (header, nav, spacing)
+│   │   ├── workflow-log.md       #     Autonomous pipeline log (output of /design)
 │   │   └── screens/              #     Per-screen build JSONs (for multi-screen flows)
 │   │       └── 01-<screen>.json  #       One build JSON per screen (avoids context overload)
 │   └── components/               #   Component plans (separate lifecycle)
@@ -47,18 +52,20 @@ design-kit/
 ├── setup-components/             # Catalog your components with variants and props
 ├── setup-relationships/          # Map how components depend on each other
 ├── setup-icons/                  # Catalog icons with search tags
+├── setup-product/                # Catalog product context: identity, users, IA, terminology
 │
 │── ── Phase 1.5: Capture + Wireframe ──────────────────────────────────
 ├── capture/                      # Capture a live URL → raw + mapped Figma builds
 ├── wireframe/                    # Lo-fi wireframes on FigJam (4 fidelity levels: zones/sketch/wireframe/detailed)
 │
 │── ── Phase 2: Create ────────────────────────────────────────────────
+├── design/                       # End-to-end autonomous design (brief → built + audited + handoff)
 ├── brainstorm/                   # Generate design variations (SCAMPER + JTBD)
 ├── plan/                         # Plan a screen — map brief to components + tokens
-├── build/                        # Execute a plan in Figma
+├── build/                        # Execute a plan in Figma (now with state generation Phase 6)
 ├── plan-component/               # Plan a new component (variants, props, tokens)
 ├── build-component/              # Build a component set in Figma from plan
-├── flow/                         # Design multi-screen connected flows
+├── flow/                         # Multi-screen flow planning (internal module, called by /design)
 ├── responsive/                   # Desktop to tablet + mobile adaptation
 │
 │── ── Phase 3: Review ────────────────────────────────────────────────
@@ -116,6 +123,7 @@ Step 4:  You're ready. Try any skill below.
 | **Catalog my components** | `/setup-components` | Reads every component with variant keys, props, overrides → `design-system/components/` |
 | **Map component relationships** | `/setup-relationships` | Builds dependency graph → `design-system/relationships.json` |
 | **Catalog icons** | `/setup-icons` | Maps icon names to keys with search tags → `design-system/icons.json` |
+| **Catalog product context** | `/setup-product` | Gathers product identity, users, IA, terminology, content patterns → `design-system/product.json` + `content-guide.md` |
 
 **Capture + Wireframe**
 
@@ -128,8 +136,8 @@ Step 4:  You're ready. Try any skill below.
 
 | I want to... | Run this | What happens |
 |---|---|---|
-| **Design a new screen** | `/plan` then `/build` | Describe the screen → get a plan → build it in Figma with library components |
-| **Design a multi-screen flow** | `/flow` | Describe the user journey → get connected screens with flow annotations |
+| **Design a screen or flow (autonomous)** | `/design` | Describe the screen **or flow** → AI handles planning, building, auditing, states, and handoff. Detects single vs multi-screen automatically. |
+| **Design a new screen (manual)** | `/plan` then `/build` | Describe the screen → get a plan → build it in Figma with library components |
 | **Explore design variations** | `/brainstorm` | Get 3-5 layout variations using SCAMPER + Jobs-to-be-Done |
 | **Create a new component** | `/plan-component` then `/build-component` | Define variants, props, tokens → build as a component set |
 | **Generate responsive variants** | `/responsive` | Convert a desktop design to tablet + mobile breakpoints |
@@ -153,6 +161,17 @@ Step 4:  You're ready. Try any skill below.
 
 ### Common workflows
 
+**"I want AI to design a page for me autonomously"**
+```
+/setup-product
+→ answers a few questions, researches your product, analyzes your Figma file
+→ creates product.json and content-guide.md
+
+/design settings page with account info, notifications, and integrations
+→ AI plans, builds, generates states, audits, stress-tests, and creates handoff specs
+→ complete design in Figma with empty/loading/error states
+```
+
 **"I need to bring our production app into Figma"**
 ```
 /capture https://app.company.com/settings
@@ -173,11 +192,11 @@ Step 4:  You're ready. Try any skill below.
 
 **"I need a user flow from signup to dashboard"**
 ```
-/flow user signs up, verifies email, completes onboarding, lands on dashboard
-→ review the flow map → approve
+/design user signs up, verifies email, completes onboarding, lands on dashboard
+→ detects multi-screen flow automatically
+→ plans flow topology, builds each screen with full quality pipeline
 → 5 connected screens built in Figma with flow annotations
-/stress-test
-→ test each screen with extreme content
+→ audit + stress-test + handoff on primary screen
 ```
 
 **"I need a new Toast component"**
@@ -249,7 +268,7 @@ Skills are organized into 4 phases. You don't need them all — start where you 
 
 ```
 Phase 1: SETUP (one-time — catalog what you have)
-  /setup-tokens → /setup-components → /setup-relationships → /setup-icons
+  /setup-tokens → /setup-components → /setup-relationships → /setup-icons → /setup-product
 
 CAPTURE + WIREFRAME (bring existing pages into Figma)
   /capture URL ──→ raw replica + mapped version (side by side, in Figma)
@@ -258,6 +277,10 @@ CAPTURE + WIREFRAME (bring existing pages into Figma)
     flags: --zones (IA boxes), --sketch (default), --wireframe (real text), --detailed (states + annotations)
 
 Phase 2: CREATE (the design loop — spec-driven)
+  /design ──→ autonomous end-to-end (context → plan → build → states → audit → handoff)
+       │        ├── single screen: uses /plan + /build
+       │        └── multi-screen: uses flow/SKILL.md (internal) + /build per screen
+       │
   /brainstorm ──→ pick a direction
        │
   /plan ──→ /build ──→ see it in Figma
@@ -268,8 +291,8 @@ Phase 2: CREATE (the design loop — spec-driven)
        │     │    ├── Phase 4: TOKEN-BUILT (fill gaps with frames/text)
        │     │    └── Phase 5: VALIDATE (coverage, text, tokens, visual)
        │     │
-  /flow       /responsive
-  (multi-screen)  (tablet + mobile)
+       │     /responsive
+       │     (tablet + mobile)
 
   Build pipeline (inspired by github/spec-kit):
     /plan creates build.json with a "manifest" — a flat list of every

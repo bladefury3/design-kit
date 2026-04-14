@@ -177,12 +177,15 @@ Present a summary to the user:
 - **Categories**: What types are present (COLOR, FLOAT, STRING, BOOLEAN)
 
 Ask the user:
-> "Here's what I found in your file. Which collections should I extract?
-> Should I include all modes, or just the default?"
+> "Here's what I found in your file. Which collections should I extract?"
 
    If the user asked for "all tokens" or didn't specify, extract everything.
    Only ask this question if the file has collections that are clearly unrelated
    (e.g., a "Deprecated" collection alongside active ones).
+
+   **Modes**: Always extract ALL modes (light, dark, etc.) for every collection.
+   Do NOT ask whether to include modes — always include them. Mode values are
+   required for downstream skills (`/build`, `/design`) to support dark mode builds.
 
 ## Step 2: Extract token values
 
@@ -445,7 +448,16 @@ Format tokens following the W3C Design Tokens Community Group specification.
     "extractedAt": "<ISO timestamp>",
     "figmaFile": "<file name>",
     "collections": ["<collection names>"],
-    "modes": ["<mode names>"]
+    "modes": ["<mode names>"],
+    "modeCollections": {
+      "<Collection Name>": {
+        "collectionId": "<VariableCollectionId:...>",
+        "modes": {
+          "<Mode Name>": "<modeId>",
+          "<Mode Name>": "<modeId>"
+        }
+      }
+    }
   },
   "color": {
     "primitive": {
@@ -521,7 +533,15 @@ Format tokens following the W3C Design Tokens Community Group specification.
 
 ### Multi-mode handling
 
-If the design system has multiple modes (e.g., light/dark), structure as:
+If the design system has multiple modes (e.g., light/dark), you MUST:
+
+1. **Extract values for every mode** — not just the default. Every token with mode-specific
+   values gets a `$extensions.modes` object mapping mode name → value.
+2. **Record `modeCollections` in `$metadata`** — this maps each Figma VariableCollection name
+   to its available modes with their `modeId` strings. Downstream skills use this to call
+   `setExplicitVariableModeForCollection()` on build frames.
+
+Token structure with modes:
 
 ```json
 {
@@ -533,8 +553,8 @@ If the design system has multiple modes (e.g., light/dark), structure as:
           "$type": "color",
           "$extensions": {
             "modes": {
-              "light": "#ffffff",
-              "dark": "#0f172a"
+              "Light mode": "#ffffff",
+              "Dark mode": "#0C111D"
             }
           }
         }
@@ -543,6 +563,82 @@ If the design system has multiple modes (e.g., light/dark), structure as:
   }
 }
 ```
+
+`$metadata.modeCollections` structure:
+
+```json
+{
+  "$metadata": {
+    "modeCollections": {
+      "1. Color modes": {
+        "collectionId": "VariableCollectionId:5256:1315",
+        "modes": {
+          "Light mode": "5256:0",
+          "Dark mode": "5256:1"
+        }
+      },
+      "2. Radius": {
+        "collectionId": "VariableCollectionId:6298:3",
+        "modes": {
+          "Default": "6298:3"
+        }
+      },
+      "3. Spacing": {
+        "collectionId": "VariableCollectionId:6298:2",
+        "modes": {
+          "Default": "6298:2"
+        }
+      },
+      "_Primitives": {
+        "collectionId": "VariableCollectionId:5248:3",
+        "modes": {
+          "Default": "5248:3"
+        }
+      },
+      "6. Typography": {
+        "collectionId": "VariableCollectionId:7403:0",
+        "modes": {
+          "Default": "7403:0"
+        }
+      }
+    }
+  }
+}
+```
+
+### How to extract `modeCollections`
+
+During Step 1a/1b discovery, capture the collection ID + mode info:
+
+```javascript
+// For local collections
+const localCollections = await figma.variables.getLocalVariableCollectionsAsync();
+const modeCollections = {};
+for (const c of localCollections) {
+  modeCollections[c.name] = {
+    collectionId: c.id,  // e.g. "VariableCollectionId:5256:1315"
+    modes: {}
+  };
+  for (const mode of c.modes) {
+    modeCollections[c.name].modes[mode.name] = mode.modeId;
+  }
+}
+
+// For library collections — after importing at least one variable per collection,
+// the collection becomes accessible via getVariableCollectionByIdAsync
+const imported = await figma.variables.importVariableByKeyAsync(someVarKey);
+const collection = await figma.variables.getVariableCollectionByIdAsync(imported.variableCollectionId);
+modeCollections[collection.name] = {
+  collectionId: collection.id,
+  modes: {}
+};
+for (const mode of collection.modes) {
+  modeCollections[collection.name].modes[mode.name] = mode.modeId;
+}
+```
+
+Write the full `modeCollections` map into `$metadata`. This is critical — without it,
+downstream skills cannot switch to dark mode without manually discovering modes at runtime.
 
 ## Step 4: Resolve aliases
 

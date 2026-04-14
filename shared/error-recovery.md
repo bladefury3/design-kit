@@ -47,6 +47,28 @@ Standard error handling patterns for all skills that interact with Figma.
 3. Only fall back to placeholder frame if search returns nothing AND user confirms
 4. Label placeholder: `[Missing: Component Name]` — never silently skip
 
+## figma_instantiate_component timeouts
+
+**Symptom**: `figma_instantiate_component` hangs for 10-15 seconds, then returns a timeout error
+
+**This is DIFFERENT from "not found".** A timeout means the component library is
+unresponsive (network, plugin, or library size). A "not found" error returns
+immediately and means the key is wrong.
+
+**Recovery**:
+1. **Do NOT retry.** Every retry will also timeout, wasting 15s + context each time.
+2. Switch to **token-built-only mode** for ALL remaining library components in this session.
+3. Build equivalent elements using `figma_execute` with `mkF()` and `mkT()` helpers,
+   binding all values to tokens from `design-system/tokens.json`.
+4. Log every substitution in workflow-log.md:
+   > "Component probe timed out. Switched to token-built-only mode.
+   > [N] components built from tokens instead of library."
+5. Note in the build output: "Library import unavailable — all elements token-built."
+
+**The probe pattern**: Before building N components, test ONE small component first
+(a Divider, Badge, or Icon). If the probe times out, skip all library imports. If it
+succeeds, proceed normally. One test, one decision for the entire build.
+
 ## figma_execute timeouts
 
 **Symptom**: "timed out after Nms"
