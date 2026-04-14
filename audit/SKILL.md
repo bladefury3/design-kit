@@ -416,6 +416,97 @@ Figma file is the source of truth. Instead:
 This keeps findings where designers actually look (Figma comments) rather than
 in JSON files nobody opens twice.
 
+## Cross-Screen Consistency Lint (multi-frame mode)
+
+When the user selects multiple frames, or when auditing a flow (from `/flow` or
+`/design`), automatically run cross-screen consistency checks IN ADDITION to
+the per-frame audit above.
+
+### When to activate
+
+- User selected 2+ frames in Figma
+- The frames share a `plans/<feature>/context.md` file
+- The user explicitly asks to audit a flow or set of related screens
+- Called from `/design` orchestrator with multiple frames
+
+### Load context.md
+
+If `plans/<feature>/context.md` exists, load it as the ground truth for what
+"consistent" means. Every shared decision in context.md is a hard constraint.
+
+### Cross-screen checks
+
+For every pair of frames in the set, check:
+
+**1. Header consistency**
+- Same component, same variant, same variantKey across all frames
+- Same property overrides (same booleans toggled)
+- Different title/breadcrumb text is expected — but same structure
+
+**2. Navigation consistency**
+- Same nav items in the same order on every frame
+- Correct active state per frame (the current page is highlighted)
+- Same sidebar width, same item spacing
+
+**3. Spacing rhythm**
+- Same section gaps across all frames
+- Same item gaps within sections
+- Compare padding-top, padding-bottom, itemSpacing on equivalent sections
+
+**4. Typography scale**
+- Same heading levels for same content types across frames
+- Section headers use the same text style everywhere
+- Body text, labels, and values are consistent
+
+**5. Button placement**
+- Primary CTA in the same position on every frame
+- Same button variant for primary/secondary actions
+- Cancel/back button position consistent
+
+**6. Error pattern**
+- If any frame has error states, all frames should handle errors the same way
+- Inline errors styled identically
+
+**7. Token usage**
+- No frame using hardcoded values where others use tokens for the same property
+- Same color tokens for same semantic purposes across frames
+
+### Present cross-screen findings
+
+Add a section to the audit report:
+
+> ### Cross-Screen Consistency
+>
+> **Frames audited**: [list of frame names]
+> **Context file**: plans/<feature>/context.md [found/not found]
+>
+> | Check | Result | Details |
+> |---|---|---|
+> | Header | Pass/Fail | Same component and config across all frames |
+> | Navigation | Pass/Fail | Same items, correct active state |
+> | Spacing | Pass/Fail | Consistent section/item gaps |
+> | Typography | Pass/Fail | Same scale for same content types |
+> | Button placement | Pass/Fail | Primary CTA consistent |
+> | Token usage | Pass/Fail | No hardcoded values where tokens used elsewhere |
+>
+> **Inconsistencies found**: [N]
+> [Detailed list of each inconsistency with frame names and specific values]
+
+### Scoring
+
+Cross-screen consistency contributes to the overall audit score when multiple
+frames are audited. Add it as a weighted category:
+
+| Category | Weight (single frame) | Weight (multi-frame) |
+|---|---|---|
+| Token compliance | 20% | 15% |
+| Component compliance | 20% | 15% |
+| Heuristic evaluation | 30% | 25% |
+| Cognitive load | 15% | 15% |
+| Gestalt compliance | 10% | 10% |
+| Naming quality | 5% | 5% |
+| **Cross-screen consistency** | — | **15%** |
+
 ## Next steps
 
 After presenting the audit report, suggest follow-up actions:

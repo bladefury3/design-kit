@@ -1,0 +1,40 @@
+{
+  "id": "d-04",
+  "skill": "design",
+  "name": "Design lead strategic brief — team lead dashboard, tests scale and accessibility",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "Design the Team Lead Home screen — at-a-glance team health. Optimize for 'Is my team healthy?' Show: team health metrics (active members, pulses posted, open blockers, avg response time), 'Needs Attention' section (unanswered questions, stale blockers, incomplete onboarding), recent decisions log (decision + date + who). Must work for teams of 5 and 200. Scannable in 10 seconds. All metrics must have text labels. Color must not be only status indicator.",
+    "designSystemAvailable": true,
+    "figmaConnected": true,
+    "productContextAvailable": true,
+    "productContextQuality": "excellent"
+  },
+  "expectedBehaviors": [
+    "Matches dashboard-status or command-center archetype",
+    "Layout prioritizes metrics (top), then action items (middle), then log (bottom)",
+    "All 4 metrics have text labels AND numeric values (not just numbers)",
+    "Status indicators use shape/icon/label in addition to color",
+    "Needs Attention section has urgency ordering",
+    "Decisions log shows decision + date + author as specified",
+    "Empty state for each section (new team, no blockers, no decisions)",
+    "Stress-test: 0 blockers vs 50 blockers, team of 5 vs 200",
+    "Audit checks accessibility (text labels, non-color-dependent status)",
+    "Design is scannable — clear visual hierarchy for quick parsing"
+  ],
+  "antiPatterns": [
+    "Designs an IC feed instead of a lead dashboard",
+    "Metrics without text labels (just numbers in cards)",
+    "Using only color (red/green) to indicate good/bad status",
+    "Not handling scale difference (5 vs 200 team members)",
+    "Needs Attention as a flat list without urgency ordering",
+    "Ignoring the 'scannable in 10 seconds' requirement",
+    "No accessibility considerations in audit"
+  ],
+  "evaluationCriteria": {
+    "dashboardNotFeed": "Is this clearly a dashboard for a manager, not a content feed?",
+    "accessibilityCompliance": "Do metrics have text labels? Is color not the only status indicator?",
+    "scaleHandling": "Does the stress test verify behavior at 5 and 200 team members?",
+    "scanability": "Could a busy manager get the answer in under 10 seconds?"
+  }
+}

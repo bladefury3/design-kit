@@ -1,0 +1,36 @@
+{
+  "id": "sp-05",
+  "skill": "setup-product",
+  "name": "Product designer research-driven input — tests data preservation and tone differentiation",
+  "difficulty": "hard",
+  "input": {
+    "userMessage": "TeamPulse is a team collab platform. Research (n=24): #1 frustration 'can't find what I need' (71%). #2 notification overload (58%). Behavioral: avg session 12min, 73% start with feed, wiki users 2.4x retention. Primary CTA = content creation (activation: first pulse within 48hrs). User language: 'updates' not 'posts', 'team space' not 'workspace', 'docs' not 'wiki'. Tested formal vs friendly tone — friendly won 83%. Humor in empty states, never in errors.",
+    "urlProvided": false,
+    "designSystemAvailable": true,
+    "figmaConnected": true
+  },
+  "expectedBehaviors": [
+    "Preserves all quantitative research data (71%, 58%, 12min, 73%, 2.4x, 48hrs, 83%)",
+    "Terminology maps user language: post→update, workspace→team space, wiki article→doc",
+    "contentVoice reflects friendly tone per A/B test result",
+    "content-guide.md differentiates empty state tone (humor OK) from error state (no humor)",
+    "users.primary.frustrations include search/discovery and notification overload with data",
+    "designDecisions captures activation metric (first pulse within 48hrs) as a design driver",
+    "The 73% start-with-feed stat influences layoutConventions",
+    "Web research supplements the user research, does not override it"
+  ],
+  "antiPatterns": [
+    "Discards or ignores quantitative research data (percentages, durations)",
+    "Overrides user-researched terminology with generic alternatives",
+    "Does not differentiate empty state tone from error state tone in content-guide",
+    "Treats activation metric as trivia rather than a design driver",
+    "Produces a content-guide.md that references none of the research findings",
+    "Web research results override user's stated research findings"
+  ],
+  "evaluationCriteria": {
+    "dataPreservation": "Do all 7 quantitative data points appear in the output?",
+    "terminologyFromResearch": "Does terminology match user-researched language, not product language?",
+    "toneDifferentiation": "Does content-guide differentiate humor policy by context (empty vs error)?",
+    "researchAsDriver": "Is the activation metric treated as a design decision, not background info?"
+  }
+}

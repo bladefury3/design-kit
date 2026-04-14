@@ -90,7 +90,19 @@ Create ONLY the empty frame structure: root, sections, sub-sections.
 Set sizing, padding, gaps, fills. NO content, NO components, NO text.
 Screenshot to verify proportions.
 
-### Phase 3: COMPONENTS (the critical phase)
+### Phase 2.5: COMPONENT PROBE (run ONCE before Phase 3)
+
+Before processing the manifest, test library availability:
+1. Pick the smallest component from the manifest (a Divider, Badge, or Icon)
+2. `figma_instantiate_component` with its variantKey
+3. **If it succeeds**: proceed to Phase 3 normally. Delete the test instance.
+4. **If it times out**: set `componentMode = "token-built-only"`. Skip Phase 3.
+   Go straight to Phase 4. Log: "Component probe timed out."
+
+Never retry after a timeout. Timeouts are library-level, not component-level.
+See `shared/error-recovery.md` for details.
+
+### Phase 3: COMPONENTS (skip if probe timed out)
 
 Work through the manifest checklist item by item:
 1. **Structural**: Tabs, dividers, page headers, section headers
@@ -227,7 +239,13 @@ function canvasScan() {
 
 1. Read the plan from `plans/<name>/build.json` (or `plans/<name>.json`).
 2. Load design system data following `shared/design-system-loading.md`.
-3. Find clear canvas space following `shared/canvas-positioning.md`.
+   - **Also load**: `design-system/product.json` and `design-system/content-guide.md`
+     if they exist (Tier 0 in the loading pattern). Use product terminology for
+     all text content and content-guide.md voice patterns for any text you generate.
+3. Check for `plans/<feature>/context.md` — if it exists, load shared decisions
+   (header config, nav items, spacing rhythm). Every shared component must match
+   the context exactly. Do not deviate from context.md decisions.
+4. Find clear canvas space following `shared/canvas-positioning.md`.
 
 ## How to build
 
@@ -380,6 +398,53 @@ After all sections are built and verified:
 9. **Icons are library components, not ellipses.** Never use
    `figma.createEllipse()` for an icon. Icons exist in the library as
    standalone components (24x24). Instantiate them like any other component.
+
+## Phase 6: State Generation (optional — run when requested or via /design)
+
+After the primary frame passes Phase 5 validation, generate state variants to
+show how the screen behaves with different data conditions. Each state is a
+cloned copy of the primary frame with targeted modifications.
+
+### When to generate states
+
+- **Always** when called from `/design` (the autonomous orchestrator)
+- **On request** when the user asks for states, empty states, error states, etc.
+- **Suggested** after any build — mention states as a next step
+
+### State priority (when called from /design)
+
+| Priority | State | Required? | What changes | Text source |
+|---|---|---|---|---|
+| 1 | **Empty / First-time** | **MANDATORY** | Lists empty, metrics show zero/dash, tables show 0 rows | `content-guide.md` emptyStatePattern |
+| 2 | **Error / Recovery** | **MANDATORY** | Inline error banner at top, retry button visible | `content-guide.md` errorPattern |
+| 3 | **Loading / Skeleton** | Optional | Content replaced with gray rectangle placeholders | No text — skeleton shapes |
+| 4 | **Success / Confirmation** | Optional | Toast or banner confirming completed action | Brief confirmation |
+
+If you can only build 2 states, build Empty + Error. These catch the most
+common UX failures and are weighted highest in design audits.
+
+### How to generate each state
+
+1. **Clone the primary frame**: `figma_clone_node` on the root frame
+2. **Rename**: "[Screen Name] — [State] State"
+3. **Position**: Per `shared/canvas-positioning.md` — all states in a horizontal row, 100px gap between each frame, same y as primary
+4. **Modify**: Walk the cloned frame and apply state-specific changes:
+   - **Empty**: Find list/table sections → replace content with empty state (illustration + headline + CTA)
+   - **Loading**: Find content sections → replace with gray rectangles (`fills: [{type:'SOLID', color:{r:0.92,g:0.92,b:0.93}}]`, `cornerRadius: 8`)
+   - **Error**: Add an alert/banner component at the top of the content area
+   - **Success**: Add a toast/notification at the top
+5. **Screenshot** each state for validation
+
+### Content for states
+
+If `design-system/content-guide.md` exists, use its patterns:
+- Empty state headline: follow `emptyStatePattern`
+- Error message: follow `errorPattern`
+- Success message: brief confirmation
+
+If `design-system/product.json` exists, use product terminology:
+- "No [product-specific items] yet" (not "No items yet")
+- "Create your first [product term]" (not "Add item")
 
 ## Definition of Done
 

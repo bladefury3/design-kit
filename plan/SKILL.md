@@ -39,9 +39,23 @@ the plan, it's decided. See PRINCIPLES.md for design principles and frameworks.
 
 ## Step 1: Load design system data
 
-Follow `shared/design-system-loading.md` for the 3-tier fallback pattern.
+Follow `shared/design-system-loading.md` for the full fallback pattern.
 
-Read ALL of these (preferred):
+### Tier 0: Product context (load first — informs everything)
+
+- `design-system/product.json` — product identity, users, IA, terminology, layout conventions
+- `design-system/content-guide.md` — voice, tone, content patterns
+- `design-system/layout-patterns.json` — common page archetypes
+
+If product.json exists, use it to:
+- **Skip questions** the context already answers (product type, users, nav pattern)
+- **Match the brief** against layout-patterns.json for the closest archetype
+- **Apply terminology** from the terminology map (use product vocabulary, not generic labels)
+- **Apply layout conventions** for the page type (e.g., settings → sidebar+content+save-bar)
+- **Pre-fill content** using content-guide.md voice patterns for empty states, errors, CTAs
+
+### Tier 1: Design system data
+
 - `design-system/tokens.json` — token values and figma keys
 - `design-system/components/index.json` — component catalog with figmaKey, defaultVariantKey, typicalOverrides
 - `design-system/relationships.json` — how components compose
@@ -49,8 +63,11 @@ Read ALL of these (preferred):
 
 If any are missing, follow the Tier 2/3 fallbacks in `shared/design-system-loading.md`.
 
-Also check for `plans/<feature>/context.md` — shared decisions from prior screens
+### Prior screen context
+
+Check for `plans/<feature>/context.md` — shared decisions from prior screens
 (header config, nav items, spacing rhythm) that this screen must follow.
+If it exists, enforce ALL shared decisions. Do not re-decide what's already decided.
 
 ## Step 2: Analyze the brief
 
@@ -58,6 +75,23 @@ If the user already described what they want, proceed. Otherwise ask for a
 description, wireframe, or screenshot.
 
 Default to Desktop (1440px) unless context clearly suggests mobile/tablet.
+
+### Layout pattern matching (do this first if product context exists)
+
+If `design-system/layout-patterns.json` and/or `design-system/product.json` exist:
+
+1. **Match the brief** against known layout patterns. "Settings page" → `settings-sidebar`.
+   "Dashboard" → `dashboard-status`. "User list" → `data-table`.
+2. **Check product.json layoutConventions** — if the product has a convention for this
+   page type, use it as the starting point.
+3. **Check product.json informationArchitecture** — confirm the page exists in the IA.
+   Use the nav items, page hierarchy, and JTBD classification from the context.
+4. **Apply terminology** — use product vocabulary for all labels, headings, nav items.
+5. **State the match** to the user: "This looks like a **settings-sidebar** pattern
+   (sidebar navigation + form content). I'll use your product's settings convention
+   as the starting point."
+
+This pre-fills 60-80% of layout decisions, reducing clarifying questions significantly.
 
 ### From a description
 
@@ -278,6 +312,62 @@ the page shape in 5 seconds.>
 
 - <Deliberate exclusion>: <reason>
 ```
+
+## Step 4.5: Write context.md (if first screen in a feature)
+
+If `plans/<feature>/context.md` does NOT exist, create it now. This file records
+shared decisions that all future screens in this feature must follow.
+
+```markdown
+# Context: <Feature Name>
+
+## Shared Decisions (apply to all screens in this feature)
+
+### Header
+- Component: <component name> (variant: <variant>)
+- variantKey: <40-char hex>
+- Property overrides: { ... }
+
+### Navigation
+- Pattern: <sidebar / top-nav / breadcrumb>
+- Items: [list of nav items]
+- Active highlighting: <description>
+
+### Spacing Rhythm
+- Section gap: <token name>
+- Item gap: <token name>
+- Inner gap: <token name>
+
+### Typography Scale
+- Section headers: <text style, weight, color token>
+- Labels: <text style, weight, color token>
+- Values: <text style, weight, color token>
+
+### Terminology
+- <term>: <definition from product.json>
+```
+
+If context.md already exists, read it and enforce all shared decisions in this plan.
+
+## Step 4.6: Write content inventory
+
+If `design-system/content-guide.md` exists, add a content inventory to plan.md.
+This ensures every text element follows the product's voice and content patterns.
+
+```markdown
+## Content Inventory
+
+| Element | Text | Voice Rule | Character Limit |
+|---|---|---|---|
+| Page title | "Team Settings" | Professional, no abbreviations | 40 |
+| Save button | "Save changes" | Verb + noun per voice guide | 25 |
+| Empty state headline | "No integrations yet" | Warm per emptyStatePattern | 40 |
+| Empty state body | "Connect your tools to streamline workflows" | 1 sentence, action-oriented | 120 |
+| Error banner | "Could not save. Check your connection." | errorPattern formula | 100 |
+```
+
+Every text element in the plan must appear in this inventory. `/build` uses it
+to validate that all text follows voice conventions.
 
 ## Step 5: Write build.json
 

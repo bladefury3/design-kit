@@ -250,10 +250,17 @@ if [ "$UPDATE" != true ]; then
 fi
 
 # Discover skills (directories containing SKILL.md)
+# Skip internal-only modules (flow is called by /design, not user-facing)
+INTERNAL_SKILLS="flow"
 SKILLS=()
 for dir in "$SCRIPT_DIR"/*/; do
   if [ -f "$dir/SKILL.md" ]; then
-    SKILLS+=("$(basename "$dir")")
+    skill_name="$(basename "$dir")"
+    # Skip internal modules
+    if echo "$INTERNAL_SKILLS" | grep -qw "$skill_name"; then
+      continue
+    fi
+    SKILLS+=("$skill_name")
   fi
 done
 

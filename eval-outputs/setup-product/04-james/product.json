@@ -1,0 +1,152 @@
+{
+  "$schema": "design-kit/product/v1",
+  "generatedAt": "2026-04-11T22:45:00.000Z",
+  "sources": {
+    "interview": { "status": "completed", "confidence": "very-high", "note": "Strategic brief with 3 user types, accessibility requirements, scale range, and design philosophy" },
+    "url": {
+      "status": "completed",
+      "urls": [
+        { "url": "linear.app", "note": "Analyzed for density and clarity patterns — progressive disclosure, semantic color coding, monospace for technical content" },
+        { "url": "notion.so", "note": "Analyzed for navigation patterns, workspace hierarchy, AI agent layer on top of docs" }
+      ]
+    },
+    "research": { "status": "completed", "note": "Enterprise team collaboration UX patterns, accessibility standards, RTL considerations" },
+    "figmaFile": { "status": "completed", "note": "Existing frames show dashboard, feed, sidebar, onboarding flow — confirms product is past initial design phase" },
+    "designSystem": { "status": "completed", "note": "Untitled UI PRO: 92 components, 71 icons. Note: current tokens don't include RTL-specific tokens — may need extension." }
+  },
+  "identity": {
+    "name": "TeamPulse",
+    "tagline": "Team collaboration for distributed teams at scale",
+    "category": "Enterprise team collaboration platform (SaaS)",
+    "platform": "Web-first, multi-platform",
+    "stage": "Series B — prioritizing consistent patterns over pixel-perfect polish (user-specified)",
+    "designPhilosophy": "Consistent patterns > pixel-perfect. Ship quality through systems, not artisanship.",
+    "confidence": "very-high"
+  },
+  "users": {
+    "primary": {
+      "label": "Individual contributor (IC)",
+      "description": "Daily active user in feed and wiki. Needs fast creation and fast discovery.",
+      "homeScreen": "Activity feed with quick-create actions",
+      "goals": ["Fast content creation", "Quick information discovery", "Stay current without drowning in notifications"],
+      "keyMetric": "Time to first pulse (activation metric)",
+      "frequency": "Daily, multiple sessions",
+      "confidence": "very-high — explicitly specified"
+    },
+    "secondary": {
+      "label": "Team lead",
+      "description": "Needs at-a-glance team health: who's active, who's blocked, what decisions were made",
+      "homeScreen": "Status dashboard with metrics, needs-attention section, and decisions log",
+      "goals": ["Quick team health check", "Early blocker identification", "Decision tracking"],
+      "keyMetric": "Time to 'is my team healthy?' answer (<10 seconds)",
+      "frequency": "Daily, shorter sessions",
+      "confidence": "very-high — explicitly specified"
+    },
+    "tertiary": {
+      "label": "Org admin",
+      "description": "Manages workspace infrastructure: SSO, billing, compliance. Different mental model entirely.",
+      "homeScreen": "Admin console with workspace management, security, billing",
+      "goals": ["Efficient user management at scale", "Security and compliance", "Billing visibility"],
+      "keyMetric": "Tasks completed per admin session",
+      "frequency": "Weekly to monthly",
+      "confidence": "very-high — explicitly specified"
+    }
+  },
+  "informationArchitecture": {
+    "navigation": "Left sidebar with icon + label, differentiated by user type",
+    "userTypeDifferentiation": {
+      "ic": ["Home (feed)", "Wiki", "Team", "Notifications"],
+      "lead": ["Home (dashboard)", "Team health", "Decisions", "Wiki", "Notifications"],
+      "admin": ["Workspace", "Members", "Security", "Billing", "Integrations"]
+    },
+    "primarySections": [
+      { "name": "Home", "purpose": "User-type-specific landing (feed OR dashboard OR admin console)", "icon": "home-line" },
+      { "name": "Feed", "purpose": "Team activity stream for ICs", "icon": "rows-01" },
+      { "name": "Wiki", "purpose": "Knowledge base", "icon": "book-open-01" },
+      { "name": "Team", "purpose": "Directory and profiles", "icon": "users-01" },
+      { "name": "Notifications", "purpose": "Centralized alerts with smart filtering", "icon": "bell-01" },
+      { "name": "Settings", "purpose": "Personal + workspace settings", "icon": "settings-01" }
+    ],
+    "confidence": "very-high"
+  },
+  "scale": {
+    "teamSize": { "min": 5, "max": 5000, "note": "Must work for teams of 5 and 5000 (user-specified)" },
+    "accessibility": {
+      "standard": "WCAG AA",
+      "requirements": [
+        "Color must not be the only status indicator",
+        "All metrics must have text labels",
+        "Keyboard navigable",
+        "Screen reader compatible"
+      ],
+      "note": "WCAG AA explicitly required by user"
+    },
+    "internationalization": {
+      "languages": "15+",
+      "rtl": true,
+      "note": "RTL support explicitly required — affects all layout decisions"
+    }
+  },
+  "terminology": {
+    "mappings": [
+      { "generic": "post", "product": "pulse", "context": "Core content unit" },
+      { "generic": "workspace", "product": "workspace", "context": "Top-level container" },
+      { "generic": "article", "product": "page", "context": "Wiki content" },
+      { "generic": "channel", "product": "team space", "context": "Group context" },
+      { "generic": "member", "product": "teammate", "context": "In general copy" },
+      { "generic": "notification", "product": "notification", "context": "System alerts" },
+      { "generic": "dashboard", "product": "home", "context": "User-type-specific landing" }
+    ]
+  },
+  "existingFrames": {
+    "analyzed": true,
+    "frames": [
+      { "name": "Dashboard", "nodeId": "16:18", "type": "dashboard", "note": "Existing IC-focused dashboard" },
+      { "name": "Sidebar", "nodeId": "58:1147", "type": "navigation" },
+      { "name": "1. Feeds", "nodeId": "112:72440", "type": "feed" },
+      { "name": "Product Overview Dashboard [Revised v2]", "nodeId": "86:28900", "type": "dashboard" },
+      { "name": "Flow: Login → Onboarding → Dashboard", "nodeId": "100:34147", "type": "flow" },
+      { "name": "Deep Dive variations", "type": "detail views", "note": "4 variants showing different content density approaches" }
+    ],
+    "gaps": [
+      "No team lead dashboard exists yet",
+      "No admin console screens",
+      "No RTL variants",
+      "No accessibility-annotated frames"
+    ]
+  },
+  "designContext": {
+    "currentFocus": "Differentiated home screens per user type",
+    "completedScreens": ["IC Dashboard", "Feed", "Sidebar navigation", "Onboarding flow"],
+    "upcomingScreens": ["Team lead dashboard", "Admin console", "Notification center", "Settings"],
+    "constraints": [
+      "WCAG AA compliance",
+      "RTL support for 15+ languages",
+      "Scale: 5 to 5000 team members",
+      "Consistent patterns > pixel-perfect (Series B philosophy)",
+      "Color never sole status indicator",
+      "Text labels on all metrics"
+    ],
+    "urlResearch": {
+      "linear.app": {
+        "keyTakeaways": [
+          "Progressive disclosure through 9 typography levels — prevents cognitive overload",
+          "Semantic color coding for project status (red/green) but always paired with text labels",
+          "Monospace for technical content — reduces cognitive switching",
+          "Separation of concerns: projects, issues, teams as distinct layers",
+          "Performance-first: adaptive density for varied devices and contexts"
+        ]
+      },
+      "notion.so": {
+        "keyTakeaways": [
+          "Sidebar navigation with icon+label is the standard",
+          "Workspace > Team > Page hierarchy",
+          "AI agent layer on top of collaboration infrastructure",
+          "Dual CTA pattern (free + enterprise)",
+          "Progressive disclosure for complex features"
+        ]
+      }
+    },
+    "confidence": "very-high"
+  }
+}

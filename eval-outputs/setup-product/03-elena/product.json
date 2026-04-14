@@ -1,0 +1,107 @@
+{
+  "$schema": "design-kit/product/v1",
+  "generatedAt": "2026-04-11T22:40:00.000Z",
+  "sources": {
+    "interview": { "status": "completed", "confidence": "very-high", "note": "Extremely detailed spec: platform, users, IA, spacing grid, voice, terminology — minimal inference needed" },
+    "url": { "status": "failed", "url": "teampulse.io", "error": "Domain does not resolve (fictional URL)", "note": "Gracefully skipped — user's interview input is comprehensive enough to proceed" },
+    "research": { "status": "completed", "note": "Team collaboration enterprise UX patterns, validated against user's spec" },
+    "figmaFile": { "status": "completed", "note": "Existing frames confirm sidebar navigation, dashboard, feed layouts already in place" },
+    "designSystem": { "status": "completed", "note": "Untitled UI PRO tokens loaded. 8px spacing grid confirmed (matches user's spec). 4px compact available." }
+  },
+  "identity": {
+    "name": "TeamPulse",
+    "tagline": "Enterprise team collaboration platform",
+    "category": "Enterprise team collaboration (SaaS)",
+    "platform": "Web-first, mobile companion",
+    "stage": "Active development — multiple screens already designed",
+    "confidence": "very-high"
+  },
+  "users": {
+    "primary": {
+      "label": "Knowledge worker",
+      "description": "IC at a tech company (50-500 employees) who uses TeamPulse daily for communication, documentation, and collaboration",
+      "goals": ["Quick content creation", "Fast information retrieval", "Stay current on team activity"],
+      "frustrations": ["Tool fragmentation", "Search across multiple platforms", "Notification overload"],
+      "frequency": "Daily, multiple sessions",
+      "confidence": "very-high — explicitly specified by user"
+    },
+    "secondary": {
+      "label": "Org admin",
+      "description": "Manages workspace infrastructure: user accounts, billing, permissions, integrations",
+      "goals": ["Efficient workspace management", "Security and compliance", "User onboarding"],
+      "frustrations": ["Complex permission models", "Billing visibility", "Bulk user management"],
+      "frequency": "Weekly to monthly",
+      "confidence": "very-high — explicitly specified by user"
+    }
+  },
+  "informationArchitecture": {
+    "navigation": "Left sidebar with icon + label navigation",
+    "topBar": {
+      "height": "64px",
+      "content": "Breadcrumbs navigation",
+      "note": "Explicitly specified by user"
+    },
+    "primarySections": [
+      { "name": "Home", "purpose": "Personalized landing page", "icon": "home-line" },
+      { "name": "Feed", "purpose": "Team activity stream", "icon": "rows-01" },
+      { "name": "Wiki", "purpose": "Knowledge base (called 'knowledge base' in copy, not 'wiki')", "icon": "book-open-01" },
+      { "name": "Team", "purpose": "Team directory and profiles", "icon": "users-01" },
+      { "name": "Notifications", "purpose": "Centralized alerts", "icon": "bell-01" },
+      { "name": "Settings", "purpose": "Workspace configuration", "icon": "settings-01" }
+    ],
+    "spacingGrid": {
+      "standard": "8px",
+      "compact": "4px",
+      "note": "Explicitly specified by user"
+    },
+    "confidence": "very-high — user provided exact IA spec"
+  },
+  "terminology": {
+    "strict": true,
+    "note": "User explicitly defined terminology. These are NOT suggestions — they are requirements.",
+    "mappings": [
+      { "generic": "post", "product": "pulse", "context": "Core content unit in feeds", "source": "user-specified" },
+      { "generic": "organization", "product": "workspace", "context": "Top-level container — NEVER use 'organization'", "source": "user-specified" },
+      { "generic": "wiki", "product": "knowledge base", "context": "In all user-facing copy — sidebar nav can still say 'Wiki' if space-constrained", "source": "user-specified" },
+      { "generic": "comment", "product": "reply", "context": "Threaded response", "source": "inferred" },
+      { "generic": "channel", "product": "team space", "context": "Group context", "source": "inferred" },
+      { "generic": "member", "product": "teammate", "context": "In copy, use 'member' only in admin/settings context", "source": "inferred" }
+    ]
+  },
+  "voice": {
+    "style": "Professional but warm",
+    "person": "Second person ('you', 'your')",
+    "capitalization": "Sentence case",
+    "note": "All three explicitly specified by user"
+  },
+  "existingFrames": {
+    "analyzed": true,
+    "frames": [
+      { "name": "Dashboard", "nodeId": "16:18", "type": "dashboard" },
+      { "name": "Sidebar", "nodeId": "58:1147", "type": "navigation" },
+      { "name": "1. Feeds", "nodeId": "112:72440", "type": "feed" },
+      { "name": "Product Overview Dashboard [Revised v2]", "nodeId": "86:28900", "type": "dashboard" },
+      { "name": "Flow: Login → Onboarding → Dashboard", "nodeId": "100:34147", "type": "flow" },
+      { "name": "Deep Dive variations (V1-V4)", "type": "detail views" }
+    ]
+  },
+  "designContext": {
+    "currentFocus": "Enterprise workspace management, settings, and admin screens",
+    "completedScreens": ["Dashboard", "Feed", "Sidebar navigation", "Onboarding flow", "Deep dive views"],
+    "constraints": [
+      "8px spacing grid (4px for compact contexts)",
+      "64px top bar for breadcrumbs",
+      "Sentence case everywhere",
+      "Second person voice",
+      "Professional but warm tone"
+    ],
+    "urlResearch": {
+      "teampulse.io": {
+        "status": "failed",
+        "error": "Domain does not resolve — fictional URL. Proceeded without URL research. User's spec is comprehensive enough.",
+        "impact": "None — all required context was provided in the interview"
+      }
+    },
+    "confidence": "very-high"
+  }
+}

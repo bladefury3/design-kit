@@ -1,0 +1,107 @@
+{
+  "$schema": "design-kit/eval-rubric/v1",
+  "name": "design specific criteria",
+  "weight": 0.65,
+  "criteria": {
+    "contextLoading": {
+      "weight": 0.08,
+      "description": "Does it load product.json, content-guide.md, tokens, components, and layout-patterns.json?",
+      "scoring": {
+        "10": "All available context loaded and referenced throughout the pipeline",
+        "7": "Most context loaded, minor data not utilized",
+        "4": "Tokens and components loaded but product context ignored",
+        "1": "Minimal context loading, operates from brief alone"
+      }
+    },
+    "planArchetypeMatch": {
+      "weight": 0.10,
+      "description": "Does the plan match an appropriate layout archetype from layout-patterns.json?",
+      "scoring": {
+        "10": "Correct archetype selected with clear rationale, adapted to brief specifics",
+        "7": "Reasonable archetype selected, minor mismatch with brief",
+        "4": "Generic layout that doesn't match any archetype",
+        "1": "Wrong archetype (e.g., card grid for a data table brief)"
+      }
+    },
+    "componentCoverage": {
+      "weight": 0.12,
+      "description": "Does Gate 1 pass? Library components / total UI elements >= 75%?",
+      "scoring": {
+        "10": ">85% coverage, every token-built element justified",
+        "7": "75-85% coverage, meets gate",
+        "4": "50-75% coverage, gate fails but proceeds with note",
+        "1": "<50% coverage, mostly custom-built frames"
+      }
+    },
+    "buildExecution": {
+      "weight": 0.12,
+      "description": "Does Gate 2 pass? 5/5 build validation checks (coverage, text, properties, tokens, visual)?",
+      "scoring": {
+        "10": "All 5 checks pass on first attempt",
+        "7": "4-5 checks pass after 1-2 fix iterations",
+        "4": "3 checks pass, issues remain",
+        "1": "Build fails or produces broken output"
+      }
+    },
+    "stateGeneration": {
+      "weight": 0.12,
+      "description": "Does Gate 3 pass? At least 3 of 4 states generated with product-specific content?",
+      "scoring": {
+        "10": "All 4 states generated with product-specific content (no generic empty states)",
+        "7": "3 states generated with appropriate content",
+        "4": "1-2 states generated, missing key states",
+        "1": "No states generated, only primary frame"
+      }
+    },
+    "auditRigor": {
+      "weight": 0.10,
+      "description": "Does the audit score all 9 dimensions with evidence? Does Gate 4 pass (>= 7.0)?",
+      "scoring": {
+        "10": "All 9 dimensions scored with specific evidence, overall >= 8.0",
+        "7": "All dimensions scored, overall >= 7.0",
+        "4": "Some dimensions scored, overall 5.0-6.9",
+        "1": "Perfunctory audit with no evidence, or audit skipped"
+      }
+    },
+    "stressTestCoverage": {
+      "weight": 0.10,
+      "description": "Does the stress test cover overflow, empty, error, and boundary cases? Grade >= B?",
+      "scoring": {
+        "10": "All categories tested, specific failures identified with remediation notes, grade A",
+        "7": "Most categories tested, grade B",
+        "4": "Only text overflow tested, grade C",
+        "1": "Minimal testing or stress test skipped, grade D or F"
+      }
+    },
+    "contentQuality": {
+      "weight": 0.10,
+      "description": "Does all text content use product terminology, content-guide.md voice, and real data?",
+      "scoring": {
+        "10": "Every text element uses product terminology, voice matches content-guide, zero placeholders",
+        "7": "Most text is product-specific, 1-2 generic items",
+        "4": "Mix of product-specific and generic/placeholder text",
+        "1": "Placeholder text throughout (Lorem ipsum, Olivia Rhye, generic labels)"
+      }
+    },
+    "handoffCompleteness": {
+      "weight": 0.08,
+      "description": "Does Phase 8 produce annotations with token names, interaction states, and a summary comment?",
+      "scoring": {
+        "10": "Full annotations on frame, comment posted with states and specs, workflow log complete",
+        "7": "Annotations and comment present, minor gaps in coverage",
+        "4": "Partial annotations, no Figma comment posted",
+        "1": "No handoff phase executed"
+      }
+    },
+    "workflowLogIntegrity": {
+      "weight": 0.08,
+      "description": "Is workflow-log.md complete with all gate results, node IDs, and summary table?",
+      "scoring": {
+        "10": "Every phase logged with gate results, node IDs, and final summary table",
+        "7": "Most phases logged, minor gaps in detail",
+        "4": "Partial log, missing gate results or node references",
+        "1": "No workflow log produced"
+      }
+    }
+  }
+}

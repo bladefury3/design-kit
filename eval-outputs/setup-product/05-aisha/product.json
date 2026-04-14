@@ -1,0 +1,138 @@
+{
+  "$schema": "design-kit/product/v1",
+  "generatedAt": "2026-04-11T22:50:00.000Z",
+  "sources": {
+    "interview": { "status": "completed", "confidence": "very-high", "note": "Research-driven brief with quantitative data (n=24), behavioral metrics, user-tested terminology, and tone preferences" },
+    "url": { "status": "skipped", "note": "User said 'We're pre-launch' — no URL available" },
+    "research": { "status": "completed", "note": "Team collaboration UX patterns validated against user's research data" },
+    "figmaFile": { "status": "completed", "note": "Existing frames confirm feed-first design (73% start with feed matches existing feed frame)" },
+    "designSystem": { "status": "completed", "note": "Untitled UI PRO loaded: 92 components, 71 icons, full token set" }
+  },
+  "identity": {
+    "name": "TeamPulse",
+    "tagline": "Team collaboration platform",
+    "category": "Team collaboration (chat + knowledge base)",
+    "platform": "Web (pre-launch)",
+    "stage": "Pre-launch — research phase complete, building toward first release",
+    "confidence": "high"
+  },
+  "researchData": {
+    "note": "All data from user's research (n=24). Preserved exactly as provided — these drive design decisions.",
+    "sampleSize": 24,
+    "keyFindings": [
+      {
+        "id": "R1",
+        "finding": "#1 frustration: 'Can't find what I need'",
+        "percentage": 71,
+        "designImplication": "Search must be prominent. Wiki IA must be intuitive. Feed search should search content, not just titles.",
+        "priority": "critical"
+      },
+      {
+        "id": "R2",
+        "finding": "#2 frustration: Notification overload",
+        "percentage": 58,
+        "designImplication": "Notification center must filter aggressively. Default to actionable notifications, batch low-signal ones.",
+        "priority": "critical"
+      },
+      {
+        "id": "R3",
+        "finding": "Average session length: 12 minutes",
+        "designImplication": "Optimize for quick scanning. Key content must be visible within 10 seconds. No deep navigation to find today's updates.",
+        "priority": "high"
+      },
+      {
+        "id": "R4",
+        "finding": "73% of sessions start with feed",
+        "percentage": 73,
+        "designImplication": "Feed is the primary screen. Home should default to feed view, not a dashboard or overview.",
+        "priority": "high"
+      },
+      {
+        "id": "R5",
+        "finding": "Wiki users have 2.4x retention",
+        "multiplier": 2.4,
+        "designImplication": "Encourage wiki usage through cross-linking from feed, 'Related docs' suggestions, and wiki creation CTAs.",
+        "priority": "high"
+      },
+      {
+        "id": "R6",
+        "finding": "Primary CTA is content creation — activation = first pulse within 48 hours",
+        "designImplication": "New user onboarding must surface pulse creation prominently. Empty feed state should guide to first pulse.",
+        "priority": "critical"
+      },
+      {
+        "id": "R7",
+        "finding": "Friendly tone won over formal (83% preference)",
+        "percentage": 83,
+        "designImplication": "Content guide should use friendly, conversational tone. Humor in empty states. Never humor in errors.",
+        "priority": "high"
+      }
+    ]
+  },
+  "users": {
+    "primary": {
+      "label": "Team member (IC)",
+      "description": "Daily user who creates updates, reads the feed, and consults docs. 12-minute average sessions, feed-first behavior.",
+      "goals": ["Find what they need quickly (addresses R1)", "Share updates with minimal friction", "Discover relevant docs"],
+      "frustrations": ["Can't find what I need (71%)", "Notification overload (58%)", "Too many clicks to create content"],
+      "behavioralInsights": {
+        "avgSession": "12 minutes",
+        "startsWith": "Feed (73%)",
+        "activationMetric": "First pulse within 48 hours"
+      },
+      "frequency": "Daily",
+      "confidence": "very-high — research-backed"
+    }
+  },
+  "informationArchitecture": {
+    "navigation": "Left sidebar",
+    "primarySections": [
+      { "name": "Home", "purpose": "Feed-first landing (per R4: 73% start here)", "icon": "home-line" },
+      { "name": "Feed", "purpose": "Team updates stream — primary content view", "icon": "rows-01" },
+      { "name": "Docs", "purpose": "Knowledge base (user language: 'docs' not 'wiki')", "icon": "book-open-01" },
+      { "name": "Team", "purpose": "Team directory", "icon": "users-01" },
+      { "name": "Notifications", "purpose": "Filtered alerts — actionable by default (per R2)", "icon": "bell-01" },
+      { "name": "Search", "purpose": "Global search — prominent (per R1: #1 frustration)", "icon": "search-lg" }
+    ],
+    "designDecisions": [
+      "Search is elevated to primary nav (not just a search bar) because R1 shows 71% frustration with finding content",
+      "Feed is the default Home view because R4 shows 73% start there",
+      "Docs are cross-linked from feed to leverage R5 (2.4x retention for wiki users)"
+    ],
+    "confidence": "high — research-informed"
+  },
+  "terminology": {
+    "strict": true,
+    "note": "User explicitly tested these terms. They are user-researched, not inferred.",
+    "mappings": [
+      { "generic": "post", "product": "update", "context": "User language from research — 'updates' not 'posts'", "source": "user-researched" },
+      { "generic": "workspace", "product": "team space", "context": "User language — 'team space' not 'workspace'", "source": "user-researched" },
+      { "generic": "wiki", "product": "docs", "context": "User language — 'docs' not 'wiki'", "source": "user-researched" },
+      { "generic": "channel", "product": "team space", "context": "Group context", "source": "user-researched" },
+      { "generic": "notification", "product": "notification", "context": "Standard term — no research override", "source": "default" }
+    ]
+  },
+  "existingFrames": {
+    "analyzed": true,
+    "frames": [
+      { "name": "Dashboard", "nodeId": "16:18", "type": "dashboard", "researchNote": "Research suggests feed-first, not dashboard-first. This dashboard may be for lead view." },
+      { "name": "Sidebar", "nodeId": "58:1147", "type": "navigation" },
+      { "name": "1. Feeds", "nodeId": "112:72440", "type": "feed", "researchNote": "Validates R4 — feed is already designed as primary screen" },
+      { "name": "Product Overview Dashboard [Revised v2]", "nodeId": "86:28900", "type": "dashboard" },
+      { "name": "Flow: Login → Onboarding → Dashboard", "nodeId": "100:34147", "type": "flow", "researchNote": "Onboarding should guide to first pulse (R6: activation = first pulse within 48hrs)" }
+    ]
+  },
+  "designContext": {
+    "currentFocus": "Notification center and feed optimization",
+    "completedScreens": ["Dashboard", "Feed", "Sidebar", "Onboarding flow"],
+    "upcomingScreens": ["Notification center (addressing R2)", "Search (addressing R1)", "Docs with cross-linking (leveraging R5)"],
+    "constraints": [
+      "Friendly tone preferred (83% in research)",
+      "Humor in empty states, never in errors (user-specified)",
+      "Feed-first design (73% start there)",
+      "Content creation is primary CTA (activation metric)",
+      "Search must be prominent (#1 frustration)"
+    ],
+    "confidence": "high"
+  }
+}

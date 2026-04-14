@@ -84,12 +84,23 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
 1. **Confirm Figma is connected.** Check that the Figma Console MCP is responding.
    If not, tell the user to start the Desktop Bridge.
 
-2. **Load the design system data.** ALL of these are preferred:
+2. **Load design system data.** Follow `shared/design-system-loading.md` for the full fallback pattern.
+
+   **Tier 0: Product context** (load first):
+   - `design-system/product.json` — product identity, users, IA, terminology
+   - `design-system/content-guide.md` — voice, tone, content patterns
+   - `design-system/layout-patterns.json` — page archetypes
+
+   If product.json exists:
+   - Validate the flow screens against the product's IA (do the pages exist in the hierarchy?)
+   - Use the product's navigation pattern for all screens
+   - Apply terminology from the terminology map
+   - Use content-guide.md for empty state text, error messages, button labels
+
+   **Tier 1: Design system data** (required):
    - `design-system/tokens.json` — available token values and their figma keys
    - `design-system/components/index.json` — the component catalog with figmaKey and defaultVariantKey
    - `design-system/relationships.json` — how components compose together
-
-   Read `shared/design-system-loading.md` and follow the 3-tier fallback pattern.
 
 3. **Get the flow description.** If the user already described what they want (in
    the slash command args or conversation), skip straight to Step 1. Do not ask
@@ -110,7 +121,8 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    > B) I have a wireframe sequence in Figma (I will capture your selection)
    > C) I have a reference flow from another product
 
-   **STOP.** Wait for response.
+   **When called from `/design`:** Skip this prompt — use the brief from Phase 1.
+   **When called standalone:** STOP and wait for user response.
 
 4. **AskUserQuestion: Flow topology.** (from PRINCIPLES.md)
 
@@ -128,7 +140,8 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    > D) Wizard — A then B then C with back/skip at every step (guided setup)
    > E) Loop — A then B then C then back to A (review cycles, feed browsing)
 
-   **STOP.** Wait for response.
+   **When called from `/design`:** Infer topology from the brief. Default to Linear.
+   **When called standalone:** STOP and wait for user response.
 
 5. **Viewport size.** (if not already specified)
 
@@ -214,7 +227,8 @@ Present the screen count and flow topology to the user:
 >
 > Does this flow map look right? I will plan each screen next.
 
-**STOP.** Wait for confirmation before proceeding.
+**When called from `/design`:** Log the flow map and proceed without waiting.
+**When called standalone:** STOP and wait for user confirmation before proceeding.
 
 ## Step 2: Design each screen
 
@@ -303,6 +317,41 @@ Plan loading states in the flow plan JSON under each screen's `transitions` bloc
   }
 }
 ```
+
+### Write context.md after the first screen
+
+After planning the first screen in the flow, create `plans/<flow-name>/context.md`
+to capture shared decisions. This file ensures all subsequent screens in the flow
+use identical configurations for shared components.
+
+```markdown
+# Context: <Flow Name>
+
+## Shared Decisions
+
+### Header
+- Component: <name>, variant: <variant>, variantKey: <key>
+- Property overrides: { ... }
+- Breadcrumb pattern: <Flow Name> > [Screen Name]
+
+### Navigation / Progress
+- Pattern: <step indicators / progress bar / breadcrumb>
+- Position: <top / left>
+- Labels: ["Step 1", "Step 2", ...]
+
+### Spacing Rhythm
+- Section gap: <token>
+- Item gap: <token>
+- Inner gap: <token>
+
+### Button Placement
+- Primary action: <position (bottom-right / centered)>
+- Back button: <position>
+- Cancel: <position and behavior>
+```
+
+For all subsequent screens, read context.md FIRST and enforce every shared decision.
+Do not re-decide header config, spacing rhythm, or navigation patterns per screen.
 
 ### Cross-screen consistency
 
@@ -488,6 +537,11 @@ sidebar Screen 1 showing "Students" while sidebar Screen 3 still shows "Projects
 Build all screens as a horizontal sequence in Figma. The flow reads left to right
 like a storyboard.
 
+**Important:** Each screen is built using `/build`'s full 6-phase pipeline
+(MANIFEST → SCAFFOLD → COMPONENT PROBE → COMPONENTS → TOKEN-BUILT → VALIDATE).
+This ensures every flow screen has the same build quality as a standalone design.
+See "Build execution" below for the delegation pattern.
+
 ### Canvas scan (mandatory — do this first)
 
 Read `shared/canvas-positioning.md` and follow the canvas space scanning protocol.
@@ -622,30 +676,34 @@ Screen 2 means you don't discover 4 screens of problems at the end.
 
 ### Build execution
 
-For each screen in the plan, execute the same build process as `/build`:
+For each screen in the flow plan, **read and follow `build/SKILL.md`**.
 
-1. **Phase 1: Build all frames** — Create the frame tree, apply token bindings,
-   set text content. One `figma_execute` call per screen, or batch if possible.
+Pass the screen's build JSON from `plans/<flow-name>/screens/<screen>.json`.
+If individual screen build JSONs don't exist, generate them from the flow plan
+before building (same format as `/plan` output).
 
-2. **Phase 2: Instantiate library components** — Place each library component
-   into its parent frame using `figma_instantiate_component` with the variantKey.
+**Build ONE screen at a time.** After each screen passes /build's Phase 5
+validation, proceed to the next. Do NOT batch-build all screens.
 
-3. **Phase 3: Configure instances** — Set text overrides, sizing (fill/hug),
-   reorder children as needed.
+Between screens:
+- Record shared component customizations (sidebar text, nav active state,
+  user name) and replay them on subsequent screen instances
+- Read `plans/<flow-name>/context.md` before each screen to enforce shared
+  decisions (spacing, typography, button placement)
+- Drop the previous screen's build manifest from working memory (you have
+  the nodeId and screenshot — you don't need the manifest anymore)
 
-4. **Phase 4: Position screens** — Move each completed screen to its position
-   in the horizontal flow layout. Happy path in Row 1, edge screens in Row 2.
+After all screens are built:
+- Position screens in the horizontal flow layout (happy path Row 1, edge Row 2)
+- Add text labels above each screen and flow annotation pills between them
 
-5. **Phase 5: Add labels and annotations** — Create text labels above each screen
-   and flow direction annotations between them.
+### Context budget for multi-screen builds
 
-### Batch execution
-
-Build screens in parallel where possible. Independent screens can be built
-simultaneously. Dependent screens (where a later screen's content depends on
-an earlier screen's layout) should be built sequentially.
-
-Target: build the entire flow in 10-15 MCP calls total, not one per node.
+- Build up to 4 screens per session. If the flow has more than 4 screens,
+  build the first 4, present progress, then continue in the next turn.
+- Shared component registry persists across all screens (it's small).
+- After each screen, log the completed screen's nodeId and dimensions to
+  workflow-log.md before starting the next.
 
 ## Step 6: Screenshot and present
 
@@ -670,6 +728,15 @@ Present the result:
 >
 > Want to adjust any screen? I can update the plan and rebuild, or you can run
 > `/plan` on any individual screen for deeper iteration.
+
+## Step 7: Return to /design (when called as internal module)
+
+If this flow was invoked by `/design`'s Phase 0 routing, control returns to
+`/design` after Step 6. `/design` resumes at Phase 4 (AUDIT) and runs
+audit → revise → stress-test → handoff on the primary screen (the most complex
+happy-path screen in the flow).
+
+If `/flow` was invoked standalone (not via `/design`), this step does not apply.
 
 ## Self-review checklist
 
