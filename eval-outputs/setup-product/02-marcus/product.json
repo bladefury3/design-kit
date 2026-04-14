@@ -1,0 +1,97 @@
+{
+  "$schema": "design-kit/product/v1",
+  "generatedAt": "2026-04-11T22:35:00.000Z",
+  "sources": {
+    "interview": { "status": "completed", "confidence": "high", "note": "Structured brief with product identity, features, users, and roadmap" },
+    "url": { "status": "completed", "url": "notion.so", "note": "Fetched Notion homepage — extracted IA patterns, terminology, navigation density" },
+    "research": { "status": "completed", "note": "Team collaboration platform UX patterns 2025-2026" },
+    "figmaFile": { "status": "completed", "note": "8 key frames identified on Page 1: dashboards, feeds, sidebar, deep dives, onboarding flow" },
+    "designSystem": { "status": "completed", "note": "Untitled UI PRO: 92 components, 71 icons, tokens for color/spacing/radius/typography/shadow" }
+  },
+  "identity": {
+    "name": "TeamPulse",
+    "tagline": "Team collaboration for distributed teams",
+    "category": "Team collaboration platform (Notion meets Slack)",
+    "platform": "Web-first",
+    "stage": "Active development — existing frames show dashboard, feeds, and onboarding already designed",
+    "competitors": ["Notion", "Slack", "Linear"],
+    "confidence": "high"
+  },
+  "users": {
+    "primary": {
+      "label": "Individual contributor (IC)",
+      "description": "Daily active user who creates content, reads feeds, and uses the wiki for documentation",
+      "goals": ["Stay informed on team activity", "Share updates efficiently", "Find information quickly in wiki"],
+      "frustrations": ["Notification overload", "Context switching between chat and docs", "Finding old information"],
+      "frequency": "Daily",
+      "confidence": "high"
+    },
+    "secondary": {
+      "label": "Team lead",
+      "description": "Monitors team activity, stays informed on blockers and progress without micromanaging",
+      "goals": ["Quick team health overview", "Identify blockers early", "Track decisions made"],
+      "frustrations": ["Too much noise in feeds", "No at-a-glance summary", "Missing important updates"],
+      "frequency": "Daily (shorter sessions)",
+      "confidence": "high"
+    }
+  },
+  "informationArchitecture": {
+    "navigation": "Left sidebar with icon + label, collapsible (matches existing Sidebar frame in Figma)",
+    "primarySections": [
+      { "name": "Home", "purpose": "Personalized landing — feed + quick actions", "icon": "home-line" },
+      { "name": "Feed", "purpose": "Chronological team activity stream", "icon": "rows-01" },
+      { "name": "Wiki", "purpose": "Internal knowledge base with pages and folders", "icon": "book-open-01" },
+      { "name": "Team", "purpose": "Team profiles, org chart, directory", "icon": "users-01" },
+      { "name": "Notifications", "purpose": "Centralized notification center (planned)", "icon": "bell-01" },
+      { "name": "Settings", "purpose": "Workspace and user settings (planned)", "icon": "settings-01" }
+    ],
+    "patterns": {
+      "feedLayout": "Vertical card stream with avatar + content + reactions (matches existing '1. Feeds' frame)",
+      "dashboardLayout": "Metric cards + activity feed (matches existing 'Dashboard' frame)",
+      "navigationPattern": "Persistent left sidebar, 64px collapsed / 240px expanded"
+    },
+    "confidence": "high"
+  },
+  "terminology": {
+    "mappings": [
+      { "generic": "post", "product": "pulse", "context": "Activity feed content unit" },
+      { "generic": "channel", "product": "team space", "context": "Group context for conversations" },
+      { "generic": "article", "product": "page", "context": "Wiki content unit" },
+      { "generic": "workspace", "product": "workspace", "context": "Top-level org container" },
+      { "generic": "comment", "product": "reply", "context": "Response to a pulse" },
+      { "generic": "bookmark", "product": "save", "context": "User's saved items" },
+      { "generic": "notification", "product": "notification", "context": "System alerts and mentions" }
+    ],
+    "note": "User mentioned 'activity feeds' and 'internal wiki' — terminology aligned with Notion patterns"
+  },
+  "existingFrames": {
+    "analyzed": true,
+    "frames": [
+      { "name": "Dashboard", "nodeId": "16:18", "type": "dashboard", "note": "Product overview with metrics, charts, activity" },
+      { "name": "Sidebar", "nodeId": "58:1147", "type": "navigation", "note": "Left sidebar with icon + label navigation" },
+      { "name": "1. Feeds", "nodeId": "112:72440", "type": "feed", "note": "Activity feed with content cards" },
+      { "name": "Deep Dive (V1-V4)", "nodeIds": ["58:1146", "58:1152", "58:1206", "58:1233"], "type": "detail views", "note": "4 layout variations for deep content views" },
+      { "name": "Product Overview Dashboard [Revised v2]", "nodeId": "86:28900", "type": "dashboard", "note": "Latest iteration of dashboard" },
+      { "name": "Flow: Login → Onboarding → Dashboard", "nodeId": "100:34147", "type": "flow", "note": "Multi-screen onboarding sequence" }
+    ],
+    "patterns": ["Left sidebar navigation", "Card-based feed layout", "Metric dashboard with activity feed", "Multi-step onboarding flow"]
+  },
+  "designContext": {
+    "currentFocus": "Notification center and team settings (mentioned as 'next')",
+    "completedScreens": ["Dashboard", "Feed", "Sidebar navigation", "Onboarding flow"],
+    "upcomingScreens": ["Notification center", "Team settings"],
+    "constraints": [],
+    "urlResearch": {
+      "notion.so": {
+        "keyTakeaways": [
+          "Sidebar navigation with icon+label is the standard pattern",
+          "Workspace > Team space > Page hierarchy",
+          "AI agents as a layer on top of docs/projects",
+          "Dual CTA pattern: free + enterprise",
+          "Progressive disclosure for complex features"
+        ]
+      }
+    },
+    "confidence": "high"
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "design-kit/product/v1",
+  "generatedAt": "2026-04-11T22:30:00.000Z",
+  "sources": {
+    "interview": { "status": "partial", "confidence": "low", "note": "User provided minimal description — significant inference required" },
+    "url": { "status": "skipped", "note": "User has no URL ('still building it')" },
+    "research": { "status": "completed", "note": "Web search for team chat + wiki collaboration UX patterns" },
+    "figmaFile": { "status": "completed", "note": "Scanned existing frames on Page 1: dashboards, feeds, sidebar, deep dives" },
+    "designSystem": { "status": "completed", "note": "Untitled UI PRO tokens, 92 component sets, 71 icons available" }
+  },
+  "identity": {
+    "name": "TeamPulse",
+    "tagline": "Team chat and knowledge sharing for work",
+    "category": "Team collaboration",
+    "platform": "Web (assumed — no mobile mentioned)",
+    "stage": "Early build (no live URL yet)",
+    "confidence": "medium"
+  },
+  "users": {
+    "primary": {
+      "label": "Team member",
+      "description": "People who use the tool daily to chat with teammates and find information in the wiki",
+      "goals": ["Stay updated on team activity", "Find answers in the wiki", "Share updates quickly"],
+      "frustrations": ["Too many tools", "Can't find old conversations"],
+      "confidence": "low — inferred from product type"
+    }
+  },
+  "informationArchitecture": {
+    "navigation": "Left sidebar (inferred from existing Figma sidebar frame)",
+    "primarySections": [
+      { "name": "Home", "purpose": "Landing page, likely a feed", "icon": "home-line" },
+      { "name": "Feed", "purpose": "Team activity and updates", "icon": "rows-01" },
+      { "name": "Wiki", "purpose": "Shared knowledge base", "icon": "book-open-01" },
+      { "name": "Messages", "purpose": "Direct and group chat", "icon": "message-chat-circle" }
+    ],
+    "confidence": "low — inferred from 'chat thing with wiki' description and Figma frames"
+  },
+  "terminology": {
+    "mappings": [
+      { "generic": "post", "product": "update", "confidence": "low" },
+      { "generic": "channel", "product": "channel", "confidence": "low" },
+      { "generic": "article", "product": "page", "confidence": "low" },
+      { "generic": "workspace", "product": "workspace", "confidence": "low" }
+    ],
+    "note": "Terminology is heavily inferred — user did not specify product language"
+  },
+  "existingFrames": {
+    "analyzed": true,
+    "frames": [
+      { "name": "Dashboard", "type": "dashboard", "note": "Product overview with metrics" },
+      { "name": "Sidebar", "type": "navigation", "note": "Left sidebar navigation pattern" },
+      { "name": "1. Feeds", "type": "feed", "note": "Activity feed layout" },
+      { "name": "Deep Dive (4 variations)", "type": "detail view", "note": "V1-V4 showing different detail layouts" },
+      { "name": "Flow: Login → Onboarding → Dashboard", "type": "flow", "note": "Multi-screen onboarding flow" }
+    ]
+  },
+  "designContext": {
+    "currentFocus": "Main feed page",
+    "upcomingScreens": [],
+    "constraints": [],
+    "confidence": "medium"
+  }
+}
