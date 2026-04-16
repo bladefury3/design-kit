@@ -81,16 +81,27 @@ Default to Desktop (1440px) unless context clearly suggests mobile/tablet.
 
 If `design-system/layout-patterns.json` and/or `design-system/product.json` exist:
 
-1. **Match the brief** against known layout patterns. "Settings page" → `settings-sidebar`.
-   "Dashboard" → `dashboard-status`. "User list" → `data-table`.
-2. **Check product.json layoutConventions** — if the product has a convention for this
-   page type, use it as the starting point.
-3. **Check product.json informationArchitecture** — confirm the page exists in the IA.
+1. **Match the brief** against archetype `aliases` in `layout-patterns.json`.
+   "Settings page" → `settings`. "Dashboard for managers" → `dashboard`.
+   "PR review queue" → `master-detail`. Match is case-insensitive substring.
+2. **Read the archetype's `richnessHints.narrative`** — this is the design
+   philosophy for this page type. Internalize it; don't copy it verbatim.
+3. **Apply `decisionRules`** to the specifics of THIS brief. If a rule matches
+   (e.g., "audience is admin AND data has reviewable items → master-detail"),
+   fold the recommendation into the plan.
+4. **Use `considerForRicher` / `considerForLeaner`** as creative inspiration.
+   At **Standard or higher richness** (when called from `/design`), bias toward
+   `considerForRicher` — pick elements that fit the brief, skip those that
+   don't. At **Lean richness**, bias toward `considerForLeaner`.
+   This is NOT a checklist — it's a menu. The LLM owns the final composition.
+5. **Check product.json layoutConventions** — if the product has a convention for
+   this page type, use it as the starting point.
+6. **Check product.json informationArchitecture** — confirm the page exists in the IA.
    Use the nav items, page hierarchy, and JTBD classification from the context.
-4. **Apply terminology** — use product vocabulary for all labels, headings, nav items.
-5. **State the match** to the user: "This looks like a **settings-sidebar** pattern
-   (sidebar navigation + form content). I'll use your product's settings convention
-   as the starting point."
+7. **Apply terminology** — use product vocabulary for all labels, headings, nav items.
+8. **State the match** to the user: "This looks like a **dashboard** pattern.
+   At [richness], I'm including [list of chosen enrichments]. Let me know if
+   any of those don't fit."
 
 This pre-fills 60-80% of layout decisions, reducing clarifying questions significantly.
 
@@ -195,7 +206,7 @@ For every library component, select the specific variant:
 ### Property overrides (MANDATORY for every library component)
 
 Library components default to showing everything — labels, hints, icons, search
-bars, action buttons. The plan MUST specify which boolean properties to disable.
+bars, action buttons. The plan MUST specify which boolean properties to set.
 
 Include `propertyOverrides` on every `library-component` node:
 
@@ -213,19 +224,44 @@ Include `propertyOverrides` on every `library-component` node:
 }
 ```
 
-**Common overrides by component:**
+### Richness-aware property resolution
 
-| Component | Typically DISABLE |
+**How the plan decides what to enable/disable on each component:**
+
+When called from `/design`, the plan receives a `chosenRichness` (lean, standard,
+polished, marketing, or a free-text string like "Stripe-like") alongside the
+matched archetype from `layout-patterns.json`. These drive a precedence chain:
+
+1. **Per-instance `propertyOverrides`** in build.json (highest — explicit wins)
+2. **`layout-patterns.json[archetype].richnessHints.considerForRicher`** enables —
+   when richness is **standard or higher**, the LLM uses the archetype's hints as
+   creative inspiration to ENABLE decorative props where they fit. This is NOT a
+   checklist — it's a menu. Skip items that don't fit the brief.
+3. **`components/index.json[*].typicalOverrides`** disables — applied at **Lean
+   richness only**. At Standard+, the `typicalOverrides` table below is guidance,
+   not a hard rule. The LLM overrides freely when the archetype recommends it.
+4. **Component default** (library ships with all props visible)
+
+**At Lean richness:** apply the table below as defaults. This is today's behavior.
+**At Standard+ richness:** use the table as a starting point, then enable any
+decorative booleans the archetype's `considerForRicher` recommends for this slot.
+For example, on a dashboard archetype at Standard richness, Metric item gets
+`Featured icon = true` and `Actions = true` even though the Lean table below
+says to disable them.
+
+**Common defaults (Lean richness starting point):**
+
+| Component | Lean default: DISABLE |
 |---|---|
 | Input field | `Label`, `Hint text`, `Supporting text` (unless form needs them) |
 | Page header | `Search`, `Actions`, `Tabs` (unless screen needs them) |
 | Button | `⬅️ Icon leading`, `➡️ Icon trailing` (unless icon is specified) |
 | Avatar label group | subtitle text → empty string if not needed |
 | Section header | `Tabs`, `Actions`, `Dropdown icon` |
-| Metric item | `Actions` (unless action buttons shown) |
+| Metric item | `Featured icon`, `Actions` (unless KPI card needs them) |
 
-If no `propertyOverrides` specified, build falls back to `typicalOverrides`
-from `design-system/components/index.json`.
+If no `propertyOverrides` specified and no richness context, build falls back to
+`typicalOverrides` from `design-system/components/index.json`.
 
 ### CRITICAL: Property name matching
 

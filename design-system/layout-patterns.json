@@ -1,0 +1,235 @@
+{
+  "$schema": "design-kit/layout-patterns/v1",
+  "$metadata": {
+    "extractedAt": "2026-04-16T00:00:00Z",
+    "purpose": "Reference patterns for /plan and /design to draw from. NOT rigid templates — the LLM should adapt freely based on the brief, audience, and chosen richness.",
+    "philosophy": "Suggest, don't enforce. Skip recommendations that don't fit the specific brief. The aliases + decision rules help match a brief to an archetype; the richnessHints inspire what to add/skip; the LLM owns the final composition.",
+    "howToUse": [
+      "1. Match the brief to an archetype using `aliases` (case-insensitive substring match).",
+      "2. Read `richnessHints.narrative` for the design philosophy of this archetype.",
+      "3. Apply `decisionRules` to the specifics of this brief (audience, data volume, domain).",
+      "4. Use `richnessHints.considerForRicher` (or `considerForLeaner`) as inspiration based on the chosen richness — pick freely, don't checklist.",
+      "5. The chosen `recommendedShell` and `typicalSections` anchor the IA but can be overridden when the brief calls for something different."
+    ]
+  },
+
+  "patterns": {
+
+    "dashboard": {
+      "aliases": ["dashboard", "manager dashboard", "overview", "home", "monitor", "admin", "command center", "control panel", "ops"],
+      "job": "Monitor",
+      "shellOptions": ["sidebar+content", "topbar+content", "sidebar+topbar+content"],
+      "recommendedShell": "sidebar+topbar+content",
+      "typicalSections": [
+        "KPI row (3-5 metrics) — Library health-style metric cards",
+        "primary content (table, chart, or master-detail pane) — the main activity",
+        "secondary content (activity feed, recent items, or detail pane) — context"
+      ],
+      "richnessHints": {
+        "narrative": "What feels right depends on the audience. A monitor dashboard for execs leans summary-heavy with sparklines and trend lines. An ops dashboard for managers leans master-detail with a queue + active item pane. A status dashboard leans live-data with refresh affordances. A 'home' dashboard for end-users leans personalized + quick-actions.",
+        "considerForRicher": [
+          "sidebar navigation with grouped sections (Workspace / Team / Account)",
+          "page header with Actions + Search + breadcrumbs + version chip",
+          "Featured icon + Actions + trend delta on Metric item cards",
+          "filter chip group above primary content (All / Pending / Approved / etc.)",
+          "master-detail pane (list left, active item right with details)",
+          "status badges with semantic color (success / warning / error / info)",
+          "activity feed in a right rail or as a section",
+          "+ New / primary CTA button in top right",
+          "right-side detail panel with Approve / Request changes actions",
+          "selected-state row highlight in lists"
+        ],
+        "considerForLeaner": [
+          "topbar only, no sidebar",
+          "3 KPIs not 5",
+          "single-section content, no detail pane",
+          "Disable Featured icon on metric cards",
+          "No filter chips — just a simple list"
+        ]
+      },
+      "decisionRules": [
+        "If audience is admin/manager AND data has reviewable items → master-detail",
+        "If primary content is a table > 50 rows → add filter chips + search",
+        "If the page is a status overview → add status badges with semantic color",
+        "If the domain involves comparisons (before/after, version diffs) → add a comparison preview pane",
+        "If the page tracks 'pending action items' → add a primary CTA button (e.g., '+ New review')",
+        "If the audience needs to make decisions (approve/reject) → add action buttons in a detail panel"
+      ]
+    },
+
+    "master-detail": {
+      "aliases": ["master detail", "master-detail", "list-detail", "queue", "inbox", "review queue", "PR review", "ticket queue", "messages"],
+      "job": "Investigate or Decide",
+      "shellOptions": ["sidebar+list+detail", "list+detail"],
+      "recommendedShell": "sidebar+list+detail",
+      "typicalSections": [
+        "left sidebar nav (~240px) — primary IA",
+        "middle list pane (~400-500px) — items to review with filters at top",
+        "right detail pane (~fill) — selected item with full context + actions"
+      ],
+      "richnessHints": {
+        "narrative": "The user's job is to work through a queue of items, looking at one at a time. The list shows scannable summaries; the detail pane shows everything. Critical: the selected item must be visually distinct in the list, and the detail pane must always reflect the current selection.",
+        "considerForRicher": [
+          "filter + sort controls above the list",
+          "search input above the list",
+          "selected-state row highlight (left border accent + bg fill)",
+          "status badges on each list row",
+          "metadata row per list item (author + timestamp + count)",
+          "tabbed sections in the detail pane (Overview / Comments / History)",
+          "threaded comments thread in detail pane",
+          "primary action buttons fixed at the bottom of detail pane (Approve / Request changes)",
+          "before/after comparison preview if items represent changes"
+        ],
+        "considerForLeaner": [
+          "no filters, just a chronological list",
+          "single-tab detail pane",
+          "actions inline per row instead of a detail pane"
+        ]
+      },
+      "decisionRules": [
+        "If list items represent design/code changes → add before/after preview in detail pane",
+        "If items are reviewable → add Approve + Request changes buttons in detail pane",
+        "If items have discussion → add threaded comments in detail pane",
+        "If list > 20 items → add filter chips for status",
+        "If list > 50 items → add search input"
+      ]
+    },
+
+    "content-feed": {
+      "aliases": ["feed", "social feed", "timeline", "activity feed", "stream", "newsfeed"],
+      "job": "Browse + React",
+      "shellOptions": ["sidebar+feed+rail", "feed-only", "topbar+feed"],
+      "recommendedShell": "sidebar+feed+rail",
+      "typicalSections": [
+        "left sidebar (~240px) — identity + nav",
+        "center feed (~620px) — composer at top, then post cards",
+        "right rail (~300px) — sponsored / suggestions / contacts"
+      ],
+      "richnessHints": {
+        "narrative": "The feed is the reason the user opened the app. Composer at the top invites action. Post cards stack vertically with consistent rhythm. Right rail is supplementary — never compete with the feed for attention.",
+        "considerForRicher": [
+          "stories carousel at top of feed",
+          "post composer with media affordances (Photo / Video / Live)",
+          "engagement actions on each post (like, comment, share)",
+          "embedded reposts inside post cards",
+          "right-rail sections: sponsored, birthdays, online contacts"
+        ],
+        "considerForLeaner": [
+          "no stories carousel",
+          "simple text-only composer",
+          "no right rail",
+          "minimal engagement (just like + share)"
+        ]
+      },
+      "decisionRules": [
+        "If platform supports media → composer should expose Photo + Video buttons",
+        "If platform has social graph → add right-rail contacts/birthdays",
+        "If platform monetizes → add sponsored section above organic content (clearly labeled)"
+      ]
+    },
+
+    "settings": {
+      "aliases": ["settings", "preferences", "account", "configuration", "profile settings"],
+      "job": "Configure",
+      "shellOptions": ["sidebar+content", "tabs+content", "sidebar+content+save-bar"],
+      "recommendedShell": "sidebar+content+save-bar",
+      "typicalSections": [
+        "left sidebar (~240px) — section nav (Account / Notifications / Billing / etc.)",
+        "main content (~fill) — form sections with labels + inputs",
+        "save bar at bottom (sticky) — Save changes / Cancel"
+      ],
+      "richnessHints": {
+        "narrative": "Settings pages need to be scannable AND editable. Group related fields under section headers. Show current values clearly. Disable Save until changes exist; surface validation inline. The save bar prevents lost work.",
+        "considerForRicher": [
+          "section headers with description text per group",
+          "inline validation on each field",
+          "helper text under inputs explaining choices",
+          "toggle rows for boolean settings (with description)",
+          "danger zone at bottom (delete account, etc.) visually separated",
+          "sticky save bar with Cancel + Save",
+          "breadcrumbs in page header showing Account > Notifications"
+        ],
+        "considerForLeaner": [
+          "no save bar, autosave per field",
+          "no helper text",
+          "no danger zone (or move to a separate page)"
+        ]
+      },
+      "decisionRules": [
+        "If save is explicit (not autosave) → sticky save bar required",
+        "If page edits a destructive setting → add danger zone with confirmation",
+        "If multiple sub-sections → use sidebar nav, not tabs"
+      ]
+    },
+
+    "auth-landing": {
+      "aliases": ["login", "sign in", "sign up", "register", "auth", "landing page", "welcome", "sign-in", "sign-up"],
+      "job": "Convert",
+      "shellOptions": ["centered-card", "split-hero+form", "fullscreen-form"],
+      "recommendedShell": "split-hero+form",
+      "typicalSections": [
+        "hero copy on left (~560px) — brand wordmark + value prop",
+        "auth form card on right (~396px) — email + password + CTAs"
+      ],
+      "richnessHints": {
+        "narrative": "Auth landing pages have one job: get the user in or signed up. Minimize cognitive load. Big primary CTA. Clear secondary path (Create new account). 'Empty' state isn't meaningful here — this IS the first-time view. States that matter: Filled (with credentials) and Error (invalid credentials).",
+        "considerForRicher": [
+          "social SSO buttons (Google / Apple / GitHub)",
+          "'Remember me' checkbox",
+          "trust badges or social proof below the form",
+          "language picker in footer",
+          "marketing illustration on the hero side"
+        ],
+        "considerForLeaner": [
+          "no SSO, just email + password",
+          "no Remember me",
+          "minimal footer"
+        ]
+      },
+      "decisionRules": [
+        "If product supports SSO → add social buttons above email/password divider",
+        "If audience is global → add language picker in footer",
+        "States to build: Filled + Error (NOT Empty + Error — Empty is ill-defined for auth)"
+      ]
+    },
+
+    "marketing-landing": {
+      "aliases": ["marketing page", "homepage", "product page", "landing", "marketing landing", "product landing"],
+      "job": "Convert + Inform",
+      "shellOptions": ["topnav+sections+footer"],
+      "recommendedShell": "topnav+sections+footer",
+      "typicalSections": [
+        "top navigation with logo + product/pricing/login + primary CTA",
+        "hero section with headline + subhead + CTA + visual",
+        "social proof (logos / quote / metric)",
+        "feature sections (3-6 features)",
+        "secondary CTA section",
+        "footer with sitemap + legal"
+      ],
+      "richnessHints": {
+        "narrative": "Marketing pages are persuasion engines. Hierarchy is everything: hook → proof → features → CTA. Every section earns its place. Avoid the 'wall of features' — group meaningfully. Visuals carry as much weight as copy.",
+        "considerForRicher": [
+          "press logo strip below hero",
+          "testimonial section with avatars + quotes",
+          "metric callouts (10M users, 99.9% uptime)",
+          "feature sections with screenshots/illustrations",
+          "comparison table (us vs competitors)",
+          "FAQ section above footer",
+          "CTA banner before footer with secondary signup ask"
+        ],
+        "considerForLeaner": [
+          "single hero + 3 features + footer",
+          "no comparison table",
+          "no FAQ"
+        ]
+      },
+      "decisionRules": [
+        "If product has notable customers → press logo strip + testimonials",
+        "If product is in a crowded space → comparison table",
+        "If audience asks the same questions repeatedly → FAQ section",
+        "If product has measurable scale → metric callouts in hero or below"
+      ]
+    }
+
+  }
+}
