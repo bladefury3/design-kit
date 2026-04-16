@@ -150,6 +150,41 @@ token-built frames.
 
 **Entry gate**: Scaffold exists. Manifest exists.
 
+### Batch rule (speed optimization)
+
+If the manifest has N≥2 instances of the same `variantKey` in the same parent
+(e.g., 4 metric cards in a KPI row, 3 avatar groups in a list), batch them in
+a single `figma_execute` call:
+
+```javascript
+// mkInstances — batch-instantiate N copies of the same component
+async function mkInstances(parentId, variantKey, count, overrides) {
+  const parent = await figma.getNodeByIdAsync(parentId);
+  const comp = await figma.importComponentByKeyAsync(variantKey);
+  const instances = [];
+  for (let i = 0; i < count; i++) {
+    const inst = comp.createInstance();
+    parent.appendChild(inst);
+    inst.layoutSizingHorizontal = 'FILL';
+    inst.layoutSizingVertical = 'HUG';
+    if (overrides && overrides[i]) {
+      inst.setProperties(overrides[i]);
+    }
+    instances.push({ id: inst.id, index: i });
+  }
+  return instances;
+}
+```
+
+This eliminates N-1 `importComponentByKeyAsync` round trips per batch.
+
+### Combined overrides rule
+
+**MUST** combine boolean overrides AND any text properties exposed by the
+component into a single `figma_set_instance_properties` call per instance.
+Never split boolean and text overrides into separate calls — that's a
+2× overhead regression.
+
 **Process**: Work through the manifest checklist in order:
 
 ### 3a. Structural components first
