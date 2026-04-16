@@ -300,9 +300,47 @@ Each entry in the index should include the variant intelligence fields:
     "Search": false,
     "Actions": false
   },
-  "hasPlaceholderContent": true
+  "hasPlaceholderContent": true,
+  "variantKeys": {
+    "Size=lg, Hierarchy=Primary, Icon=Default, State=Default": "42a6895c0420c40082b0ba73ef56269f8cc2673a",
+    "Size=lg, Hierarchy=Secondary gray, Icon=Default, State=Default": "b817e2b04cd4570a10707bef7b073cfaa024079f",
+    "Size=md, Hierarchy=Tertiary color, Icon=Default, State=Default": "b36ba155d0a61ff919aea3b800e3eee83348d9f3"
+  }
 }
 ```
+
+### Pre-resolved variant keys (speed optimization)
+
+For the **top-30 most-used components** (heuristic: all in categories
+`navigation`, `layout`, `input`, `feedback`, `data-display` + any with
+`variantCount > 20`), resolve the most commonly needed variant keys at
+extraction time so `/build` doesn't need to `figma_search_components` at runtime.
+
+**How to resolve variant keys during extraction:**
+
+```javascript
+// Run via figma_execute — resolve common variant keys for one component set
+const setKey = '<40-char-hex component set key>';
+const componentSet = await figma.importComponentSetByKeyAsync(setKey);
+
+// Pick the top-N most useful variants — typically Default state × all sizes × common hierarchies
+const variantKeys = {};
+for (const v of componentSet.children) {
+  // Filter to Default state variants only (skip Hover/Focused/Disabled/etc.)
+  if (v.name.includes('State=Default') || !v.name.includes('State=')) {
+    variantKeys[v.name] = v.key;  // v.key is the 40-char hex hash
+  }
+}
+return variantKeys;
+```
+
+Include the `variantKeys` map in each index.json entry. Only include
+State=Default variants to keep the index compact (~5-15 entries per
+component instead of the full 50-380 variant matrix).
+
+When downstream skills (e.g., `/build`) see a `variantKeys` entry, they can
+look up the variant key by name match — skipping the library search round trip
+entirely. This eliminates 4-8 round trips × 5-15s each per build.
 
 ### Variant Intelligence (mandatory)
 
