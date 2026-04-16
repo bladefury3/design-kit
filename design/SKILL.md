@@ -220,10 +220,35 @@ constraints" / "use defaults" earlier in the conversation.
 
 **Store the depth choice as `chosenDepth` (A/B/C/D/E) for the rest of the run.**
 
-If the user invoked `/design --auto`, skip all 3 questions, set `chosenDepth = E`,
-and proceed.
+If the user invoked `/design --auto`, skip all 4 questions, set `chosenDepth = E`,
+`chosenRichness = standard`, and proceed.
 
 If the user invoked `/design --depth=<X>`, skip Q3, use that depth.
+
+### Q4: Richness (always ask, unless `--auto` or `--richness` flag)
+
+> [Re-ground] You're building [page] for [audience], depth [chosen].
+>
+> **How rich should this feel?** Pick a vibe — I'll interpret it against the
+> archetype's recommendations (from `layout-patterns.json`). "Other" works
+> for anything not listed (e.g., "make it feel like Stripe").
+>
+> RECOMMENDATION: B for most pages. If you picked a dashboard or admin screen,
+> B already adds sidebar, filter chips, and status badges per the archetype.
+>
+> A) **Lean** — bare-bones, library defaults, no decorative extras
+> B) **Standard** — archetype-aware extras the page job calls for *(default)*
+> C) **Polished SaaS** — what a Linear/Vercel/Notion dashboard looks like;
+>    sidebar, master-detail, badges, search, colored icons, detail panels
+> D) **Marketing-grade** — hero treatment, illustrations where library has them,
+>    social proof, testimonials, press logos
+
+**Store as `chosenRichness`** — can be A/B/C/D label OR the user's "Other" string.
+Pass to `plan/SKILL.md` alongside the brief, depth, and matched archetype.
+
+If the user invoked `/design --richness=<value>`, skip Q4, use that value.
+
+If Q4 is skipped under `--auto`, default richness is `standard`.
 
 ---
 
@@ -651,9 +676,10 @@ stopped, then continues from there. Asks ONE question at the start: "Resume
 
 ## Flags reference
 
-- `/design "<brief>"` — interactive, default depth B (plan + primary frame)
-- `/design --auto "<brief>"` — full autonomous (depth E), no checkpoints
+- `/design "<brief>"` — interactive, default depth B (plan + primary frame), default richness Standard
+- `/design --auto "<brief>"` — full autonomous (depth E, richness Standard), no checkpoints
 - `/design --depth=<A|B|C|D|E> "<brief>"` — skip Q3, jump to chosen depth
+- `/design --richness=<lean|standard|polished|marketing|"<freetext>"> "<brief>"` — skip Q4, use that richness
 - `/design --resume <A|B|C|D|E>` — extend the most recent plan to higher depth
 
 ---

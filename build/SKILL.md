@@ -82,6 +82,13 @@ each is in the expected Figma format. Do this **before MANIFEST** so failures
 are surfaced atomically — never start a build that will silently fall back to
 hardcoded values mid-flight.
 
+**Pre-resolved key shortcut:** If `design-system/components/index.json` has a
+`variantKeys` map on a component entry, and the `build.json` references that
+component by variant name (e.g., `"Size=lg, Hierarchy=Primary, Icon=Default,
+State=Default"`), look up the 40-char hex key directly from `variantKeys` —
+skip `figma_search_components` + `importComponentSetByKeyAsync` for that
+component. This eliminates 5-15s per component lookup.
+
 **Step A — Format check (always run, no Figma calls):**
 - Must be a 40-char hex hash (e.g., `a1b2c3d4...`).
   Reject path-style strings like `Colors/Text/text-primary`,
@@ -192,12 +199,24 @@ Work through the manifest checklist item by item:
 3. **Data display**: Avatars, avatar groups, badges, tags
 4. **Icons**: Every icon from the manifest
 
-For EACH component:
-- `figma_instantiate_component` with variantKey
+**Batch rule:** If the manifest has N≥2 instances of the same `variantKey` in
+the same parent (e.g., 4 metric cards in a KPI row, 3 avatar groups in a list),
+do ONE `figma_execute` call that imports the component once via
+`importComponentByKeyAsync(key)` then loops `.createInstance()` × N. Apply
+per-instance overrides inside the same call. This eliminates N-1 round trips.
+
+For EACH component (or batch of identical components):
+- `figma_instantiate_component` with variantKey (or batch via `figma_execute`)
 - Move into parent frame, set sizing
-- `figma_set_instance_properties` for overrides
-- Set text content
+- **Combine boolean + text overrides in a single `figma_set_instance_properties`
+  call.** Do NOT split boolean overrides and text overrides into separate calls.
+  Two-call patterns per instance are a regression.
 - Check off the manifest entry
+
+**Search cache rule:** Maintain an in-context `searchCache: { query → result }`
+map across the run. If you search for "Button" via `figma_search_components`
+and get results, cache them. Re-searches for "Button" return cached. Cache is
+per-session; not persisted.
 
 **Exit gate**: Count INSTANCE nodes. Must match manifest total.
 If not, find and add missing components before proceeding.
@@ -368,18 +387,23 @@ For each library component in the plan:
 1. `figma_instantiate_component` with the `variantKey` from the plan
 2. Move it into its parent frame
 3. Set sizing (FILL/HUG) AFTER it's in the parent
-4. `figma_set_instance_properties` to disable unwanted properties:
-   - Input field: `Label=false`, `Hint text=false`, `Help icon=false` (unless plan says otherwise)
-   - Page header: `Search=false`, `Actions=false`
-   - Button: `⬅️ Icon leading=false`, `➡️ Icon trailing=false` (note emoji prefixes)
-   - Avatar label group: set subtitle text to empty if not needed
+4. `figma_set_instance_properties` to apply property overrides from the plan.
+   The plan's `propertyOverrides` were resolved using the richness-aware
+   precedence chain (see `plan/SKILL.md` "Richness-aware property resolution"):
+   - If the plan says `Label=false`, disable it.
+   - If the plan says `Featured icon=true` (because richness ≥ Standard and the
+     archetype recommends it), enable it.
+   - If the plan has NO `propertyOverrides` AND no richness context, fall back
+     to the Lean defaults: disable Label, Hint text, Help icon, Actions.
    **If overrides fail silently**: check the error response — it lists available
    property names. Some libraries use emoji prefixes (e.g., `⬅️`, `➡️`, `🔀`).
+   **Combine boolean + text overrides in a single call** when possible (see below).
 5. Set text content on the instance (see "How to set text" below)
 
 **NEVER skip property overrides.** Library components show labels, hints, icons
-by default. If the plan has `propertyOverrides`, apply them. If not, disable
-Label, Hint text, Help icon, and Actions as defaults.
+by default. If the plan has `propertyOverrides`, apply them exactly. If richness
+is Standard+ and the plan enables decorative props, do NOT re-disable them — the
+plan already resolved what should be on vs off for this richness level.
 
 ### How to set text on library components
 
