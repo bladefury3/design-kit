@@ -386,6 +386,117 @@ of a breaking API change.
 | Component renamed | **Medium** | Instances still work (bound by key, not name) but human references break. |
 | Component description changed | **Info** | Documentation update. No functional impact. |
 
+### 4a.1 Critical-component override
+
+The components in this list are foundational — their removal cascades through
+many compositions and triggers Figma "missing component" warnings on every
+consumer file. **Removal of any component matching one of these names (or
+documented as belonging to one of these categories in `relationships.json`)
+is ALWAYS Critical**, regardless of usage count or `dependedOnBy` metric:
+
+```
+Toast, Snackbar, Banner, Alert, Notification,
+Modal, Dialog, Drawer, Popover, Tooltip,
+Header, PageHeader, Sidebar, Navigation, NavBar, TabBar,
+Button, Input, TextField, Select, Checkbox, Radio
+```
+
+Match by case-insensitive substring (`Toast` matches `feedback/Toast` and
+`ToastContainer`). If `relationships.json` exists, also escalate any component
+whose `dependedOnBy` count is in the top 10% of the library, even if its name
+isn't on the list.
+
+Do not downgrade these to Warning under any condition. If the removal looks
+intentional (matches a renamed/recreated pattern from 4a.2), keep severity
+Critical and add a `note` explaining the suspected migration so the user can
+confirm.
+
+### 4a.2 Replacement detection (run before flagging anything as removed)
+
+Before marking a component as removed, scan the current Figma state for a
+likely replacement. A removal that is actually a rename or category-swap should
+be reported as `recreated` (Medium) with a pointer to the new component, not as
+a clean removal (Critical).
+
+For each baseline component that no longer matches its `figmaKey`:
+
+1. **Exact name match** in current state → flag as `recreated` (key changed,
+   instances will detach but a successor exists). Severity: Medium.
+2. **Same atomic category + similar name** → flag as `possibly-replaced` with
+   the candidate listed. Severity: High. Ask the user to confirm. Examples:
+   `Toast` removed, `Notification` added → likely rename. `Button-old` removed,
+   `Button` added → consolidation.
+3. **Same category, no name match** → flag as `removed` with severity per the
+   table above (and 4a.1 override). Add to `recommendation`: "No replacement
+   found. Confirm intentional removal."
+
+For each removed component flagged as Critical or High, append to the
+`impact` field a count of consuming compositions from `relationships.json`:
+
+> "Used in 5 compositions: LoginForm, Settings, Dashboard, Feed, ProfileEdit.
+> All 5 will surface as 'missing component' warnings in Figma until updated."
+
+### 4a.3 Live instance enumeration (concrete frames, not just compositions)
+
+Compositions from `relationships.json` tell you *which components* depend on
+the removed one — but designers think in *frames*. For every component flagged
+Critical or High in 4a.1/4a.2, enumerate the actual instances that exist in the
+current file so the user knows exactly which frames will break.
+
+```javascript
+// Run via figma_execute — find every live instance of a removed component
+const removedKeys = [/* lastKnownKey values from removed[] */];
+const results = {};
+
+for (const key of removedKeys) {
+  // findAllWithCriteria scopes to the current file and is fast
+  const instances = figma.root.findAllWithCriteria({ types: ['INSTANCE'] })
+    .filter(i => i.mainComponent && i.mainComponent.key === key);
+
+  results[key] = instances.map(i => {
+    // Walk up to find the nearest top-level frame for context
+    let topFrame = i.parent;
+    while (topFrame && topFrame.parent && topFrame.parent.type !== 'PAGE') {
+      topFrame = topFrame.parent;
+    }
+    return {
+      instanceId: i.id,
+      instanceName: i.name,
+      page: i.parent ? findPageOf(i) : 'unknown',
+      topFrame: topFrame ? topFrame.name : 'orphan',
+      x: i.x,
+      y: i.y
+    };
+  });
+}
+
+function findPageOf(node) {
+  let n = node;
+  while (n && n.type !== 'PAGE') n = n.parent;
+  return n ? n.name : 'unknown';
+}
+
+return results;
+```
+
+For library files, `findAllWithCriteria` only sees instances in the library
+file itself — not consumer files. If the diff is running against a library,
+note in the impact field:
+
+> "Live instances in this library file: 0 (this is the source library —
+> consumer files are not visible to this scan)."
+
+For non-library files, append the live instance list to the `impact` field:
+
+> "Live instances in this file: 8 across 5 frames on 3 pages
+> (Login page > LoginForm × 2; Settings page > NotificationSettings × 3;
+> Dashboard page > AlertBanner × 3). Each will break in place."
+
+Cap the listed examples at 10 frames; for higher counts, summarize:
+
+> "Live instances: 142 across 38 frames on 12 pages. Top 5 by frame:
+> Dashboard (24), CheckoutFlow (18), Settings (15), Onboarding (12), Feed (9)."
+
 ### 4b. Detailed variant diffing
 
 For components that still exist, compare their variants:
@@ -445,8 +556,36 @@ Compare component property definitions:
       "name": "Toast",
       "lastKnownKey": "abc456...",
       "severity": "critical",
-      "impact": "Used in 5 compositions: LoginForm, Settings, Dashboard, Feed, ProfileEdit",
+      "criticalReason": "matches critical-component list (4a.1); replacement scan found no successor",
+      "impact": "Used in 5 compositions: LoginForm, Settings, Dashboard, Feed, ProfileEdit. All 5 will surface as 'missing component' warnings in Figma until updated.",
+      "liveInstances": {
+        "totalCount": 8,
+        "frameCount": 5,
+        "pageCount": 3,
+        "examples": [
+          { "instanceId": "12:34", "instanceName": "Toast / error", "page": "Login", "topFrame": "LoginForm" },
+          { "instanceId": "12:67", "instanceName": "Toast / success", "page": "Settings", "topFrame": "NotificationSettings" }
+        ]
+      },
       "recommendation": "Check if renamed or replaced. If intentionally removed, update all consuming files."
+    }
+  ],
+  "recreated": [
+    {
+      "name": "Toast",
+      "oldKey": "abc456...",
+      "newKey": "def789...",
+      "severity": "medium",
+      "note": "Same name, new key — instances will detach but successor exists in current state."
+    }
+  ],
+  "possiblyReplaced": [
+    {
+      "removed": "Toast",
+      "candidate": "Notification",
+      "severity": "high",
+      "confirmRequired": true,
+      "note": "Toast removed, Notification added — likely rename. Confirm before treating as resolved."
     }
   ],
   "changed": [
