@@ -49,6 +49,7 @@ See PRINCIPLES.md for the full frameworks referenced in this audit.
 
 Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
 Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+Read `shared/decision-capture.md` — when an audit finding establishes a new rule (e.g., "raise body text to 16px going forward"), append it to `design-system/decisions.md`.
 
 ## Before you begin
 
@@ -272,13 +273,97 @@ Evaluate the frame(s) against cognitive load laws from PRINCIPLES.md:
 - Do frame names follow the project's naming convention?
 - Are components named consistently with the library?
 
-### Check 8: Accessibility basics
+### Check 8: Accessibility (WCAG 2.2 AA)
 
-- Is there sufficient color contrast between text and backgrounds?
-  (Check text color against its immediate background)
-- Are interactive elements large enough? (minimum 44x44px touch targets)
-- Is text size at least 12px for body content?
-- Are focus states present on interactive components?
+A11y is a first-class category, not a quick checklist. Run all sub-checks and
+score each. Critical findings here trigger the floor rule (overall ≤ 5.0).
+
+Use `figma_scan_code_accessibility` for automated a11y checks, then layer in the
+manual checks below for things tools can't see.
+
+**8a. Color contrast (WCAG 2.1.4.3)**
+
+For every text-on-background pair in the frame:
+- Compute the contrast ratio (use APCA or WCAG 2 ratio).
+- Body text (<18px regular / <14px bold): **4.5:1 minimum**
+- Large text (≥18px regular / ≥14px bold): **3.0:1 minimum**
+- UI components and graphical objects (icons, focus rings, borders): **3.0:1 minimum**
+- Disabled text is exempt but flag if it's the *only* indicator of disabled state
+
+Severity: <3.0 = **critical**, <4.5 on body = **critical**, 4.5-4.9 borderline = **warning**
+
+For each failing pair, report: foreground token, background token, computed ratio, required ratio.
+
+**8b. Hit-target size (WCAG 2.5.8)**
+
+- Every interactive target ≥ **24×24px** (WCAG AA minimum)
+- Recommended ≥ **44×44px** (also Fitts's Law in cognitive load)
+- Spacing between adjacent targets ≥ **8px** (prevents mis-taps)
+- Icon-only buttons need a padded hit area even if the icon is small
+
+Severity: <24px = **critical**, 24-43px = **warning**, <8px gap = **warning**
+
+**8c. Focus order & visible focus**
+
+- Walk interactive elements in DOM/layer order — does it match the visual reading order?
+- Skip links present for long pages with repeated nav?
+- Every interactive element has a documented focus state (check the component spec
+  in `design-system/components/<name>.json` for a "Focused" variant)
+- Focus indicator has ≥3:1 contrast against the background it sits on
+- No keyboard traps (modals must have a documented Esc/close affordance)
+
+Severity: missing focus state on interactive component = **critical**, mismatched
+order = **warning**
+
+**8d. Text & content**
+
+- Body text ≥ **14px** (12px only for fine print like timestamps)
+- Line height ≥ 1.5× font size for body, ≥ 1.2× for headings
+- Line length 45-75 characters for long-form text
+- No text rendered as image (loses scaling and screen reader access)
+- Text supports 200% zoom without horizontal scroll or clipping
+
+Severity: <12px body = **critical**, <14px body = **warning**
+
+**8e. Non-color signaling (WCAG 1.4.1)**
+
+- Status messages don't rely on color alone (success/error/warning need icon + text)
+- Required form fields marked with text (`*` or "required") not just color
+- Selected state uses more than color (border, background, checkmark, weight)
+- Links inside body text are underlined or otherwise distinguished beyond color
+
+Severity: color-only critical info = **critical**, color-only secondary state = **warning**
+
+**8f. Forms & inputs**
+
+- Every input has a visible label (placeholder ≠ label)
+- Required fields marked
+- Error messages associated with the field they describe (proximity + same color rule)
+- Helper/hint text near the field, not at the bottom of the form
+- Error states use icon + text + color (not color alone)
+
+Severity: input without label = **critical**, hint detached from field = **warning**
+
+**8g. Motion & sensory**
+
+- No flashing >3 times per second (seizure risk — WCAG 2.3.1)
+- Auto-playing motion (carousels, marquees) has pause/stop controls
+- Critical info isn't conveyed through motion alone
+
+Severity: any flash >3Hz = **critical**
+
+**8h. Touch & gesture**
+
+- Multi-finger or path-based gestures have a single-tap alternative (WCAG 2.5.1)
+- Drag operations have a click/tap fallback (WCAG 2.5.7)
+
+Severity: gesture-only interaction without alternative = **critical**
+
+**Compute an a11y score (0-10)** based on findings:
+- 10: zero findings, all critical thresholds passed
+- 7-9: 1-2 warnings, no criticals
+- 4-6: 3+ warnings or 1 critical
+- 0-3: multiple criticals
 
 ## Step 3: Compile findings
 
@@ -310,7 +395,8 @@ Format the report clearly:
 > ### Critical floor rule
 >
 > If ANY dimension has a Critical-severity finding (e.g., Fitts's Law target <36px,
-> Hick's Law >12 ungrouped choices, hardcoded colors, missing error recovery):
+> Hick's Law >12 ungrouped choices, hardcoded colors, missing error recovery,
+> WCAG contrast <3.0, hit target <24px, input without label, gesture-only interaction):
 >
 > **The overall score cannot exceed 5.0**, regardless of the weighted average.
 >
@@ -322,13 +408,14 @@ Format the report clearly:
 >
 > | Category | Weight | Score | Weighted |
 > |---|---|---|---|
-> | Token compliance | 20% | 8.5 | 1.70 |
-> | Component compliance | 20% | 9.0 | 1.80 |
-> | Heuristic evaluation | 30% | 7.2 | 2.16 |
+> | Token compliance | 15% | 8.5 | 1.28 |
+> | Component compliance | 15% | 9.0 | 1.35 |
+> | Heuristic evaluation | 25% | 7.2 | 1.80 |
+> | Accessibility (WCAG 2.2 AA) | 15% | 7.5 | 1.13 |
 > | Cognitive load | 15% | 7.0 | 1.05 |
 > | Gestalt compliance | 10% | 8.0 | 0.80 |
 > | Naming quality | 5% | 6.0 | 0.30 |
-> | **Overall** | **100%** | | **7.81** |
+> | **Overall** | **100%** | | **7.71** |
 >
 > ### Heuristic Scores
 >
@@ -535,12 +622,15 @@ Before presenting the audit to the user, verify ALL of these:
 2. [ ] Every score cites the exact element/location that earned or lost points
 3. [ ] Gestalt compliance checked for all 5 principles
 4. [ ] Cognitive load assessed (Hick's, Miller's, Fitts's, Von Restorff)
-5. [ ] Token compliance percentage calculated (bound vs hardcoded values)
-6. [ ] Component compliance percentage calculated (library vs custom-built)
-7. [ ] Critical floor rule applied (any Critical finding caps score at 5.0)
-8. [ ] Findings categorized by severity (Critical, Warning, Info)
-9. [ ] Findings posted as Figma comments on the audited frame
-10. [ ] Next steps suggested (/revise for fixes, /handoff if clean)
+5. [ ] Accessibility scored across 8 sub-checks (contrast, hit-target, focus,
+       text, non-color signaling, forms, motion, gestures)
+6. [ ] Every contrast finding includes computed ratio + required ratio
+7. [ ] Token compliance percentage calculated (bound vs hardcoded values)
+8. [ ] Component compliance percentage calculated (library vs custom-built)
+9. [ ] Critical floor rule applied (any Critical finding caps score at 5.0)
+10. [ ] Findings categorized by severity (Critical, Warning, Info)
+11. [ ] Findings posted as Figma comments on the audited frame
+12. [ ] Next steps suggested (/revise for fixes, /handoff if clean)
 
 ## Tone
 
