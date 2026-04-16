@@ -17,6 +17,7 @@ and hand off to engineering — all from your terminal.
 | `/setup-components` | Document component specs, variants, and props |
 | `/setup-relationships` | Map how components depend on each other |
 | `/setup-icons` | Catalog icons with keys, categories, and search tags |
+| `/setup-product` | Capture product identity, users, IA, terminology, voice — informs every other skill |
 
 ### Capture + Wireframe (bring existing pages into Figma)
 
@@ -29,19 +30,19 @@ and hand off to engineering — all from your terminal.
 
 | Command | What it does |
 |---|---|
+| `/design` | End-to-end autonomous: brief → plan → build → states → audit → handoff. Routes single screen or multi-screen flow automatically. |
 | `/brainstorm` | Generate 3-5 design variations using SCAMPER + Jobs-to-be-Done |
 | `/plan` | Create a build plan from a brief, wireframe, or screenshot |
 | `/build` | Execute a plan in Figma via a 5-phase pipeline (scaffold, components, tokens, validate) |
 | `/plan-component` | Plan a new component — variants, props, tokens, anatomy |
 | `/build-component` | Build a component set in Figma from a plan |
-| `/flow` | Design multi-screen flows (onboarding, checkout, settings) |
 | `/responsive` | Desktop to tablet and mobile with content choreography |
 
 ### Phase 3: Review (check and fix)
 
 | Command | What it does |
 |---|---|
-| `/audit` | Nielsen's heuristics + Gestalt + cognitive load + token compliance |
+| `/audit` | Nielsen's heuristics + Gestalt + cognitive load + WCAG 2.2 AA accessibility + token compliance |
 | `/stress-test` | Break your design with edge-case content before users do |
 | `/review-component` | Score component quality across 9 dimensions |
 | `/revise` | Apply feedback from Figma comments or direct input |
@@ -146,7 +147,7 @@ This creates the structure Cursor expects:
 │   └── SKILL.md
 ├── brainstorm/
 │   └── SKILL.md
-└── ... (19 skills total)
+└── ... (21 skills total)
 ```
 
 **Step 3: Use skills in Cursor**
@@ -226,14 +227,19 @@ Then open your Figma file and run the **Desktop Bridge** plugin (Plugins > Devel
 /setup-components      # catalogs all components with variant keys
 /setup-relationships   # maps how components compose together
 /setup-icons           # catalogs icons with search tags
+/setup-product         # captures product identity, users, IA, voice
 ```
 
-This creates a `design-system/` directory with your tokens, component specs, and dependency graph.
-It's a one-time step — the data is cached locally for all future commands.
+This creates a `design-system/` directory with your tokens, component specs,
+dependency graph, and product context. It's a one-time step — the data is
+cached locally and informs every future command (terminology, layout
+archetypes, content voice).
 
 ### Design something new
 
 ```
+/design                # autonomous: brief → plan → build → states → audit → handoff
+                       # OR drive each step yourself:
 /plan                  # describe what you want, or paste a screenshot
 /build                 # executes the plan in Figma
 ```
@@ -243,7 +249,7 @@ It's a one-time step — the data is cached locally for all future commands.
 ```
 /brainstorm            # generates 3-5 alternative layouts from your design
 /responsive            # creates tablet + mobile versions
-/flow                  # plans a multi-screen flow (onboarding, checkout)
+/design "multi-screen" # /design auto-detects flows and plans every screen
 ```
 
 ### Check your work
@@ -275,7 +281,7 @@ It's a one-time step — the data is cached locally for all future commands.
 
 ```
 Phase 1: SETUP (one-time)
-  /setup-tokens → /setup-components → /setup-relationships → /setup-icons
+  /setup-tokens → /setup-components → /setup-relationships → /setup-icons → /setup-product
 
 CAPTURE + WIREFRAME (bring existing pages into Figma)
   /capture URL  ──→ raw replica + mapped version (Figma)
@@ -283,6 +289,10 @@ CAPTURE + WIREFRAME (bring existing pages into Figma)
     accepts: URL, screenshot, Figma frame, or text description
 
 Phase 2: CREATE
+  /design  ──→ autonomous end-to-end pipeline (single screen or multi-screen flow)
+       │       (auto-detects topology, calls /plan + /build per screen, then audit + handoff)
+       │
+       └── OR drive it yourself:
   /brainstorm ──→ pick a direction
        │
   /plan ──→ /build ──→ see it in Figma
@@ -293,26 +303,30 @@ Phase 2: CREATE
        │     │    ├── Phase 4: TOKEN-BUILT (fill gaps with frames/text)
        │     │    └── Phase 5: VALIDATE (coverage, text, tokens, visual)
        │     │
-  /flow       /responsive
-  (multi-screen)  (tablet + mobile)
+       └── /responsive (tablet + mobile)
 
 Phase 3: REVIEW
   /stress-test ──→ /audit ──→ /revise
-  (break it)      (check it)   (fix it)
+  (break it)      (check it — heuristics, Gestalt, WCAG 2.2 AA)
+                              (fix it)
 
 Phase 4: HANDOFF
   /handoff ──→ done
 
 Need a new component?
   /plan-component ──→ /build-component ──→ /review-component
+
+Decision memory (no extra command — happens automatically)
+  Skills append meaningful design decisions to design-system/decisions.md.
+  Future sessions read it as context. See shared/decision-capture.md.
 ```
 
 Skills read from and write to three local directories:
 
 | Directory | What's in it | Created by |
 |---|---|---|
-| `design-system/` | Tokens, icons, component specs, relationships | `/setup-*` skills, `/build-component` |
-| `plans/` | Screen + component build plans | `/plan`, `/brainstorm`, `/plan-component` |
+| `design-system/` | Tokens, icons, component specs, relationships, product context, decision log | `/setup-*` skills, `/build-component`, all skills (decisions) |
+| `plans/` | Screen + component build plans, autonomous workflow logs | `/plan`, `/brainstorm`, `/plan-component`, `/design` |
 | `reports/` | (deprecated — findings go to Figma comments) | `/audit`, `/stress-test`, `/diff`, `/review-component` |
 
 You don't need to extract first — most skills can read directly from Figma as a
@@ -348,7 +362,7 @@ What's new:
   ~ updated  /brainstorm
   ~ updated  PRINCIPLES.md
 
-→ Installing 19 skills...
+→ Installing 21 skills...
 ```
 
 ### Automatic updates (optional)
@@ -418,9 +432,17 @@ design-kit/
 │   ├── tokens.json          #   Design tokens with Figma variable keys
 │   ├── icons.json           #   Icon catalog with keys, categories, tags
 │   ├── components/          #   Component specs (index.json + per-component)
-│   └── relationships.json   #   Component dependency graph
+│   ├── relationships.json   #   Component dependency graph
+│   ├── product.json         #   Product identity, users, IA, terminology
+│   ├── content-guide.md     #   Voice, tone, content patterns
+│   └── decisions.md         #   Append-only log of meaningful decisions (auto-captured)
 ├── plans/                   # Build plans (generated)
-│   └── components/          #   Component plans (from plan-component)
+│   ├── components/          #   Component plans (from plan-component)
+│   └── <feature>/           #   Per-screen plans + workflow log (from /design)
+├── shared/                  # Shared prompt patterns referenced by all skills
+│   ├── design-system-loading.md  # Tier 0/1/2/3 fallback for data loading
+│   ├── decision-capture.md       # When + how skills append to decisions.md
+│   └── ...
 ├── build-helpers/           # Reusable Figma plugin API helpers
 │   ├── figma-helpers.js     #   mkFrame, mkText, sweepText, canvasScan, etc.
 │   ├── build-phases.md      #   5-phase build pipeline reference
@@ -433,11 +455,12 @@ design-kit/
 ├── setup-components/
 ├── setup-relationships/
 ├── setup-icons/
+├── setup-product/
+├── design/                  # Autonomous end-to-end pipeline
 ├── plan/
 ├── build/
 ├── brainstorm/
 ├── responsive/
-├── flow/
 ├── stress-test/
 ├── audit/
 ├── diff/
@@ -447,6 +470,7 @@ design-kit/
 ├── review-component/
 ├── handoff/
 ├── handoff-ai/
+├── flow/                    # (internal — called by /design, not a public command)
 ├── setup                    # Installation script
 ├── CLAUDE.md                # Project instructions for Claude
 ├── PRINCIPLES.md            # Shared design frameworks
