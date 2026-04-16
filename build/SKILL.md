@@ -59,20 +59,102 @@ Check `design-system/components/index.json`: use `defaultVariantKey`, not `figma
 **Components first. Frames fill gaps. Validate before presenting.**
 
 Read `build-helpers/build-phases.md` for the full phase specification.
-The 5 phases are:
+The phases are:
 
 ```
-Phase 1: MANIFEST     → Parse build.json into a component checklist
-Phase 2: SCAFFOLD     → Root frame + section frames (empty structure only)
-Phase 3: COMPONENTS   → Instantiate ALL library components from manifest
-Phase 4: TOKEN-BUILT  → Fill remaining gaps with frames/text
-Phase 5: VALIDATE     → Coverage, text, property, token binding checks
+Phase 0: VALIDATE-KEYS → Verify every key in build.json is a usable Figma key
+Phase 1: MANIFEST      → Parse build.json into a component checklist
+Phase 2: SCAFFOLD      → Root frame + section frames (empty structure only)
+Phase 3: COMPONENTS    → Instantiate ALL library components from manifest
+Phase 4: TOKEN-BUILT   → Fill remaining gaps with frames/text
+Phase 5: VALIDATE      → Coverage, text, property, token binding checks
 ```
 
 **CRITICAL: Do NOT start Phase 4 until Phase 3's exit gate passes.**
 Phase 3 (components) must complete before Phase 4 (token-built). This
 prevents the #1 build failure: building everything as frames and never
 swapping in library components.
+
+### Phase 0: VALIDATE-KEYS (before any Figma mutation)
+
+Walk every `tokenKey`, `figmaKey`, and `variantKey` in `build.json` and verify
+each is in the expected Figma format. Do this **before MANIFEST** so failures
+are surfaced atomically — never start a build that will silently fall back to
+hardcoded values mid-flight.
+
+**Step A — Format check (always run, no Figma calls):**
+- Must be a 40-char hex hash (e.g., `a1b2c3d4...`).
+  Reject path-style strings like `Colors/Text/text-primary`,
+  `color.primary.500`, or anything containing `/`, `.`, or non-hex characters.
+- Length check: exactly 40 characters. Shorter or longer = invalid.
+- Variant vs set check: nodes intended for `figma_instantiate_component`
+  must carry a `variantKey` (individual variant), not a `figmaKey` (component
+  set). Reject `figmaKey` on instantiation nodes.
+
+**Step B — Existence check (one batched figma_execute call):**
+
+Format-only validation misses stale-but-well-formed keys (e.g., a key was
+correctly extracted six weeks ago but the variable has since been deleted from
+the library). Resolve every format-passing key against Figma in a single batched
+call:
+
+```javascript
+// Run via figma_execute — verify all keys resolve in current Figma state
+const tokenKeys = [/* all tokenKey values from build.json */];
+const variantKeys = [/* all variantKey values from build.json */];
+const stale = { tokens: [], variants: [] };
+
+for (const key of tokenKeys) {
+  try {
+    const v = await figma.variables.importVariableByKeyAsync(key);
+    if (!v) stale.tokens.push(key);
+  } catch (e) {
+    stale.tokens.push({ key, error: e.message });
+  }
+}
+
+for (const key of variantKeys) {
+  try {
+    const c = await figma.importComponentByKeyAsync(key);
+    if (!c) stale.variants.push(key);
+  } catch (e) {
+    stale.variants.push({ key, error: e.message });
+  }
+}
+
+return stale;
+```
+
+Batch in groups of 50 keys per call if the build is large. Use a 30s timeout.
+
+**Exit gate (mandatory):**
+- If ZERO invalid keys (format AND existence): log "Phase 0 passed — N keys
+  validated" and proceed to Phase 1.
+- If ANY invalid key: STOP. Do not run Phase 1. Print a single report listing
+  every invalid key with: location in the build.json tree, bad value, the
+  category (`format-invalid` vs `format-valid-but-stale`), and the expected
+  format. Then offer the user a recovery path via AskUserQuestion:
+
+  > "build.json has [N] invalid keys ([F] format-invalid, [S] stale).
+  > How should I proceed?
+  >
+  > **A) Re-run extraction** — Run `/setup-tokens` and `/setup-components` to
+  >    refresh keys, then re-run `/build`. Best for stale keys.
+  > **B) Patch inline** — Tell me the corrected key for each bad entry; I'll
+  >    update build.json in-place and proceed. Best for 1-3 typo fixes.
+  > **C) Re-plan** — Run `/plan` to regenerate build.json from scratch.
+  > **D) Abort** — Stop and let me investigate manually."
+
+  - **If A**: stop the build, do not auto-run extraction (the user owns that step).
+  - **If B**: walk each bad key one by one, prompt for the replacement, validate
+    the replacement passes Steps A and B, write back to build.json, then resume
+    Phase 1 from the top.
+  - **If C/D**: stop cleanly, write nothing.
+
+**Never silently substitute a hardcoded value for a missing or invalid key.**
+The earlier "fall back and flag" rule under Error Recovery only applies to
+runtime failures from `setBoundVariable` after a key passed Phase 0. Pre-build,
+invalid keys are a hard stop with explicit user direction.
 
 ### Phase 1: MANIFEST (before touching Figma)
 
@@ -136,6 +218,7 @@ The build process depends on `/plan` output. The pipeline is:
 ```
 /plan → plans/<name>/plan.md + build.json (with manifest)
                 ↓
+/build Phase 0 → validates every key (40-char hex), STOPs on invalid
 /build Phase 1 → reads manifest from build.json → prints task checklist
 /build Phase 2 → creates scaffold (empty frames)
 /build Phase 3 → instantiates components from manifest checklist
@@ -300,6 +383,20 @@ Label, Hint text, Help icon, and Actions as defaults.
 
 ### How to set text on library components
 
+**Content rules (every text string you write):**
+
+If `design-system/content-guide.md` exists, treat it as the source of truth for:
+- **Voice & tone** — match cadence, pronouns, capitalization rules
+- **Terminology** — use the exact product vocabulary from `product.json` (e.g., "Workspace" not "Project" if that's the product term)
+- **Patterns** — empty-state phrasing, error messages, button labels, headings, microcopy
+- **Forbidden phrases** — never use generic placeholders like "Olivia Rhye", "Lorem ipsum",
+  "Click here", "Submit", "Label" if a content-guide pattern exists for that slot
+
+If `content-guide.md` is absent, use neutral domain-specific copy (no Lorem ipsum,
+no template names) and flag in the final report:
+> "No content-guide.md found — used inferred copy. Run `/setup-product` for
+> persistent voice + terminology."
+
 **Preferred: Use figma_set_instance_properties for TEXT properties.**
 Many components expose text as component properties (e.g., "Label text",
 "Placeholder", "Supporting text"). These are reliable — they use the
@@ -454,6 +551,7 @@ Before presenting the build to the user, verify ALL of these:
 2. [ ] Every library component from the plan was instantiated (count INSTANCE nodes)
 3. [ ] Every library component has property overrides applied (no unwanted labels/hints/icons)
 4. [ ] All text shows domain-specific content (no "Olivia Rhye", "Label", "UX review presentations")
+4a. [ ] If `content-guide.md` exists, every generated string follows its voice + terminology rules
 5. [ ] No frames are stuck at 100px height (check for phantom whitespace)
 8. [ ] All spacing/padding uses setBoundVariable with tokens (no hardcoded pixel values)
 9. [ ] Zero emoji used as icons (no 🟥, 📘, 🎮 — all icons are library components)

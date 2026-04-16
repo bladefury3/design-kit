@@ -7,12 +7,52 @@ until the previous phase's exit gate passes.**
 ## Overview
 
 ```
-Phase 1: MANIFEST     → Parse build.json, create component checklist
-Phase 2: SCAFFOLD     → Root frame + section frames (layout only, no content)
-Phase 3: COMPONENTS   → Instantiate ALL library components from manifest
-Phase 4: TOKEN-BUILT  → Fill gaps with token-built frames/text
-Phase 5: VALIDATE     → Coverage check, text check, style check
+Phase 0: VALIDATE-KEYS → Verify every key in build.json is a usable Figma key
+Phase 1: MANIFEST      → Parse build.json, create component checklist
+Phase 2: SCAFFOLD      → Root frame + section frames (layout only, no content)
+Phase 3: COMPONENTS    → Instantiate ALL library components from manifest
+Phase 4: TOKEN-BUILT   → Fill gaps with token-built frames/text
+Phase 5: VALIDATE      → Coverage check, text check, style check
 ```
+
+## Phase 0: VALIDATE-KEYS (no Figma calls)
+
+**Purpose**: Catch invalid keys before any Figma mutation. Path-style or
+malformed keys silently break `setBoundVariable` and `instantiateComponent`,
+producing partial frames the user must clean up. Phase 0 makes failures atomic.
+
+**Entry gate**: build.json exists and has been read.
+
+**Process**:
+1. Walk every node in build.json
+2. Collect every `tokenKey`, `figmaKey`, and `variantKey`
+3. **Step A — Format check** (no Figma calls):
+   - 40-char hex hash (regex: `^[a-f0-9]{40}$`)
+   - Length exactly 40 characters
+   - `figma_instantiate_component` nodes use `variantKey`, not `figmaKey`
+   - Reject path-style strings (`Colors/Text/text-primary`, `color.primary.500`)
+4. **Step B — Existence check** (one batched figma_execute call):
+   - Resolve every format-passing key against current Figma state
+   - `figma.variables.importVariableByKeyAsync(key)` for tokens
+   - `figma.importComponentByKeyAsync(key)` for variants
+   - Catches stale-but-well-formed keys (e.g., variable was deleted from library)
+   - Batch in groups of 50 keys per call for large builds; 30s timeout
+5. Aggregate all failures into a single report (categorize: `format-invalid` vs
+   `format-valid-but-stale`)
+
+**Exit gate**:
+- ZERO invalid keys → log "Phase 0 passed — N keys validated" → proceed to Phase 1
+- ANY invalid key → STOP. Print every invalid key with location, bad value,
+  category, expected format. Offer recovery via AskUserQuestion:
+  - **A) Re-run extraction** (best for stale keys)
+  - **B) Patch inline** (walk each bad key, prompt for replacement, validate
+    against Steps A+B, write back to build.json, resume Phase 1)
+  - **C) Re-plan** from scratch
+  - **D) Abort**
+
+**Never silently substitute hardcoded values for invalid keys.** The "fall back
+and flag" rule under Error Recovery only applies to runtime `setBoundVariable`
+failures *after* a key passed Phase 0.
 
 ## Phase 1: MANIFEST (no Figma calls)
 
