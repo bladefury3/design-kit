@@ -40,6 +40,7 @@ the plan, it's decided. See PRINCIPLES.md for design principles and frameworks.
 ## Step 1: Load design system data
 
 Follow `shared/design-system-loading.md` for the full fallback pattern.
+Read `shared/decision-capture.md` — when planning chooses a layout archetype, nav pattern, or primary CTA placement that overrides a sensible alternative, append a one-liner to `design-system/decisions.md` after presenting the plan.
 
 ### Tier 0: Product context (load first — informs everything)
 

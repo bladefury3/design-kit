@@ -74,6 +74,7 @@ Read `shared/tool-selection.md` for the decision tree on which MCP tool to use.
 Read `shared/error-recovery.md` for error handling and retry patterns.
 Read `shared/screenshot-validation.md` for visual validation workflow.
 Read `shared/canvas-positioning.md` for placing frames on the canvas.
+Read `shared/decision-capture.md` — when the pipeline routes single vs multi-screen, or a phase output overrides a sensible default, append a one-liner to `design-system/decisions.md` (the autonomous workflow log lives in `plans/<feature>/workflow-log.md`; cross-feature decisions belong in `decisions.md`).
 
 See `PRINCIPLES.md` for Nielsen heuristics, Gestalt principles, and design frameworks.
 

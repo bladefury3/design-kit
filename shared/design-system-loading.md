@@ -10,6 +10,7 @@ Read these from the project directory:
 - `design-system/product.json` — product identity, users, IA, terminology, layout conventions
 - `design-system/content-guide.md` — voice, tone, content patterns, error/empty state formulas
 - `design-system/layout-patterns.json` — common page archetypes for pattern matching
+- `design-system/decisions.md` — append-only log of prior design decisions (see `shared/decision-capture.md`)
 
 If `product.json` exists, use it to:
 - Pre-fill terminology (use product vocabulary, not generic labels)
@@ -20,6 +21,11 @@ If `product.json` exists, use it to:
 
 If these files are missing, proceed — they are optional enrichment. Suggest
 running `/setup-product` if the user would benefit from persistent product context.
+
+If `decisions.md` exists, scan it before making any choice that the log might
+already cover. Cite the prior decision when applying it; cite + override when
+deviating. Skills that make new meaningful decisions append per
+`shared/decision-capture.md`.
 
 ## Tier 1: Local JSON (fast, pre-extracted)
 

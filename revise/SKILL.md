@@ -52,6 +52,7 @@ Read `shared/error-recovery.md` for error handling and retry patterns with Figma
 Read `shared/screenshot-validation.md` for post-build visual validation.
 Read `shared/placeholder-detection.md` for detecting placeholder text.
 Read `shared/canvas-positioning.md` for canvas scan before placing frames.
+Read `shared/decision-capture.md` — when a revision contradicts an earlier pattern or sets a new convention, append a one-liner to `design-system/decisions.md` after applying the fix.
 
 ## Design Philosophy
 

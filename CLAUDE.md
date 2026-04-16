@@ -23,7 +23,8 @@ design-kit/
 │   ├── relationships.json        #   Component dependency graph
 │   ├── product.json              #   Product context: identity, users, IA, terminology (output of /setup-product)
 │   ├── content-guide.md          #   Voice, tone, content patterns (output of /setup-product)
-│   └── layout-patterns.json      #   Common page archetypes (shipped defaults + product-specific)
+│   ├── layout-patterns.json      #   Common page archetypes (shipped defaults + product-specific)
+│   └── decisions.md              #   Append-only log of meaningful design decisions (auto-captured by skills)
 ├── plans/                        # Build plans (output of /plan, /brainstorm, /design)
 │   ├── <feature>/                #   One folder per feature/flow
 │   │   ├── plan.md               #     Human-readable: IA, hierarchy, components, edge cases
@@ -40,7 +41,8 @@ design-kit/
 │   ├── error-recovery.md         #   Standard error handling and retry patterns
 │   ├── screenshot-validation.md  #   Post-build visual validation workflow
 │   ├── canvas-positioning.md     #   Canvas space scanning before placing frames
-│   └── placeholder-detection.md  #   Detecting and replacing placeholder text
+│   ├── placeholder-detection.md  #   Detecting and replacing placeholder text
+│   └── decision-capture.md       #   When + how skills append to design-system/decisions.md
 ├── build-helpers/                # Reusable Figma plugin API helpers
 │   └── figma-helpers.js          #   mkFrame, mkText, sweepText, canvasScan, etc.
 ├── reports/                      # (deprecated — QA findings go to Figma comments)

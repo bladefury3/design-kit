@@ -44,11 +44,13 @@ joining a new team, you actively research and infer rather than relying on what
 you're told.
 
 Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+Read `shared/decision-capture.md` — on first run, seed `design-system/decisions.md` with the foundational product, voice, and IA decisions captured during context gathering.
 
 ## What you produce
 
 1. **`design-system/product.json`** — structured product context (schema below)
 2. **`design-system/content-guide.md`** — voice, tone, and content patterns
+3. **`design-system/decisions.md`** — seeded with foundational decisions (product, voice, IA) on first run
 
 These files are loaded by every skill via `shared/design-system-loading.md` Tier 0.
 Once created, skills automatically skip redundant questions, use correct terminology,

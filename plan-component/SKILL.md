@@ -91,6 +91,7 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
 Read `shared/design-system-loading.md` for the 3-tier fallback when loading tokens and components.
 Read `shared/tool-selection.md` for the decision tree on which MCP tool to use.
 Read `shared/error-recovery.md` for error handling and retry patterns with Figma MCP calls.
+Read `shared/decision-capture.md` — when planning a component's variant taxonomy, default state, or anatomy split, append a one-liner to `design-system/decisions.md` after presenting the plan.
 
 ## Before you begin
 
