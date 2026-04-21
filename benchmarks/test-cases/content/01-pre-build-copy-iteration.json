@@ -1,0 +1,50 @@
+{
+  "id": "content-01",
+  "skill": "content",
+  "name": "Pre-build copy iteration — tests content matrix and voice validation",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "Review the copy in my tasks.md before I build",
+    "designSystemAvailable": true,
+    "figmaConnected": false,
+    "contentGuideExists": true,
+    "tasksFileExists": true,
+    "tasksContent": {
+      "texts": [
+        { "element": "Page title", "current": "Settings", "parent": "Header" },
+        { "element": "Save button", "current": "Submit", "parent": "Actions" },
+        { "element": "Empty state headline", "current": "Nothing here", "parent": "Integrations" },
+        { "element": "Empty state body", "current": "No integrations have been added yet. Click below to add one.", "parent": "Integrations" },
+        { "element": "Error message", "current": "Error occurred", "parent": "Banner" }
+      ]
+    },
+    "contentGuideRules": {
+      "buttons": "Verb + noun (e.g., 'Save changes', not 'Submit')",
+      "emptyStates": "Formula: [What's empty] + [1 sentence value] + CTA",
+      "errors": "Formula: [What happened] + [What to do]. Never blame the user.",
+      "voice": "Professional but warm. First person plural."
+    }
+  },
+  "expectedBehaviors": [
+    "Presents all 5 text entries as a content matrix with voice rules",
+    "Flags 'Submit' as violating the verb+noun pattern — suggests 'Save changes'",
+    "Flags 'Nothing here' as too casual/vague for an empty state headline",
+    "Flags 'Error occurred' as too vague — suggests formula-based alternative",
+    "Flags 'No integrations have been added yet. Click below to add one.' as verbose — suggests tighter version",
+    "Does NOT flag 'Settings' — it's a valid page title",
+    "Offers to update tasks.md with approved changes"
+  ],
+  "antiPatterns": [
+    "Accepts all text without checking against content guide rules",
+    "Only checks formatting (char count) but not voice/tone",
+    "Suggests changes without explaining which rule was violated",
+    "Rewrites all text without asking the user first",
+    "Uses engineering language ('text node', 'figma_set_text') instead of 'heading', 'button label'"
+  ],
+  "evaluationCriteria": {
+    "ruleApplication": "Does it check each text against the specific content guide rule for that element type?",
+    "issueSpecificity": "Does it explain WHY each text is flagged, citing the rule?",
+    "matrixCompleteness": "Does the matrix include every text entry with role, rule, and issue?",
+    "iterationFlow": "Does it present changes for approval before writing back?"
+  }
+}

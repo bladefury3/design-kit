@@ -72,38 +72,56 @@ means constant back-and-forth and guesswork. This skill bridges that gap.
    - `design-system/tokens.json` — for token context
    - `design-system/components/index.json` — for component inventory
    - `design-system/relationships.json` — for dependency context
-### JSON-first approach (mandatory)
+### JSON-first approach (preferred, with graceful fallback)
 
-Pre-extracted JSONs are the required input for MCP optimization. You MUST use the
-structured data from `design-system/tokens.json` and `design-system/components/*.json` rather than re-extracting
-from Figma. When writing descriptions back to Figma, source the content from these
-files, which contain authoritative token values, Figma keys (`$extensions.figma.key`),
-component specs, and relationship data:
+Pre-extracted JSONs are the BEST input for MCP optimization because they contain
+authoritative token values, Figma keys, component specs, and relationship data.
 
-- `design-system/tokens.json` — Use token descriptions, naming, and Figma keys to write rich variable
-  descriptions back into Figma, rather than guessing from raw values. Use
-  `$extensions.figma.key` for any direct variable lookups.
-- `design-system/components/index.json` — Use component specs to write structured descriptions
-  (variants, props, usage guidelines) back into Figma component descriptions.
-- `design-system/relationships.json` — Use dependency data to add relationship annotations
-  ("Contains: Button, Avatar, Text") to component descriptions.
+**Tier 1 (preferred): Pre-extracted JSONs exist**
 
-**With JSONs**: Load files → write enriched descriptions back to Figma from structured data → validate
+Load and use:
+- `design-system/tokens.json` — token descriptions, naming, Figma keys for rich variable descriptions
+- `design-system/components/index.json` — component specs for structured descriptions (variants, props, usage)
+- `design-system/relationships.json` — dependency data for relationship annotations ("Contains: Button, Avatar")
 
-**Without JSONs — use `figma_get_design_system_kit` as the "before" snapshot:**
+Flow: Load files → write enriched descriptions back to Figma → validate
+
+**Tier 2 (fallback): No JSONs — use `figma_get_design_system_kit` directly**
+
+If any JSON files are missing, do NOT hard-stop. Instead:
 
 ```
 Use figma_get_design_system_kit with:
   - include: ["tokens", "components", "styles"]
   - format: "full"
 ```
-This shows you exactly what downstream AI tools currently see when they query the file.
-Use this as your "before" snapshot — then optimize descriptions, naming, and annotations
-to make the next `figma_get_design_system_kit` call return richer, more actionable data.
 
-If the file has no design system data, suggest extraction first:
-> "I need structured design system data to optimize for MCP. Let me run
-> `/setup-tokens` and `/setup-components` first."
+This returns what downstream AI tools currently see. Use it as BOTH the "before"
+snapshot AND the source data for writing enriched descriptions. The data is less
+structured than pre-extracted JSONs, but it's sufficient for:
+- Writing component descriptions (you can see variant names, property definitions)
+- Standardizing layer names (you can see the current tree)
+- Adding annotations (you can analyze what's missing)
+
+Note the limitation to the user:
+> "Working from live Figma data instead of pre-extracted JSONs. Results will be
+> good but not as precise as running `/setup-tokens` + `/setup-components` first."
+
+**Tier 3 (minimal): No JSONs AND kit call fails**
+
+If `figma_get_design_system_kit` also fails:
+- Use `figma_get_file_data` to read the file structure
+- Use `figma_search_components` to discover components
+- Use `figma_get_variables` to discover tokens
+- Proceed with what you can gather — naming standardization and annotations
+  still work without full design system data
+
+> "Limited data available. I can still standardize naming and add annotations,
+> but component descriptions will be less detailed. Run `/setup-tokens` and
+> `/setup-components` after for a deeper optimization pass."
+
+**Never refuse to work.** Always proceed with whatever data is available, noting
+limitations. The user gets value at every tier — just more value with better data.
 
 3. Ask the user about scope:
 

@@ -167,6 +167,33 @@ flow into the pipeline. Do not rely on remembered instructions — read the file
 Three questions, **one at a time**, each via AskUserQuestion. Skip any question
 the brief already answers — but log the inferred answer in the workflow log.
 
+### Pre-check: Context quality gate
+
+Before asking Q1, assess how much context is available:
+
+1. **Check for a feature brief.** Look for `plans/<feature>/brief.md`. If it
+   exists, read it — it contains use case, audience, and constraints from a
+   prior session. Use its content to skip Q1 and Q2 (treat them as answered).
+   Log: "Loaded brief.md — Q1/Q2 pre-answered."
+
+2. **Check for product context.** Look for `design-system/product.json`.
+
+3. **Evaluate brief richness.** Count sentences in the user's original
+   description (split on `.` / `!` / `?`).
+
+**If neither `brief.md` nor `product.json` exists AND the user's description
+is under 2 sentences:** context is thin. Thin context makes the full
+autonomous pipeline fragile — plans will guess at terminology, audience, and
+content patterns. In Q3, recommend depth **A** (plan only) or **B** (plan +
+primary frame) and add a note:
+
+> Context is light (no product.json, no brief). Depths C-E rely on product
+> context for accurate audits and content. I recommend A or B now — you can
+> run `/setup-product` and then `/design --resume` to go deeper.
+
+Log to workflow-log.md: "Context quality: thin (no product.json, no brief.md,
+brief < 2 sentences). Depth recommendation capped at B."
+
 ### Q1: Use case + audience
 
 **Skip if:** the brief already names the page, the user, and the goal in one
@@ -315,12 +342,21 @@ Follow `shared/design-system-loading.md` for the full fallback:
 - `design-system/relationships.json`
 - `design-system/icons.json` (optional)
 
-### 1c. Prior screen context
+### 1c. Feature brief
+
+Check for `plans/<feature>/brief.md`. If it exists, read it and merge its content
+into the session context — it may contain use case, audience, constraints, and
+prior decisions from an earlier session or a product manager's input. When
+`brief.md` is present, it takes precedence over the user's inline description
+for fields it covers (use case, audience, constraints) but the user's inline
+description wins for anything it explicitly overrides.
+
+### 1d. Prior screen context
 
 Check for `plans/<feature>/context.md`. If this screen is part of an existing flow,
 enforce all shared decisions (header, nav, spacing, typography).
 
-### 1d. Start workflow log
+### 1e. Start workflow log
 
 Create `plans/<feature>/workflow-log.md`:
 

@@ -1,0 +1,41 @@
+{
+  "id": "brief-01",
+  "skill": "brief",
+  "name": "Feature request without problem — tests reframing ability",
+  "difficulty": "medium",
+  "input": {
+    "userMessage": "I need a dashboard for our school attendance system",
+    "designSystemAvailable": true,
+    "figmaConnected": false,
+    "productJsonExists": true,
+    "productContext": {
+      "product": "ParentSquare",
+      "type": "School communication platform",
+      "primaryUser": "Teachers",
+      "terminology": { "user": "member", "student": "student", "class": "class" }
+    }
+  },
+  "expectedBehaviors": [
+    "Recognizes 'dashboard' as a feature request, not a problem statement",
+    "Reframes: 'the problem is probably teachers can't quickly see who's absent' — asks if that's right",
+    "Uses product.json context to pre-fill user type (teachers) without re-asking",
+    "Asks about success metrics: what does 'working' look like?",
+    "Asks about scope: what's IN this dashboard and what's deferred?",
+    "Produces brief.md with HMW statement, not just the feature request",
+    "Suggests specific success metrics relevant to monitoring problems (time-to-notice, scan rate)"
+  ],
+  "antiPatterns": [
+    "Accepts 'dashboard' as the problem statement without reframing",
+    "Asks about the product/user type when product.json already has it",
+    "Produces a brief that says 'build a dashboard' as the problem",
+    "Asks more than 5 questions",
+    "Writes success metrics as 'users are satisfied' — too vague",
+    "Skips scope boundaries entirely"
+  ],
+  "evaluationCriteria": {
+    "reframing": "Does it distinguish the feature request from the user problem?",
+    "contextReuse": "Does it pre-fill from product.json instead of re-asking?",
+    "metricsSpecificity": "Are success metrics measurable and relevant to the problem type?",
+    "scopeClarity": "Does the brief clearly separate IN vs OUT?"
+  }
+}

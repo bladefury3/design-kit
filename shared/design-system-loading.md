@@ -11,6 +11,11 @@ Read these from the project directory:
 - `design-system/content-guide.md` — voice, tone, content patterns, error/empty state formulas
 - `design-system/layout-patterns.json` — common page archetypes for pattern matching (6 archetypes with richness hints, decision rules, and shell options — use as creative inspiration, not rigid templates)
 - `design-system/decisions.md` — append-only log of prior design decisions (see `shared/decision-capture.md`)
+- `design-system/context.md` — product-wide shared decisions (header, nav, spacing, typography) that apply across all features. Written by the first `/plan` run, read by all subsequent runs.
+
+If `design-system/context.md` exists, enforce ALL shared decisions before making
+feature-specific choices. If a planned decision conflicts with an existing context
+decision, flag the conflict and ask — don't silently override.
 
 If `product.json` exists, use it to:
 - Pre-fill terminology (use product vocabulary, not generic labels)

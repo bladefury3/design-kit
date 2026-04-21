@@ -53,31 +53,43 @@ Read `shared/error-recovery.md` for error handling and retry patterns with Figma
    for direct variable lookups via `figma.variables.importVariableByKeyAsync(key)`
    instead of scanning collections.
 
-3. **Ask the user where components live.** This is the critical question:
+3. **Auto-detect component sources before asking.**
 
-> "Where are the components I should extract?
->
-> **A) This file** — Components are defined locally in the current Figma file
-> **B) An attached library** — Components come from a separate library file
->    → If so, what's the library file URL? (e.g., `https://www.figma.com/design/ABC123/My-Library`)
-> **C) Multiple sources** — Some local, some from libraries
->
-> If you're not sure, I can check what's in this file and what libraries are attached."
+   Try `figma_get_design_system_kit` first. This single call reveals what components
+   exist in the current file AND attached libraries. If it returns data:
+   - Note whether components are local, library, or both
+   - Note the library file key if library components are present
+   - **Proceed directly** without asking — state what you found and default to
+     extracting everything: "Found [N] components from [source]. Extracting all
+     unless you want to narrow scope."
 
-**Why the file URL matters:** The MCP tools can read component data from ANY Figma
-file via REST API — but they need the file URL or key. Unlike variables (which have
-a plugin API for library discovery), components can ONLY be discovered from library
-files via REST API tools like `figma_get_design_system_kit` and
-`figma_get_library_components`. Without the library file URL, you're limited to
-navigating to the file or reverse-discovering from instances.
+   **Only ask if auto-detection fails or is ambiguous:**
 
-4. Ask the user about scope:
+   > "I couldn't auto-detect your component sources. Where should I look?
+   >
+   > **A) This file** — Components are defined locally
+   > **B) An attached library** — Give me the library file URL
+   > **C) Multiple sources** — Some local, some from libraries"
 
-> "Which components should I extract?
->
-> **A) Everything** — All published components
-> **B) Specific categories** — e.g., just Inputs, or just Navigation
-> **C) Search** — Components matching a name pattern"
+   **Why the file URL matters (when needed):** The MCP tools can read component data
+   from ANY Figma file via REST API — but they need the file URL or key. Unlike
+   variables (which have a plugin API for library discovery), components can ONLY be
+   discovered from library files via REST API tools like `figma_get_design_system_kit`
+   and `figma_get_library_components`.
+
+4. **Default to extracting everything.** Only ask about scope if the user
+   mentioned specific categories or the library has 200+ components:
+
+   > "Your library has [N] components. Want me to extract all of them, or
+   > narrow to specific categories?
+   >
+   > RECOMMENDATION: A — extract everything. You can always filter later.
+   >
+   > **A) Everything** — All published components
+   > **B) Specific categories** — e.g., just Inputs, or just Navigation
+   > **C) Search** — Components matching a name pattern"
+
+   For libraries under 200 components, skip this question and extract all.
 
 ## Step 1: Discover components
 
@@ -280,6 +292,25 @@ and work cross-file via `figma_instantiate_component`.
 - `hasPlaceholderContent` — whether the component ships with domain-specific sample data
 - `variantCount` — how many variants exist
 - `status` — published/draft
+
+### Key validation gate (BLOCKING — run before writing)
+
+Before writing index.json, walk EVERY entry and validate:
+- [ ] `figmaKey` is 40-char hex (`/^[a-f0-9]{40}$/`). If it contains `:` → it's a nodeId → REJECT.
+- [ ] `defaultVariantKey` is 40-char hex. If it contains `:` → REJECT.
+- [ ] `recommendedDesktopKey` is 40-char hex. If it contains `:` → REJECT.
+
+**If ANY key is nodeId format** (contains `:`), convert it NOW:
+1. Use `figma_search_components` with the component name + `libraryFileKey`
+2. The search result returns hex keys — replace the nodeId key with the hex key
+3. Re-validate after conversion
+
+**NEVER write nodeId-format keys to index.json.** NodeId keys (like `3287:427074`)
+are session-specific, go stale on Figma restart, and fail when used from a
+different file. Every downstream skill (`/plan`, `/build`) depends on hex keys
+for `figma_instantiate_component`. A single nodeId key in index.json means that
+component will fail to instantiate in every future build — requiring a runtime
+MCP search call that defeats the purpose of extraction.
 
 Write `design-system/components/index.json`. This is the one file that MUST be produced. Everything
 else is on-demand.

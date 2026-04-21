@@ -1,50 +1,60 @@
 {
   "$schema": "design-kit/eval-rubric/v1",
-  "name": "brainstorm specific criteria",
+  "name": "brainstorm v2 specific criteria",
   "weight": 0.65,
   "criteria": {
-    "variationDiversity": {
-      "weight": 0.25,
-      "description": "Are variations MEANINGFULLY different in layout, hierarchy, and IA — not just cosmetic shuffles?",
-      "scoring": {
-        "10": "Each variation explores a fundamentally different approach to the same problem",
-        "7": "Most variations differ meaningfully, 1 feels like a minor tweak",
-        "4": "Variations differ in arrangement but not in approach",
-        "1": "All variations are essentially the same layout with different spacing/colors"
-      }
-    },
-    "scamperApplication": {
+    "frameworkDiversity": {
       "weight": 0.20,
-      "description": "Does each variation apply a specific, named SCAMPER lens with clear rationale?",
+      "description": "Does it use MULTIPLE exploration frameworks (SCAMPER, Concept Reframe, Competitive, Constraint Play, User Journey) — not just SCAMPER?",
       "scoring": {
-        "10": "Each variation names its SCAMPER lens and explains what specifically was substituted/eliminated/etc.",
-        "7": "SCAMPER lenses named but rationale is thin",
-        "4": "Lenses mentioned but don't actually drive the variation",
-        "1": "No SCAMPER framework visible"
+        "10": "Uses 3+ frameworks, each direction explores a fundamentally different angle",
+        "7": "Uses 2 frameworks, most directions are meaningfully different",
+        "4": "Uses only SCAMPER, variations are layout-level not concept-level",
+        "1": "All directions use the same framework with minor tweaks"
       }
     },
-    "jtbdAlignment": {
-      "weight": 0.15,
-      "description": "Does each variation state which user job (Monitor/Investigate/Act/Configure/Learn/Decide) it optimizes for?",
+    "conceptDepth": {
+      "weight": 0.20,
+      "description": "Do directions explore CONCEPT-level variation (metaphors, mental models, interaction paradigms) — not just layout rearrangement?",
       "scoring": {
-        "10": "Each variation explicitly names its target job and explains how the design serves it",
-        "7": "Jobs mentioned but connection to design decisions is implicit",
-        "4": "Generic job assignment without design reasoning",
-        "1": "No JTBD framing"
+        "10": "At least 2 directions reframe the fundamental approach (different metaphor, different IA model, different interaction paradigm)",
+        "7": "One direction reframes the concept, rest are layout variations",
+        "4": "All directions rearrange the same content into different layouts",
+        "1": "Directions are cosmetic shuffles (sidebar left vs right)"
       }
     },
-    "contradictionHandling": {
+    "depthProgression": {
       "weight": 0.15,
-      "description": "When constraints conflict, does the skill identify and address the tension?",
+      "description": "Does it offer concept cards first (cheap) before investing in sketches/builds (expensive)?",
       "scoring": {
-        "10": "Explicitly names the contradiction, explores creative resolutions, asks user to prioritize",
-        "7": "Acknowledges tension but doesn't fully resolve it",
-        "4": "Ignores contradictions",
-        "0": "N/A — no contradictions in the test case"
+        "10": "Starts with concept cards, lets user promote to sketches, then builds. Diverge cheap, converge expensive.",
+        "7": "Offers depth choice but defaults to full build",
+        "4": "Goes straight to full builds without concept-level exploration",
+        "1": "No depth options — one mode only"
+      }
+    },
+    "thesisClarity": {
+      "weight": 0.15,
+      "description": "Does each direction have a clear, defensible thesis grounded in user behavior?",
+      "scoring": {
+        "10": "Each direction: 'This version prioritizes X because user Y needs Z' with specific behavioral reasoning",
+        "7": "Thesis present but behavior reasoning is thin",
+        "4": "Directions have names but no clear thesis",
+        "1": "'Variation 1', 'Variation 2' with no rationale"
+      }
+    },
+    "convergenceSupport": {
+      "weight": 0.10,
+      "description": "Does it offer structured merge/hybrid creation, not just 'pick A, B, or C'?",
+      "scoring": {
+        "10": "Offers merge with conflict detection: 'V2's sidebar nav conflicts with V3's top nav — which?'",
+        "7": "Mentions merging but no structured process",
+        "4": "Just 'pick one' with no merge option",
+        "1": "No convergence path at all"
       }
     },
     "recommendationQuality": {
-      "weight": 0.15,
+      "weight": 0.10,
       "description": "Is the recommendation grounded in user behavior, not aesthetic preference?",
       "scoring": {
         "10": "'Variation 2 works for ops teams because the status bar eliminates scrolling before knowing if something's broken'",
@@ -53,14 +63,14 @@
         "1": "No recommendation or 'they're all good'"
       }
     },
-    "buildability": {
+    "buildReadiness": {
       "weight": 0.10,
-      "description": "Is each variation a complete, buildable design — not a half-thought?",
+      "description": "At full-build depth, does each variation produce plan.md + build.json + tasks.md?",
       "scoring": {
-        "10": "Each variation has specific components, tokens, text content, and could be built immediately",
-        "7": "Mostly buildable, 1-2 vague areas",
-        "4": "Conceptual sketches, not buildable plans",
-        "1": "Abstract ideas without concrete design decisions"
+        "10": "Each full-build variation has all three files, tasks.md has literal text and resolved overrides",
+        "7": "Plan.md and build.json present, tasks.md missing or incomplete",
+        "4": "Only plan.md, no machine-readable output",
+        "1": "No buildable output — just text descriptions"
       }
     }
   }

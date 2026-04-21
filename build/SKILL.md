@@ -35,6 +35,11 @@ allowed-tools:
 
 Build a plan from `plans/` in Figma using **5 enforced phases**.
 
+**Build executes. Build does not decide.** All content, property overrides, batch
+grouping, and font requirements are pre-resolved in `tasks.md`. If tasks.md exists,
+read it and execute line by line. If tasks.md does not exist, fall back to parsing
+build.json (legacy mode) but flag that tasks.md should be generated via `/plan`.
+
 ## Tool Selection
 
 Read `shared/tool-selection.md` for the full decision tree. The critical rules:
@@ -62,12 +67,12 @@ Read `build-helpers/build-phases.md` for the full phase specification.
 The phases are:
 
 ```
-Phase 0: VALIDATE-KEYS → Verify every key in build.json is a usable Figma key
-Phase 1: MANIFEST      → Parse build.json into a component checklist
-Phase 2: SCAFFOLD      → Root frame + section frames (empty structure only)
-Phase 3: COMPONENTS    → Instantiate ALL library components from manifest
-Phase 4: TOKEN-BUILT   → Fill remaining gaps with frames/text
-Phase 5: VALIDATE      → Coverage, text, property, token binding checks
+Phase 0: VALIDATE-KEYS → Verify every key in tasks.md/build.json is a usable Figma key
+Phase 1: LOAD TASKS    → Read tasks.md (preferred) or parse build.json (legacy fallback)
+Phase 2: SCAFFOLD      → Execute SCAFFOLD phase tasks (empty structure only)
+Phase 3: COMPONENTS    → Execute COMPONENT phase tasks (library instances + icons)
+Phase 4: TOKEN-BUILT   → Execute TOKEN-BUILT phase tasks (frames + text)
+Phase 5: VALIDATE      → Execute VALIDATE phase checks
 ```
 
 **CRITICAL: Do NOT start Phase 4 until Phase 3's exit gate passes.**
@@ -163,13 +168,16 @@ The earlier "fall back and flag" rule under Error Recovery only applies to
 runtime failures from `setBoundVariable` after a key passed Phase 0. Pre-build,
 invalid keys are a hard stop with explicit user direction.
 
-### Phase 1: MANIFEST (before touching Figma)
+### Phase 1: LOAD TASKS (before touching Figma)
 
-Parse `build.json` and print a flat checklist of every element to build:
-- Library components (with variantKey, parent section, text overrides)
-- Icons (with componentKey, parent, size)
-- Token-built elements (with justification for why no component fits)
-- Expected coverage percentage
+**Preferred**: Read `plans/<name>/tasks.md` and use it as the execution checklist.
+Every task is pre-computed with exact text, overrides, batch groups, and figmaKeys.
+Execute line by line — do not re-interpret, infer, or generate content.
+
+**Legacy fallback**: If tasks.md does not exist, parse `build.json` manifest into
+a flat checklist (library components, icons, token-built, coverage). Flag:
+> "No tasks.md found — using build.json directly. Re-run `/plan` to generate
+> tasks.md with pre-resolved overrides and content."
 
 **This checklist is mandatory.** Without it, you WILL skip components.
 
@@ -235,23 +243,23 @@ Run 5 checks (coverage, text, overrides, tokens, visual). Present results.
 The build process depends on `/plan` output. The pipeline is:
 
 ```
-/plan → plans/<name>/plan.md + build.json (with manifest)
+/plan → plans/<name>/plan.md (human) + build.json (machine) + tasks.md (execution)
                 ↓
-/build Phase 0 → validates every key (40-char hex), STOPs on invalid
-/build Phase 1 → reads manifest from build.json → prints task checklist
-/build Phase 2 → creates scaffold (empty frames)
-/build Phase 3 → instantiates components from manifest checklist
-/build Phase 4 → fills gaps with token-built frames/text
-/build Phase 5 → validates and presents
+/build Phase 0 → validates every key in tasks.md (40-char hex), STOPs on invalid
+/build Phase 1 → reads tasks.md line by line (or build.json manifest as fallback)
+/build Phase 2 → executes SCAFFOLD tasks (empty frames)
+/build Phase 3 → executes COMPONENT tasks (library instances + icons)
+/build Phase 4 → executes TOKEN-BUILT tasks (frames + text with pre-written content)
+/build Phase 5 → executes VALIDATE tasks (coverage, text, overrides, tokens, visual)
 ```
 
-This mirrors spec-kit's `/speckit.specify` → `/speckit.plan` → `/speckit.tasks`
-→ `/speckit.implement` pipeline. The key insight borrowed from spec-kit:
+**The key principle: plan decides, build executes.**
 
-1. **Specifications drive implementation** — the manifest is the source of truth
+1. **tasks.md is the contract** — every task is pre-computed with exact strings, keys, overrides
 2. **Tasks are flat and ordered** — not a nested tree that requires interpretation
-3. **Each task has one API call** — no creative re-interpretation
+3. **Each task maps to one API call** — no creative re-interpretation
 4. **Gates block progression** — you can't skip Phase 3 and jump to Phase 4
+5. **Build never generates content** — if text is missing from tasks.md, flag it, don't guess
 
 See `build-helpers/tasks-template.md` for the task list format and
 `build-helpers/build-phases.md` for the full phase specification.
@@ -339,7 +347,20 @@ function canvasScan() {
 
 ## Before you begin
 
-1. Read the plan from `plans/<name>/build.json` (or `plans/<name>.json`).
+1. **Find the right build files.** Check what exists:
+   - `plans/<name>/tasks.md` — single-screen plan (preferred)
+   - `plans/<name>/screens/` — multi-screen plan (check for per-screen files)
+
+   **For multi-screen plans:** If the user specified a screen ("build the compose
+   screen"), find `plans/<name>/screens/02-compose-tasks.md`. If they said just
+   "/build", list available screens and ask which to build:
+
+   > "This plan has [N] screens. Which should I build?
+   > A) 01-inbox  B) 02-compose  C) All (sequential)"
+
+   **For single-screen plans:** Read `plans/<name>/tasks.md` directly.
+
+2. Read the plan from the located build.json (or tasks.md).
 2. Load design system data following `shared/design-system-loading.md`.
    - **Also load**: `design-system/product.json` and `design-system/content-guide.md`
      if they exist (Tier 0 in the loading pattern). Use product terminology for
@@ -407,19 +428,17 @@ plan already resolved what should be on vs off for this richness level.
 
 ### How to set text on library components
 
-**Content rules (every text string you write):**
+**Content rules (build is a text executor, not a writer):**
 
-If `design-system/content-guide.md` exists, treat it as the source of truth for:
-- **Voice & tone** — match cadence, pronouns, capitalization rules
-- **Terminology** — use the exact product vocabulary from `product.json` (e.g., "Workspace" not "Project" if that's the product term)
-- **Patterns** — empty-state phrasing, error messages, button labels, headings, microcopy
-- **Forbidden phrases** — never use generic placeholders like "Olivia Rhye", "Lorem ipsum",
-  "Click here", "Submit", "Label" if a content-guide pattern exists for that slot
+**When tasks.md exists**: Every text string is pre-written in the task. Use the
+exact literal string from the `text:` field. Do not modify, improve, or infer.
+If a task has no `text:` field, leave the element with its default text and flag
+it in the validation report.
 
-If `content-guide.md` is absent, use neutral domain-specific copy (no Lorem ipsum,
-no template names) and flag in the final report:
-> "No content-guide.md found — used inferred copy. Run `/setup-product` for
-> persistent voice + terminology."
+**When tasks.md does NOT exist (legacy mode)**: Fall back to build.json text
+overrides. If text is missing there too, use `content-guide.md` patterns and
+`product.json` terminology to write copy. Flag all inferred text:
+> "No tasks.md found — inferred [N] text strings. Re-run `/plan` to pre-resolve content."
 
 **Preferred: Use figma_set_instance_properties for TEXT properties.**
 Many components expose text as component properties (e.g., "Label text",

@@ -54,14 +54,21 @@ producing partial frames the user must clean up. Phase 0 makes failures atomic.
 and flag" rule under Error Recovery only applies to runtime `setBoundVariable`
 failures *after* a key passed Phase 0.
 
-## Phase 1: MANIFEST (no Figma calls)
+## Phase 1: LOAD TASKS (no Figma calls)
 
-**Purpose**: Parse build.json into a flat checklist of everything to build.
-This is the "bill of materials" that Phase 3 uses to instantiate components.
+**Purpose**: Load the pre-computed task list. tasks.md is the preferred input —
+it has pre-resolved overrides, literal text, batch groups, and font requirements.
+If tasks.md does not exist, fall back to parsing build.json into a manifest.
 
-**Entry gate**: build.json exists and has been read.
+**Entry gate**: tasks.md or build.json exists and has been read.
 
-**Process**:
+**Process (preferred — tasks.md exists)**:
+1. Read `plans/<name>/tasks.md`
+2. Print the task list as-is — it is already phase-ordered
+3. Verify header counts (coverage, fonts)
+4. Proceed to Phase 2
+
+**Process (legacy fallback — no tasks.md)**:
 1. Read `plans/<name>/build.json`
 2. Walk every node in the tree
 3. For each node, create a manifest entry:

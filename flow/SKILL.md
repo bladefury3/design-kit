@@ -97,6 +97,11 @@ options. One decision per question. STOP after each. Escape hatch for obvious an
    - Apply terminology from the terminology map
    - Use content-guide.md for empty state text, error messages, button labels
 
+   **Product-level context**: Also check `design-system/context.md` for product-wide
+   shared decisions (header, nav, spacing, typography). If it exists, enforce ALL
+   shared decisions across every screen in this flow. Do not re-decide what's
+   already decided at the product level.
+
    **Tier 1: Design system data** (required):
    - `design-system/tokens.json` — available token values and their figma keys
    - `design-system/components/index.json` — the component catalog with figmaKey and defaultVariantKey

@@ -23,12 +23,14 @@ design-kit/
 │   ├── relationships.json        #   Component dependency graph
 │   ├── product.json              #   Product context: identity, users, IA, terminology (output of /setup-product)
 │   ├── content-guide.md          #   Voice, tone, content patterns (output of /setup-product)
+│   ├── context.md                #   Product-wide shared decisions (header, nav, spacing, typography)
 │   ├── layout-patterns.json      #   Common page archetypes (shipped defaults + product-specific)
 │   └── decisions.md              #   Append-only log of meaningful design decisions (auto-captured by skills)
 ├── plans/                        # Build plans (output of /plan, /brainstorm, /design)
 │   ├── <feature>/                #   One folder per feature/flow
 │   │   ├── plan.md               #     Human-readable: IA, hierarchy, components, edge cases
 │   │   ├── build.json            #     Machine-readable: pre-resolved keys for /build
+│   │   ├── tasks.md              #     Execution contract: flat task list for /build (zero runtime decisions)
 │   │   ├── context.md            #     Shared decisions across screens (header, nav, spacing)
 │   │   ├── workflow-log.md       #     Autonomous pipeline log (output of /design)
 │   │   └── screens/              #     Per-screen build JSONs (for multi-screen flows)
@@ -49,7 +51,11 @@ design-kit/
 │   └── ...                       #   Audit/stress/diff results are presented inline
 │                                 #   and posted as Figma comments, not saved as JSON
 │
+│── ── Phase 0: Define ────────────────────────────────────────────────
+├── brief/                        # Define the problem before designing (HMW, metrics, scope)
+│
 │── ── Phase 1: Setup ─────────────────────────────────────────────────
+├── setup-all/                    # Run full extraction pipeline in one command
 ├── setup-tokens/                 # Catalog your design tokens from Figma
 ├── setup-components/             # Catalog your components with variants and props
 ├── setup-relationships/          # Map how components depend on each other
@@ -69,6 +75,7 @@ design-kit/
 ├── build-component/              # Build a component set in Figma from plan
 ├── flow/                         # Multi-screen flow planning (internal module, called by /design)
 ├── responsive/                   # Desktop to tablet + mobile adaptation
+├── content/                      # First-class UX writing iteration (pre-build or post-build)
 │
 │── ── Phase 3: Review ────────────────────────────────────────────────
 ├── audit/                        # Check designs against heuristics + tokens + Gestalt
@@ -117,10 +124,17 @@ Step 4:  You're ready. Try any skill below.
 
 ### What can I do?
 
+**Define (before designing)**
+
+| I want to... | Run this | What happens |
+|---|---|---|
+| **Define the problem first** | `/brief` | Interactive questions → `plans/<feature>/brief.md` with HMW statement, success metrics, scope |
+
 **Setup (one-time)**
 
 | I want to... | Run this | What happens |
 |---|---|---|
+| **Extract everything at once** | `/setup-all` | Runs all 5 setup skills in order, skips existing data |
 | **Catalog my design tokens** | `/setup-tokens` | Reads colors, spacing, radii, typography from Figma → `design-system/tokens.json` |
 | **Catalog my components** | `/setup-components` | Reads every component with variant keys, props, overrides → `design-system/components/` |
 | **Map component relationships** | `/setup-relationships` | Builds dependency graph → `design-system/relationships.json` |
@@ -140,7 +154,8 @@ Step 4:  You're ready. Try any skill below.
 |---|---|---|
 | **Design a screen or flow (autonomous)** | `/design` | Describe the screen **or flow** → AI handles planning, building, auditing, states, and handoff. Detects single vs multi-screen automatically. |
 | **Design a new screen (manual)** | `/plan` then `/build` | Describe the screen → get a plan → build it in Figma with library components |
-| **Explore design variations** | `/brainstorm` | Get 3-5 layout variations using SCAMPER + Jobs-to-be-Done |
+| **Explore design variations** | `/brainstorm` | 5 frameworks × 3 depths: concept cards → sketches → full builds. SCAMPER + Concept Reframe + Competitive + Constraints + User Journey |
+| **Iterate on copy** | `/content` | Extract text, present as matrix, validate against voice guide, write back |
 | **Create a new component** | `/plan-component` then `/build-component` | Define variants, props, tokens → build as a component set |
 | **Generate responsive variants** | `/responsive` | Convert a desktop design to tablet + mobile breakpoints |
 
@@ -269,7 +284,11 @@ Step 4:  You're ready. Try any skill below.
 Skills are organized into 4 phases. You don't need them all — start where you are.
 
 ```
+Phase 0: DEFINE (ground design in user needs)
+  /brief ──→ plans/<feature>/brief.md (HMW, success metrics, scope)
+
 Phase 1: SETUP (one-time — catalog what you have)
+  /setup-all ──→ runs all 5 in order (or run individually):
   /setup-tokens → /setup-components → /setup-relationships → /setup-icons → /setup-product
 
 CAPTURE + WIREFRAME (bring existing pages into Figma)
@@ -278,29 +297,31 @@ CAPTURE + WIREFRAME (bring existing pages into Figma)
     accepts: URL, screenshot, Figma frame, or text description
     flags: --zones (IA boxes), --sketch (default), --wireframe (real text), --detailed (states + annotations)
 
-Phase 2: CREATE (the design loop — spec-driven)
+Phase 2: CREATE (the design loop — plan decides, build executes)
   /design ──→ autonomous end-to-end (context → plan → build → states → audit → handoff)
        │        ├── single screen: uses /plan + /build
        │        └── multi-screen: uses flow/SKILL.md (internal) + /build per screen
        │
-  /brainstorm ──→ pick a direction
+  /brainstorm ──→ explore directions (5 frameworks × 3 depths)
+       │            ├── concept cards (30s each, text-only)
+       │            ├── sketch plans (2min each, ASCII + component mapping)
+       │            └── full builds (5-10min each, Figma + tasks.md)
        │
-  /plan ──→ /build ──→ see it in Figma
-       │     │    │
-       │     │    ├── Phase 1: MANIFEST (parse build.json → flat task checklist)
-       │     │    ├── Phase 2: SCAFFOLD (empty frame structure)
-       │     │    ├── Phase 3: COMPONENTS (instantiate ALL library components)
-       │     │    ├── Phase 4: TOKEN-BUILT (fill gaps with frames/text)
-       │     │    └── Phase 5: VALIDATE (coverage, text, tokens, visual)
-       │     │
-       │     /responsive
-       │     (tablet + mobile)
+  /plan ──→ /content ──→ /build ──→ see it in Figma
+       │     (optional)    │
+       │                   ├── reads tasks.md (execution contract)
+       │                   ├── Phase 2: SCAFFOLD (empty frames)
+       │                   ├── Phase 3: COMPONENTS (library instances)
+       │                   ├── Phase 4: TOKEN-BUILT (gap filler)
+       │                   └── Phase 5: VALIDATE (quality checks)
+       │
+       │     /responsive (tablet + mobile)
 
-  Build pipeline (inspired by github/spec-kit):
-    /plan creates build.json with a "manifest" — a flat list of every
-    component, icon, and token-built element with pre-resolved keys.
-    /build reads the manifest and executes it as ordered tasks:
-    components first, then token-built, then validate.
+  Plan→Build architecture (3-file output):
+    /plan produces plan.md (human), build.json (machine), tasks.md (execution).
+    tasks.md is the contract: flat, phase-ordered, pre-computed. Every text
+    string is literal, every override is resolved, every batch is pre-grouped.
+    /build reads tasks.md and executes — zero runtime decisions.
     See build-helpers/build-phases.md and build-helpers/tasks-template.md.
 
 Phase 3: REVIEW (check and fix)

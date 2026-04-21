@@ -107,30 +107,58 @@ Use figma_get_design_system_kit with:
 This returns all components in one call. Filter the results for icons using the
 identification rules below.
 
-#### Strategy 2: `figma_get_library_components` (good — with filtering)
+#### Strategy 2: `figma_get_library_components` (good — with pagination)
+
+**CRITICAL: This API has a max of 25 results per call. You MUST paginate.**
 
 ```
+# Page 1
 Use figma_get_library_components with:
-  - libraryFileUrl: "<library file URL>" OR libraryFileKey: "<key>"
-  - includeVariants: true
-  - limit: 500
+  - libraryFileKey: "<key>"
+  - limit: 25
+  - offset: 0
+
+# Page 2
+Use figma_get_library_components with:
+  - libraryFileKey: "<key>"
+  - limit: 25
+  - offset: 25
+
+# Continue until hasMore is false
 ```
 
-Filter the results for icon-sized, single-purpose components.
+Filter each page for icon-sized, single-purpose components.
+**Do NOT stop after the first page.** Continue until `hasMore: false`.
 
 #### Strategy 3: `figma_search_components` (targeted — for specific queries)
 
-Search with icon-related queries when the library is large and you need to narrow
-down:
+**CRITICAL: Max 25 results per call. Paginate AND run multiple queries.**
+
+Use systematic category searches to find ALL icons. Run EACH of these queries
+with pagination (offset 0, 25, 50... until hasMore is false):
 
 ```
-Use figma_search_components with:
-  - query: "icon" (or "arrow", "check", etc.)
-  - libraryFileKey: "<key>"
-  - limit: 100
+Mandatory search queries (run ALL of these):
+  "arrow"    "chevron"   "check"    "close"     "x-"
+  "search"   "plus"      "minus"    "star"      "heart"
+  "home"     "settings"  "user"     "users"     "mail"
+  "bell"     "calendar"  "clock"    "lock"      "eye"
+  "edit"     "trash"     "copy"     "download"  "upload"
+  "share"    "filter"    "menu"     "grid"      "list"
+  "map"      "phone"     "link"     "file"      "folder"
+  "bookmark" "flag"      "alert"    "info"      "help"
+  "send"     "repeat"    "refresh"  "play"      "pause"
+  "log"      "globe"     "credit"   "bar-chart" "pie-chart"
+  "message"  "image"     "camera"   "mic"       "video"
+  "cloud"    "database"  "server"   "code"      "terminal"
+  "gift"     "tag"       "hash"     "at-sign"   "zap"
 ```
 
-Run multiple searches with different queries to build a complete picture.
+This systematic search ensures no common icon category is missed. Deduplicate
+results by component key — the same icon may match multiple queries.
+
+**After all queries complete, report:**
+> "Searched [N] query categories. Found [M] unique icons. [P] from previous run were already in catalog."
 
 #### Strategy 4: `figma_execute` local discovery (current file only)
 
@@ -540,6 +568,53 @@ for (const cs of allComponentSets) {
 
 return swapSlots;
 ```
+
+## Step 3.5: Completeness validation gate (BLOCKING)
+
+Before writing icons.json, verify the extraction is comprehensive:
+
+### Essential icon check
+
+These icons are used in nearly every design. If ANY are missing, search for them
+specifically before proceeding:
+
+```
+MUST HAVE (search individually if not found):
+  Navigation: arrow-left, arrow-right, arrow-up, arrow-down,
+              chevron-left, chevron-right, chevron-down, chevron-up
+  Actions:    search-lg, search-md, search-sm, plus, minus, x-close,
+              edit-03, trash-01, copy-01, download-01, upload-01
+  UI Chrome:  menu-01, settings-01, settings-02, help-circle,
+              bell-01, bell-02, home-line, home-01
+  People:     user-01, user-02, users-01, users-02
+  Content:    mail-01, mail-02, send-01, send-03,
+              file-01, file-02, file-text, folder
+  Location:   map-pin, globe-01
+  Time:       clock, calendar, repeat-04, refresh-cw-01
+  Media:      image-01, camera-01, mic-01, play, pause
+  Commerce:   credit-card-01, shopping-bag-01, tag-01
+  Status:     check, check-circle, alert-circle, alert-triangle,
+              info-circle, x-circle
+  Misc:       link-01, bookmark, star-01, heart, eye, eye-off,
+              lock-01, unlock-01, log-out-01, log-in-01
+```
+
+For each missing essential icon:
+1. `figma_search_components` with the icon name + libraryFileKey
+2. If found → add to catalog with hex key
+3. If not found → note as "not in library" (don't leave gaps silently)
+
+### Count validation
+
+- **Minimum for a typical UI library**: 200+ icons
+- **Expected for a full library (like Untitled UI)**: 800-1500 icons
+- If you found < 200, the extraction is incomplete. Re-run Strategy 3 with
+  ALL systematic queries before writing.
+
+### Key format validation
+
+Walk every icon entry. Verify `key` is a 40-char hex hash (`/^[a-f0-9]{40}$/`).
+If any key contains `:` (nodeId format), convert it via `figma_search_components`.
 
 ## Step 4: Write `design-system/icons.json`
 
